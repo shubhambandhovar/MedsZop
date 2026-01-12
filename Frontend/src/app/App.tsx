@@ -1,0 +1,365 @@
+import { useState } from 'react';
+import { Header } from './components/Header';
+import { HomePage } from './components/HomePage';
+import { MedicineSearch } from './components/MedicineSearch';
+import { MedicineDetail } from './components/MedicineDetail';
+import { PrescriptionUpload } from './components/PrescriptionUpload';
+import { Cart } from './components/Cart';
+import { Checkout } from './components/Checkout';
+import { OrderTracking } from './components/OrderTracking';
+import { UserProfile } from './components/UserProfile';
+import { Login } from './components/Login';
+import { AIChatbot } from './components/AIChatbot';
+import { PharmacyDashboard } from './components/PharmacyDashboard';
+import { AdminDashboard } from './components/AdminDashboard';
+import { Toaster } from './components/ui/sonner';
+import { toast } from 'sonner';
+import {
+  ViewType,
+  Language,
+  Medicine,
+  CartItem,
+  Order,
+  User,
+} from './types';
+import {
+  mockMedicines,
+  mockUser,
+  mockOrders,
+  mockPrescriptions,
+  mockPharmacies,
+  mockPharmacyOrders,
+} from './data/mockData';
+
+export default function App() {
+  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [language, setLanguage] = useState<Language>('en');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User>(mockUser);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showChatbot, setShowChatbot] = useState(false);
+
+  // View Mode (user, pharmacy, admin)
+  const [viewMode, setViewMode] = useState<'user' | 'pharmacy' | 'admin'>('user');
+
+  const handleLanguageToggle = () => {
+    setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
+    toast.success(
+      language === 'en'
+        ? 'भाषा बदल दी गई'
+        : 'Language changed to English'
+    );
+  };
+
+  const handleLogin = (phoneOrEmail: string) => {
+    setIsLoggedIn(true);
+    setUser(mockUser);
+    setCurrentView('home');
+    toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentView('home');
+    setCartItems([]);
+    toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');
+  };
+
+  const handleAddToCart = (medicine: Medicine, quantity: number) => {
+    const existingItem = cartItems.find((item) => item.id === medicine.id);
+
+    if (existingItem) {
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === medicine.id ? { ...item, quantity: item.quantity + quantity } : item
+        )
+      );
+    } else {
+      setCartItems([...cartItems, { ...medicine, quantity }]);
+    }
+
+    toast.success(
+      language === 'en'
+        ? `${medicine.brand} added to cart`
+        : `${medicine.brand} कार्ट में जोड़ा गया`
+    );
+    setCurrentView('cart');
+  };
+
+  const handleUpdateQuantity = (id: string, quantity: number) => {
+    if (quantity <= 0) {
+      handleRemoveItem(id);
+      return;
+    }
+    setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity } : item)));
+  };
+
+  const handleRemoveItem = (id: string) => {
+    setCartItems(cartItems.filter((item) => item.id !== id));
+    toast.success(language === 'en' ? 'Item removed from cart' : 'आइटम कार्ट से हटाया गया');
+  };
+
+  const handlePlaceOrder = (addressId: string, paymentMethod: string) => {
+    const address = user.addresses.find((a) => a.id === addressId);
+    if (!address) return;
+
+    const newOrder: Order = {
+      id: `order-${Date.now()}`,
+      orderNumber: `MZ${Date.now().toString().slice(-8)}`,
+      date: new Date().toISOString(),
+      items: cartItems,
+      total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      status: 'confirmed',
+      deliveryAddress: address,
+      estimatedDeliveryTime: Math.max(...cartItems.map((item) => item.estimatedDeliveryTime)),
+      paymentMethod,
+      prescriptionRequired: cartItems.some((item) => item.requiresPrescription),
+      prescriptionVerified: true,
+    };
+
+    setOrders([newOrder, ...orders]);
+    setSelectedOrder(newOrder);
+    setCartItems([]);
+    setCurrentView('order-tracking');
+    
+    toast.success(
+      language === 'en'
+        ? '🎉 Order placed successfully!'
+        : '🎉 ऑर्डर सफलतापूर्वक दिया गया!'
+    );
+
+    // Simulate order status updates
+    setTimeout(() => {
+      setOrders((prev) =>
+        prev.map((o) => (o.id === newOrder.id ? { ...o, status: 'packed' } : o))
+      );
+      toast.info(language === 'en' ? '📦 Your order is being packed' : '📦 आपका ऑर्डर पैक किया जा रहा है');
+    }, 10000);
+
+    setTimeout(() => {
+      setOrders((prev) =>
+        prev.map((o) => (o.id === newOrder.id ? { ...o, status: 'out_for_delivery' } : o))
+      );
+      toast.info(language === 'en' ? '🚚 Your order is out for delivery' : '🚚 आपका ऑर्डर डिलीवरी के लिए निकल गया है');
+    }, 20000);
+  };
+
+  const handleMedicineClick = (medicine: Medicine) => {
+    setSelectedMedicine(medicine);
+    setCurrentView('medicine-detail');
+  };
+
+  const handleUploadPrescription = () => {
+    setCurrentView('prescription');
+  };
+
+  const handlePrescriptionUploadComplete = (prescriptionId: string) => {
+    toast.success(
+      language === 'en'
+        ? 'Prescription uploaded successfully!'
+        : 'प्रिस्क्रिप्शन सफलतापूर्वक अपलोड किया गया!'
+    );
+    setCurrentView('home');
+  };
+
+  const handleSearchSubmit = () => {
+    setCurrentView('search');
+  };
+
+  const handleAcceptOrder = (orderId: string) => {
+    toast.success('Order accepted and assigned to delivery partner');
+  };
+
+  const handleRejectOrder = (orderId: string) => {
+    toast.error('Order rejected');
+  };
+
+  // Quick toggle for demo purposes (in real app, this would be based on user role)
+  const toggleViewMode = () => {
+    if (viewMode === 'user') {
+      setViewMode('pharmacy');
+      toast.info('Switched to Pharmacy Dashboard');
+    } else if (viewMode === 'pharmacy') {
+      setViewMode('admin');
+      toast.info('Switched to Admin Dashboard');
+    } else {
+      setViewMode('user');
+      toast.info('Switched to User View');
+    }
+  };
+
+  // Render pharmacy dashboard
+  if (viewMode === 'pharmacy') {
+    return (
+      <div className="min-h-screen">
+        <div className="fixed right-4 top-4 z-50">
+          <button
+            onClick={toggleViewMode}
+            className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
+          >
+            Switch View
+          </button>
+        </div>
+        <PharmacyDashboard
+          pharmacyName={mockPharmacies[0].name}
+          orders={mockPharmacyOrders}
+          inventory={mockMedicines}
+          onAcceptOrder={handleAcceptOrder}
+          onRejectOrder={handleRejectOrder}
+        />
+        <Toaster position="top-right" />
+      </div>
+    );
+  }
+
+  // Render admin dashboard
+  if (viewMode === 'admin') {
+    return (
+      <div className="min-h-screen">
+        <div className="fixed right-4 top-4 z-50">
+          <button
+            onClick={toggleViewMode}
+            className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
+          >
+            Switch View
+          </button>
+        </div>
+        <AdminDashboard />
+        <Toaster position="top-right" />
+      </div>
+    );
+  }
+
+  // Render user view (main app)
+  return (
+    <div className="min-h-screen">
+      {/* Demo Toggle Button */}
+      <div className="fixed right-4 top-4 z-50">
+        <button
+          onClick={toggleViewMode}
+          className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
+        >
+          Switch View
+        </button>
+      </div>
+
+      {currentView !== 'login' && (
+        <Header
+          cartCount={cartItems.length}
+          onCartClick={() => setCurrentView('cart')}
+          onProfileClick={() => setCurrentView('profile')}
+          onChatbotClick={() => setShowChatbot(true)}
+          onLoginClick={() => setCurrentView('login')}
+          isLoggedIn={isLoggedIn}
+          language={language}
+          onLanguageToggle={handleLanguageToggle}
+        />
+      )}
+
+      {currentView === 'home' && (
+        <HomePage
+          medicines={mockMedicines}
+          onMedicineClick={handleMedicineClick}
+          onUploadPrescription={handleUploadPrescription}
+          onDoctorConsultation={() =>
+            toast.info(
+              language === 'en'
+                ? 'Doctor consultation feature coming soon!'
+                : 'डॉक्टर परामर्श सुविधा जल्द आ रही है!'
+            )
+          }
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onSearchSubmit={handleSearchSubmit}
+          language={language}
+        />
+      )}
+
+      {currentView === 'search' && (
+        <MedicineSearch
+          medicines={mockMedicines}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onMedicineClick={handleMedicineClick}
+          onBack={() => setCurrentView('home')}
+          language={language}
+        />
+      )}
+
+      {currentView === 'medicine-detail' && selectedMedicine && (
+        <MedicineDetail
+          medicine={selectedMedicine}
+          onBack={() => setCurrentView('search')}
+          onAddToCart={handleAddToCart}
+          language={language}
+        />
+      )}
+
+      {currentView === 'prescription' && (
+        <PrescriptionUpload
+          onBack={() => setCurrentView('home')}
+          onUploadComplete={handlePrescriptionUploadComplete}
+          savedPrescriptions={mockPrescriptions}
+          language={language}
+        />
+      )}
+
+      {currentView === 'cart' && (
+        <Cart
+          items={cartItems}
+          onBack={() => setCurrentView('home')}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          onCheckout={() => setCurrentView('checkout')}
+          language={language}
+        />
+      )}
+
+      {currentView === 'checkout' && (
+        <Checkout
+          items={cartItems}
+          addresses={user.addresses}
+          onBack={() => setCurrentView('cart')}
+          onPlaceOrder={handlePlaceOrder}
+          language={language}
+        />
+      )}
+
+      {currentView === 'order-tracking' && selectedOrder && (
+        <OrderTracking
+          order={selectedOrder}
+          onBack={() => setCurrentView('home')}
+          language={language}
+        />
+      )}
+
+      {currentView === 'profile' && isLoggedIn && (
+        <UserProfile
+          user={user}
+          orders={orders}
+          onBack={() => setCurrentView('home')}
+          onLogout={handleLogout}
+          onViewOrders={() => {
+            if (orders.length > 0) {
+              setSelectedOrder(orders[0]);
+              setCurrentView('order-tracking');
+            }
+          }}
+          language={language}
+        />
+      )}
+
+      {currentView === 'login' && (
+        <Login onLogin={handleLogin} onBack={() => setCurrentView('home')} language={language} />
+      )}
+
+      {showChatbot && <AIChatbot onClose={() => setShowChatbot(false)} language={language} />}
+
+      <Toaster position="top-right" richColors />
+    </div>
+  );
+}
