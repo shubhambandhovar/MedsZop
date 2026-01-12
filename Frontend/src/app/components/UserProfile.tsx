@@ -55,7 +55,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
           <Card>
             <CardContent className="p-4 text-center">
               <p className="mb-1 text-2xl font-bold text-[var(--health-blue)]">
-                {orders.length}
+                {(orders?.length || 0)}
               </p>
               <p className="text-xs text-muted-foreground">
                 {language === 'en' ? 'Orders' : 'ऑर्डर'}
@@ -65,7 +65,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
           <Card>
             <CardContent className="p-4 text-center">
               <p className="mb-1 text-2xl font-bold text-[var(--health-green)]">
-                {user.savedPrescriptions.length}
+                {user.savedPrescriptions?.length || 0}
               </p>
               <p className="text-xs text-muted-foreground">
                 {language === 'en' ? 'Prescriptions' : 'प्रिस्क्रिप्शन'}
@@ -75,7 +75,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
           <Card>
             <CardContent className="p-4 text-center">
               <p className="mb-1 text-2xl font-bold text-[var(--trust-blue)]">
-                {user.addresses.length}
+                {user.addresses?.length || 0}
               </p>
               <p className="text-xs text-muted-foreground">
                 {language === 'en' ? 'Addresses' : 'पते'}
@@ -113,7 +113,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
                   {language === 'en' ? 'Saved Prescriptions' : 'सेव किए गए प्रिस्क्रिप्शन'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {user.savedPrescriptions.length}{' '}
+                  {(user.savedPrescriptions?.length || 0)}{' '}
                   {language === 'en' ? 'prescriptions saved' : 'प्रिस्क्रिप्शन सेव किए गए'}
                 </p>
               </div>
@@ -131,7 +131,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
                   {language === 'en' ? 'Saved Addresses' : 'सेव किए गए पते'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {user.addresses.length}{' '}
+                  {(user.addresses?.length || 0)}{' '}
                   {language === 'en' ? 'addresses saved' : 'पते सेव किए गए'}
                 </p>
               </div>

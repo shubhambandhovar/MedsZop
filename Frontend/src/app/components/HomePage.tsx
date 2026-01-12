@@ -1,10 +1,13 @@
-import { Search, Clock, Shield, Pill, Upload, Stethoscope, Bell, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Clock, Shield, Pill, Upload, Stethoscope, Bell, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Medicine, Language } from '../types';
 import { translations } from '../data/mockData';
+import { medicineService } from '../../services/medicineService';
+import { toast } from 'sonner';
 
 interface HomePageProps {
   medicines: Medicine[];
@@ -28,7 +31,33 @@ export function HomePage({
   language,
 }: HomePageProps) {
   const t = translations[language];
-  const popularMedicines = medicines.slice(0, 6);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayMedicines, setDisplayMedicines] = useState<Medicine[]>(medicines);
+
+  // Fetch medicines from backend on mount
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        setIsLoading(true);
+        const response = await medicineService.getMedicines({
+          limit: 6,
+          page: 1
+        });
+        if (response.success) {
+          setDisplayMedicines(response.data);
+        }
+      } catch (error: any) {
+        // Fall back to mock data if API fails
+        setDisplayMedicines(medicines.slice(0, 6));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMedicines();
+  }, []);
+
+  const popularMedicines = isLoading ? medicines.slice(0, 6) : displayMedicines;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--health-blue-light)] to-white pb-8">

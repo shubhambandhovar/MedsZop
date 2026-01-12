@@ -1,4 +1,4 @@
-import { ChevronLeft, MapPin, CreditCard, Wallet, Check } from 'lucide-react';
+import { ChevronLeft, MapPin, CreditCard, Wallet, Check, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -6,6 +6,8 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
 import { CartItem, Address, Language } from '../types';
 import { useState } from 'react';
+import { orderService } from '../../services/orderService';
+import { toast } from 'sonner';
 
 interface CheckoutProps {
   items: CartItem[];
@@ -20,13 +22,49 @@ export function Checkout({ items, addresses, onBack, onPlaceOrder, language }: C
     addresses.find((a) => a.isDefault)?.id || addresses[0]?.id || ''
   );
   const [paymentMethod, setPaymentMethod] = useState('upi');
+  const [isLoading, setIsLoading] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 0; // Free delivery
   const total = subtotal + deliveryFee;
 
-  const handlePlaceOrder = () => {
-    onPlaceOrder(selectedAddress, paymentMethod);
+  const handlePlaceOrder = async () => {
+    if (!selectedAddress) {
+      toast.error('Please select a delivery address');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const address = addresses.find(a => a.id === selectedAddress);
+      if (!address) {
+        toast.error('Invalid address selected');
+        return;
+      }
+
+      const orderData = {
+        items: items.map(item => ({
+          medicineId: item.id,
+          name: item.name,
+          brand: item.brand,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        deliveryAddress: address,
+        paymentMethod
+      };
+
+      const result = await orderService.createOrder(orderData);
+      if (result.success) {
+        toast.success('Order placed successfully!');
+        onPlaceOrder(selectedAddress, paymentMethod);
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || 'Failed to place order';
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -233,10 +271,19 @@ export function Checkout({ items, addresses, onBack, onPlaceOrder, language }: C
           <Button
             className="h-12 w-full bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg"
             onClick={handlePlaceOrder}
-            disabled={!selectedAddress}
+            disabled={!selectedAddress || isLoading}
           >
-            <Check className="mr-2 h-5 w-5" />
-            {language === 'en' ? 'Place Order' : 'ऑर्डर करें'}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                {language === 'en' ? 'Placing Order...' : 'ऑर्डर दे रहे हैं...'}
+              </>
+            ) : (
+              <>
+                <Check className="mr-2 h-5 w-5" />
+                {language === 'en' ? 'Place Order' : 'ऑर्डर करें'}
+              </>
+            )}
           </Button>
           <p className="mt-2 text-center text-xs text-muted-foreground">
             {language === 'en'

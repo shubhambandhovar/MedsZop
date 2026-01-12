@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HomePage } from './components/HomePage';
 import { MedicineSearch } from './components/MedicineSearch';
@@ -14,6 +14,7 @@ import { PharmacyDashboard } from './components/PharmacyDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
+import { authService } from '../services/authService';
 import {
   ViewType,
   Language,
@@ -46,6 +47,15 @@ export default function App() {
   // View Mode (user, pharmacy, admin)
   const [viewMode, setViewMode] = useState<'user' | 'pharmacy' | 'admin'>('user');
 
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = authService.getCurrentUser();
+    if (storedUser) {
+      setUser(storedUser);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const handleLanguageToggle = () => {
     setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
     toast.success(
@@ -55,15 +65,17 @@ export default function App() {
     );
   };
 
-  const handleLogin = (phoneOrEmail: string) => {
+  const handleLogin = (user: User) => {
     setIsLoggedIn(true);
-    setUser(mockUser);
+    setUser(user);
     setCurrentView('home');
     toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
   };
 
   const handleLogout = () => {
+    authService.logout();
     setIsLoggedIn(false);
+    setUser(mockUser);
     setCurrentView('home');
     setCartItems([]);
     toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');

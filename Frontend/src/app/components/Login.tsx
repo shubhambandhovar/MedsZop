@@ -5,10 +5,12 @@ import { Label } from './ui/label';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Shield, Phone, Mail } from 'lucide-react';
-import { Language } from '../types';
+import { Language, User } from '../types';
+import { authService } from '../../services/authService';
+import { toast } from 'sonner';
 
 interface LoginProps {
-  onLogin: (phone: string) => void;
+  onLogin: (user: User) => void;
   onBack: () => void;
   language: Language;
 }
@@ -16,15 +18,68 @@ interface LoginProps {
 export function Login({ onLogin, onBack, language }: LoginProps) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
 
-  const handleSendOtp = () => {
-    setOtpSent(true);
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error('Please enter email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await authService.login(email, password);
+      if (result.success) {
+        toast.success('Login successful!');
+        onLogin(result.data.user);
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || 'Login failed';
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleVerifyOtp = () => {
-    onLogin(phone || email);
+  const handleRegister = async () => {
+    if (!name || !email || !password || !phone) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (phone.length !== 10) {
+      toast.error('Phone number must be 10 digits');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await authService.register({
+        name,
+        email,
+        password,
+        phone,
+        role: 'user'
+      });
+      if (result.success) {
+        toast.success('Registration successful!');
+        setEmail('');
+        setPassword('');
+        setName('');
+        setPhone('');
+        setIsRegistering(false);
+        onLogin(result.data.user);
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || 'Registration failed';
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,85 +103,18 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
         {/* Login Card */}
         <Card className="mx-auto max-w-md shadow-lg">
           <CardContent className="p-6">
-            <Tabs defaultValue="phone">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="phone">
-                  <Phone className="mr-2 h-4 w-4" />
-                  {language === 'en' ? 'Phone' : 'फ़ोन'}
+                <TabsTrigger value="login">
+                  {language === 'en' ? 'Login' : 'लॉगिन'}
                 </TabsTrigger>
-                <TabsTrigger value="email">
-                  <Mail className="mr-2 h-4 w-4" />
-                  {language === 'en' ? 'Email' : 'ईमेल'}
+                <TabsTrigger value="register">
+                  {language === 'en' ? 'Register' : 'पंजीकरण'}
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="phone" className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">
-                    {language === 'en' ? 'Phone Number' : 'फ़ोन नंबर'}
-                  </Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+91 98765 43210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={otpSent}
-                    className="h-12 text-lg"
-                  />
-                </div>
-
-                {otpSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">
-                      {language === 'en' ? 'Enter OTP' : 'OTP दर्ज करें'}
-                    </Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="123456"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      maxLength={6}
-                      className="h-12 text-center text-2xl tracking-widest"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'en'
-                        ? 'OTP sent to your phone'
-                        : 'OTP आपके फ़ोन पर भेजा गया'}
-                    </p>
-                  </div>
-                )}
-
-                {!otpSent ? (
-                  <Button
-                    className="h-12 w-full bg-[var(--health-blue)] hover:bg-[var(--health-blue-dark)] text-lg"
-                    onClick={handleSendOtp}
-                    disabled={!phone}
-                  >
-                    {language === 'en' ? 'Send OTP' : 'OTP भेजें'}
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <Button
-                      className="h-12 w-full bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg"
-                      onClick={handleVerifyOtp}
-                      disabled={otp.length !== 6}
-                    >
-                      {language === 'en' ? 'Verify & Login' : 'सत्यापित करें और लॉगिन करें'}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full"
-                      onClick={() => setOtpSent(false)}
-                    >
-                      {language === 'en' ? 'Change Number' : 'नंबर बदलें'}
-                    </Button>
-                  </div>
-                )}
-              </TabsContent>
-
-              <TabsContent value="email" className="space-y-4">
+              {/* Login Tab */}
+              <TabsContent value="login" className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">
                     {language === 'en' ? 'Email Address' : 'ईमेल पता'}
@@ -137,59 +125,110 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
                     placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    disabled={otpSent}
+                    disabled={isLoading}
                     className="h-12"
                   />
                 </div>
 
-                {otpSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp-email">
-                      {language === 'en' ? 'Enter OTP' : 'OTP दर्ज करें'}
-                    </Label>
-                    <Input
-                      id="otp-email"
-                      type="text"
-                      placeholder="123456"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      maxLength={6}
-                      className="h-12 text-center text-2xl tracking-widest"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'en'
-                        ? 'OTP sent to your email'
-                        : 'OTP आपके ईमेल पर भेजा गया'}
-                    </p>
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <Label htmlFor="password">
+                    {language === 'en' ? 'Password' : 'पासवर्ड'}
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12"
+                  />
+                </div>
 
-                {!otpSent ? (
-                  <Button
-                    className="h-12 w-full bg-[var(--health-blue)] hover:bg-[var(--health-blue-dark)] text-lg"
-                    onClick={handleSendOtp}
-                    disabled={!email}
-                  >
-                    {language === 'en' ? 'Send OTP' : 'OTP भेजें'}
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <Button
-                      className="h-12 w-full bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg"
-                      onClick={handleVerifyOtp}
-                      disabled={otp.length !== 6}
-                    >
-                      {language === 'en' ? 'Verify & Login' : 'सत्यापित करें और लॉगिन करें'}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full"
-                      onClick={() => setOtpSent(false)}
-                    >
-                      {language === 'en' ? 'Change Email' : 'ईमेल बदलें'}
-                    </Button>
-                  </div>
-                )}
+                <Button
+                  className="h-12 w-full bg-[var(--health-blue)] hover:bg-[var(--health-blue-dark)] text-lg"
+                  onClick={handleLogin}
+                  disabled={isLoading || !email || !password}
+                >
+                  {isLoading ? 'Logging in...' : language === 'en' ? 'Login' : 'लॉगिन'}
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
+                  {language === 'en'
+                    ? 'Demo: user@test.com / password123'
+                    : 'डेमो: user@test.com / password123'}
+                </p>
+              </TabsContent>
+
+              {/* Register Tab */}
+              <TabsContent value="register" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">
+                    {language === 'en' ? 'Full Name' : 'पूरा नाम'}
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-email">
+                    {language === 'en' ? 'Email Address' : 'ईमेल पता'}
+                  </Label>
+                  <Input
+                    id="reg-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">
+                    {language === 'en' ? 'Phone Number' : 'फ़ोन नंबर'}
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="9876543210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    disabled={isLoading}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-password">
+                    {language === 'en' ? 'Password' : 'पासवर्ड'}
+                  </Label>
+                  <Input
+                    id="reg-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12"
+                  />
+                </div>
+
+                <Button
+                  className="h-12 w-full bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg"
+                  onClick={handleRegister}
+                  disabled={isLoading || !name || !email || !password || !phone}
+                >
+                  {isLoading ? 'Registering...' : language === 'en' ? 'Register' : 'पंजीकरण'}
+                </Button>
               </TabsContent>
             </Tabs>
 
@@ -198,8 +237,8 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
               <Shield className="h-5 w-5 flex-shrink-0 text-[var(--health-blue)]" />
               <p className="text-xs text-[var(--health-blue-dark)]">
                 {language === 'en'
-                  ? 'Your data is secure with JWT authentication and end-to-end encryption'
-                  : 'आपका डेटा JWT प्रमाणीकरण और एंड-टू-एंड एन्क्रिप्शन के साथ सुरक्षित है'}
+                  ? 'Your data is secure with JWT authentication and password encryption'
+                  : 'आपका डेटा JWT प्रमाणीकरण और पासवर्ड एन्क्रिप्शन के साथ सुरक्षित है'}
               </p>
             </div>
           </CardContent>
@@ -222,3 +261,4 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
     </div>
   );
 }
+

@@ -1,4 +1,5 @@
-import { Search, Filter, MapPin, Clock, ChevronLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Filter, MapPin, Clock, ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
@@ -6,6 +7,8 @@ import { Badge } from './ui/badge';
 import { Medicine, Language } from '../types';
 import { translations } from '../data/mockData';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { medicineService } from '../../services/medicineService';
+import { toast } from 'sonner';
 
 interface MedicineSearchProps {
   medicines: Medicine[];
@@ -25,15 +28,64 @@ export function MedicineSearch({
   language,
 }: MedicineSearchProps) {
   const t = translations[language];
-  
-  // Filter medicines based on search
-  const filteredMedicines = medicines.filter(
-    (med) =>
-      med.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.genericName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredMedicines, setFilteredMedicines] = useState<Medicine[]>(medicines);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [categories, setCategories] = useState<string[]>([]);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await medicineService.getCategories();
+        if (response.success) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        // Use default categories if API fails
+        setCategories(['Pain Relief', 'Antibiotics', 'Allergy', 'Diabetes', 'Gastro']);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Search medicines
+  useEffect(() => {
+    const searchMedicines = async () => {
+      if (!searchQuery && !selectedCategory) {
+        setFilteredMedicines(medicines);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await medicineService.getMedicines({
+          search: searchQuery || undefined,
+          category: selectedCategory || undefined
+        });
+        if (response.success) {
+          setFilteredMedicines(response.data);
+        }
+      } catch (error) {
+        // Fallback to client-side filtering
+        const filtered = medicines.filter((med) => {
+          const matchesSearch = !searchQuery || 
+            med.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            med.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            med.genericName.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          const matchesCategory = !selectedCategory || med.category === selectedCategory;
+          return matchesSearch && matchesCategory;
+        });
+        setFilteredMedicines(filtered);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    searchMedicines();
+  }, [searchQuery, selectedCategory, medicines]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
@@ -58,16 +110,18 @@ export function MedicineSearch({
           </div>
 
           <div className="flex items-center gap-2">
-            <Select defaultValue="all">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-36">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{language === 'en' ? 'All' : 'सभी'}</SelectItem>
-                <SelectItem value="pain">{language === 'en' ? 'Pain Relief' : 'दर्द निवारक'}</SelectItem>
-                <SelectItem value="antibiotic">{language === 'en' ? 'Antibiotics' : 'एंटीबायोटिक्स'}</SelectItem>
-                <SelectItem value="diabetes">{language === 'en' ? 'Diabetes' : 'मधुमेह'}</SelectItem>
+                <SelectItem value="">{language === 'en' ? 'All Categories' : 'सभी श्रेणियां'}</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -84,6 +138,14 @@ export function MedicineSearch({
           </div>
         </div>
       </div>
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="container mx-auto px-4 py-8 text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-[var(--health-blue)]" />
+          <p className="mt-2 text-muted-foreground">{language === 'en' ? 'Searching...' : 'खोज रहे हैं...'}</p>
+        </div>
+      )}
 
       {/* Results */}
       <div className="container mx-auto px-4 pt-4">
