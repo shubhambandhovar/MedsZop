@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { processPrescriptionImage, simulateOCRForTesting } from "../services/ocrService";
-import { Medicine } from "../models/Medicine";
+import Medicine from "../models/Medicine";
 
 const router = express.Router();
 

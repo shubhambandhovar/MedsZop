@@ -16,9 +16,13 @@ import { PharmacyDashboard } from './components/PharmacyDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { HealthDashboard } from './components/HealthDashboard';
 import { OrderSuccess } from './components/OrderSuccess';
+import { SubscriptionPlans } from './components/SubscriptionPlans';
+import { SubscriptionManager } from './components/SubscriptionManager';
+import { DoctorConsultationUI } from './components/DoctorConsultation';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { authService } from '../services/authService';
+import { UserSubscription } from '../services/subscriptionService';
 import {
   ViewType,
   Language,
@@ -50,6 +54,7 @@ export default function App() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
 
   // View Mode (user, pharmacy, admin)
   const [viewMode, setViewMode] = useState<'user' | 'pharmacy' | 'admin'>('user');
@@ -219,7 +224,7 @@ export default function App() {
     setCurrentView('prescription');
   };
 
-  const handlePrescriptionUploadComplete = (prescriptionId: string) => {
+  const handlePrescriptionUploadComplete = () => {
     toast.success(
       language === 'en'
         ? 'Prescription uploaded successfully!'
@@ -232,11 +237,11 @@ export default function App() {
     setCurrentView('search');
   };
 
-  const handleAcceptOrder = (orderId: string) => {
+  const handleAcceptOrder = () => {
     toast.success('Order accepted and assigned to delivery partner');
   };
 
-  const handleRejectOrder = (orderId: string) => {
+  const handleRejectOrder = () => {
     toast.error('Order rejected');
   };
 
@@ -329,13 +334,15 @@ export default function App() {
           onMedicineClick={handleMedicineClick}
           onUploadPrescription={handleUploadPrescription}
           onScanPrescription={() => setCurrentView('prescription-scanner')}
-          onDoctorConsultation={() =>
-            toast.info(
-              language === 'en'
-                ? 'Doctor consultation feature coming soon!'
-                : 'डॉक्टर परामर्श सुविधा जल्द आ रही है!'
-            )
-          }
+          onDoctorConsultation={() => {
+            if (!isLoggedIn) {
+              toast.info(language === 'en' ? 'Please login to continue' : 'कृपया जारी रखने के लिए लॉगिन करें');
+              setCurrentView('login');
+              return;
+            }
+            // Navigate to subscription plans so user can subscribe and access consultations
+            setCurrentView('subscription-plans');
+          }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearchSubmit={handleSearchSubmit}
@@ -443,6 +450,35 @@ export default function App() {
       {currentView === 'health-dashboard' && isLoggedIn && (
         <HealthDashboard
           healthProfile={mockHealthProfile}
+          language={language}
+          onBack={() => setCurrentView('home')}
+        />
+      )}
+
+      {currentView === 'subscription-plans' && isLoggedIn && (
+        <SubscriptionPlans
+          user={user}
+          language={language}
+          onSubscriptionCreated={(subscription) => {
+            setUserSubscription(subscription);
+            setCurrentView('subscription-manager');
+          }}
+          onBack={() => setCurrentView('home')}
+        />
+      )}
+
+      {currentView === 'subscription-manager' && isLoggedIn && userSubscription && (
+        <SubscriptionManager
+          user={user}
+          language={language}
+          onBack={() => setCurrentView('home')}
+        />
+      )}
+
+      {currentView === 'doctor-consultation' && isLoggedIn && userSubscription && (
+        <DoctorConsultationUI
+          user={user}
+          subscription={userSubscription}
           language={language}
           onBack={() => setCurrentView('home')}
         />

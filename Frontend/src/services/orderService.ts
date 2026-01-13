@@ -1,5 +1,5 @@
 import api from './api';
-import { Order, CartItem, Address } from '../app/types';
+import { Order, Address } from '../app/types';
 
 interface CreateOrderData {
   items: Array<{

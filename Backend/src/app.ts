@@ -10,6 +10,8 @@ import authRoutes from './routes/auth.routes';
 import medicineRoutes from './routes/medicine.routes';
 import orderRoutes from './routes/order.routes';
 import prescriptionRoutes from './routes/prescription.routes';
+import subscriptionRoutes from './routes/subscription.routes';
+import consultationRoutes from './routes/consultation.routes';
 
 const app: Application = express();
 
@@ -30,6 +32,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/prescription', prescriptionRoutes);
+app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/consultation', consultationRoutes);
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {

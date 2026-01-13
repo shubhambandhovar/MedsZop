@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Shield, Phone, Mail, Eye, EyeOff } from 'lucide-react';
+import { Shield, Eye, EyeOff } from 'lucide-react';
 import { Language, User } from '../types';
 import { mockUser } from '../data/mockData';
 import { authService } from '../../services/authService';
@@ -16,13 +16,12 @@ interface LoginProps {
   language: Language;
 }
 
-export function Login({ onLogin, onBack, language }: LoginProps) {
+export function Login({ onLogin, language }: LoginProps) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,7 +72,6 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
         setPassword('');
         setName('');
         setPhone('');
-        setIsRegistering(false);
         onLogin(result.data.user);
       }
     } catch (error: any) {

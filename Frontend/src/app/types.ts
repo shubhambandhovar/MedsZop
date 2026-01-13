@@ -192,6 +192,9 @@ export type ViewType =
   | 'admin-dashboard'
   | 'health-dashboard'
   | 'chatbot'
+  | 'doctor-consultation'
+  | 'subscription-plans'
+  | 'subscription-manager'
   | 'doctor-consultation';
 
 export type Language = 'en' | 'hi';

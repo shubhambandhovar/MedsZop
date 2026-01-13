@@ -81,3 +81,6 @@ export const authorize = (...roles: string[]) => {
     next();
   };
 };
+
+// Backward-compat alias for older imports
+export const authenticate = protect;
