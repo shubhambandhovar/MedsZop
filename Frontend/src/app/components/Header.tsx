@@ -30,14 +30,12 @@ export function Header({
     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={onHomeClick}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--health-blue)] to-[var(--health-green)]">
-            <span className="text-lg font-bold text-white">M</span>
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-bold text-[var(--health-blue)]">MedsZop</h1>
-            <p className="text-xs text-muted-foreground">60 min delivery</p>
-          </div>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={onHomeClick}>
+          <img 
+            src="/assets/logo.png" 
+            alt="MedsZop Logo"
+            className="h-16 w-auto object-contain"
+          />
         </div>
 
         {/* Actions */}

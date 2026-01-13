@@ -21,15 +21,18 @@ interface CheckoutProps {
 }
 
 export function Checkout({ items, addresses, onBack, onPlaceOrder, onAddAddress, language }: CheckoutProps) {
+  // Normalize incoming addresses to avoid runtime errors when data is missing or not an array
+  const normalizedAddresses = Array.isArray(addresses) ? addresses : [];
+
   const [selectedAddress, setSelectedAddress] = useState(
-    addresses.find((a) => a.isDefault)?.id || addresses[0]?.id || ''
+    normalizedAddresses.find((a) => a.isDefault)?.id || normalizedAddresses[0]?.id || ''
   );
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [isLoading, setIsLoading] = useState(false);
   const [showAddAddressModal, setShowAddAddressModal] = useState(false);
   const [showEditAddressModal, setShowEditAddressModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [allAddresses, setAllAddresses] = useState<Address[]>(addresses);
+  const [allAddresses, setAllAddresses] = useState<Address[]>(normalizedAddresses);
   const [currentStep, setCurrentStep] = useState<'address' | 'summary' | 'payment'>('address');
   const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
 
