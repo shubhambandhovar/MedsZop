@@ -10,8 +10,10 @@ import { OrderTracking } from './components/OrderTracking';
 import { UserProfile } from './components/UserProfile';
 import { Login } from './components/Login';
 import { AIChatbot } from './components/AIChatbot';
+import { EditProfileModal } from './components/EditProfileModal';
 import { PharmacyDashboard } from './components/PharmacyDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
+import { OrderSuccess } from './components/OrderSuccess';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { authService } from '../services/authService';
@@ -43,6 +45,7 @@ export default function App() {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   // View Mode (user, pharmacy, admin)
   const [viewMode, setViewMode] = useState<'user' | 'pharmacy' | 'admin'>('user');
@@ -81,6 +84,11 @@ export default function App() {
     toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');
   };
 
+  const handleUpdateProfile = (updatedUser: User) => {
+    setUser(updatedUser);
+    authService.saveCurrentUser(updatedUser);
+  };
+
   const handleAddToCart = (medicine: Medicine, quantity: number) => {
     const existingItem = cartItems.find((item) => item.id === medicine.id);
 
@@ -115,9 +123,41 @@ export default function App() {
     toast.success(language === 'en' ? 'Item removed from cart' : 'आइटम कार्ट से हटाया गया');
   };
 
+  const handleAddAddress = (address: Address) => {
+    // Check if address already exists (edit case) or is new (add case)
+    const existingIndex = user.addresses.findIndex(a => a.id === address.id);
+    if (existingIndex >= 0) {
+      // Update existing address
+      const updatedAddresses = [...user.addresses];
+      updatedAddresses[existingIndex] = address;
+      setUser({ ...user, addresses: updatedAddresses });
+    } else {
+      // Add new address
+      setUser({ ...user, addresses: [...user.addresses, address] });
+    }
+  };
+
   const handlePlaceOrder = (addressId: string, paymentMethod: string) => {
-    const address = user.addresses.find((a) => a.id === addressId);
-    if (!address) return;
+    // Try to find address in user's addresses, otherwise use from allAddresses in Checkout
+    let address = user.addresses.find((a) => a.id === addressId);
+    
+    // If address not found in user addresses, it might be newly added in Checkout
+    // Create a fallback order with basic info
+    if (!address) {
+      console.log('Address not found in user.addresses, using fallback');
+      address = {
+        id: addressId,
+        type: 'home' as const,
+        name: user.name,
+        phone: user.phone,
+        street: 'Address details',
+        city: 'City',
+        state: 'State',
+        pincode: '000000',
+        landmark: '',
+        isDefault: false
+      };
+    }
 
     const newOrder: Order = {
       id: `order-${Date.now()}`,
@@ -127,7 +167,7 @@ export default function App() {
       total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
       status: 'confirmed',
       deliveryAddress: address,
-      estimatedDeliveryTime: Math.max(...cartItems.map((item) => item.estimatedDeliveryTime)),
+      estimatedDeliveryTime: cartItems.length > 0 ? Math.max(...cartItems.map((item) => item.estimatedDeliveryTime)) : 60,
       paymentMethod,
       prescriptionRequired: cartItems.some((item) => item.requiresPrescription),
       prescriptionVerified: true,
@@ -136,13 +176,7 @@ export default function App() {
     setOrders([newOrder, ...orders]);
     setSelectedOrder(newOrder);
     setCartItems([]);
-    setCurrentView('order-tracking');
-    
-    toast.success(
-      language === 'en'
-        ? '🎉 Order placed successfully!'
-        : '🎉 ऑर्डर सफलतापूर्वक दिया गया!'
-    );
+    setCurrentView('order-success');
 
     // Simulate order status updates
     setTimeout(() => {
@@ -266,6 +300,7 @@ export default function App() {
           onProfileClick={() => setCurrentView('profile')}
           onChatbotClick={() => setShowChatbot(true)}
           onLoginClick={() => setCurrentView('login')}
+          onHomeClick={() => setCurrentView('home')}
           isLoggedIn={isLoggedIn}
           language={language}
           onLanguageToggle={handleLanguageToggle}
@@ -337,6 +372,18 @@ export default function App() {
           addresses={user.addresses}
           onBack={() => setCurrentView('cart')}
           onPlaceOrder={handlePlaceOrder}
+          onAddAddress={handleAddAddress}
+          language={language}
+        />
+      )}
+
+      {currentView === 'order-success' && selectedOrder && (
+        <OrderSuccess
+          orderNumber={selectedOrder.orderNumber}
+          deliveryAddress={selectedOrder.deliveryAddress}
+          estimatedDelivery="Fri, Jan 16th '26"
+          onContinueShopping={() => setCurrentView('home')}
+          onViewOrders={() => setCurrentView('order-tracking')}
           language={language}
         />
       )}
@@ -361,12 +408,23 @@ export default function App() {
               setCurrentView('order-tracking');
             }
           }}
+          onEditProfile={() => setShowEditProfile(true)}
           language={language}
         />
       )}
 
       {currentView === 'login' && (
         <Login onLogin={handleLogin} onBack={() => setCurrentView('home')} language={language} />
+      )}
+
+      {isLoggedIn && (
+        <EditProfileModal
+          user={user}
+          isOpen={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          onSave={handleUpdateProfile}
+          language={language}
+        />
       )}
 
       {showChatbot && <AIChatbot onClose={() => setShowChatbot(false)} language={language} />}

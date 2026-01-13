@@ -1,4 +1,4 @@
-import { ShoppingCart, User, Menu, Globe, MessageCircle } from 'lucide-react';
+import { ShoppingCart, User, Menu, Globe, MessageCircle, Home } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Language } from '../types';
@@ -9,6 +9,7 @@ interface HeaderProps {
   onProfileClick: () => void;
   onChatbotClick: () => void;
   onLoginClick: () => void;
+  onHomeClick: () => void;
   isLoggedIn: boolean;
   language: Language;
   onLanguageToggle: () => void;
@@ -20,6 +21,7 @@ export function Header({
   onProfileClick,
   onChatbotClick,
   onLoginClick,
+  onHomeClick,
   isLoggedIn,
   language,
   onLanguageToggle,
@@ -28,7 +30,7 @@ export function Header({
     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={onHomeClick}>
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--health-blue)] to-[var(--health-green)]">
             <span className="text-lg font-bold text-white">M</span>
           </div>
@@ -40,6 +42,18 @@ export function Header({
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {/* Home Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onHomeClick}
+            className="relative"
+            title="Home"
+          >
+            <Home className="h-5 w-5" />
+            <span className="sr-only">Home</span>
+          </Button>
+
           {/* Language Toggle */}
           <Button
             variant="ghost"

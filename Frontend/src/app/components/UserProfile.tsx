@@ -10,10 +10,11 @@ interface UserProfileProps {
   onBack: () => void;
   onLogout: () => void;
   onViewOrders: () => void;
+  onEditProfile: () => void;
   language: Language;
 }
 
-export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, language }: UserProfileProps) {
+export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, onEditProfile, language }: UserProfileProps) {
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
       {/* Header */}
@@ -43,7 +44,7 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, lang
                 <p className="text-sm opacity-90">{user.email}</p>
                 <p className="text-sm opacity-90">{user.phone}</p>
               </div>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20" onClick={onEditProfile}>
                 <Edit className="h-5 w-5" />
               </Button>
             </div>

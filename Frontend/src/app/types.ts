@@ -26,6 +26,8 @@ export interface CartItem extends Medicine {
 export interface Address {
   id: string;
   type: 'home' | 'work' | 'other';
+  name: string;
+  phone: string;
   street: string;
   city: string;
   state: string;
@@ -91,6 +93,7 @@ export type ViewType =
   | 'cart' 
   | 'checkout'
   | 'order-tracking'
+  | 'order-success'
   | 'profile'
   | 'login'
   | 'pharmacy-dashboard'

@@ -50,9 +50,13 @@ export const createOrder = async (req: Request, res: Response) => {
       });
     }
 
+    // Generate unique order number
+    const orderNumber = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase();
+
     // Create order
     const order = await Order.create({
       userId: req.user?._id,
+      orderNumber,
       items,
       total,
       deliveryAddress,
