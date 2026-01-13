@@ -6,6 +6,7 @@ import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Shield, Phone, Mail, Eye, EyeOff } from 'lucide-react';
 import { Language, User } from '../types';
+import { mockUser } from '../data/mockData';
 import { authService } from '../../services/authService';
 import { toast } from 'sonner';
 
@@ -88,16 +89,21 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
       <div className="container mx-auto px-4 py-8">
         {/* Logo and Header */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--health-blue)] to-[var(--health-green)] shadow-lg">
-            <span className="text-3xl font-bold text-white">M</span>
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center">
+            <img
+              src="/assets/M logo1.png"
+              alt="MedsZop logo"
+              className="h-20 w-20 rounded-2xl object-contain shadow-lg"
+              loading="lazy"
+            />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-[var(--health-blue)]">
             {language === 'en' ? 'Welcome to MedsZop' : 'मेड्सज़ॉप में आपका स्वागत है'}
           </h1>
           <p className="text-muted-foreground">
             {language === 'en'
-              ? 'Medicine delivery in 60 minutes'
-              : '60 मिनट में दवा डिलीवरी'}
+              ? 'Medicine at your doorstep in 60 minutes'
+              : 'समान घंटे में डिलीवरी'}
           </p>
         </div>
 
@@ -273,7 +279,7 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
 
         {/* Skip for Demo */}
         <div className="mt-6 text-center">
-          <Button variant="ghost" onClick={() => onLogin('demo')}>
+          <Button variant="ghost" onClick={() => onLogin(mockUser)}>
             {language === 'en' ? 'Skip & Browse' : 'छोड़ें और ब्राउज़ करें'}
           </Button>
         </div>
