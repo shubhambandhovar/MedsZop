@@ -1,9 +1,9 @@
-import { ChevronLeft, Camera, Upload, Check, Clock, FileText } from 'lucide-react';
+import { ChevronLeft, Camera, Upload, Check, Clock, FileText, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Language, Prescription } from '../types';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface PrescriptionUploadProps {
   onBack: () => void;
@@ -20,6 +20,92 @@ export function PrescriptionUpload({
 }: PrescriptionUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup camera stream when component unmounts
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const handleCameraCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      streamRef.current = stream;
+      setShowCamera(true);
+      
+      // Wait for video element to be available
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      alert('Unable to access camera. Please check permissions or use gallery upload.');
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], 'prescription.jpg', { type: 'image/jpeg' });
+            handleFileSelected(file);
+            closeCamera();
+          }
+        }, 'image/jpeg');
+      }
+    }
+  };
+
+  const closeCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setShowCamera(false);
+  };
+
+  const handleGalleryUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*,.pdf';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handleFileSelected(file);
+      }
+    };
+    input.click();
+  };
+
+  const handleFileSelected = (file: File) => {
+    setSelectedFile(file);
+    setUploading(true);
+    // Simulate upload
+    setTimeout(() => {
+      setUploading(false);
+      setUploaded(true);
+      setTimeout(() => {
+        onUploadComplete('new-prescription-id');
+      }, 1500);
+    }, 2000);
+  };
 
   const handleFileUpload = () => {
     setUploading(true);
@@ -35,6 +121,32 @@ export function PrescriptionUpload({
 
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+          <button
+            onClick={closeCamera}
+            className="absolute top-4 right-4 z-10 rounded-full bg-white p-2 text-black hover:bg-gray-200"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+            <button
+              onClick={capturePhoto}
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-100"
+            >
+              <div className="h-14 w-14 rounded-full border-4 border-black"></div>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="sticky top-16 z-40 bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3">
@@ -63,7 +175,7 @@ export function PrescriptionUpload({
                   <Button
                     variant="outline"
                     className="h-16 w-full justify-start gap-4 border-2 border-dashed"
-                    onClick={handleFileUpload}
+                    onClick={handleCameraCapture}
                     disabled={uploading}
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-blue-light)]">
@@ -82,7 +194,7 @@ export function PrescriptionUpload({
                   <Button
                     variant="outline"
                     className="h-16 w-full justify-start gap-4 border-2 border-dashed"
-                    onClick={handleFileUpload}
+                    onClick={handleGalleryUpload}
                     disabled={uploading}
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-green-light)]">
