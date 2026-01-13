@@ -1,6 +1,6 @@
 // Mock data for MedsZop platform
 
-import { Medicine, Order, User, Prescription, Pharmacy, PharmacyOrder } from '../types';
+import { Medicine, Order, User, Prescription, Pharmacy, PharmacyOrder, HealthProfile } from '../types';
 
 export const mockMedicines: Medicine[] = [
   {
@@ -154,10 +154,13 @@ export const mockUser: User = {
   name: 'Rajesh Kumar',
   email: 'rajesh@example.com',
   phone: '+91 98765 43210',
+  role: 'user',
   addresses: [
     {
       id: 'addr-1',
       type: 'home',
+      name: 'Rajesh Kumar',
+      phone: '+91 98765 43210',
       street: '123, MG Road, Apartment 4B',
       city: 'Bangalore',
       state: 'Karnataka',
@@ -168,6 +171,8 @@ export const mockUser: User = {
     {
       id: 'addr-2',
       type: 'work',
+      name: 'Rajesh Kumar',
+      phone: '+91 98765 43210',
       street: '456, Tech Park, Building 2',
       city: 'Bangalore',
       state: 'Karnataka',
@@ -176,6 +181,17 @@ export const mockUser: User = {
       isDefault: false,
     },
   ],
+  orders: [],
+  savedPrescriptions: [],
+};
+
+export const mockAdminUser: User = {
+  id: 'admin-1',
+  name: 'Admin User',
+  email: 'admin@medszop.com',
+  phone: '+91 98765 00000',
+  role: 'admin',
+  addresses: [],
   orders: [],
   savedPrescriptions: [],
 };
@@ -321,4 +337,182 @@ export const translations = {
     outOfStock: 'स्टॉक में नहीं',
     inStock: 'स्टॉक में उपलब्ध',
   },
+};
+
+export const mockHealthProfile: HealthProfile = {
+  medications: [
+    {
+      id: 'med-1',
+      medicineName: 'Metformin 500mg',
+      dosage: '1 tablet',
+      frequency: 'Twice a day',
+      timing: ['9:00 AM', '9:00 PM'],
+      startDate: '2026-01-01',
+      notes: 'Take with meals to reduce stomach upset',
+      active: true
+    },
+    {
+      id: 'med-2',
+      medicineName: 'Atorvastatin 10mg',
+      dosage: '1 tablet',
+      frequency: 'Once daily',
+      timing: ['10:00 PM'],
+      startDate: '2025-12-15',
+      notes: 'Take at bedtime',
+      active: true
+    },
+    {
+      id: 'med-3',
+      medicineName: 'Omeprazole 20mg',
+      dosage: '1 capsule',
+      frequency: 'Once daily',
+      timing: ['8:00 AM'],
+      startDate: '2026-01-10',
+      endDate: '2026-02-10',
+      notes: 'Take before breakfast',
+      active: true
+    }
+  ],
+  appointments: [
+    {
+      id: 'apt-1',
+      type: 'doctor',
+      title: 'Follow-up Consultation',
+      date: '2026-01-20',
+      time: '10:30 AM',
+      doctorName: 'Dr. Sharma (Cardiologist)',
+      location: 'Apollo Hospital, MG Road',
+      status: 'upcoming'
+    },
+    {
+      id: 'apt-2',
+      type: 'lab',
+      title: 'Blood Test - HbA1c',
+      date: '2026-01-18',
+      time: '8:00 AM',
+      location: 'Thyrocare Labs, Indiranagar',
+      notes: 'Fasting required',
+      status: 'upcoming'
+    },
+    {
+      id: 'apt-3',
+      type: 'checkup',
+      title: 'Annual Health Checkup',
+      date: '2026-02-05',
+      time: '9:00 AM',
+      location: 'Manipal Hospital, Bangalore',
+      status: 'upcoming'
+    }
+  ],
+  healthMetrics: [
+    { id: 'hm-1', type: 'bloodPressure', value: '120/80', unit: 'mmHg', date: '2026-01-14' },
+    { id: 'hm-2', type: 'bloodPressure', value: '125/82', unit: 'mmHg', date: '2026-01-13' },
+    { id: 'hm-3', type: 'bloodPressure', value: '118/78', unit: 'mmHg', date: '2026-01-12' },
+    { id: 'hm-4', type: 'bloodPressure', value: '122/80', unit: 'mmHg', date: '2026-01-11' },
+    { id: 'hm-5', type: 'bloodPressure', value: '126/84', unit: 'mmHg', date: '2026-01-10' },
+    { id: 'hm-6', type: 'bloodPressure', value: '121/79', unit: 'mmHg', date: '2026-01-09' },
+    { id: 'hm-7', type: 'bloodPressure', value: '119/77', unit: 'mmHg', date: '2026-01-08' },
+    { id: 'hm-8', type: 'bloodSugar', value: '110', unit: 'mg/dL', date: '2026-01-14' },
+    { id: 'hm-9', type: 'bloodSugar', value: '125', unit: 'mg/dL', date: '2026-01-13' },
+    { id: 'hm-10', type: 'bloodSugar', value: '105', unit: 'mg/dL', date: '2026-01-12' },
+    { id: 'hm-11', type: 'bloodSugar', value: '115', unit: 'mg/dL', date: '2026-01-11' },
+    { id: 'hm-12', type: 'bloodSugar', value: '120', unit: 'mg/dL', date: '2026-01-10' },
+    { id: 'hm-13', type: 'bloodSugar', value: '108', unit: 'mg/dL', date: '2026-01-09' },
+    { id: 'hm-14', type: 'bloodSugar', value: '112', unit: 'mg/dL', date: '2026-01-08' },
+    { id: 'hm-15', type: 'weight', value: '75', unit: 'kg', date: '2026-01-14' }
+  ],
+  labReports: [
+    {
+      id: 'lab-1',
+      testName: 'Lipid Profile',
+      date: '2026-01-05',
+      labName: 'Thyrocare Diagnostics',
+      results: [
+        { parameter: 'Total Cholesterol', value: '185 mg/dL', normalRange: '<200', status: 'normal' },
+        { parameter: 'LDL', value: '110 mg/dL', normalRange: '<100', status: 'high' },
+        { parameter: 'HDL', value: '55 mg/dL', normalRange: '>40', status: 'normal' },
+        { parameter: 'Triglycerides', value: '140 mg/dL', normalRange: '<150', status: 'normal' }
+      ],
+      doctorName: 'Dr. Sharma'
+    },
+    {
+      id: 'lab-2',
+      testName: 'HbA1c Test',
+      date: '2025-12-28',
+      labName: 'PathLabs',
+      results: [
+        { parameter: 'HbA1c', value: '6.2%', normalRange: '<5.7%', status: 'high' },
+        { parameter: 'Fasting Glucose', value: '115 mg/dL', normalRange: '70-100', status: 'high' }
+      ],
+      doctorName: 'Dr. Sharma'
+    }
+  ],
+  medicalHistory: [
+    {
+      id: 'hist-1',
+      condition: 'Type 2 Diabetes',
+      diagnosedDate: '2025-06-15',
+      status: 'active',
+      medications: ['Metformin'],
+      notes: 'Well controlled with medication and diet'
+    },
+    {
+      id: 'hist-2',
+      condition: 'Hypertension',
+      diagnosedDate: '2024-03-20',
+      status: 'active',
+      medications: ['Atorvastatin'],
+      notes: 'Regular monitoring required'
+    },
+    {
+      id: 'hist-3',
+      condition: 'Gastritis',
+      diagnosedDate: '2026-01-10',
+      status: 'active',
+      medications: ['Omeprazole'],
+      notes: 'Short-term treatment'
+    }
+  ],
+  reminders: [
+    {
+      id: 'rem-1',
+      type: 'medication',
+      title: 'Take Metformin',
+      description: '1 tablet with breakfast',
+      time: '9:00 AM',
+      date: '2026-01-14',
+      repeat: 'daily',
+      active: true
+    },
+    {
+      id: 'rem-2',
+      type: 'medication',
+      title: 'Take Atorvastatin',
+      description: '1 tablet at bedtime',
+      time: '10:00 PM',
+      date: '2026-01-14',
+      repeat: 'daily',
+      active: true
+    },
+    {
+      id: 'rem-3',
+      type: 'appointment',
+      title: 'Doctor Appointment',
+      description: 'Dr. Sharma at Apollo Hospital',
+      time: '10:30 AM',
+      date: '2026-01-20',
+      repeat: 'once',
+      active: true
+    },
+    {
+      id: 'rem-4',
+      type: 'checkup',
+      title: 'Check Blood Pressure',
+      description: 'Weekly BP monitoring',
+      time: '8:00 AM',
+      date: '2026-01-14',
+      repeat: 'weekly',
+      active: true
+    }
+  ]
 };

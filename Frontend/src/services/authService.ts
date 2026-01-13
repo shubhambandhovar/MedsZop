@@ -1,5 +1,6 @@
 import api from './api';
 import { User } from '../app/types';
+import { mockAdminUser } from '../app/data/mockData';
 
 interface AuthResponse {
   success: boolean;
@@ -27,6 +28,21 @@ export const authService = {
   },
 
   login: async (email: string, password: string): Promise<AuthResponse> => {
+    // Check for admin demo login
+    if (email === 'admin@medszop.com' && password === 'admin123') {
+      const mockResponse: AuthResponse = {
+        success: true,
+        message: 'Admin login successful',
+        data: {
+          user: mockAdminUser,
+          token: 'mock-admin-token'
+        }
+      };
+      localStorage.setItem('token', mockResponse.data.token);
+      localStorage.setItem('user', JSON.stringify(mockResponse.data.user));
+      return mockResponse;
+    }
+    
     const response = await api.post('/auth/login', { email, password });
     if (response.data.data.token) {
       localStorage.setItem('token', response.data.data.token);
@@ -64,5 +80,9 @@ export const authService = {
 
   isLoggedIn: (): boolean => {
     return !!localStorage.getItem('token');
+  },
+
+  saveCurrentUser: (user: User) => {
+    localStorage.setItem('user', JSON.stringify(user));
   },
 };

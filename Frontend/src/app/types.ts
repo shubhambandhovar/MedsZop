@@ -55,6 +55,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
+  role?: 'user' | 'admin' | 'pharmacy';
   addresses: Address[];
   orders: Order[];
   savedPrescriptions: Prescription[];
@@ -85,11 +86,102 @@ export interface Pharmacy {
   inventory: Medicine[];
 }
 
+export interface MedicationSchedule {
+  id: string;
+  medicineName: string;
+  dosage: string;
+  frequency: string; // "Daily", "Twice a day", etc.
+  timing: string[]; // ["9:00 AM", "9:00 PM"]
+  startDate: string;
+  endDate?: string;
+  notes?: string;
+  active: boolean;
+}
+
+export interface Appointment {
+  id: string;
+  type: 'doctor' | 'lab' | 'checkup';
+  title: string;
+  date: string;
+  time: string;
+  doctorName?: string;
+  location: string;
+  notes?: string;
+  status: 'upcoming' | 'completed' | 'cancelled';
+}
+
+export interface HealthMetric {
+  id: string;
+  type: 'bloodPressure' | 'bloodSugar' | 'weight' | 'heartRate' | 'temperature';
+  value: string;
+  unit: string;
+  date: string;
+  notes?: string;
+}
+
+export interface LabReport {
+  id: string;
+  testName: string;
+  date: string;
+  reportUrl?: string;
+  results: {
+    parameter: string;
+    value: string;
+    normalRange: string;
+    status: 'normal' | 'high' | 'low';
+  }[];
+  doctorName?: string;
+  labName: string;
+}
+
+export interface MedicalHistory {
+  id: string;
+  condition: string;
+  diagnosedDate: string;
+  status: 'active' | 'resolved';
+  medications: string[];
+  notes?: string;
+}
+
+export interface HealthReminder {
+  id: string;
+  type: 'medication' | 'appointment' | 'checkup' | 'custom';
+  title: string;
+  description: string;
+  time: string;
+  date: string;
+  repeat: 'once' | 'daily' | 'weekly' | 'monthly';
+  active: boolean;
+}
+
+export interface HealthProfile {
+  medications: MedicationSchedule[];
+  appointments: Appointment[];
+  healthMetrics: HealthMetric[];
+  labReports: LabReport[];
+  medicalHistory: MedicalHistory[];
+  reminders: HealthReminder[];
+}
+
+export interface OCRResult {
+  medicineNames: string[];
+  confidence: number;
+  rawText: string;
+}
+
+export interface ScannedMedicine {
+  detectedName: string;
+  matchedMedicine: Medicine | null;
+  confidence: number;
+  alternatives: Medicine[];
+}
+
 export type ViewType = 
   | 'home' 
   | 'search' 
   | 'medicine-detail' 
   | 'prescription' 
+  | 'prescription-scanner'
   | 'cart' 
   | 'checkout'
   | 'order-tracking'
@@ -98,6 +190,7 @@ export type ViewType =
   | 'login'
   | 'pharmacy-dashboard'
   | 'admin-dashboard'
+  | 'health-dashboard'
   | 'chatbot'
   | 'doctor-consultation';
 

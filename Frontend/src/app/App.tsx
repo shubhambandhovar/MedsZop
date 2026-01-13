@@ -4,6 +4,7 @@ import { HomePage } from './components/HomePage';
 import { MedicineSearch } from './components/MedicineSearch';
 import { MedicineDetail } from './components/MedicineDetail';
 import { PrescriptionUpload } from './components/PrescriptionUpload';
+import { PrescriptionScanner } from './components/PrescriptionScanner';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
 import { OrderTracking } from './components/OrderTracking';
@@ -13,6 +14,7 @@ import { AIChatbot } from './components/AIChatbot';
 import { EditProfileModal } from './components/EditProfileModal';
 import { PharmacyDashboard } from './components/PharmacyDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
+import { HealthDashboard } from './components/HealthDashboard';
 import { OrderSuccess } from './components/OrderSuccess';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
@@ -24,6 +26,7 @@ import {
   CartItem,
   Order,
   User,
+  Address,
 } from './types';
 import {
   mockMedicines,
@@ -32,6 +35,7 @@ import {
   mockPrescriptions,
   mockPharmacies,
   mockPharmacyOrders,
+  mockHealthProfile,
 } from './data/mockData';
 
 export default function App() {
@@ -71,8 +75,19 @@ export default function App() {
   const handleLogin = (user: User) => {
     setIsLoggedIn(true);
     setUser(user);
-    setCurrentView('home');
-    toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
+    
+    // Route based on user role
+    if (user.role === 'admin') {
+      setViewMode('admin');
+      toast.success(language === 'en' ? 'Welcome Admin!' : 'व्यवस्थापक स्वागत है!');
+    } else if (user.role === 'pharmacy') {
+      setViewMode('pharmacy');
+      toast.success(language === 'en' ? 'Welcome Pharmacy!' : 'फार्मेसी स्वागत है!');
+    } else {
+      setViewMode('user');
+      setCurrentView('home');
+      toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
+    }
   };
 
   const handleLogout = () => {
@@ -80,6 +95,7 @@ export default function App() {
     setIsLoggedIn(false);
     setUser(mockUser);
     setCurrentView('home');
+    setViewMode('user');
     setCartItems([]);
     toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');
   };
@@ -274,7 +290,7 @@ export default function App() {
             Switch View
           </button>
         </div>
-        <AdminDashboard />
+        <AdminDashboard onLogout={handleLogout} />
         <Toaster position="top-right" />
       </div>
     );
@@ -312,6 +328,7 @@ export default function App() {
           medicines={mockMedicines}
           onMedicineClick={handleMedicineClick}
           onUploadPrescription={handleUploadPrescription}
+          onScanPrescription={() => setCurrentView('prescription-scanner')}
           onDoctorConsultation={() =>
             toast.info(
               language === 'en'
@@ -351,6 +368,15 @@ export default function App() {
           onBack={() => setCurrentView('home')}
           onUploadComplete={handlePrescriptionUploadComplete}
           savedPrescriptions={mockPrescriptions}
+          language={language}
+        />
+      )}
+
+      {currentView === 'prescription-scanner' && (
+        <PrescriptionScanner
+          onBack={() => setCurrentView('home')}
+          medicines={mockMedicines}
+          onAddToCart={handleAddToCart}
           language={language}
         />
       )}
@@ -409,7 +435,16 @@ export default function App() {
             }
           }}
           onEditProfile={() => setShowEditProfile(true)}
+          onViewHealthDashboard={() => setCurrentView('health-dashboard')}
           language={language}
+        />
+      )}
+
+      {currentView === 'health-dashboard' && isLoggedIn && (
+        <HealthDashboard
+          healthProfile={mockHealthProfile}
+          language={language}
+          onBack={() => setCurrentView('home')}
         />
       )}
 

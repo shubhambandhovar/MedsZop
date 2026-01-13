@@ -1,4 +1,4 @@
-import { ChevronLeft, User, MapPin, FileText, Package, Bell, LogOut, ChevronRight, Edit } from 'lucide-react';
+import { ChevronLeft, User, MapPin, FileText, Package, Bell, LogOut, ChevronRight, Edit, Activity } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -11,10 +11,11 @@ interface UserProfileProps {
   onLogout: () => void;
   onViewOrders: () => void;
   onEditProfile: () => void;
+  onViewHealthDashboard?: () => void;
   language: Language;
 }
 
-export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, onEditProfile, language }: UserProfileProps) {
+export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, onEditProfile, onViewHealthDashboard, language }: UserProfileProps) {
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
       {/* Header */}
@@ -87,6 +88,28 @@ export function UserProfile({ user, orders, onBack, onLogout, onViewOrders, onEd
 
         {/* Menu Options */}
         <div className="space-y-3">
+          {onViewHealthDashboard && (
+            <Card 
+              className="cursor-pointer transition-shadow hover:shadow-md border-2 border-[var(--health-blue)]" 
+              onClick={onViewHealthDashboard}
+            >
+              <CardContent className="flex items-center gap-4 p-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--health-blue)] to-[var(--health-green)]">
+                  <Activity className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-[var(--health-blue)]">
+                    {language === 'en' ? 'Health Dashboard' : 'स्वास्थ्य डैशबोर्ड'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'en' ? 'Track medications, appointments & health metrics' : 'दवाएं, अपॉइंटमेंट और स्वास्थ्य मेट्रिक्स ट्रैक करें'}
+                  </p>
+                </div>
+                <ChevronRight className="h-5 w-5 text-[var(--health-blue)]" />
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="cursor-pointer transition-shadow hover:shadow-md" onClick={onViewOrders}>
             <CardContent className="flex items-center gap-4 p-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-blue-light)]">

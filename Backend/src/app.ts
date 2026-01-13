@@ -9,6 +9,7 @@ dotenv.config();
 import authRoutes from './routes/auth.routes';
 import medicineRoutes from './routes/medicine.routes';
 import orderRoutes from './routes/order.routes';
+import prescriptionRoutes from './routes/prescription.routes';
 
 const app: Application = express();
 
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/prescription', prescriptionRoutes);
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {

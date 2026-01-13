@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Clock, Shield, Pill, Upload, Stethoscope, Bell, ChevronRight, Loader2 } from 'lucide-react';
+import { Search, Clock, Shield, Pill, Upload, Stethoscope, Bell, ChevronRight, Loader2, Scan } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
@@ -13,6 +13,7 @@ interface HomePageProps {
   medicines: Medicine[];
   onMedicineClick: (medicine: Medicine) => void;
   onUploadPrescription: () => void;
+  onScanPrescription?: () => void;
   onDoctorConsultation: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -24,6 +25,7 @@ export function HomePage({
   medicines,
   onMedicineClick,
   onUploadPrescription,
+  onScanPrescription,
   onDoctorConsultation,
   searchQuery,
   onSearchChange,
@@ -144,7 +146,7 @@ export function HomePage({
           </div>
 
           {/* Quick Actions */}
-          <div className="mb-8 grid gap-4 sm:grid-cols-2">
+          <div className="mb-8 grid gap-4 sm:grid-cols-3">
             <Card
               className="cursor-pointer border-2 border-[var(--health-blue)] bg-gradient-to-br from-[var(--health-blue-light)] to-white shadow-lg transition-all hover:shadow-xl"
               onClick={onUploadPrescription}
@@ -162,6 +164,28 @@ export function HomePage({
                 <ChevronRight className="h-6 w-6 text-muted-foreground" />
               </CardContent>
             </Card>
+
+            {onScanPrescription && (
+              <Card
+                className="cursor-pointer border-2 border-purple-500 bg-gradient-to-br from-purple-50 to-white shadow-lg transition-all hover:shadow-xl"
+                onClick={onScanPrescription}
+              >
+                <CardContent className="flex items-center gap-4 p-6">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-500">
+                    <Scan className="h-8 w-8 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="mb-1 text-lg font-semibold">
+                      {language === 'en' ? 'AI Prescription Scanner' : 'AI प्रिस्क्रिप्शन स्कैनर'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {language === 'en' ? 'Auto-detect medicines' : 'स्वचालित दवा पहचान'}
+                    </p>
+                  </div>
+                  <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            )}
 
             <Card
               className="cursor-pointer border-2 border-[var(--health-green)] bg-gradient-to-br from-[var(--health-green-light)] to-white shadow-lg transition-all hover:shadow-xl"

@@ -1,9 +1,15 @@
-import { Users, ShoppingBag, TrendingUp, Clock, Activity, Package } from 'lucide-react';
+import { Users, ShoppingBag, TrendingUp, Clock, Activity, Package, LogOut, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-export function AdminDashboard() {
+interface AdminDashboardProps {
+  onLogout?: () => void;
+}
+
+export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   // Mock analytics data
   const orderData = [
     { name: 'Mon', orders: 45, revenue: 12500 },
@@ -32,12 +38,39 @@ export function AdminDashboard() {
 
   const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'];
 
+  // Mock user data
+  const users = [
+    { id: '1', name: 'Rajesh Kumar', email: 'rajesh@example.com', phone: '+91 98765 43210', orders: 12, status: 'active' },
+    { id: '2', name: 'Priya Sharma', email: 'priya@example.com', phone: '+91 98765 43211', orders: 8, status: 'active' },
+    { id: '3', name: 'Amit Patel', email: 'amit@example.com', phone: '+91 98765 43212', orders: 15, status: 'active' },
+    { id: '4', name: 'Sneha Reddy', email: 'sneha@example.com', phone: '+91 98765 43213', orders: 5, status: 'inactive' },
+  ];
+
+  // Mock pharmacy approval requests
+  const pharmacyRequests = [
+    { id: '1', name: 'HealthPlus Pharmacy', address: 'MG Road, Bangalore', phone: '+91 98765 43214', status: 'pending' },
+    { id: '2', name: 'QuickMeds Pharmacy', address: 'Koramangala, Bangalore', phone: '+91 98765 43215', status: 'pending' },
+    { id: '3', name: 'MediCare Store', address: 'Indiranagar, Bangalore', phone: '+91 98765 43216', status: 'pending' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="mb-2 text-3xl font-bold text-[var(--health-blue)]">Admin Dashboard</h1>
-        <p className="text-muted-foreground">MedsZop Platform Analytics</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-3xl font-bold text-[var(--health-blue)]">Admin Dashboard</h1>
+          <p className="text-muted-foreground">MedsZop Platform Analytics</p>
+        </div>
+        {onLogout && (
+          <Button 
+            variant="outline" 
+            onClick={onLogout}
+            className="gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -116,6 +149,16 @@ export function AdminDashboard() {
       </div>
 
       {/* Charts Section */}
+      <Tabs defaultValue="analytics" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="pharmacies">Pharmacy Approvals</TabsTrigger>
+        </TabsList>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Orders & Revenue Chart */}
         <Card>
@@ -256,6 +299,153 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+
+        {/* User Management Tab */}
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {users.map((user) => (
+                  <div key={user.id} className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-blue-light)]">
+                        <Users className="h-6 w-6 text-[var(--health-blue)]" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{user.name}</h3>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                        <p className="text-xs text-muted-foreground">{user.phone}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="font-semibold">{user.orders} orders</p>
+                        <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
+                          {user.status}
+                        </Badge>
+                      </div>
+                      <Button variant="outline" size="sm">View Details</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Orders Tab */}
+        <TabsContent value="orders">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Orders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-green-light)]">
+                      <ShoppingBag className="h-6 w-6 text-[var(--health-green)]" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Order #MZ2026010001</h3>
+                      <p className="text-sm text-muted-foreground">Rajesh Kumar</p>
+                      <p className="text-xs text-muted-foreground">2 items • ₹156</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge className="bg-green-100 text-green-700">
+                      <CheckCircle className="mr-1 h-3 w-3" />
+                      Delivered
+                    </Badge>
+                    <p className="mt-1 text-xs text-muted-foreground">2 hours ago</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-blue-light)]">
+                      <ShoppingBag className="h-6 w-6 text-[var(--health-blue)]" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Order #MZ2026010002</h3>
+                      <p className="text-sm text-muted-foreground">Priya Sharma</p>
+                      <p className="text-xs text-muted-foreground">3 items • ₹245</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge className="bg-blue-100 text-blue-700">
+                      <Activity className="mr-1 h-3 w-3" />
+                      Out for Delivery
+                    </Badge>
+                    <p className="mt-1 text-xs text-muted-foreground">30 min ago</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+                      <ShoppingBag className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Order #MZ2026010003</h3>
+                      <p className="text-sm text-muted-foreground">Amit Patel</p>
+                      <p className="text-xs text-muted-foreground">1 item • ₹95</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge className="bg-orange-100 text-orange-700">
+                      <AlertCircle className="mr-1 h-3 w-3" />
+                      Processing
+                    </Badge>
+                    <p className="mt-1 text-xs text-muted-foreground">Just now</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Pharmacy Approvals Tab */}
+        <TabsContent value="pharmacies">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pharmacy Approval Requests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {pharmacyRequests.map((pharmacy) => (
+                  <div key={pharmacy.id} className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+                        <Package className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{pharmacy.name}</h3>
+                        <p className="text-sm text-muted-foreground">{pharmacy.address}</p>
+                        <p className="text-xs text-muted-foreground">{pharmacy.phone}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" className="bg-[var(--health-green)] hover:bg-[var(--health-green-dark)]">
+                        <CheckCircle className="mr-1 h-4 w-4" />
+                        Approve
+                      </Button>
+                      <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50">
+                        <XCircle className="mr-1 h-4 w-4" />
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

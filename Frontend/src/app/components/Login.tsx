@@ -173,11 +173,19 @@ export function Login({ onLogin, onBack, language }: LoginProps) {
                   {isLoading ? 'Logging in...' : language === 'en' ? 'Login' : 'लॉगिन'}
                 </Button>
 
-                <p className="text-center text-sm text-muted-foreground">
-                  {language === 'en'
-                    ? 'Demo: user@test.com / password123'
-                    : 'डेमो: user@test.com / password123'}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-center text-sm text-muted-foreground">
+                    {language === 'en'
+                      ? 'Demo Accounts:'
+                      : 'डेमो खाते:'}
+                  </p>
+                  <p className="text-center text-xs text-muted-foreground">
+                    User: user@test.com / password123
+                  </p>
+                  <p className="text-center text-xs font-semibold text-[var(--health-blue)]">
+                    Admin: admin@medszop.com / admin123
+                  </p>
+                </div>
               </TabsContent>
 
               {/* Register Tab */}
