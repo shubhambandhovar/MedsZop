@@ -64,7 +64,7 @@ export function HomePage({
     fetchMedicines();
   }, []);
 
-  const popularMedicines = isLoading ? medicines.slice(0, 6) : displayMedicines;
+  const popularMedicines = (displayMedicines && displayMedicines.length > 0) ? displayMedicines : medicines.slice(0, 6);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--health-blue-light)] to-white pb-8">
