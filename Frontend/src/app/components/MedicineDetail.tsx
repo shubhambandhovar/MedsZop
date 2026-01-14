@@ -57,6 +57,27 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
             <h1 className="mb-2 text-2xl font-bold">{medicine.brand}</h1>
             <p className="mb-4 text-muted-foreground">{medicine.genericName}</p>
 
+            <div className="mb-4 space-y-1 border-b pb-4 text-sm">
+              <div>
+                <span className="text-muted-foreground">
+                  {language === 'en' ? 'Manufacturer' : 'निर्माता'}
+                </span>
+                <span className="font-medium">: {medicine.manufacturer}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">
+                  {language === 'en' ? 'Pack Size' : 'पैक साइज़'}
+                </span>
+                <span className="font-medium">: {medicine.packSize}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">
+                  {language === 'en' ? 'Category' : 'श्रेणी'}
+                </span>
+                <span className="font-medium">: {medicine.category}</span>
+              </div>
+            </div>
+
             <div className="mb-4 flex items-baseline gap-3">
               <span className="text-3xl font-bold text-[var(--health-blue)]">
                 ₹{medicine.price}
@@ -67,7 +88,7 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
                     ₹{medicine.mrp}
                   </span>
                   <span className="text-lg text-[var(--health-green)] font-semibold">
-                    Save ₹{medicine.mrp - medicine.price}
+                    Save ₹{(medicine.mrp - medicine.price).toFixed(2)}
                   </span>
                 </>
               )}
@@ -98,27 +119,6 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
                   {t.prescriptionRequired}
                 </Badge>
               )}
-            </div>
-
-            <div className="space-y-2 border-t pt-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {language === 'en' ? 'Manufacturer' : 'निर्माता'}
-                </span>
-                <span className="font-medium">{medicine.manufacturer}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {language === 'en' ? 'Pack Size' : 'पैक साइज़'}
-                </span>
-                <span className="font-medium">{medicine.packSize}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {language === 'en' ? 'Category' : 'श्रेणी'}
-                </span>
-                <span className="font-medium">{medicine.category}</span>
-              </div>
             </div>
           </CardContent>
         </Card>

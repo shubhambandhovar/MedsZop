@@ -196,6 +196,30 @@ export const mockAdminUser: User = {
   savedPrescriptions: [],
 };
 
+export const mockPharmacyUser: User = {
+  id: 'pharmacy-user-1',
+  name: 'HealthPlus Pharmacy',
+  email: 'pharmacy@healthplus.com',
+  phone: '+91 98765 54321',
+  role: 'pharmacy',
+  addresses: [
+    {
+      id: 'pharmacy-addr-1',
+      type: 'work',
+      name: 'HealthPlus Pharmacy',
+      phone: '+91 98765 54321',
+      street: '789, Pharmacy Lane, Suite 100',
+      city: 'Bangalore',
+      state: 'Karnataka',
+      pincode: '560034',
+      landmark: 'Near City Center',
+      isDefault: true,
+    },
+  ],
+  orders: [],
+  savedPrescriptions: [],
+};
+
 export const mockPrescriptions: Prescription[] = [
   {
     id: 'rx-1',

@@ -55,7 +55,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  role?: 'user' | 'admin' | 'pharmacy';
+  role: 'user' | 'admin' | 'pharmacy';
   addresses: Address[];
   orders: Order[];
   savedPrescriptions: Prescription[];

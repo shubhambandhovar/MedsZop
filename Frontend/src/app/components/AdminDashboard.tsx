@@ -1,15 +1,24 @@
-import { Users, ShoppingBag, TrendingUp, Clock, Activity, Package, LogOut, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Users, ShoppingBag, TrendingUp, Clock, Activity, Package, LogOut, CheckCircle, XCircle, AlertCircle, FileText, Shield, Settings, BarChart3, Stethoscope, LayoutDashboard, Store, Pill, Receipt, User, Eye, EyeOff, Bell, Lock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { toast } from 'sonner';
 
 interface AdminDashboardProps {
   onLogout?: () => void;
 }
 
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   // Mock analytics data
   const orderData = [
     { name: 'Mon', orders: 45, revenue: 12500 },
@@ -40,18 +49,87 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   // Mock user data
   const users = [
-    { id: '1', name: 'Rajesh Kumar', email: 'rajesh@example.com', phone: '+91 98765 43210', orders: 12, status: 'active' },
-    { id: '2', name: 'Priya Sharma', email: 'priya@example.com', phone: '+91 98765 43211', orders: 8, status: 'active' },
-    { id: '3', name: 'Amit Patel', email: 'amit@example.com', phone: '+91 98765 43212', orders: 15, status: 'active' },
-    { id: '4', name: 'Sneha Reddy', email: 'sneha@example.com', phone: '+91 98765 43213', orders: 5, status: 'inactive' },
+    { id: '1', name: 'Rajesh Kumar', email: 'rajesh@example.com', phone: '+91 98765 43210', orders: 12, status: 'active', prescriptions: 5 },
+    { id: '2', name: 'Priya Sharma', email: 'priya@example.com', phone: '+91 98765 43211', orders: 8, status: 'active', prescriptions: 3 },
+    { id: '3', name: 'Amit Patel', email: 'amit@example.com', phone: '+91 98765 43212', orders: 15, status: 'active', prescriptions: 7 },
+    { id: '4', name: 'Sneha Reddy', email: 'sneha@example.com', phone: '+91 98765 43213', orders: 5, status: 'inactive', prescriptions: 2 },
   ];
 
   // Mock pharmacy approval requests
   const pharmacyRequests = [
-    { id: '1', name: 'HealthPlus Pharmacy', address: 'MG Road, Bangalore', phone: '+91 98765 43214', status: 'pending' },
-    { id: '2', name: 'QuickMeds Pharmacy', address: 'Koramangala, Bangalore', phone: '+91 98765 43215', status: 'pending' },
-    { id: '3', name: 'MediCare Store', address: 'Indiranagar, Bangalore', phone: '+91 98765 43216', status: 'pending' },
+    { id: '1', name: 'HealthPlus Pharmacy', address: 'MG Road, Bangalore', phone: '+91 98765 43214', status: 'pending', license: 'DL-12345', performance: 4.8, orders: 1250 },
+    { id: '2', name: 'QuickMeds Pharmacy', address: 'Koramangala, Bangalore', phone: '+91 98765 43215', status: 'pending', license: 'DL-23456', performance: 4.6, orders: 980 },
+    { id: '3', name: 'MediCare Store', address: 'Indiranagar, Bangalore', phone: '+91 98765 43216', status: 'pending', license: 'DL-34567', performance: 4.7, orders: 856 },
   ];
+
+  // Mock prescriptions
+  const prescriptions = [
+    { id: '1', userName: 'Rajesh Kumar', uploadedAt: '2 hours ago', status: 'pending', aiDetected: ['Paracetamol 500mg', 'Amoxicillin 250mg'], pharmacyStatus: 'pending' },
+    { id: '2', userName: 'Priya Sharma', uploadedAt: '1 day ago', status: 'approved', aiDetected: ['Cetirizine 10mg'], pharmacyStatus: 'approved' },
+    { id: '3', userName: 'Amit Patel', uploadedAt: '3 hours ago', status: 'pending', aiDetected: ['Metformin 500mg', 'Aspirin 75mg'], pharmacyStatus: 'pending' },
+  ];
+
+  // Mock subscriptions
+  const subscriptions = [
+    { id: '1', userName: 'Rajesh Kumar', plan: 'Premium', status: 'active', nextDelivery: 'Jan 20, 2026', revenue: '₹999/month' },
+    { id: '2', userName: 'Priya Sharma', plan: 'Regular', status: 'active', nextDelivery: 'Jan 18, 2026', revenue: '₹499/month' },
+    { id: '3', userName: 'Amit Patel', plan: 'Premium', status: 'paused', nextDelivery: '-', revenue: '₹999/month' },
+  ];
+
+  // Mock doctors
+  const doctors = [
+    { id: '1', name: 'Dr. Ramesh Verma', specialization: 'General Physician', fee: '₹500', availability: 'Available', consultations: 125 },
+    { id: '2', name: 'Dr. Meera Patel', specialization: 'Cardiologist', fee: '₹800', availability: 'Busy', consultations: 89 },
+    { id: '3', name: 'Dr. Arjun Singh', specialization: 'Dermatologist', fee: '₹600', availability: 'Available', consultations: 67 },
+  ];
+
+  // Navigation items
+  const navItems = [
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { id: 'profile', icon: User, label: 'My Profile' },
+    { id: 'users', icon: Users, label: 'Users' },
+    { id: 'pharmacies', icon: Store, label: 'Pharmacies' },
+    { id: 'orders', icon: ShoppingBag, label: 'Orders' },
+    { id: 'prescriptions', icon: FileText, label: 'Prescriptions' },
+    { id: 'subscriptions', icon: Receipt, label: 'Subscriptions' },
+    { id: 'doctors', icon: Stethoscope, label: 'Doctors' },
+    { id: 'analytics', icon: BarChart3, label: 'Analytics' },
+    { id: 'settings', icon: Settings, label: 'Settings' },
+  ];
+
+  const handlePasswordChange = () => {
+    if (!newPassword || !confirmPassword) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    toast.success('Password changed successfully');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleApprovePharmacy = (name: string) => {
+    toast.success(`${name} approved successfully`);
+  };
+
+  const handleRejectPharmacy = (name: string) => {
+    toast.error(`${name} rejected`);
+  };
+
+  const handleBlockUser = (name: string) => {
+    toast.warning(`User ${name} blocked`);
+  };
+
+  const handleOverridePrescription = (id: string) => {
+    toast.success(`Prescription #${id} decision overridden`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

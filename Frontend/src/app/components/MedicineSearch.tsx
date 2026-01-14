@@ -53,8 +53,10 @@ export function MedicineSearch({
   // Search medicines
   useEffect(() => {
     const searchMedicines = async () => {
+      const pharmacyMedicines = JSON.parse(localStorage.getItem('pharmacyMedicines') || '[]');
+      
       if (!searchQuery && !selectedCategory) {
-        setFilteredMedicines(medicines);
+        setFilteredMedicines([...pharmacyMedicines, ...medicines]);
         return;
       }
 
@@ -65,15 +67,25 @@ export function MedicineSearch({
           category: selectedCategory || undefined
         });
         if (response.success) {
-          setFilteredMedicines(response.data);
+          // Filter pharmacy medicines client-side based on search/category
+          const filteredPharmacyMedicines = pharmacyMedicines.filter((med: Medicine) => {
+            const matchesSearch = !searchQuery || 
+              med.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              med.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              med.genericName?.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const matchesCategory = !selectedCategory || med.category === selectedCategory;
+            return matchesSearch && matchesCategory;
+          });
+          setFilteredMedicines([...filteredPharmacyMedicines, ...response.data]);
         }
       } catch (error) {
         // Fallback to client-side filtering
-        const filtered = medicines.filter((med) => {
+        const filtered = [...pharmacyMedicines, ...medicines].filter((med) => {
           const matchesSearch = !searchQuery || 
-            med.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            med.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            med.genericName.toLowerCase().includes(searchQuery.toLowerCase());
+            med.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            med.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            med.genericName?.toLowerCase().includes(searchQuery.toLowerCase());
           
           const matchesCategory = !selectedCategory || med.category === selectedCategory;
           return matchesSearch && matchesCategory;
@@ -110,13 +122,13 @@ export function MedicineSearch({
           </div>
 
           <div className="flex items-center gap-2">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory || 'all'} onValueChange={(value) => setSelectedCategory(value === 'all' ? '' : value)}>
               <SelectTrigger className="w-36">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{language === 'en' ? 'All Categories' : 'सभी श्रेणियां'}</SelectItem>
+                <SelectItem value="all">{language === 'en' ? 'All Categories' : 'सभी श्रेणियां'}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -148,18 +160,19 @@ export function MedicineSearch({
       )}
 
       {/* Results */}
-      <div className="container mx-auto px-4 pt-4">
-        <p className="mb-4 text-sm text-muted-foreground">
-          {filteredMedicines.length} {language === 'en' ? 'results found' : 'परिणाम मिले'}
-        </p>
+      {!isLoading && (
+        <div className="container mx-auto px-4 pt-4">
+          <p className="mb-4 text-sm text-muted-foreground">
+            {filteredMedicines.length} {language === 'en' ? 'results found' : 'परिणाम मिले'}
+          </p>
 
-        <div className="space-y-3">
-          {filteredMedicines.map((medicine) => (
-            <Card
-              key={medicine.id}
-              className="cursor-pointer overflow-hidden shadow-sm transition-all hover:shadow-md"
-              onClick={() => onMedicineClick(medicine)}
-            >
+          <div className="space-y-3">
+            {filteredMedicines.map((medicine) => (
+              <Card
+                key={medicine.id}
+                className="cursor-pointer overflow-hidden shadow-sm transition-all hover:shadow-md"
+                onClick={() => onMedicineClick(medicine)}
+              >
               <CardContent className="flex gap-4 p-4">
                 {/* Image */}
                 <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -233,8 +246,8 @@ export function MedicineSearch({
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
+            ))}
+          </div>
 
         {filteredMedicines.length === 0 && (
           <div className="py-16 text-center">
@@ -246,7 +259,8 @@ export function MedicineSearch({
             </p>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

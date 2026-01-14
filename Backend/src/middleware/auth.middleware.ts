@@ -82,5 +82,24 @@ export const authorize = (...roles: string[]) => {
   };
 };
 
+// Middleware to enforce fine-grained permission checks
+export const checkPermission = (permission: string) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+
+    const hasPermission = req.user.permissions?.includes(permission);
+    if (!hasPermission && req.user.role !== 'super_admin') {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    next();
+  };
+};
+
+// Convenience guard to allow only admin roles
+export const requireAdmin = authorize('admin', 'super_admin');
+
 // Backward-compat alias for older imports
 export const authenticate = protect;

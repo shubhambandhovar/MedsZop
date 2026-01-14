@@ -46,11 +46,16 @@ export function HomePage({
           page: 1
         });
         if (response.success) {
-          setDisplayMedicines(response.data);
+          // Merge with pharmacy-added medicines from localStorage
+          const pharmacyMedicines = JSON.parse(localStorage.getItem('pharmacyMedicines') || '[]');
+          const merged = [...pharmacyMedicines, ...response.data].slice(0, 6);
+          setDisplayMedicines(merged);
         }
       } catch (error: any) {
-        // Fall back to mock data if API fails
-        setDisplayMedicines(medicines.slice(0, 6));
+        // Fall back to mock data + pharmacy medicines if API fails
+        const pharmacyMedicines = JSON.parse(localStorage.getItem('pharmacyMedicines') || '[]');
+        const merged = [...pharmacyMedicines, ...medicines].slice(0, 6);
+        setDisplayMedicines(merged);
       } finally {
         setIsLoading(false);
       }

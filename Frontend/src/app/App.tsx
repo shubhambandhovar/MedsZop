@@ -13,7 +13,9 @@ import { Login } from './components/Login';
 import { AIChatbot } from './components/AIChatbot';
 import { EditProfileModal } from './components/EditProfileModal';
 import { PharmacyDashboard } from './components/PharmacyDashboard';
-import { AdminDashboard } from './components/AdminDashboard';
+import { AdminDashboard } from './components/AdminDashboardEnhanced';
+import { AdminLogin } from './components/AdminLogin';
+import { AdminSetPassword } from './components/AdminSetPassword';
 import { HealthDashboard } from './components/HealthDashboard';
 import { OrderSuccess } from './components/OrderSuccess';
 import { SubscriptionPlans } from './components/SubscriptionPlans';
@@ -43,7 +45,7 @@ import {
 } from './data/mockData';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [currentView, setCurrentView] = useState<ViewType>('login');
   const [language, setLanguage] = useState<Language>('en');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User>(mockUser);
@@ -59,12 +61,33 @@ export default function App() {
   // View Mode (user, pharmacy, admin)
   const [viewMode, setViewMode] = useState<'user' | 'pharmacy' | 'admin'>('user');
 
+  // Basic path-based routing for admin flows
+  const path = window.location.pathname;
+  const pathParts = path.split('/').filter(Boolean);
+  const isAdminLoginPath = path === '/admin/login' || path === '/admin';
+  const isAdminSetPasswordPath = path.startsWith('/admin/set-password');
+  const isAdminDashboardPath = path.startsWith('/admin/dashboard');
+  const adminInviteToken = isAdminSetPasswordPath ? (pathParts[2] || '') : '';
+
   // Load user from localStorage on mount
   useEffect(() => {
     const storedUser = authService.getCurrentUser();
     if (storedUser) {
       setUser(storedUser);
       setIsLoggedIn(true);
+      
+      // Route to appropriate dashboard based on role
+      if (storedUser.role === 'admin') {
+        setViewMode('admin');
+        if (!isAdminSetPasswordPath && !isAdminLoginPath) {
+          window.history.replaceState(null, '', '/admin/dashboard');
+        }
+      } else if (storedUser.role === 'pharmacy') {
+        setViewMode('pharmacy');
+      } else {
+        setViewMode('user');
+        setCurrentView('home');
+      }
     }
   }, []);
 
@@ -80,10 +103,12 @@ export default function App() {
   const handleLogin = (user: User) => {
     setIsLoggedIn(true);
     setUser(user);
+    setCartItems([]);
     
     // Route based on user role
     if (user.role === 'admin') {
       setViewMode('admin');
+      window.history.replaceState(null, '', '/admin/dashboard');
       toast.success(language === 'en' ? 'Welcome Admin!' : 'व्यवस्थापक स्वागत है!');
     } else if (user.role === 'pharmacy') {
       setViewMode('pharmacy');
@@ -99,9 +124,12 @@ export default function App() {
     authService.logout();
     setIsLoggedIn(false);
     setUser(mockUser);
-    setCurrentView('home');
+    setCurrentView('login');
     setViewMode('user');
     setCartItems([]);
+    if (path.startsWith('/admin')) {
+      window.history.replaceState(null, '', '/');
+    }
     toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');
   };
 
@@ -245,38 +273,61 @@ export default function App() {
     toast.error('Order rejected');
   };
 
-  // Quick toggle for demo purposes (in real app, this would be based on user role)
-  const toggleViewMode = () => {
-    if (viewMode === 'user') {
-      setViewMode('pharmacy');
-      toast.info('Switched to Pharmacy Dashboard');
-    } else if (viewMode === 'pharmacy') {
-      setViewMode('admin');
-      toast.info('Switched to Admin Dashboard');
-    } else {
-      setViewMode('user');
-      toast.info('Switched to User View');
+  const renderAdminLogin = () => (
+    <div className="min-h-screen">
+      <AdminLogin
+        onLoginSuccess={(admin) => {
+          handleLogin(admin as User);
+          window.history.replaceState(null, '', '/admin/dashboard');
+        }}
+      />
+      <Toaster position="top-right" richColors />
+    </div>
+  );
+
+  if (isAdminSetPasswordPath) {
+    return (
+      <div className="min-h-screen">
+        <AdminSetPassword
+          token={adminInviteToken}
+          onSuccess={() => window.location.replace('/admin/login')}
+        />
+        <Toaster position="top-right" richColors />
+      </div>
+    );
+  }
+
+  if (isAdminLoginPath && !isLoggedIn) {
+    return renderAdminLogin();
+  }
+
+  if (isAdminDashboardPath) {
+    if (!isLoggedIn || viewMode !== 'admin') {
+      return renderAdminLogin();
     }
-  };
+  }
+
+  // Render login page if not authenticated
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen">
+        <Login onLogin={handleLogin} onBack={() => setCurrentView('login')} language={language} />
+        <Toaster position="top-right" richColors />
+      </div>
+    );
+  }
 
   // Render pharmacy dashboard
   if (viewMode === 'pharmacy') {
     return (
       <div className="min-h-screen">
-        <div className="fixed right-4 top-4 z-50">
-          <button
-            onClick={toggleViewMode}
-            className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
-          >
-            Switch View
-          </button>
-        </div>
         <PharmacyDashboard
           pharmacyName={mockPharmacies[0].name}
           orders={mockPharmacyOrders}
           inventory={mockMedicines}
           onAcceptOrder={handleAcceptOrder}
           onRejectOrder={handleRejectOrder}
+          onLogout={handleLogout}
         />
         <Toaster position="top-right" />
       </div>
@@ -287,14 +338,6 @@ export default function App() {
   if (viewMode === 'admin') {
     return (
       <div className="min-h-screen">
-        <div className="fixed right-4 top-4 z-50">
-          <button
-            onClick={toggleViewMode}
-            className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
-          >
-            Switch View
-          </button>
-        </div>
         <AdminDashboard onLogout={handleLogout} />
         <Toaster position="top-right" />
       </div>
@@ -304,16 +347,6 @@ export default function App() {
   // Render user view (main app)
   return (
     <div className="min-h-screen">
-      {/* Demo Toggle Button */}
-      <div className="fixed right-4 top-4 z-50">
-        <button
-          onClick={toggleViewMode}
-          className="rounded-lg bg-white px-4 py-2 text-sm shadow-lg hover:bg-gray-50"
-        >
-          Switch View
-        </button>
-      </div>
-
       {currentView !== 'login' && (
         <Header
           cartCount={cartItems.length}
@@ -429,7 +462,7 @@ export default function App() {
         />
       )}
 
-      {currentView === 'profile' && isLoggedIn && (
+      {currentView === 'profile' && (
         <UserProfile
           user={user}
           orders={orders}
@@ -447,7 +480,7 @@ export default function App() {
         />
       )}
 
-      {currentView === 'health-dashboard' && isLoggedIn && (
+      {currentView === 'health-dashboard' && (
         <HealthDashboard
           healthProfile={mockHealthProfile}
           language={language}
@@ -455,7 +488,7 @@ export default function App() {
         />
       )}
 
-      {currentView === 'subscription-plans' && isLoggedIn && (
+      {currentView === 'subscription-plans' && (
         <SubscriptionPlans
           user={user}
           language={language}
@@ -467,7 +500,7 @@ export default function App() {
         />
       )}
 
-      {currentView === 'subscription-manager' && isLoggedIn && userSubscription && (
+      {currentView === 'subscription-manager' && userSubscription && (
         <SubscriptionManager
           user={user}
           language={language}
@@ -475,17 +508,13 @@ export default function App() {
         />
       )}
 
-      {currentView === 'doctor-consultation' && isLoggedIn && userSubscription && (
+      {currentView === 'doctor-consultation' && userSubscription && (
         <DoctorConsultationUI
           user={user}
           subscription={userSubscription}
           language={language}
           onBack={() => setCurrentView('home')}
         />
-      )}
-
-      {currentView === 'login' && (
-        <Login onLogin={handleLogin} onBack={() => setCurrentView('home')} language={language} />
       )}
 
       {isLoggedIn && (

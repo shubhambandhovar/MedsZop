@@ -40,6 +40,13 @@ MONGODB_URI=mongodb://localhost:27017/medszop
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=7d
 FRONTEND_URL=http://localhost:5174
+# Email (optional for local, required for invites)
+SMTP_HOST=smtp.yourprovider.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_username
+SMTP_PASS=your_smtp_password
+EMAIL_FROM=no-reply@medszop.com
+EMAIL_FROM_NAME=MedsZop Admin
 ```
 
 3. Seed sample data:

@@ -1,12 +1,18 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import User from '../models/User';
 
 // Generate JWT Token
-const generateToken = (id: string): string => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'default-secret', {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
-  });
+const generateToken = (id: string, role: string, permissions: string[]): string => {
+  const payload = { id, role, permissions };
+  const secret: Secret = process.env.JWT_SECRET ?? 'default-secret';
+  const expiresInEnv = process.env.JWT_EXPIRE;
+  const expiresIn: SignOptions['expiresIn'] =
+    expiresInEnv && expiresInEnv.trim().length > 0
+      ? (expiresInEnv as unknown as SignOptions['expiresIn'])
+      : '7d';
+  const options: SignOptions = { expiresIn };
+  return jwt.sign(payload, secret, options);
 };
 
 // @desc    Register a new user
@@ -26,6 +32,10 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required' });
+    }
+
     // Create user
     const user = await User.create({
       name,
@@ -36,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken(user._id.toString(), user.role, user.permissions || []);
 
     res.status(201).json({
       success: true,
@@ -48,6 +58,9 @@ export const register = async (req: Request, res: Response) => {
           email: user.email,
           phone: user.phone,
           role: user.role,
+          permissions: user.permissions,
+          status: user.status,
+          firstLogin: user.firstLogin,
           addresses: user.addresses
         },
         token
@@ -86,6 +99,10 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
+    if (user.status === 'inactive') {
+      return res.status(403).json({ success: false, message: 'Account is inactive' });
+    }
+
     // Check if password matches
     const isMatch = await user.comparePassword(password);
 
@@ -97,7 +114,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken(user._id.toString(), user.role, user.permissions || []);
 
     res.status(200).json({
       success: true,
@@ -109,6 +126,9 @@ export const login = async (req: Request, res: Response) => {
           email: user.email,
           phone: user.phone,
           role: user.role,
+          permissions: user.permissions,
+          status: user.status,
+          firstLogin: user.firstLogin,
           addresses: user.addresses
         },
         token
@@ -138,6 +158,9 @@ export const getMe = async (req: Request, res: Response) => {
           email: user?.email,
           phone: user?.phone,
           role: user?.role,
+          permissions: user?.permissions,
+          status: user?.status,
+          firstLogin: user?.firstLogin,
           addresses: user?.addresses,
           savedPrescriptions: user?.savedPrescriptions
         }

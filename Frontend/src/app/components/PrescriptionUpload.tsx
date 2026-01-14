@@ -148,13 +148,18 @@ export function PrescriptionUpload({
       )}
 
       {/* Header */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={onBack}>
-              <ChevronLeft className="h-5 w-5" />
+      <div className="sticky top-16 z-40 bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onBack}
+              className="hover:bg-gray-100"
+            >
+              <ChevronLeft className="h-6 w-6" />
             </Button>
-            <h1 className="text-lg font-semibold">
+            <h1 className="text-xl font-semibold">
               {language === 'en' ? 'Upload Prescription' : 'प्रिस्क्रिप्शन अपलोड करें'}
             </h1>
           </div>
