@@ -529,6 +529,11 @@ export default function App() {
 
       {showChatbot && <AIChatbot onClose={() => setShowChatbot(false)} language={language} />}
 
+      {/* Beta Badge */}
+      <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-2 rounded text-xs font-semibold z-40">
+        MedsZop v0.8 (Beta)
+      </div>
+
       <Toaster position="top-right" richColors />
     </div>
   );

@@ -1,8 +1,9 @@
 {
-  "name": "@figma/my-make-file",
+  "name": "medszop-frontend",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.8.0",
   "type": "module",
+  "description": "MedsZop Frontend - Beta Version",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
