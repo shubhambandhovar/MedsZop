@@ -11,9 +11,15 @@ import { toast } from 'sonner';
 
 interface AdminDashboardProps {
   onLogout?: () => void;
+  currentUser?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+  };
 }
 
-export function AdminDashboard({ onLogout }: AdminDashboardProps) {
+export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -28,6 +34,16 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [viewOrderModal, setViewOrderModal] = useState<any>(null);
   const [viewPrescriptionModal, setViewPrescriptionModal] = useState<any>(null);
   const [viewSubscriptionModal, setViewSubscriptionModal] = useState<any>(null);
+  const storedUser = (() => {
+    try {
+      const raw = localStorage.getItem('user');
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.warn('Failed to parse stored user', err);
+      return null;
+    }
+  })();
+  const loggedInUser = currentUser || storedUser || {};
   
   // Current user role (mock - replace with actual auth context)
   const currentUserRole = 'super_admin';
@@ -525,15 +541,19 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <CardContent className="space-y-4">
             <div>
               <Label>Name</Label>
-              <Input value="Admin User" readOnly className="mt-1" />
+              <Input value={loggedInUser.name || 'Admin User'} readOnly className="mt-1" />
             </div>
             <div>
               <Label>Email</Label>
-              <Input value="admin@medszop.com" readOnly className="mt-1" />
+              <Input value={loggedInUser.email || 'admin@medszop.com'} readOnly className="mt-1" />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={loggedInUser.phone || 'N/A'} readOnly className="mt-1" />
             </div>
             <div>
               <Label>Role</Label>
-              <Badge className="mt-1 bg-purple-600">Super Admin</Badge>
+              <Badge className="mt-1 bg-purple-600">{loggedInUser.role || 'admin'}</Badge>
             </div>
             <Button className="w-full" onClick={() => toast.info('Edit profile dialog opened')}>
               <Edit2 className="mr-2 h-4 w-4" />

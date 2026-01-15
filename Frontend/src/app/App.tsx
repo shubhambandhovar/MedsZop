@@ -431,7 +431,7 @@ export default function App() {
   if (viewMode === 'admin') {
     return (
       <div className="min-h-screen">
-        <AdminDashboard onLogout={handleLogout} />
+        <AdminDashboard onLogout={handleLogout} currentUser={user} />
         <Toaster position="top-right" />
       </div>
     );
