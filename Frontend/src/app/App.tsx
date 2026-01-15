@@ -628,6 +628,9 @@ export default function App() {
       </div>
 
       <Toaster position="top-right" richColors />
+            {/* Firebase Recaptcha */}
+      <div id="recaptcha-container"></div>
+
     </div>
   );
 }
