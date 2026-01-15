@@ -14,10 +14,13 @@ export const googleLogin = async () => {
 };
 
 export const startPhoneLogin = async (phone: string) => {
-  const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    size: 'invisible'
-  });
-  return signInWithPhoneNumber(auth, phone, verifier);
+  // Create RecaptchaVerifier only once and reuse it
+  if (!(window as any).recaptchaVerifier) {
+    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: 'invisible'
+    });
+  }
+  return signInWithPhoneNumber(auth, phone, (window as any).recaptchaVerifier);
 };
 
 export const confirmPhoneOtp = async (confirmation: any, code: string) => {
