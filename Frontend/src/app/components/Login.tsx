@@ -61,13 +61,13 @@ const handleGoogleLogin = async () => {
 };
 
 const handleSendPhoneOtp = async () => {
-  if (!otpPhone || otpPhone.length !== 10) {
-    toast.error(language === 'en' ? 'Please enter a valid 10-digit phone number' : 'कृपया वैध फोन नंबर दर्ज करें');
+  if (!otpPhone || !otpPhone.startsWith('+')) {
+    toast.error(language === 'en' ? 'Please enter a valid phone number with country code' : 'कृपया देश कोड के साथ वैध फोन नंबर दर्ज करें');
     return;
   }
   try {
     setIsLoading(true);
-    const confirmationResult = await startPhoneLogin('+91' + otpPhone);
+    const confirmationResult = await startPhoneLogin(otpPhone);
     setConfirmation(confirmationResult);
     setPhoneOtpStep('otp');
     toast.success(language === 'en' ? 'OTP sent!' : 'OTP भेजा गया!');
@@ -307,18 +307,25 @@ const handleVerifyPhoneOtp = async () => {
   
   {phoneOtpStep === 'phone' ? (
     <>
-      <Input
-        type="tel"
-        placeholder="9876543210"
-        value={otpPhone}
-        onChange={(e) => setOtpPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-        disabled={isLoading}
-        className="h-11 mb-2"
-      />
+      <div className="space-y-1 mb-2">
+        <Input
+          type="tel"
+          placeholder="+919876543210"
+          value={otpPhone}
+          onChange={(e) => {
+            let value = e.target.value.replace(/[^0-9+]/g, '');
+            if (!value.startsWith('+')) value = '+' + value.replace(/\+/g, '');
+            setOtpPhone(value);
+          }}
+          disabled={isLoading}
+          className="h-11"
+        />
+        <p className="text-xs text-gray-500">{language === 'en' ? 'Format: +[country code][number]' : 'प्रारूप: +[देश कोड][नंबर]'}</p>
+      </div>
       <Button
         className="h-11 w-full bg-green-600 hover:bg-green-700"
         onClick={handleSendPhoneOtp}
-        disabled={isLoading || otpPhone.length !== 10}
+        disabled={isLoading || !otpPhone.startsWith('+') || otpPhone.length < 10}
       >
         {language === 'en' ? 'Send OTP' : 'OTP भेजें'}
       </Button>
