@@ -1,12 +1,12 @@
 ﻿/// <reference types="vite/client" />
 import axios, { AxiosInstance } from 'axios';
 
-const API_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000';
+const API_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
 
 // Debug: Log the API URL being used
 console.log(' API Configuration:', {
   VITE_API_URL: import.meta.env.VITE_API_URL,
-  API_URL: "https://medszop-backend.onrender.com",
+  API_URL: API_URL,
   mode: import.meta.env.MODE
 });
 
