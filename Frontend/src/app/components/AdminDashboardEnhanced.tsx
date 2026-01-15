@@ -8,6 +8,7 @@ import { Label } from './ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { toast } from 'sonner';
+import { authService } from '../../services/authService';
 
 interface AdminDashboardProps {
   onLogout?: () => void;
@@ -34,6 +35,10 @@ export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
   const [viewOrderModal, setViewOrderModal] = useState<any>(null);
   const [viewPrescriptionModal, setViewPrescriptionModal] = useState<any>(null);
   const [viewSubscriptionModal, setViewSubscriptionModal] = useState<any>(null);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '' });
+  const [profileUser, setProfileUser] = useState<any>(() => currentUser || authService.getCurrentUser() || {});
   const storedUser = (() => {
     try {
       const raw = localStorage.getItem('user');
@@ -43,7 +48,11 @@ export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
       return null;
     }
   })();
-  const loggedInUser = currentUser || storedUser || {};
+
+  useEffect(() => {
+    const nextUser = currentUser || storedUser || authService.getCurrentUser() || {};
+    setProfileUser(nextUser);
+  }, [currentUser, storedUser?.email, storedUser?.name, storedUser?.phone, storedUser?.role]);
   
   // Current user role (mock - replace with actual auth context)
   const currentUserRole = 'super_admin';
@@ -181,6 +190,48 @@ export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
     toast.success('Password changed successfully');
     setNewPassword('');
     setConfirmPassword('');
+  };
+
+  const handleOpenProfileEdit = () => {
+    setProfileForm({
+      name: profileUser?.name || '',
+      phone: profileUser?.phone || ''
+    });
+    setShowEditProfileModal(true);
+  };
+
+  const handleProfileSave = async () => {
+    if (!profileForm.name.trim()) {
+      toast.error('Name is required');
+      return;
+    }
+
+    if (profileForm.phone && profileForm.phone.trim().length < 6) {
+      toast.error('Phone looks too short');
+      return;
+    }
+
+    setProfileSaving(true);
+    try {
+      const response = await authService.updateProfile({
+        name: profileForm.name.trim(),
+        phone: profileForm.phone.trim(),
+      });
+
+      const updatedUser = (response as any)?.data?.user || (response as any)?.data?.data?.user || profileUser;
+      if (updatedUser) {
+        setProfileUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+
+      toast.success('Profile updated successfully');
+      setShowEditProfileModal(false);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || 'Failed to update profile';
+      toast.error(msg);
+    } finally {
+      setProfileSaving(false);
+    }
   };
 
   const handleApprovePharmacy = (name: string) => {
@@ -541,21 +592,21 @@ export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
           <CardContent className="space-y-4">
             <div>
               <Label>Name</Label>
-              <Input value={loggedInUser.name || 'Admin User'} readOnly className="mt-1" />
+              <Input value={profileUser?.name || 'Admin User'} readOnly className="mt-1" />
             </div>
             <div>
               <Label>Email</Label>
-              <Input value={loggedInUser.email || 'admin@medszop.com'} readOnly className="mt-1" />
+              <Input value={profileUser?.email || 'admin@medszop.com'} readOnly className="mt-1" />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={loggedInUser.phone || 'N/A'} readOnly className="mt-1" />
+              <Input value={profileUser?.phone || 'N/A'} readOnly className="mt-1" />
             </div>
             <div>
               <Label>Role</Label>
-              <Badge className="mt-1 bg-purple-600">{loggedInUser.role || 'admin'}</Badge>
+              <Badge className="mt-1 bg-purple-600">{profileUser?.role || 'admin'}</Badge>
             </div>
-            <Button className="w-full" onClick={() => toast.info('Edit profile dialog opened')}>
+            <Button className="w-full" onClick={handleOpenProfileEdit}>
               <Edit2 className="mr-2 h-4 w-4" />
               Edit Profile
             </Button>
@@ -1640,6 +1691,43 @@ export function AdminDashboard({ onLogout, currentUser }: AdminDashboardProps) {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Profile Modal */}
+      <Dialog open={showEditProfileModal} onOpenChange={setShowEditProfileModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="profile-name">Full Name</Label>
+              <Input
+                id="profile-name"
+                value={profileForm.name}
+                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                placeholder="Enter your name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="profile-phone">Phone</Label>
+              <Input
+                id="profile-phone"
+                value={profileForm.phone}
+                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowEditProfileModal(false)} disabled={profileSaving}>
+                Cancel
+              </Button>
+              <Button onClick={handleProfileSave} disabled={profileSaving}>
+                {profileSaving ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
