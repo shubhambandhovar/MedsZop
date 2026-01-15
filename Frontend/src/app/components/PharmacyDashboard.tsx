@@ -271,29 +271,46 @@ export function PharmacyDashboard({
       imageUrl: medicineForm.imageUrl || selectedMedicine?.imageUrl || 'https://images.unsplash.com/photo-1582719478248-54e9f2af2e8f?w=400',
     } as Medicine;
 
+    // Check if this is a mock user (skip API calls for mock users)
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-');
+
     try {
       if (isAddingMedicine) {
         let saved = payload;
-        try {
-          // Try to save to MongoDB
-          const res = await medicineService.createPharmacyMedicine(pharmacyId, payload);
-          saved = res.data ? { ...payload, ...res.data, id: res.data.id || res.data._id || payload.id } : payload;
-          toast.success('Medicine added to database successfully!');
-        } catch (dbError: any) {
-          console.warn('Database save failed, saving locally:', dbError.message);
-          toast.warning('Saving locally (offline mode). Will sync when online.');
+        
+        if (!isMockUser) {
+          try {
+            // Try to save to MongoDB (only for authenticated users)
+            const res = await medicineService.createPharmacyMedicine(pharmacyId, payload);
+            saved = res.data ? { ...payload, ...res.data, id: res.data.id || res.data._id || payload.id } : payload;
+            toast.success('Medicine added to database successfully!');
+          } catch (dbError: any) {
+            console.warn('Database save failed, saving locally:', dbError.message);
+            toast.warning('Saving locally (offline mode). Will sync when online.');
+          }
+        } else {
+          // Mock user - save only to localStorage
+          toast.success('Medicine added successfully!');
         }
+        
         setInventoryList((prev) => [...prev, saved]);
         setIsAddingMedicine(false);
       } else if (isEditingMedicine && selectedMedicine) {
-        try {
-          // Try to update in MongoDB
-          await medicineService.updatePharmacyMedicine(selectedMedicine.id, pharmacyId, payload);
-          toast.success('Medicine updated in database!');
-        } catch (dbError: any) {
-          console.warn('Database update failed, updating locally:', dbError.message);
-          toast.warning('Updated locally. Will sync when online.');
+        if (!isMockUser) {
+          try {
+            // Try to update in MongoDB (only for authenticated users)
+            await medicineService.updatePharmacyMedicine(selectedMedicine.id, pharmacyId, payload);
+            toast.success('Medicine updated in database!');
+          } catch (dbError: any) {
+            console.warn('Database update failed, updating locally:', dbError.message);
+            toast.warning('Updated locally. Will sync when online.');
+          }
+        } else {
+          // Mock user - update only localStorage
+          toast.success('Medicine updated successfully!');
         }
+        
         setInventoryList((prev) => prev.map((m) => (m.id === selectedMedicine.id ? { ...payload, id: m.id } : m)));
         setIsEditingMedicine(false);
       }
