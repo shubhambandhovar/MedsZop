@@ -549,6 +549,9 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
             ? 'By continuing, you agree to our Terms of Service and Privacy Policy'
             : 'जारी रखकर, आप हमारी सेवा की शर्तों और गोपनीयता नीति से सहमत हैं'}
         </p>
+
+        {/* 🔴 MANDATORY: Firebase Phone OTP reCAPTCHA Container */}
+        <div id="recaptcha-container" className="mt-4"></div>
       </div>
     </div>
   );
