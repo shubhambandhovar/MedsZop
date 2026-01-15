@@ -212,9 +212,16 @@ export const firebaseLogin = async (req: FirebaseRequest, res: Response) => {
 
     const { uid, email, phone } = firebaseUser;
 
+    // Try by uid first
     let user = await User.findOne({ uid });
 
+    // If not found by uid, try by email (to avoid duplicate key error)
+    if (!user && email) {
+      user = await User.findOne({ email });
+    }
+
     if (!user) {
+      // Create new user when neither uid nor email exists
       user = await User.create({
         uid,
         email,
@@ -222,6 +229,12 @@ export const firebaseLogin = async (req: FirebaseRequest, res: Response) => {
         role: 'user',
         password: null
       });
+    } else {
+      // Ensure uid is set on existing user
+      if (!user.uid) {
+        user.uid = uid;
+        await user.save();
+      }
     }
 
     const token = generateToken(user._id.toString(), user.role, user.permissions || []);
