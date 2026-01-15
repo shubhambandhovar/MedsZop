@@ -5,6 +5,7 @@ export interface FirebaseUser {
   uid: string;
   email?: string;
   phone?: string;
+  name?: string;
 }
 
 export interface FirebaseRequest extends Request {
@@ -25,6 +26,7 @@ export const firebaseAuth = async (req: Request, res: Response, next: NextFuncti
       uid: decoded.uid,
       email: decoded.email || undefined,
       phone: decoded.phone_number || undefined,
+      name: decoded.name || decoded.email || undefined,
     };
 
     (req as any).user = {

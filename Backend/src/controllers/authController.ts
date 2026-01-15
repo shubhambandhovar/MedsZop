@@ -210,7 +210,7 @@ export const firebaseLogin = async (req: FirebaseRequest, res: Response) => {
       return res.status(401).json({ success: false, message: 'No Firebase user attached' });
     }
 
-    const { uid, email, phone } = firebaseUser;
+    const { uid, email, phone, name } = firebaseUser;
 
     // Try by uid first
     let user = await User.findOne({ uid });
@@ -225,6 +225,7 @@ export const firebaseLogin = async (req: FirebaseRequest, res: Response) => {
       user = await User.create({
         uid,
         email,
+        name: name || email || 'Firebase User',
         phone: phone || '0000000000',
         role: 'user',
         password: null
