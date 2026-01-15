@@ -8,6 +8,7 @@ import { Shield, Eye, EyeOff, User as UserIcon, Store, Lock } from 'lucide-react
 import { Language, User } from '../types';
 import { mockUser, mockPharmacyUser, mockAdminUser } from '../data/mockData';
 import { authService } from '../../services/authService';
+import { googleLogin, startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 
 interface LoginProps {
@@ -37,6 +38,64 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
   
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [phoneOtpStep, setPhoneOtpStep] = useState<'phone' | 'otp'>('phone');
+  const [otpPhone, setOtpPhone] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [confirmation, setConfirmation] = useState<any>(null);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const result = await googleLogin();
+      if (result?.data?.success) {
+        toast.success(language === 'en' ? 'Google login successful!' : 'गूगल लॉगिन सफल!');
+        onLogin(result.data.data.user);
+      }
+    } catch (error: any) {
+      const errorMsg = error?.message || (language === 'en' ? 'Google login failed' : 'गूगल लॉगिन विफल');
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendPhoneOtp = async () => {
+    if (!otpPhone || !otpPhone.startsWith('+')) {
+      toast.error(language === 'en' ? 'Please enter a valid phone number with country code' : 'कृपया देश कोड के साथ वैध फोन नंबर दर्ज करें');
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const confirmationResult = await startPhoneLogin(otpPhone);
+      setConfirmation(confirmationResult);
+      setPhoneOtpStep('otp');
+      toast.success(language === 'en' ? 'OTP sent!' : 'OTP भेजा गया!');
+    } catch (error: any) {
+      toast.error(error?.message || 'Failed to send OTP');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyPhoneOtp = async () => {
+    if (!otpCode || otpCode.length !== 6) {
+      toast.error(language === 'en' ? 'Enter valid 6-digit OTP' : 'वैध OTP दर्ज करें');
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const result = await confirmPhoneOtp(confirmation, otpCode);
+      if (result?.data?.success) {
+        toast.success('Phone login successful!');
+        onLogin(result.data.data.user);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || 'OTP verification failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleUserLogin = async () => {
     if (!userEmail || !userPassword) {
@@ -370,6 +429,97 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
                       <p className="text-center text-xs text-blue-800">user@test.com</p>
                       <p className="text-center text-xs text-blue-800">password123</p>
                     </div>
+
+                    {/* Social Divider */}
+                    <div className="relative my-6">
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-muted-foreground">
+                          {language === 'en' ? 'Or continue with' : 'या इनसे लॉगिन करें'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Google Login Button */}
+                    <Button
+                      variant="outline"
+                      className="h-12 w-full"
+                      onClick={handleGoogleLogin}
+                      disabled={isLoading}
+                    >
+                      <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      {language === 'en' ? 'Continue with Google' : 'Google से जारी रखें'}
+                    </Button>
+
+                    {/* Phone OTP Section */}
+                    <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 p-4">
+                      <p className="mb-3 text-sm font-semibold text-center">
+                        {language === 'en' ? 'Or login with Phone OTP' : 'या फोन OTP से लॉगिन करें'}
+                      </p>
+                      
+                      {phoneOtpStep === 'phone' ? (
+                        <>
+                          <div className="space-y-1 mb-2">
+                            <Input
+                              type="tel"
+                              placeholder="+919876543210"
+                              value={otpPhone}
+                              onChange={(e) => {
+                                let value = e.target.value.replace(/[^0-9+]/g, '');
+                                if (!value.startsWith('+')) value = '+' + value.replace(/\+/g, '');
+                                setOtpPhone(value);
+                              }}
+                              disabled={isLoading}
+                              className="h-11"
+                            />
+                            <p className="text-xs text-gray-500">{language === 'en' ? 'Format: +[country code][number]' : 'प्रारूप: +[देश कोड][नंबर]'}</p>
+                          </div>
+                          <Button
+                            className="h-11 w-full bg-green-600 hover:bg-green-700"
+                            onClick={handleSendPhoneOtp}
+                            disabled={isLoading || !otpPhone.startsWith('+') || otpPhone.length < 10}
+                          >
+                            {language === 'en' ? 'Send OTP' : 'OTP भेजें'}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Input
+                            type="text"
+                            placeholder="Enter 6-digit OTP"
+                            value={otpCode}
+                            onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                            disabled={isLoading}
+                            className="h-11 mb-2"
+                          />
+                          <div className="flex gap-2">
+                            <Button
+                              className="h-11 flex-1 bg-green-600 hover:bg-green-700"
+                              onClick={handleVerifyPhoneOtp}
+                              disabled={isLoading || otpCode.length !== 6}
+                            >
+                              {language === 'en' ? 'Verify OTP' : 'OTP सत्यापित करें'}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="h-11"
+                              onClick={() => {
+                                setPhoneOtpStep('phone');
+                                setOtpPhone('');
+                                setOtpCode('');
+                              }}
+                              disabled={isLoading}
+                            >
+                              {language === 'en' ? 'Back' : 'वापस'}
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </TabsContent>
 
                   {/* Customer Register */}
@@ -643,6 +793,9 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
             ? 'By continuing, you agree to our Terms of Service and Privacy Policy'
             : 'जारी रखकर, आप हमारी सेवा की शर्तों और गोपनीयता नीति से सहमत हैं'}
         </p>
+
+        {/* 🔴 MANDATORY: Firebase Phone OTP reCAPTCHA Container */}
+        <div id="recaptcha-container" className="mt-4"></div>
       </div>
     </div>
   );
