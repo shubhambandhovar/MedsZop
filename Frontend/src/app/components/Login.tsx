@@ -8,7 +8,6 @@ import { Shield, Eye, EyeOff, User as UserIcon, Store, Lock } from 'lucide-react
 import { Language, User } from '../types';
 import { mockUser, mockPharmacyUser, mockAdminUser } from '../data/mockData';
 import { authService } from '../../services/authService';
-import { googleLogin, startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 
 interface LoginProps {
@@ -38,64 +37,6 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
   
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const [phoneOtpStep, setPhoneOtpStep] = useState<'phone' | 'otp'>('phone');
-const [otpPhone, setOtpPhone] = useState('');
-const [otpCode, setOtpCode] = useState('');
-const [confirmation, setConfirmation] = useState<any>(null);
-
-const handleGoogleLogin = async () => {
-  try {
-    setIsLoading(true);
-    const result = await googleLogin();
-    if (result?.data?.success) {
-      toast.success(language === 'en' ? 'Google login successful!' : 'गूगल लॉगिन सफल!');
-      onLogin(result.data.data.user);
-    }
-  } catch (error: any) {
-    const errorMsg = error?.message || (language === 'en' ? 'Google login failed' : 'गूगल लॉगिन विफल');
-    toast.error(errorMsg);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-const handleSendPhoneOtp = async () => {
-  if (!otpPhone || !otpPhone.startsWith('+')) {
-    toast.error(language === 'en' ? 'Please enter a valid phone number with country code' : 'कृपया देश कोड के साथ वैध फोन नंबर दर्ज करें');
-    return;
-  }
-  try {
-    setIsLoading(true);
-    const confirmationResult = await startPhoneLogin(otpPhone);
-    setConfirmation(confirmationResult);
-    setPhoneOtpStep('otp');
-    toast.success(language === 'en' ? 'OTP sent!' : 'OTP भेजा गया!');
-  } catch (error: any) {
-    toast.error(error?.message || 'Failed to send OTP');
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-const handleVerifyPhoneOtp = async () => {
-  if (!otpCode || otpCode.length !== 6) {
-    toast.error(language === 'en' ? 'Enter valid 6-digit OTP' : 'वैध OTP दर्ज करें');
-    return;
-  }
-  try {
-    setIsLoading(true);
-    const result = await confirmPhoneOtp(confirmation, otpCode);
-    if (result?.data?.success) {
-      toast.success('Phone login successful!');
-      onLogin(result.data.data.user);
-    }
-  } catch (error: any) {
-    toast.error(error?.message || 'OTP verification failed');
-  } finally {
-    setIsLoading(false);
-  }
-};
 
   const handleUserLogin = async () => {
     if (!userEmail || !userPassword) {
@@ -702,9 +643,6 @@ const handleVerifyPhoneOtp = async () => {
             ? 'By continuing, you agree to our Terms of Service and Privacy Policy'
             : 'जारी रखकर, आप हमारी सेवा की शर्तों और गोपनीयता नीति से सहमत हैं'}
         </p>
-
-        {/* 🔴 MANDATORY: Firebase Phone OTP reCAPTCHA Container */}
-        <div id="recaptcha-container" className="mt-4"></div>
       </div>
     </div>
   );
