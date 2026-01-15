@@ -20,7 +20,7 @@ export const googleLogin = async () => {
   const token = await result.user.getIdToken();
 
   return api.post(
-    '/auth/firebase-login',
+    '/api/auth/firebase-login',
     {},
     {
       headers: {
@@ -49,7 +49,7 @@ export const startPhoneLogin = async (phone: string) => {
     throw new Error("reCAPTCHA container not found");
   }
 
-  // Create verifier (correct order: auth, container, options)
+  // Create verifier (Firebase v9: new RecaptchaVerifier(auth, container, options))
   (window as any).recaptchaVerifier = new RecaptchaVerifier(
     auth,
     recaptchaContainer,
@@ -74,7 +74,7 @@ export const confirmPhoneOtp = async (confirmation: any, code: string) => {
   const token = await result.user.getIdToken();
 
   return api.post(
-    '/auth/firebase-login',
+    '/api/auth/firebase-login',
     {},
     {
       headers: {
