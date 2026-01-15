@@ -99,35 +99,55 @@ export function PharmacyDashboard({
         
         setPharmacyId(pid);
         
-        // Try to load from MongoDB
-        const response = await medicineService.getPharmacyMedicines(pid);
-        if (response.success && response.data.length > 0) {
-          // Server has medicines, sync to localStorage and state
-          setInventoryList(response.data);
-          localStorage.setItem('pharmacyMedicines', JSON.stringify(response.data));
-          toast.success('Medicines loaded from database');
-        } else {
-          // No medicines in database, check localStorage
+        // Check if this is a mock user (skip API calls for mock users)
+        const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-');
+        
+        if (isMockUser) {
+          // For mock users, just use localStorage
           const saved = localStorage.getItem('pharmacyMedicines');
           if (saved) {
-            const localMeds = JSON.parse(saved);
-            if (localMeds.length > 0) {
+            try {
+              const localMeds = JSON.parse(saved);
               setInventoryList(localMeds);
-              // Optionally sync local medicines to database
-              console.log('Syncing local medicines to database...');
+            } catch (e) {
+              console.error('Failed to parse local medicines', e);
             }
           }
+          setIsLoadingMedicines(false);
+          return;
         }
-      } catch (error: any) {
-        console.log('Could not load from database, using local storage:', error.message);
-        // Fall back to localStorage if API fails
-        const saved = localStorage.getItem('pharmacyMedicines');
-        if (saved) {
-          try {
-            const localMeds = JSON.parse(saved);
-            setInventoryList(localMeds);
-          } catch (e) {
-            console.error('Failed to parse local medicines', e);
+        
+        // Try to load from MongoDB (only for real authenticated users)
+        try {
+          const response = await medicineService.getPharmacyMedicines(pid);
+          if (response.success && response.data.length > 0) {
+            // Server has medicines, sync to localStorage and state
+            setInventoryList(response.data);
+            localStorage.setItem('pharmacyMedicines', JSON.stringify(response.data));
+            toast.success('Medicines loaded from database');
+          } else {
+            // No medicines in database, check localStorage
+            const saved = localStorage.getItem('pharmacyMedicines');
+            if (saved) {
+              const localMeds = JSON.parse(saved);
+              if (localMeds.length > 0) {
+                setInventoryList(localMeds);
+                // Optionally sync local medicines to database
+                console.log('Syncing local medicines to database...');
+              }
+            }
+          }
+        } catch (error: any) {
+          console.log('Could not load from database, using local storage:', error.message);
+          // Fall back to localStorage if API fails
+          const saved = localStorage.getItem('pharmacyMedicines');
+          if (saved) {
+            try {
+              const localMeds = JSON.parse(saved);
+              setInventoryList(localMeds);
+            } catch (e) {
+              console.error('Failed to parse local medicines', e);
+            }
           }
         }
       } finally {
