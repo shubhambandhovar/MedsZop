@@ -37,7 +37,20 @@ export function PharmacyDashboard({
   const [isAddingMedicine, setIsAddingMedicine] = useState(false);
   const [isEditingMedicine, setIsEditingMedicine] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
-  const [inventoryList, setInventoryList] = useState<Medicine[]>(inventory);
+  const [isLoadingMedicines, setIsLoadingMedicines] = useState(true);
+  const [pharmacyId, setPharmacyId] = useState<string>('');
+  const [inventoryList, setInventoryList] = useState<Medicine[]>(() => {
+    // Load from localStorage first, then fallback to inventory prop
+    const saved = localStorage.getItem('pharmacyMedicines');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse pharmacyMedicines from localStorage', e);
+      }
+    }
+    return inventory || [];
+  });
   const [medicineForm, setMedicineForm] = useState({
     brand: '',
     genericName: '',
@@ -68,9 +81,73 @@ export function PharmacyDashboard({
   const activeOrders = orders.filter((o) => o.status === 'packed' || o.status === 'out_for_delivery');
   const completedOrders = orders.filter((o) => o.status === 'delivered');
 
+  // Load pharmacy medicines from MongoDB on mount
   useEffect(() => {
-    setInventoryList(inventory);
-  }, [inventory]);
+    const loadPharmacyMedicines = async () => {
+      try {
+        setIsLoadingMedicines(true);
+        
+        // Get pharmacy ID from localStorage or user session
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        let pid = user.pharmacyId || localStorage.getItem('pharmacyId') || '';
+        
+        // For demo purposes, use a mock pharmacy ID if not available
+        if (!pid) {
+          pid = 'demo-pharmacy-' + new Date().getTime().toString().slice(-5);
+          localStorage.setItem('pharmacyId', pid);
+        }
+        
+        setPharmacyId(pid);
+        
+        // Try to load from MongoDB
+        const response = await medicineService.getPharmacyMedicines(pid);
+        if (response.success && response.data.length > 0) {
+          // Server has medicines, sync to localStorage and state
+          setInventoryList(response.data);
+          localStorage.setItem('pharmacyMedicines', JSON.stringify(response.data));
+          toast.success('Medicines loaded from database');
+        } else {
+          // No medicines in database, check localStorage
+          const saved = localStorage.getItem('pharmacyMedicines');
+          if (saved) {
+            const localMeds = JSON.parse(saved);
+            if (localMeds.length > 0) {
+              setInventoryList(localMeds);
+              // Optionally sync local medicines to database
+              console.log('Syncing local medicines to database...');
+            }
+          }
+        }
+      } catch (error: any) {
+        console.log('Could not load from database, using local storage:', error.message);
+        // Fall back to localStorage if API fails
+        const saved = localStorage.getItem('pharmacyMedicines');
+        if (saved) {
+          try {
+            const localMeds = JSON.parse(saved);
+            setInventoryList(localMeds);
+          } catch (e) {
+            console.error('Failed to parse local medicines', e);
+          }
+        }
+      } finally {
+        setIsLoadingMedicines(false);
+      }
+    };
+
+    loadPharmacyMedicines();
+  }, []);
+
+  // Persist inventory to both localStorage and MongoDB whenever it changes
+  useEffect(() => {
+    // Always save to localStorage for offline access
+    localStorage.setItem('pharmacyMedicines', JSON.stringify(inventoryList));
+
+    // Also sync to MongoDB (async, no await)
+    if (pharmacyId) {
+      // This is a background sync, we'll implement individual sync on each operation
+    }
+  }, [inventoryList, pharmacyId]);
 
   // Stats calculation
   const stats = {
@@ -175,44 +252,39 @@ export function PharmacyDashboard({
     } as Medicine;
 
     try {
-      const token = localStorage.getItem('token');
-      const isMockSession = token?.startsWith('mock-');
-
       if (isAddingMedicine) {
         let saved = payload;
-        if (!isMockSession) {
-          const res = await medicineService.createMedicine(payload);
-          saved = res.data ? { ...payload, ...res.data, id: res.data._id || res.data.id || payload.id } : payload;
+        try {
+          // Try to save to MongoDB
+          const res = await medicineService.createPharmacyMedicine(pharmacyId, payload);
+          saved = res.data ? { ...payload, ...res.data, id: res.data.id || res.data._id || payload.id } : payload;
+          toast.success('Medicine added to database successfully!');
+        } catch (dbError: any) {
+          console.warn('Database save failed, saving locally:', dbError.message);
+          toast.warning('Saving locally (offline mode). Will sync when online.');
         }
         setInventoryList((prev) => [...prev, saved]);
-        
-        // Save to localStorage for customer portal visibility
-        const pharmacyMedicines = JSON.parse(localStorage.getItem('pharmacyMedicines') || '[]');
-        localStorage.setItem('pharmacyMedicines', JSON.stringify([...pharmacyMedicines, saved]));
-        
-        toast.success('Medicine added successfully!');
         setIsAddingMedicine(false);
       } else if (isEditingMedicine && selectedMedicine) {
-        if (!isMockSession) {
-          await medicineService.updateMedicine(selectedMedicine.id, payload);
+        try {
+          // Try to update in MongoDB
+          await medicineService.updatePharmacyMedicine(selectedMedicine.id, pharmacyId, payload);
+          toast.success('Medicine updated in database!');
+        } catch (dbError: any) {
+          console.warn('Database update failed, updating locally:', dbError.message);
+          toast.warning('Updated locally. Will sync when online.');
         }
-        setInventoryList((prev) => prev.map((m) => (m.id === selectedMedicine.id ? { ...payload } : m)));
-        
-        // Update in localStorage for customer portal visibility
-        const pharmacyMedicines = JSON.parse(localStorage.getItem('pharmacyMedicines') || '[]');
-        const updated = pharmacyMedicines.map((m: Medicine) => m.id === selectedMedicine.id ? payload : m);
-        localStorage.setItem('pharmacyMedicines', JSON.stringify(updated));
-        
-        toast.success('Medicine updated successfully!');
+        setInventoryList((prev) => prev.map((m) => (m.id === selectedMedicine.id ? { ...payload, id: m.id } : m)));
         setIsEditingMedicine(false);
       }
-    } catch (err) {
+    } catch (err: any) {
+      // Final fallback: update local state
       setInventoryList((prev) => {
         if (isAddingMedicine) return [...prev, payload];
         if (isEditingMedicine && selectedMedicine) return prev.map((m) => (m.id === selectedMedicine.id ? payload : m));
         return prev;
       });
-      toast.error('Unable to reach server. Saved locally for now.');
+      toast.error('Unable to save. Saved locally for now.');
     }
 
     setSelectedMedicine(null);

@@ -4,6 +4,8 @@ import path from "path";
 import fs from "fs";
 import { processPrescriptionImage, simulateOCRForTesting } from "../services/ocrService";
 import Medicine from "../models/Medicine";
+import Prescription from "../models/Prescription";
+import { protect } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -134,6 +136,64 @@ router.post("/verify", async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/prescription/my-prescriptions
+ * Get all prescriptions for logged-in user
+ * Requires authentication
+ */
+router.get("/my-prescriptions", protect, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user._id;
+    
+    const prescriptions = await Prescription.find({ userId })
+      .sort({ uploadDate: -1 })
+      .lean();
+
+    res.json({
+      success: true,
+      data: prescriptions,
+    });
+  } catch (error: any) {
+    console.error("Error fetching prescriptions:", error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/prescription/save
+ * Save prescription metadata after upload
+ * Requires authentication
+ */
+router.post("/save", protect, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user._id;
+    const { imageUrl, medicines, doctorName, validUntil } = req.body;
+
+    const prescription = await Prescription.create({
+      userId,
+      imageUrl,
+      medicines: medicines || [],
+      doctorName,
+      validUntil,
+      verified: false,
+    });
+
+    res.status(201).json({
+      success: true,
+      data: prescription,
+    });
+  } catch (error: any) {
+    console.error("Error saving prescription:", error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
+    });
   }
 });
 

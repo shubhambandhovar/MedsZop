@@ -25,6 +25,7 @@ import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { authService } from '../services/authService';
 import { UserSubscription } from '../services/subscriptionService';
+import { cloudSyncService } from '../services/cloudSyncService';
 import {
   ViewType,
   Language,
@@ -91,6 +92,15 @@ export default function App() {
     }
   }, []);
 
+  // Auto-save cart to cloud when cart items change
+  useEffect(() => {
+    if (isLoggedIn && user.id && cartItems.length > 0) {
+      cloudSyncService.saveCartToCloud(user.id, cartItems).catch(error => {
+        console.error('Error auto-saving cart to cloud:', error);
+      });
+    }
+  }, [cartItems, isLoggedIn, user.id]);
+
   const handleLanguageToggle = () => {
     setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
     toast.success(
@@ -100,27 +110,53 @@ export default function App() {
     );
   };
 
-  const handleLogin = (user: User) => {
+  const handleLogin = async (user: User) => {
     setIsLoggedIn(true);
     setUser(user);
     setCartItems([]);
     
-    // Route based on user role
-    if (user.role === 'admin') {
-      setViewMode('admin');
-      window.history.replaceState(null, '', '/admin/dashboard');
-      toast.success(language === 'en' ? 'Welcome Admin!' : 'व्यवस्थापक स्वागत है!');
-    } else if (user.role === 'pharmacy') {
-      setViewMode('pharmacy');
-      toast.success(language === 'en' ? 'Welcome Pharmacy!' : 'फार्मेसी स्वागत है!');
-    } else {
-      setViewMode('user');
-      setCurrentView('home');
-      toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
+    // Sync data from cloud based on user role
+    try {
+      if (user.role === 'pharmacy') {
+        await cloudSyncService.syncPharmacyDataOnLogin(user.id);
+        setViewMode('pharmacy');
+        toast.success(language === 'en' ? 'Welcome Pharmacy! Data synced from cloud.' : 'फार्मेसी स्वागत है! क्लाउड से डेटा सिंक हो गया।');
+      } else if (user.role === 'admin') {
+        setViewMode('admin');
+        window.history.replaceState(null, '', '/admin/dashboard');
+        toast.success(language === 'en' ? 'Welcome Admin!' : 'व्यवस्थापक स्वागत है!');
+      } else {
+        // Regular user - sync orders, prescriptions, subscriptions, profile
+        const syncResult = await cloudSyncService.syncUserDataOnLogin(user.id);
+        if (syncResult) {
+          toast.success(language === 'en' ? 'Login successful! Data synced from cloud.' : 'लॉगिन सफल! क्लाउड से डेटा सिंक हो गया।');
+        } else {
+          toast.warning(language === 'en' ? 'Login successful! Using offline data.' : 'लॉगिन सफल! ऑफ़लाइन डेटा उपयोग कर रहे हैं।');
+        }
+        setViewMode('user');
+        setCurrentView('home');
+      }
+    } catch (error) {
+      console.error('Error syncing data from cloud:', error);
+      toast.warning(language === 'en' ? 'Synced with offline data. Some data may be outdated.' : 'ऑफ़लाइन डेटा से सिंक किया गया। कुछ डेटा पुराना हो सकता है।');
+      
+      // Set view mode even if sync fails
+      if (user.role === 'admin') {
+        setViewMode('admin');
+        window.history.replaceState(null, '', '/admin/dashboard');
+      } else if (user.role === 'pharmacy') {
+        setViewMode('pharmacy');
+      } else {
+        setViewMode('user');
+        setCurrentView('home');
+      }
     }
   };
 
   const handleLogout = () => {
+    // Clear local cache (preserves pharmacy medicines)
+    cloudSyncService.clearLocalCache();
+    
     authService.logout();
     setIsLoggedIn(false);
     setUser(mockUser);
@@ -133,9 +169,18 @@ export default function App() {
     toast.success(language === 'en' ? 'Logged out successfully' : 'लॉगआउट सफल');
   };
 
-  const handleUpdateProfile = (updatedUser: User) => {
+  const handleUpdateProfile = async (updatedUser: User) => {
     setUser(updatedUser);
     authService.saveCurrentUser(updatedUser);
+    
+    // Sync updated profile to cloud
+    try {
+      await cloudSyncService.updateProfileInCloud(updatedUser);
+      toast.success(language === 'en' ? 'Profile updated and synced to cloud!' : 'प्रोफ़ाइल अपडेट हो गया और क्लाउड में सिंक हो गया!');
+    } catch (error) {
+      console.error('Error syncing profile to cloud:', error);
+      toast.warning(language === 'en' ? 'Profile saved locally. Will sync when online.' : 'प्रोफ़ाइल स्थानीय रूप से सहेजा गया। ऑनलाइन होने पर सिंक होगा।');
+    }
   };
 
   const handleAddToCart = (medicine: Medicine, quantity: number) => {
@@ -186,7 +231,7 @@ export default function App() {
     }
   };
 
-  const handlePlaceOrder = (addressId: string, paymentMethod: string) => {
+  const handlePlaceOrder = async (addressId: string, paymentMethod: string) => {
     // Try to find address in user's addresses, otherwise use from allAddresses in Checkout
     let address = user.addresses.find((a) => a.id === addressId);
     
@@ -222,8 +267,26 @@ export default function App() {
       prescriptionVerified: true,
     };
 
-    setOrders([newOrder, ...orders]);
-    setSelectedOrder(newOrder);
+    // Save order to cloud
+    try {
+      const savedOrder = await cloudSyncService.saveOrderToCloud(newOrder);
+      if (savedOrder) {
+        setOrders([savedOrder, ...orders]);
+        setSelectedOrder(savedOrder);
+        toast.success(language === 'en' ? 'Order placed and saved to cloud!' : 'ऑर्डर प्लेस किया गया और क्लाउड में सेव हो गया!');
+      } else {
+        // Fallback to local storage if cloud save fails
+        setOrders([newOrder, ...orders]);
+        setSelectedOrder(newOrder);
+        toast.warning(language === 'en' ? 'Order placed locally. Will sync when online.' : 'ऑर्डर स्थानीय रूप से प्लेस किया गया। ऑनलाइन होने पर सिंक होगा।');
+      }
+    } catch (error) {
+      console.error('Error saving order to cloud:', error);
+      setOrders([newOrder, ...orders]);
+      setSelectedOrder(newOrder);
+      toast.warning(language === 'en' ? 'Order placed locally. Will sync when online.' : 'ऑर्डर स्थानीय रूप से प्लेस किया गया। ऑनलाइन होने पर सिंक होगा।');
+    }
+    
     setCartItems([]);
     setCurrentView('order-success');
 

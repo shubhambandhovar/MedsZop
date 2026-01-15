@@ -80,8 +80,14 @@ export const authService = {
   },
 
   logout: () => {
+    // Preserve pharmacy medicines before clearing localStorage
+    const pharmacyMedicines = localStorage.getItem('pharmacyMedicines');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Restore pharmacy medicines if they existed
+    if (pharmacyMedicines) {
+      localStorage.setItem('pharmacyMedicines', pharmacyMedicines);
+    }
   },
 
   getCurrentUser: (): User | null => {

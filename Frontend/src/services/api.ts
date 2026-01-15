@@ -34,9 +34,14 @@ api.interceptors.response.use(
   (error) => {
     console.error(' API Error:', error.config?.url, error.message);
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      // Unauthorized - preserve pharmacy medicines before clearing localStorage
+      const pharmacyMedicines = localStorage.getItem('pharmacyMedicines');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      // Restore pharmacy medicines if they existed
+      if (pharmacyMedicines) {
+        localStorage.setItem('pharmacyMedicines', pharmacyMedicines);
+      }
       window.location.href = '/login';
     }
     return Promise.reject(error);
