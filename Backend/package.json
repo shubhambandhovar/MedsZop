@@ -1,6 +1,6 @@
 {
   "name": "medszop-backend",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "MedsZop Backend API - Beta Version",
   "main": "src/server.ts",
   "scripts": {
