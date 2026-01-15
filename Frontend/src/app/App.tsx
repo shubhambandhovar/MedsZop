@@ -10,6 +10,7 @@ import { Checkout } from './components/Checkout';
 import { OrderTracking } from './components/OrderTracking';
 import { UserProfile } from './components/UserProfile';
 import { Login } from './components/Login';
+import { PharmacyRegister } from './components/PharmacyRegister';
 import { AIChatbot } from './components/AIChatbot';
 import { EditProfileModal } from './components/EditProfileModal';
 import { PharmacyDashboard } from './components/PharmacyDashboard';
@@ -381,11 +382,29 @@ export default function App() {
     }
   }
 
+  // Render pharmacy registration page
+  if (currentView === 'pharmacy-register') {
+    return (
+      <div className="min-h-screen">
+        <PharmacyRegister
+          onBack={() => setCurrentView('login')}
+          onSuccess={() => setCurrentView('login')}
+        />
+        <Toaster position="top-right" richColors />
+      </div>
+    );
+  }
+
   // Render login page if not authenticated
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen">
-        <Login onLogin={handleLogin} onBack={() => setCurrentView('login')} language={language} />
+        <Login 
+          onLogin={handleLogin} 
+          onBack={() => setCurrentView('login')} 
+          onRegister={() => setCurrentView('pharmacy-register')}
+          language={language} 
+        />
         <Toaster position="top-right" richColors />
       </div>
     );

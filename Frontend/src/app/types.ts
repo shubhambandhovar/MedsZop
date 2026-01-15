@@ -188,6 +188,7 @@ export type ViewType =
   | 'order-success'
   | 'profile'
   | 'login'
+  | 'pharmacy-register'
   | 'pharmacy-dashboard'
   | 'admin-dashboard'
   | 'health-dashboard'

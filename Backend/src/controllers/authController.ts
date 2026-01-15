@@ -20,7 +20,7 @@ const generateToken = (id: string, role: string, permissions: string[]): string 
 // @access  Public
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { name, email, password, phone, role, pharmacyName, pharmacyLicenseUrl, pharmacyLicenseNumber } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -36,16 +36,57 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: 'Password is required' });
     }
 
-    // Create user
-    const user = await User.create({
+    // Validate pharmacy-specific fields
+    if (role === 'pharmacy') {
+      if (!pharmacyName || !pharmacyLicenseUrl) {
+        return res.status(400).json({
+          success: false,
+          message: 'Pharmacy name and license are required for pharmacy registration'
+        });
+      }
+    }
+
+    // Create user data
+    const userData: any = {
       name,
       email,
       password,
       phone,
       role: role || 'user'
-    });
+    };
 
-    // Generate token
+    // Add pharmacy-specific fields
+    if (role === 'pharmacy') {
+      userData.pharmacyName = pharmacyName;
+      userData.pharmacyLicenseUrl = pharmacyLicenseUrl;
+      userData.pharmacyLicenseNumber = pharmacyLicenseNumber;
+      userData.isApproved = false; // Requires admin approval
+    }
+
+    // Create user
+    const user = await User.create(userData);
+
+    // For pharmacy, don't generate token yet (wait for approval)
+    if (role === 'pharmacy') {
+      return res.status(201).json({
+        success: true,
+        message: 'Pharmacy registration submitted successfully. Please wait for admin approval.',
+        data: {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            pharmacyName: user.pharmacyName,
+            isApproved: user.isApproved
+          },
+          requiresApproval: true
+        }
+      });
+    }
+
+    // Generate token for regular users
     const token = generateToken(user._id.toString(), user.role, user.permissions || []);
 
     res.status(201).json({
@@ -103,6 +144,19 @@ export const login = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, message: 'Account is inactive' });
     }
 
+    // Check if pharmacy account is approved
+    if (user.role === 'pharmacy' && !user.isApproved) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your pharmacy account is pending approval. Please wait for admin to approve your account.',
+        data: {
+          isPending: true,
+          pharmacyName: user.pharmacyName,
+          email: user.email
+        }
+      });
+    }
+
     // Check if password matches
     const isMatch = await user.comparePassword(password);
 
@@ -129,7 +183,9 @@ export const login = async (req: Request, res: Response) => {
           permissions: user.permissions,
           status: user.status,
           firstLogin: user.firstLogin,
-          addresses: user.addresses
+          addresses: user.addresses,
+          pharmacyName: user.pharmacyName,
+          isApproved: user.isApproved
         },
         token
       }

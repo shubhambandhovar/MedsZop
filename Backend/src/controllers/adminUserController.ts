@@ -242,3 +242,103 @@ export const setAdminPassword = async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, message: error.message || 'Server error' });
   }
 };
+
+// @desc    Get all pending pharmacy registrations
+// @route   GET /api/admin/pharmacy/pending
+// @access  Private/Admin
+export const getPendingPharmacies = async (req: Request, res: Response) => {
+  try {
+    const pendingPharmacies = await User.find({
+      role: 'pharmacy',
+      isApproved: false
+    }).select('-password');
+
+    res.status(200).json({
+      success: true,
+      count: pendingPharmacies.length,
+      data: pendingPharmacies
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Approve pharmacy registration
+// @route   PUT /api/admin/pharmacy/:id/approve
+// @access  Private/Admin
+export const approvePharmacy = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const adminId = req.user?._id;
+
+    const pharmacy = await User.findById(id);
+
+    if (!pharmacy || pharmacy.role !== 'pharmacy') {
+      return res.status(404).json({
+        success: false,
+        message: 'Pharmacy not found'
+      });
+    }
+
+    if (pharmacy.isApproved) {
+      return res.status(400).json({
+        success: false,
+        message: 'Pharmacy is already approved'
+      });
+    }
+
+    pharmacy.isApproved = true;
+    pharmacy.approvedBy = adminId;
+    pharmacy.approvedAt = new Date();
+    pharmacy.rejectionReason = undefined;
+
+    await pharmacy.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Pharmacy approved successfully',
+      data: pharmacy
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Reject pharmacy registration
+// @route   PUT /api/admin/pharmacy/:id/reject
+// @access  Private/Admin
+export const rejectPharmacy = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rejection reason is required'
+      });
+    }
+
+    const pharmacy = await User.findById(id);
+
+    if (!pharmacy || pharmacy.role !== 'pharmacy') {
+      return res.status(404).json({
+        success: false,
+        message: 'Pharmacy not found'
+      });
+    }
+
+    pharmacy.isApproved = false;
+    pharmacy.rejectionReason = reason;
+
+    await pharmacy.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Pharmacy registration rejected',
+      data: pharmacy
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

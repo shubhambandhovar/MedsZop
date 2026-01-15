@@ -13,10 +13,11 @@ import { toast } from 'sonner';
 interface LoginProps {
   onLogin: (user: User) => void;
   onBack: () => void;
+  onRegister?: () => void;
   language: Language;
 }
 
-export function Login({ onLogin, language }: LoginProps) {
+export function Login({ onLogin, onRegister, language }: LoginProps) {
   const [activeRole, setActiveRole] = useState<'user' | 'pharmacy' | 'admin'>('user');
   const [activeTab, setActiveTab] = useState('login');
   
@@ -398,6 +399,22 @@ export function Login({ onLogin, language }: LoginProps) {
                 >
                   {isLoading ? (language === 'en' ? 'Logging in...' : 'लॉगिन जारी है...') : (language === 'en' ? 'Login' : 'लॉगिन')}
                 </Button>
+
+                {/* Pharmacy Registration Link */}
+                {onRegister && (
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600">
+                      {language === 'en' ? "Don't have a pharmacy account?" : 'फार्मेसी खाता नहीं है?'}
+                    </p>
+                    <Button
+                      variant="link"
+                      onClick={onRegister}
+                      className="text-[var(--health-green)] hover:text-[var(--health-green-dark)] font-semibold"
+                    >
+                      {language === 'en' ? 'Register as Pharmacy Partner' : 'फार्मेसी पार्टनर के रूप में पंजीकरण करें'}
+                    </Button>
+                  </div>
+                )}
 
                 <div className="space-y-2 rounded-lg bg-green-50 p-3">
                   <p className="text-center text-xs font-semibold text-green-900">{language === 'en' ? 'Demo Account:' : 'डेमो खाता:'}</p>

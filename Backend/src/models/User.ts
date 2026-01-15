@@ -24,6 +24,15 @@ export interface IUser extends Document {
   firstLogin: boolean;
   addresses: IAddress[];
   savedPrescriptions: string[]; // Array of prescription IDs
+  // Pharmacy-specific fields
+  pharmacyName?: string;
+  pharmacyLicenseUrl?: string;
+  pharmacyLicenseNumber?: string;
+  isApproved?: boolean;
+  approvedBy?: mongoose.Types.ObjectId;
+  approvedAt?: Date;
+  rejectionReason?: string;
+  // End pharmacy fields
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   createdBy?: mongoose.Types.ObjectId;
@@ -99,6 +108,35 @@ const UserSchema = new Schema<IUser>({
     type: Schema.Types.ObjectId,
     ref: 'Prescription'
   }],
+  // Pharmacy-specific fields
+  pharmacyName: {
+    type: String,
+    trim: true
+  },
+  pharmacyLicenseUrl: {
+    type: String
+  },
+  pharmacyLicenseNumber: {
+    type: String,
+    trim: true
+  },
+  isApproved: {
+    type: Boolean,
+    default: function(this: IUser) {
+      return this.role !== 'pharmacy'; // Auto-approve non-pharmacy users
+    }
+  },
+  approvedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: {
+    type: Date
+  },
+  rejectionReason: {
+    type: String
+  },
+  // End pharmacy fields
   passwordResetToken: String,
   passwordResetExpires: Date,
   createdBy: {
