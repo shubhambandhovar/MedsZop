@@ -13,39 +13,48 @@ import { auth } from '../firebase';
 ========================= */
 
 export const googleLogin = async () => {
-  const provider = new GoogleAuthProvider();
 
-  // Open Google popup
+  const provider = new GoogleAuthProvider();
   const result = await signInWithPopup(auth, provider);
 
-  // Get Firebase ID token
   const token = await result.user.getIdToken();
 
-  // Send token to backend
-  return api.post('/auth/firebase-login', {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
+  return api.post(
+    '/auth/firebase-login',
+    {},
+    {
+      headers: {
+        Authorization: "Bearer " + token
+      }
     }
-  });
+  );
 };
 
 /* =========================
-   PHONE OTP LOGIN
+   PHONE OTP LOGIN (FIXED)
 ========================= */
 
 export const startPhoneLogin = async (phone: string) => {
 
-  // Create reCAPTCHA only once
-  if (!(window as any).recaptchaVerifier) {
-
-    (window as any).recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      'recaptcha-container',
-      {
-        size: 'invisible'
-      }
-    );
+  // Clear old recaptcha if exists
+  if ((window as any).recaptchaVerifier) {
+    (window as any).recaptchaVerifier.clear();
   }
+
+  // Get DOM element instead of string ID
+  const recaptchaContainer =
+    document.getElementById('recaptcha-container') as HTMLElement;
+
+  if (!recaptchaContainer) {
+    throw new Error("reCAPTCHA container not found");
+  }
+
+  // Create verifier (correct order: auth, container, options)
+  (window as any).recaptchaVerifier = new RecaptchaVerifier(
+    auth,
+    recaptchaContainer,
+    { size: 'invisible' }
+  );
 
   // Send OTP
   return signInWithPhoneNumber(
@@ -61,16 +70,16 @@ export const startPhoneLogin = async (phone: string) => {
 
 export const confirmPhoneOtp = async (confirmation: any, code: string) => {
 
-  // Verify OTP
   const result = await confirmation.confirm(code);
-
-  // Get Firebase token
   const token = await result.user.getIdToken();
 
-  // Send token to backend
-  return api.post('/auth/firebase-login', {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
+  return api.post(
+    '/auth/firebase-login',
+    {},
+    {
+      headers: {
+        Authorization: "Bearer " + token
+      }
     }
-  });
+  );
 };
