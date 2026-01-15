@@ -8,6 +8,7 @@ import { Shield, Eye, EyeOff, User as UserIcon, Store, Lock } from 'lucide-react
 import { Language, User } from '../types';
 import { mockUser, mockPharmacyUser, mockAdminUser } from '../data/mockData';
 import { authService } from '../../services/authService';
+import { googleLogin, startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 
 interface LoginProps {
@@ -552,5 +553,6 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
     </div>
   );
 }
+
 
 
