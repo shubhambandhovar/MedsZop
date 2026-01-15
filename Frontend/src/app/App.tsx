@@ -116,22 +116,33 @@ export default function App() {
     setCartItems([]);
     
     // Sync data from cloud based on user role
+    // Note: Mock tokens won't work with backend auth, so we skip sync for mock users
+    const isMockUser = user.id?.startsWith('mock-') || user.id?.startsWith('pharmacy-') || user.id?.startsWith('admin-');
+    
     try {
       if (user.role === 'pharmacy') {
-        await cloudSyncService.syncPharmacyDataOnLogin(user.id);
+        if (!isMockUser) {
+          await cloudSyncService.syncPharmacyDataOnLogin(user.id);
+          toast.success(language === 'en' ? 'Welcome Pharmacy! Data synced from cloud.' : 'फार्मेसी स्वागत है! क्लाउड से डेटा सिंक हो गया।');
+        } else {
+          toast.success(language === 'en' ? 'Welcome Pharmacy!' : 'फार्मेसी स्वागत है!');
+        }
         setViewMode('pharmacy');
-        toast.success(language === 'en' ? 'Welcome Pharmacy! Data synced from cloud.' : 'फार्मेसी स्वागत है! क्लाउड से डेटा सिंक हो गया।');
       } else if (user.role === 'admin') {
         setViewMode('admin');
         window.history.replaceState(null, '', '/admin/dashboard');
         toast.success(language === 'en' ? 'Welcome Admin!' : 'व्यवस्थापक स्वागत है!');
       } else {
         // Regular user - sync orders, prescriptions, subscriptions, profile
-        const syncResult = await cloudSyncService.syncUserDataOnLogin(user.id);
-        if (syncResult) {
-          toast.success(language === 'en' ? 'Login successful! Data synced from cloud.' : 'लॉगिन सफल! क्लाउड से डेटा सिंक हो गया।');
+        if (!isMockUser) {
+          const syncResult = await cloudSyncService.syncUserDataOnLogin(user.id);
+          if (syncResult) {
+            toast.success(language === 'en' ? 'Login successful! Data synced from cloud.' : 'लॉगिन सफल! क्लाउड से डेटा सिंक हो गया।');
+          } else {
+            toast.warning(language === 'en' ? 'Login successful! Using offline data.' : 'लॉगिन सफल! ऑफ़लाइन डेटा उपयोग कर रहे हैं।');
+          }
         } else {
-          toast.warning(language === 'en' ? 'Login successful! Using offline data.' : 'लॉगिन सफल! ऑफ़लाइन डेटा उपयोग कर रहे हैं।');
+          toast.success(language === 'en' ? 'Login successful!' : 'लॉगिन सफल!');
         }
         setViewMode('user');
         setCurrentView('home');
