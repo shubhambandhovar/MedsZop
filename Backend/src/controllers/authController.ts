@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import User from '../models/User';
+import { FirebaseRequest } from '../middleware/firebaseAuth';
 
 // Generate JWT Token
 const generateToken = (id: string, role: string, permissions: string[]): string => {
@@ -195,6 +196,56 @@ export const login = async (req: Request, res: Response) => {
       success: false,
       message: error.message || 'Server error during login'
     });
+  }
+};
+
+// @desc    Login/Create user via Firebase token
+// @route   POST /api/auth/firebase-login
+// @access  Public (protected by firebaseAuth middleware)
+export const firebaseLogin = async (req: FirebaseRequest, res: Response) => {
+  try {
+    const firebaseUser = req.firebaseUser;
+
+    if (!firebaseUser) {
+      return res.status(401).json({ success: false, message: 'No Firebase user attached' });
+    }
+
+    const { uid, email, phone } = firebaseUser;
+
+    let user = await User.findOne({ uid });
+
+    if (!user) {
+      user = await User.create({
+        uid,
+        email,
+        phone: phone || '0000000000',
+        role: 'user',
+        password: null
+      });
+    }
+
+    const token = generateToken(user._id.toString(), user.role, user.permissions || []);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Firebase login successful',
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          permissions: user.permissions,
+          status: user.status,
+          firstLogin: user.firstLogin,
+          addresses: user.addresses
+        },
+        token
+      }
+    });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, message: error.message || 'Server error during Firebase login' });
   }
 };
 

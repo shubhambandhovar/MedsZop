@@ -13,6 +13,7 @@ export interface IAddress {
 }
 
 export interface IUser extends Document {
+  uid?: string;
   name: string;
   email: string;
   password: string | null;
@@ -57,6 +58,11 @@ const AddressSchema = new Schema<IAddress>({
 });
 
 const UserSchema = new Schema<IUser>({
+  uid: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
   name: {
     type: String,
     required: [true, 'Please provide a name'],
@@ -77,7 +83,7 @@ const UserSchema = new Schema<IUser>({
   },
   phone: {
     type: String,
-    required: [function(this: IUser) { return this.role === 'user' || this.role === 'pharmacy'; }, 'Please provide a phone number'],
+    required: false,
     match: [/^[0-9]{10}$/, 'Please provide a valid 10-digit phone number'],
     default: '0000000000'
   },
