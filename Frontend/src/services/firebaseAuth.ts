@@ -20,7 +20,7 @@ export const googleLogin = async () => {
   const token = await result.user.getIdToken();
 
   return api.post(
-    '/api/auth/firebase-login',
+    '/auth/firebase-login',
     {},
     {
       headers: {
@@ -74,7 +74,7 @@ export const confirmPhoneOtp = async (confirmation: any, code: string) => {
   const token = await result.user.getIdToken();
 
   return api.post(
-    '/api/auth/firebase-login',
+    '/auth/firebase-login',
     {},
     {
       headers: {
