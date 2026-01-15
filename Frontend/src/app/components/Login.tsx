@@ -49,6 +49,10 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
       setIsLoading(true);
       const result = await googleLogin();
       if (result?.data?.success) {
+        // Save token and user to localStorage
+        localStorage.setItem('token', result.data.data.token);
+        authService.saveCurrentUser(result.data.data.user);
+        
         toast.success(language === 'en' ? 'Google login successful!' : 'गूगल लॉगिन सफल!');
         onLogin(result.data.data.user);
       }
@@ -87,6 +91,10 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
       setIsLoading(true);
       const result = await confirmPhoneOtp(confirmation, otpCode);
       if (result?.data?.success) {
+        // Save token and user to localStorage
+        localStorage.setItem('token', result.data.data.token);
+        authService.saveCurrentUser(result.data.data.user);
+        
         toast.success('Phone login successful!');
         onLogin(result.data.data.user);
       }
