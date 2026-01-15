@@ -148,6 +148,13 @@ const seedData = async () => {
         password: 'password123',
         phone: '9876543212',
         role: 'pharmacy'
+      },
+      {
+        name: 'Shubham Shrivastava',
+        email: 'shubham.shrivastava@medszop.com',
+        password: 'founder@123',
+        phone: '7354255105',
+        role: 'admin'
       }
     ];
 
@@ -172,6 +179,7 @@ const seedData = async () => {
     console.log('User: shreya@test.com / Meds257');
     console.log('Admin: admin@test.com / Meds257');
     console.log('Pharmacy: pharmacy@test.com / password123');
+    console.log('Founder Admin: shubham.shrivastava@medszop.com / founder@123');
 
     process.exit(0);
   } catch (error) {
