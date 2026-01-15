@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.memoryStorage(); // Store in memory for processing
 const upload = multer({
   storage,
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: any, file: any, cb: any) => {
     const allowedMimes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
@@ -30,7 +30,7 @@ const upload = multer({
 });
 
 interface PrescriptionUploadRequest extends Request {
-  file?: Express.Multer.File;
+  file?: any;
 }
 
 /**
