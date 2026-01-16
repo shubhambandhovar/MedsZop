@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { OTPModal } from './auth/OTPModal';
-import { useTheme } from '../contexts/ThemeContext';
 import { authService } from '../../services/authService';
 import { startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 import { User } from '../types';
-import { Moon, Sun } from 'lucide-react';
 
 interface NewLoginProps {
   onLogin: (user: User) => void;
@@ -13,7 +11,6 @@ interface NewLoginProps {
 }
 
 export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegister }) => {
-  const { actualTheme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -217,18 +214,6 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
       {/* Right Panel - Dark Theme Login Form */}
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 relative">
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="absolute top-6 right-6 p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors z-50"
-          aria-label="Toggle theme"
-        >
-          {actualTheme === 'dark' ? (
-            <Sun className="h-5 w-5 text-yellow-400" />
-          ) : (
-            <Moon className="h-5 w-5 text-gray-700" />
-          )}
-        </button>
 
         <div className="w-full max-w-md">
           {/* Header */}
@@ -264,18 +249,18 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             {/* Password */}
             <div>
               <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
+                <input"w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pl-11"
+                />
+                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-500"
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   placeholder="Password"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute right-3 top-3.5 ${actualTheme === 'dark' ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
+                  className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-300"
                 >
                   {showPassword ? (
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,9 +284,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className={`w-4 h-4 rounded text-blue-600 focus:ring-blue-500 ${actualTheme === 'dark' ? 'border-gray-600 bg-gray-800 focus:ring-offset-gray-900' : 'border-gray-300 bg-white focus:ring-offset-white'}`}
+                  className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900"
                 />
-                <span className={`text-sm ${actualTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Remember me</span>
+                <span className="text-sm text-gray-400">Remember me</span>
               </label>
               
               <button
@@ -309,7 +294,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 onClick={() => {
                   toast.info('Password reset feature coming soon! Please contact support at support@medszop.com');
                 }}
-                className={`text-sm transition-colors ${actualTheme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
                 Forgot password?
               </button>
@@ -343,7 +328,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className={`w-full py-3 px-4 border font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 hover:bg-gray-750 text-gray-300' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'}`}
+              className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -358,7 +343,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               <button
                 type="button"
                 onClick={() => setShowPhoneOTPForm(true)}
-                className={`w-full py-3 px-4 border font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 hover:bg-gray-750 text-gray-300' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'}`}
+                className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
