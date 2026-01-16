@@ -216,17 +216,17 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
       </div>
 
       {/* Right Panel - Dark Theme Login Form */}
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 relative">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 light:from-white light:via-gray-50 light:to-white p-8 relative">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="absolute top-6 right-6 p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+          className="absolute top-6 right-6 p-2 rounded-lg bg-gray-800 dark:bg-gray-800 light:bg-white light:border light:border-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100 transition-colors z-50"
           aria-label="Toggle theme"
         >
           {actualTheme === 'dark' ? (
             <Sun className="h-5 w-5 text-yellow-400" />
           ) : (
-            <Moon className="h-5 w-5 text-gray-300" />
+            <Moon className="h-5 w-5 text-gray-700" />
           )}
         </button>
 
