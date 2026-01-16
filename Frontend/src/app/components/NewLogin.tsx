@@ -332,6 +332,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="px-3 bg-gray-900 text-gray-400">
+                OR CONTINUE WITH
+              </span>
+            </div>
           </div>
 
           {/* Social Login Buttons */}
