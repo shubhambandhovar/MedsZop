@@ -237,9 +237,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   placeholder="Email"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors pl-11 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pl-11"
                 />
-                <svg className={`absolute left-3 top-3.5 h-5 w-5 ${actualTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -249,9 +249,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             {/* Password */}
             <div>
               <div className="relative">
-                <input"w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pl-11"
-                />
-                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-500"
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   placeholder="Password"
