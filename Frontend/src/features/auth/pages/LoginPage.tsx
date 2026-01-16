@@ -228,12 +228,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               placeholder="+91 98765 43210"
               value={otpPhone}
               onChange={(e) => setOtpPhone(e.target.value)}
-              className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+              className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white transition-all"
             />
             <button
               onClick={handlePhoneOTPRequest}
               type="button"
-              className="bg-secondary-600 hover:bg-secondary-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
             >
               Send OTP
             </button>

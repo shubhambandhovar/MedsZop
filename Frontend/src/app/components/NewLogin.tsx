@@ -250,14 +250,14 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   if (!value.startsWith('+')) value = '+' + value.replace(/\+/g, '');
                   setOtpPhone(value);
                 }}
-                className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 disabled={isLoading}
               />
               <button
                 type="button"
                 onClick={handlePhoneOTPRequest}
                 disabled={isLoading || !otpPhone.startsWith('+') || otpPhone.length < 10}
-                className="px-6 py-2 bg-secondary-600 hover:bg-secondary-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Send OTP
               </button>
