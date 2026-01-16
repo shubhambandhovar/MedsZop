@@ -116,23 +116,29 @@ export default function App() {
   };
 
   const handleLogin = async (user: User) => {
+    console.log('🔐 Login handler called with user:', user);
     setIsLoggedIn(true);
     setUser(user);
     setCartItems([]);
     
     // Sync data from cloud based on user role
     // Note: Mock tokens won't work with backend auth, so we skip sync for mock users
-    const isMockUser = user.id?.startsWith('mock-') || user.id?.startsWith('pharmacy-') || user.id?.startsWith('admin-');
+    const isMockUser = user.id?.startsWith('mock-') || user.id?.startsWith('pharmacy-') || user.id?.startsWith('admin-') || user.id?.startsWith('demo-');
+    console.log('Is mock user:', isMockUser, 'User ID:', user.id);
     
     try {
       if (user.role === 'pharmacy') {
+        console.log('🏥 Pharmacy login detected');
+        setViewMode('pharmacy');
+        
         if (!isMockUser) {
+          console.log('Syncing pharmacy data from cloud...');
           await cloudSyncService.syncPharmacyDataOnLogin(user.id);
           toast.success(language === 'en' ? 'Welcome Pharmacy! Data synced from cloud.' : 'फार्मेसी स्वागत है! क्लाउड से डेटा सिंक हो गया।');
         } else {
+          console.log('Mock pharmacy user - skipping cloud sync');
           toast.success(language === 'en' ? 'Welcome Pharmacy!' : 'फार्मेसी स्वागत है!');
         }
-        setViewMode('pharmacy');
       } else if (user.role === 'admin') {
         setViewMode('admin');
         window.history.replaceState(null, '', '/admin/dashboard');
