@@ -118,14 +118,16 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
   };
 
   const handlePhoneOTPRequest = async () => {
-    if (!otpPhone || !otpPhone.startsWith('+')) {
-      toast.error('Please enter a valid phone number with country code (e.g., +919876543210)');
+    if (!otpPhone || otpPhone.length < 10) {
+      toast.error('Please enter a valid phone number');
       return;
     }
 
+    const fullPhoneNumber = countryCode + otpPhone;
+
     setIsLoading(true);
     try {
-      const confirmationResult = await startPhoneLogin(otpPhone);
+      const confirmationResult = await startPhoneLogin(fullPhoneNumber);
       setConfirmation(confirmationResult);
       setShowOTPModal(true);
       toast.success('OTP sent successfully!');
