@@ -216,11 +216,11 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
       </div>
 
       {/* Right Panel - Dark Theme Login Form */}
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 light:from-white light:via-gray-50 light:to-white p-8 relative">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 relative">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="absolute top-6 right-6 p-2 rounded-lg bg-gray-800 dark:bg-gray-800 light:bg-white light:border light:border-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100 transition-colors z-50"
+          className="absolute top-6 right-6 p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors z-50"
           aria-label="Toggle theme"
         >
           {actualTheme === 'dark' ? (
@@ -328,13 +328,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className={`w-full border-t ${actualTheme === 'dark' ? 'border-gray-700' : 'border-gray-300'}`}></div>
+              <div className="w-full border-t border-gray-700"></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className={`px-3 ${actualTheme === 'dark' ? 'bg-gray-900 text-gray-400' : 'bg-white text-gray-600'}`}>
-                OR CONTINUE WITH
-              </span>
-            </div>
+              <span className="px-3 bg-gray-900 text-gray-400">
           </div>
 
           {/* Social Login Buttons */}
@@ -366,9 +363,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 Continue with Phone OTP
               </button>
             ) : (
-              <div className={`border rounded-lg p-4 space-y-3 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-300'}`}>
+              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className={`flex items-center gap-2 text-sm font-medium ${actualTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <div className="flex items-center gap-2 text-gray-300 text-sm font-medium">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
@@ -380,7 +377,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                       setShowPhoneOTPForm(false);
                       setOtpPhone('');
                     }}
-                    className={actualTheme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}
+                    className="text-gray-400 hover:text-gray-200"
                   >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -392,7 +389,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
-                    className={`w-28 px-3 py-2.5 border rounded-lg focus:border-blue-500 focus:outline-none text-sm ${actualTheme === 'dark' ? 'bg-gray-900 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className="w-28 px-3 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white text-sm"
                     disabled={isLoading}
                   >
                     {countryCodes.map((item) => (
@@ -409,7 +406,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                       const value = e.target.value.replace(/[^0-9]/g, '');
                       setOtpPhone(value);
                     }}
-                    className={`flex-1 px-4 py-2.5 border rounded-lg focus:border-blue-500 focus:outline-none ${actualTheme === 'dark' ? 'bg-gray-900 border-gray-600 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
+                    className="flex-1 px-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white placeholder-gray-500"
                     disabled={isLoading}
                   />
                 </div>
@@ -428,12 +425,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
           {/* Register Link */}
           <div className="text-center mt-8">
-            <p className={`text-sm ${actualTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className="text-sm text-gray-400">
               Don't have an account?{' '}
               <button
                 type="button"
                 onClick={onNavigateToRegister}
-                className={`font-semibold transition-colors ${actualTheme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
               >
                 Sign up
               </button>
