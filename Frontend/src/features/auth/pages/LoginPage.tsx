@@ -190,7 +190,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
             </label>
             <button
               type="button"
-              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+              onClick={() => {
+                ErrorHandler.showSuccess('Password reset feature coming soon! Please contact support at support@medszop.com');
+              }}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
               Forgot Password?
             </button>
