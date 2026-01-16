@@ -253,17 +253,6 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
             </button>
           </p>
         </div>
-
-        {/* Demo Credentials */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-2">
-          <p className="text-xs font-semibold text-blue-900 dark:text-blue-300 text-center">
-            Demo Credentials
-          </p>
-          <div className="text-xs text-blue-800 dark:text-blue-400 space-y-1">
-            <p><strong>Customer:</strong> customer@medszop.com / Customer@2026</p>
-            <p><strong>Pharmacy:</strong> pharmacy@medszop.com / Pharmacy@2026</p>
-          </div>
-        </div>
       </div>
 
       {/* OTP Modal */}
