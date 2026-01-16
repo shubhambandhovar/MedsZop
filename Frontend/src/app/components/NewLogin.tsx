@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { AuthLayout } from './auth/AuthLayout';
 import { FloatingInput } from './auth/FloatingInput';
 import { OTPModal } from './auth/OTPModal';
-import { useTheme } from '../contexts/ThemeContext';
 import { authService } from '../../services/authService';
 import { startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 import { User } from '../types';
-import { Moon, Sun, Chrome } from 'lucide-react';
+import { Chrome } from 'lucide-react';
 
 interface NewLoginProps {
   onLogin: (user: User) => void;
@@ -15,7 +14,6 @@ interface NewLoginProps {
 }
 
 export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegister }) => {
-  const { actualTheme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -160,27 +158,15 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
   };
 
   return (
-    <AuthLayout isDarkMode={actualTheme === 'dark'}>
-      {/* Theme Toggle */}
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-        aria-label="Toggle theme"
-      >
-        {actualTheme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-500" />
-        ) : (
-          <Moon className="h-5 w-5 text-gray-700" />
-        )}
-      </button>
+    <AuthLayout isDarkMode={false}>
 
       <div className="space-y-4">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">
             Welcome Back
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600">
             Sign in to continue to MedsZop
           </p>
         </div>
@@ -215,7 +201,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Remember me</span>
+              <span className="text-sm text-gray-700">Remember me</span>
             </label>
             
             <button
@@ -223,7 +209,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               onClick={() => {
                 toast.info('Password reset feature coming soon! Please contact support at support@medszop.com');
               }}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-blue-600 hover:underline"
             >
               Forgot password?
             </button>
@@ -242,10 +228,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         {/* Divider */}
         <div className="relative my-3">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="px-3 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+            <span className="px-3 bg-white text-gray-500">
               OR CONTINUE WITH
             </span>
           </div>
@@ -257,15 +243,15 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             type="button"
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors flex items-center justify-center gap-3"
+            className="w-full py-3 px-4 bg-white border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-3"
           >
             <Chrome className="h-5 w-5 text-blue-600" />
             Continue with Google
           </button>
 
           {/* Phone OTP */}
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 space-y-2">
-            <p className="text-xs font-medium text-center text-gray-700 dark:text-gray-300">
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 space-y-2">
+            <p className="text-xs font-medium text-center text-gray-700">
               Or login with Phone OTP
             </p>
             
@@ -274,7 +260,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-24 px-2 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-sm"
+                  className="w-24 px-2 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none bg-white text-gray-900 font-medium text-sm"
                   disabled={isLoading}
                 >
                   {countryCodes.map((item) => (
@@ -291,7 +277,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                     const value = e.target.value.replace(/[^0-9]/g, '');
                     setOtpPhone(value);
                   }}
-                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none bg-white text-gray-900"
                   disabled={isLoading}
                 />
               </div>
@@ -305,7 +291,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 {isLoading ? 'Sending...' : 'Send OTP'}
               </button>
               
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              <p className="text-xs text-gray-500 text-center">
                 Enter your phone number without country code
               </p>
             </div>
@@ -313,13 +299,13 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         </div>
 
         {/* Register Link */}
-        <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-600 dark:text-gray-400">
+        <div className="text-center pt-2 border-t border-gray-200">
+          <p className="text-xs text-gray-600">
             Don't have an account?{' '}
             <button
               type="button"
               onClick={onNavigateToRegister}
-              className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
+              className="text-primary-600 font-semibold hover:underline"
             >
               Create Account
             </button>

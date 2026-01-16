@@ -17,7 +17,6 @@ interface NewLoginProps {
 }
 
 export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
-  const { actualTheme, toggleTheme } = useTheme();
   const { login } = useAuth();
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -134,20 +133,6 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
 
   return (
     <AuthLayout>
-      {/* Theme Toggle */}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-          aria-label="Toggle theme"
-        >
-          {actualTheme === 'dark' ? (
-            <Sun className="w-5 h-5 text-yellow-500" />
-          ) : (
-            <Moon className="w-5 h-5 text-gray-700" />
-          )}
-        </button>
-      </div>
 
       <div className="space-y-6">
         {/* Email/Password Login */}
@@ -184,7 +169,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
               />
-              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="ml-2 text-sm text-gray-600">
                 Remember me
               </span>
             </label>
@@ -193,7 +178,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               onClick={() => {
                 ErrorHandler.showSuccess('Password reset feature coming soon! Please contact support at support@medszop.com');
               }}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-blue-600 hover:underline"
             >
               Forgot Password?
             </button>
@@ -224,7 +209,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
             <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
           </div>
         </div>
 
@@ -233,7 +218,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
           >
             <Chrome className="w-5 h-5" />
             Continue with Google
@@ -244,10 +229,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
         <div className="space-y-3">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or use phone</span>
+              <span className="px-2 bg-white text-gray-500">Or use phone</span>
             </div>
           </div>
 
@@ -256,7 +241,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               <select
                 value={countryCode}
                 onChange={(e) => setCountryCode(e.target.value)}
-                className="w-24 px-2 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white font-medium transition-all text-sm"
+                className="w-24 px-2 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white text-gray-700 font-medium transition-all text-sm"
               >
                 {countryCodes.map((item) => (
                   <option key={item.code} value={item.code}>
@@ -272,7 +257,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setOtpPhone(value);
                 }}
-                className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white transition-all"
+                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white text-gray-700 transition-all"
               />
             </div>
             
@@ -285,7 +270,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               Send OTP
             </button>
             
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            <p className="text-xs text-gray-500 text-center">
               Enter your phone number without country code
             </p>
           </div>
