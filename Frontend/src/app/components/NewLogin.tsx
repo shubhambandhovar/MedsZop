@@ -23,6 +23,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
   // OTP Login States
   const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showPhoneOTPForm, setShowPhoneOTPForm] = useState(false);
   const [otpPhone, setOtpPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [confirmation, setConfirmation] = useState<any>(null);
@@ -337,12 +338,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
           </div>
 
           {/* Social Login Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-3">
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -350,19 +351,79 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Google
+              Continue with Google
             </button>
             
-            <button
-              type="button"
-              onClick={() => setShowOTPModal(true)}
-              className="py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-              Phone OTP
-            </button>
+            {!showPhoneOTPForm ? (
+              <button
+                type="button"
+                onClick={() => setShowPhoneOTPForm(true)}
+                className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Continue with Phone OTP
+              </button>
+            ) : (
+              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-300 text-sm font-medium">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Login with Phone OTP
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPhoneOTPForm(false);
+                      setOtpPhone('');
+                    }}
+                    className="text-gray-400 hover:text-gray-200"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="flex gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-28 px-3 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white text-sm"
+                    disabled={isLoading}
+                  >
+                    {countryCodes.map((item) => (
+                      <option key={item.code} value={item.code}>
+                        {item.flag} {item.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    placeholder="Enter phone number"
+                    value={otpPhone}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      setOtpPhone(value);
+                    }}
+                    className="flex-1 px-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white placeholder-gray-500"
+                    disabled={isLoading}
+                  />
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={handlePhoneOTPRequest}
+                  disabled={isLoading || otpPhone.length < 10}
+                  className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Sending...' : 'Send OTP'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Register Link */}
