@@ -9,6 +9,25 @@ import { toast } from 'sonner';
 import { User } from '../types';
 import { Moon, Sun, Chrome } from 'lucide-react';
 
+// Login page specific styles
+const loginPageStyles = `
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+`;
+
 interface NewLoginProps {
   onLogin: (user: User) => void;
   onNavigateToRegister: () => void;
@@ -161,6 +180,8 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
   return (
     <AuthLayout isDarkMode={actualTheme === 'dark'}>
+      <style>{loginPageStyles}</style>
+      
       {/* Theme Toggle */}
       <button
         onClick={toggleTheme}
