@@ -100,7 +100,7 @@ export function PharmacyDashboard({
         setPharmacyId(pid);
         
         // Check if this is a mock user (skip API calls for mock users)
-        const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-');
+        const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-') || user.id?.startsWith('demo-');
         
         if (isMockUser) {
           // For mock users, just use localStorage
@@ -273,7 +273,7 @@ export function PharmacyDashboard({
 
     // Check if this is a mock user (skip API calls for mock users)
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-');
+    const isMockUser = user.id?.startsWith('pharmacy-') || user.id?.startsWith('mock-') || user.id?.startsWith('demo-');
 
     try {
       if (isAddingMedicine) {
