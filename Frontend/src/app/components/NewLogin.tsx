@@ -252,9 +252,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   placeholder="Email"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pl-11"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors pl-11 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
                 />
-                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`absolute left-3 top-3.5 h-5 w-5 ${actualTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -270,12 +270,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   placeholder="Password"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-300"
+                  className={`absolute right-3 top-3.5 ${actualTheme === 'dark' ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                   {showPassword ? (
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,9 +299,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900"
+                  className={`w-4 h-4 rounded text-blue-600 focus:ring-blue-500 ${actualTheme === 'dark' ? 'border-gray-600 bg-gray-800 focus:ring-offset-gray-900' : 'border-gray-300 bg-white focus:ring-offset-white'}`}
                 />
-                <span className="text-sm text-gray-400">Remember me</span>
+                <span className={`text-sm ${actualTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Remember me</span>
               </label>
               
               <button
@@ -309,7 +309,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 onClick={() => {
                   toast.info('Password reset feature coming soon! Please contact support at support@medszop.com');
                 }}
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                className={`text-sm transition-colors ${actualTheme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
               >
                 Forgot password?
               </button>
@@ -328,10 +328,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700"></div>
+              <div className={`w-full border-t ${actualTheme === 'dark' ? 'border-gray-700' : 'border-gray-300'}`}></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-gray-900 text-gray-400">
+              <span className={`px-3 ${actualTheme === 'dark' ? 'bg-gray-900 text-gray-400' : 'bg-white text-gray-600'}`}>
                 OR CONTINUE WITH
               </span>
             </div>
@@ -343,7 +343,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className={`w-full py-3 px-4 border font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 hover:bg-gray-750 text-gray-300' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'}`}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -358,7 +358,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               <button
                 type="button"
                 onClick={() => setShowPhoneOTPForm(true)}
-                className="w-full py-3 px-4 bg-gray-800 border border-gray-700 hover:bg-gray-750 text-gray-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                className={`w-full py-3 px-4 border font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700 hover:bg-gray-750 text-gray-300' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'}`}
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -366,9 +366,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 Continue with Phone OTP
               </button>
             ) : (
-              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-3">
+              <div className={`border rounded-lg p-4 space-y-3 ${actualTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-300'}`}>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-300 text-sm font-medium">
+                  <div className={`flex items-center gap-2 text-sm font-medium ${actualTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
@@ -380,7 +380,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                       setShowPhoneOTPForm(false);
                       setOtpPhone('');
                     }}
-                    className="text-gray-400 hover:text-gray-200"
+                    className={actualTheme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}
                   >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -392,7 +392,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                   <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
-                    className="w-28 px-3 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white text-sm"
+                    className={`w-28 px-3 py-2.5 border rounded-lg focus:border-blue-500 focus:outline-none text-sm ${actualTheme === 'dark' ? 'bg-gray-900 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                     disabled={isLoading}
                   >
                     {countryCodes.map((item) => (
@@ -409,7 +409,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                       const value = e.target.value.replace(/[^0-9]/g, '');
                       setOtpPhone(value);
                     }}
-                    className="flex-1 px-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none text-white placeholder-gray-500"
+                    className={`flex-1 px-4 py-2.5 border rounded-lg focus:border-blue-500 focus:outline-none ${actualTheme === 'dark' ? 'bg-gray-900 border-gray-600 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'}`}
                     disabled={isLoading}
                   />
                 </div>
@@ -428,12 +428,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
           {/* Register Link */}
           <div className="text-center mt-8">
-            <p className="text-sm text-gray-400">
+            <p className={`text-sm ${actualTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               Don't have an account?{' '}
               <button
                 type="button"
                 onClick={onNavigateToRegister}
-                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                className={`font-semibold transition-colors ${actualTheme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
               >
                 Sign up
               </button>
