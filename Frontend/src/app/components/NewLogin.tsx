@@ -264,42 +264,46 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               Or login with Phone OTP
             </p>
             
-            <div className="flex gap-2">
-              <select
-                value={countryCode}
-                onChange={(e) => setCountryCode(e.target.value)}
-                className="px-3 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
-                disabled={isLoading}
-              >
-                {countryCodes.map((item) => (
-                  <option key={item.code} value={item.code}>
-                    {item.flag} {item.code}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="tel"
-                placeholder="9876543210"
-                value={otpPhone}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  setOtpPhone(value);
-                }}
-                className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                disabled={isLoading}
-              />
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="w-24 px-2 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-sm"
+                  disabled={isLoading}
+                >
+                  {countryCodes.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.flag} {item.code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  placeholder="9876543210"
+                  value={otpPhone}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setOtpPhone(value);
+                  }}
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  disabled={isLoading}
+                />
+              </div>
+              
               <button
                 type="button"
                 onClick={handlePhoneOTPRequest}
                 disabled={isLoading || otpPhone.length < 10}
-                className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed whitespace-nowrap"
+                className="w-full py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
               >
-                Send OTP
+                {isLoading ? 'Sending...' : 'Send OTP'}
               </button>
+              
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                Enter your phone number without country code
+              </p>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Enter your phone number without country code
-            </p>
           </div>
         </div>
 
