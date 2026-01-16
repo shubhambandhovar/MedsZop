@@ -28,15 +28,8 @@ export const authService = {
   },
 
   login: async (email: string, password: string, role?: 'user' | 'pharmacy' | 'admin'): Promise<AuthResponse> => {
-    // Demo accounts for testing - credentials loaded from environment variables
-    const DEMO_ADMIN_EMAIL = import.meta.env.VITE_DEMO_ADMIN_EMAIL || 'admin@medszop.com';
-    const DEMO_ADMIN_PASS = import.meta.env.VITE_DEMO_ADMIN_PASS || 'demo-admin';
-    const DEMO_CUSTOMER_EMAIL = import.meta.env.VITE_DEMO_CUSTOMER_EMAIL || 'customer@medszop.com';
-    const DEMO_CUSTOMER_PASS = import.meta.env.VITE_DEMO_CUSTOMER_PASS || 'demo-customer';
-    const DEMO_PHARMACY_EMAIL = import.meta.env.VITE_DEMO_PHARMACY_EMAIL || 'pharmacy@medszop.com';
-    const DEMO_PHARMACY_PASS = import.meta.env.VITE_DEMO_PHARMACY_PASS || 'demo-pharmacy';
-    
-    if (email === DEMO_ADMIN_EMAIL && password === DEMO_ADMIN_PASS) {
+    // Demo accounts for testing
+    if (email === 'admin@medszop.com' && password === 'Medsadmin@2026') {
       const mockResponse: AuthResponse = {
         success: true,
         message: 'Admin login successful',
@@ -50,7 +43,7 @@ export const authService = {
       return mockResponse;
     }
 
-    if (email === DEMO_CUSTOMER_EMAIL && password === DEMO_CUSTOMER_PASS) {
+    if (email === 'customer@medszop.com' && password === 'Customer@2026') {
       const mockResponse: AuthResponse = {
         success: true,
         message: 'Customer login successful',
@@ -64,7 +57,7 @@ export const authService = {
       return mockResponse;
     }
 
-    if (email === DEMO_PHARMACY_EMAIL && password === DEMO_PHARMACY_PASS) {
+    if (email === 'pharmacy@medszop.com' && password === 'Pharmacy@2026') {
       const mockResponse: AuthResponse = {
         success: true,
         message: 'Pharmacy login successful',
