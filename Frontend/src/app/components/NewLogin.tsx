@@ -25,7 +25,31 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
   // OTP Login States
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [confirmation, setConfirmation] = useState<any>(null);
+
+  const countryCodes = [
+    { code: '+1', country: 'US/CA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+91', country: 'India', flag: '🇮🇳' },
+    { code: '+86', country: 'China', flag: '🇨🇳' },
+    { code: '+81', country: 'Japan', flag: '🇯🇵' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+39', country: 'Italy', flag: '🇮🇹' },
+    { code: '+61', country: 'Australia', flag: '🇦🇺' },
+    { code: '+7', country: 'Russia', flag: '🇷🇺' },
+    { code: '+55', country: 'Brazil', flag: '🇧🇷' },
+    { code: '+52', country: 'Mexico', flag: '🇲🇽' },
+    { code: '+34', country: 'Spain', flag: '🇪🇸' },
+    { code: '+82', country: 'S. Korea', flag: '🇰🇷' },
+    { code: '+971', country: 'UAE', flag: '🇦🇪' },
+    { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+    { code: '+60', country: 'Malaysia', flag: '🇲🇾' },
+    { code: '+66', country: 'Thailand', flag: '🇹🇭' },
+    { code: '+84', country: 'Vietnam', flag: '🇻🇳' },
+    { code: '+62', country: 'Indonesia', flag: '🇮🇩' },
+  ];
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -241,13 +265,24 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             </p>
             
             <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="px-3 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium"
+                disabled={isLoading}
+              >
+                {countryCodes.map((item) => (
+                  <option key={item.code} value={item.code}>
+                    {item.flag} {item.code}
+                  </option>
+                ))}
+              </select>
               <input
                 type="tel"
-                placeholder="+919876543210"
+                placeholder="9876543210"
                 value={otpPhone}
                 onChange={(e) => {
-                  let value = e.target.value.replace(/[^0-9+]/g, '');
-                  if (!value.startsWith('+')) value = '+' + value.replace(/\+/g, '');
+                  const value = e.target.value.replace(/[^0-9]/g, '');
                   setOtpPhone(value);
                 }}
                 className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -256,14 +291,14 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               <button
                 type="button"
                 onClick={handlePhoneOTPRequest}
-                disabled={isLoading || !otpPhone.startsWith('+') || otpPhone.length < 10}
+                disabled={isLoading || otpPhone.length < 10}
                 className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Send OTP
               </button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Format: +[country code][number]
+              Enter your phone number without country code
             </p>
           </div>
         </div>

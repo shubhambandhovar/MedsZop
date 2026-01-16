@@ -24,7 +24,31 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
   // OTP Login States
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [confirmation, setConfirmation] = useState<any>(null);
+
+  const countryCodes = [
+    { code: '+1', country: 'US/CA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+91', country: 'India', flag: '🇮🇳' },
+    { code: '+86', country: 'China', flag: '🇨🇳' },
+    { code: '+81', country: 'Japan', flag: '🇯🇵' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+39', country: 'Italy', flag: '🇮🇹' },
+    { code: '+61', country: 'Australia', flag: '🇦🇺' },
+    { code: '+7', country: 'Russia', flag: '🇷🇺' },
+    { code: '+55', country: 'Brazil', flag: '🇧🇷' },
+    { code: '+52', country: 'Mexico', flag: '🇲🇽' },
+    { code: '+34', country: 'Spain', flag: '🇪🇸' },
+    { code: '+82', country: 'S. Korea', flag: '🇰🇷' },
+    { code: '+971', country: 'UAE', flag: '🇦🇪' },
+    { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+    { code: '+60', country: 'Malaysia', flag: '🇲🇾' },
+    { code: '+66', country: 'Thailand', flag: '🇹🇭' },
+    { code: '+84', country: 'Vietnam', flag: '🇻🇳' },
+    { code: '+62', country: 'Indonesia', flag: '🇮🇩' },
+  ];
 
   // Form handling with custom hook
   const {
@@ -72,13 +96,15 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
   };
 
   const handlePhoneOTPRequest = async () => {
-    if (!otpPhone || !otpPhone.startsWith('+')) {
-      ErrorHandler.showError('Please enter a valid phone number with country code (e.g., +919876543210)');
+    if (!otpPhone || otpPhone.length < 10) {
+      ErrorHandler.showError('Please enter a valid phone number');
       return;
     }
 
+    const fullPhoneNumber = countryCode + otpPhone;
+
     try {
-      const result = await startPhoneLogin(otpPhone);
+      const result = await startPhoneLogin(fullPhoneNumber);
       setConfirmation(result);
       setShowOTPModal(true);
       ErrorHandler.showSuccess('OTP sent successfully!');
@@ -223,21 +249,39 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
           </div>
 
           <div className="flex gap-2">
+            <select
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+              className="px-3 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white font-medium transition-all"
+            >
+              {countryCodes.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.flag} {item.code}
+                </option>
+              ))}
+            </select>
             <input
               type="tel"
-              placeholder="+91 98765 43210"
+              placeholder="9876543210"
               value={otpPhone}
-              onChange={(e) => setOtpPhone(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                setOtpPhone(value);
+              }}
               className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white transition-all"
             />
             <button
               onClick={handlePhoneOTPRequest}
               type="button"
-              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
+              disabled={otpPhone.length < 10}
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap disabled:cursor-not-allowed"
             >
               Send OTP
             </button>
           </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            Enter your phone number without country code
+          </p>
         </div>
 
         {/* Register Link */}
