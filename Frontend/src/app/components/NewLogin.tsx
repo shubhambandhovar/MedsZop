@@ -9,25 +9,6 @@ import { toast } from 'sonner';
 import { User } from '../types';
 import { Moon, Sun, Chrome } from 'lucide-react';
 
-// Login page specific styles
-const loginPageStyles = `
-  @keyframes gradient {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
-  }
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out;
-  }
-`;
-
 interface NewLoginProps {
   onLogin: (user: User) => void;
   onNavigateToRegister: () => void;
@@ -180,31 +161,28 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
 
   return (
     <AuthLayout isDarkMode={actualTheme === 'dark'}>
-      <style>{loginPageStyles}</style>
-      
       {/* Theme Toggle */}
       <button
         onClick={toggleTheme}
-        className="absolute top-4 right-4 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
+        className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
         aria-label="Toggle theme"
       >
         {actualTheme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-500 group-hover:rotate-180 transition-transform duration-500" />
+          <Sun className="h-5 w-5 text-yellow-500" />
         ) : (
-          <Moon className="h-5 w-5 text-indigo-600 group-hover:-rotate-12 transition-transform duration-500" />
+          <Moon className="h-5 w-5 text-gray-700" />
         )}
       </button>
 
-      <div className="space-y-5 animate-fade-in">
+      <div className="space-y-4">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient mb-2">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Welcome Back
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Sign in to continue to MedsZop
           </p>
-          <div className="h-1 w-20 mx-auto bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
         </div>
 
         {/* Login Form */}
@@ -245,7 +223,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
               onClick={() => {
                 toast.info('Password reset feature coming soon! Please contact support at support@medszop.com');
               }}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200 hover:scale-105 inline-block"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
               Forgot password?
             </button>
@@ -255,18 +233,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
           <button
             type="submit"
             disabled={isLoading}
-            className="group relative w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-purple-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold rounded-xl transition-all duration-300 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
-            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-            <span className="relative flex items-center justify-center gap-2">
-              {isLoading && (
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              )}
-              {isLoading ? 'Signing in...' : 'Sign In'}
-            </span>
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
@@ -288,26 +257,24 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
             type="button"
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="group w-full py-3 px-4 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20 text-gray-700 dark:text-gray-200 font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full py-3 px-4 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors flex items-center justify-center gap-3"
           >
-            <Chrome className="h-5 w-5 text-blue-600 group-hover:rotate-12 transition-transform duration-300" />
-            <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Continue with Google</span>
+            <Chrome className="h-5 w-5 text-blue-600" />
+            Continue with Google
           </button>
 
           {/* Phone OTP */}
-          <div className="relative border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-2xl p-4 space-y-3 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 backdrop-blur-sm hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 bg-white dark:bg-gray-800">
-              <p className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                📱 Or login with Phone OTP
-              </p>
-            </div>
+          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 space-y-2">
+            <p className="text-xs font-medium text-center text-gray-700 dark:text-gray-300">
+              Or login with Phone OTP
+            </p>
             
             <div className="space-y-3">
               <div className="flex gap-2">
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-24 px-2 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-sm transition-all duration-200 hover:border-blue-400"
+                  className="w-24 px-2 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-sm"
                   disabled={isLoading}
                 >
                   {countryCodes.map((item) => (
@@ -324,7 +291,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                     const value = e.target.value.replace(/[^0-9]/g, '');
                     setOtpPhone(value);
                   }}
-                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-200 hover:border-blue-400"
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-primary-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   disabled={isLoading}
                 />
               </div>
@@ -333,10 +300,9 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
                 type="button"
                 onClick={handlePhoneOTPRequest}
                 disabled={isLoading || otpPhone.length < 10}
-                className="group w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
+                className="w-full py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/0 via-white/30 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-                <span className="relative">{isLoading ? 'Sending...' : 'Send OTP'}</span>
+                {isLoading ? 'Sending...' : 'Send OTP'}
               </button>
               
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
@@ -347,15 +313,15 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         </div>
 
         {/* Register Link */}
-        <div className="text-center pt-3 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-xs text-gray-600 dark:text-gray-400">
             Don't have an account?{' '}
             <button
               type="button"
               onClick={onNavigateToRegister}
-              className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-pink-600 font-bold transition-all duration-300 hover:scale-105 inline-block"
+              className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
             >
-              Create Account →
+              Create Account
             </button>
           </p>
         </div>
