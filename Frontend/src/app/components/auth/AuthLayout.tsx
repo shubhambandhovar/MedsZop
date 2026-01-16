@@ -103,7 +103,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, isDarkMode = f
               </div>
 
               {/* Auth Card */}
-              <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 overflow-y-auto max-h-[90vh]">
                 {children}
               </div>
 

@@ -174,19 +174,19 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         )}
       </button>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Welcome Back
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Sign in to continue to MedsZop
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-3">
           <FloatingInput
             label="Email Address"
             type="email"
@@ -237,19 +237,19 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         </form>
 
         {/* Divider */}
-        <div className="relative">
+        <div className="relative my-3">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+          <div className="relative flex justify-center text-xs">
+            <span className="px-3 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
               OR CONTINUE WITH
             </span>
           </div>
         </div>
 
         {/* Social Login */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -261,8 +261,8 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
           </button>
 
           {/* Phone OTP */}
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-3">
-            <p className="text-sm font-medium text-center text-gray-700 dark:text-gray-300">
+          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 space-y-2">
+            <p className="text-xs font-medium text-center text-gray-700 dark:text-gray-300">
               Or login with Phone OTP
             </p>
             
@@ -310,8 +310,8 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
         </div>
 
         {/* Register Link */}
-        <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-xs text-gray-600 dark:text-gray-400">
             Don't have an account?{' '}
             <button
               type="button"
