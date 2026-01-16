@@ -6,7 +6,7 @@ import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Shield, Eye, EyeOff, User as UserIcon, Store, Lock } from 'lucide-react';
 import { Language, User } from '../types';
-import { mockUser, mockPharmacyUser, mockAdminUser } from '../data/mockData';
+import { mockAdminUser, mockUser, mockPharmacyUser } from '../data/mockData';
 import { authService } from '../../services/authService';
 import { googleLogin, startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
@@ -432,12 +432,6 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
                       {isLoading ? (language === 'en' ? 'Logging in...' : 'लॉगिन जारी है...') : (language === 'en' ? 'Login' : 'लॉगिन')}
                     </Button>
 
-                    <div className="space-y-2 rounded-lg bg-blue-50 p-3">
-                      <p className="text-center text-xs font-semibold text-blue-900">{language === 'en' ? 'Demo Account:' : 'डेमो खाता:'}</p>
-                      <p className="text-center text-xs text-blue-800">user@test.com</p>
-                      <p className="text-center text-xs text-blue-800">password123</p>
-                    </div>
-
                     {/* Social Divider */}
                     <div className="relative my-6">
                       <div className="relative flex justify-center text-xs uppercase">
@@ -654,32 +648,6 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
                 </Button>
 
                 {/* Pharmacy Registration Link */}
-                {onRegister && (
-                  <div className="mt-4 text-center">
-                    <p className="text-sm text-gray-600">
-                      {language === 'en' ? "Don't have a pharmacy account?" : 'फार्मेसी खाता नहीं है?'}
-                    </p>
-                    <Button
-                      variant="link"
-                      onClick={onRegister}
-                      className="text-[var(--health-green)] hover:text-[var(--health-green-dark)] font-semibold"
-                    >
-                      {language === 'en' ? 'Register as Pharmacy Partner' : 'फार्मेसी पार्टनर के रूप में पंजीकरण करें'}
-                    </Button>
-                  </div>
-                )}
-
-                <div className="space-y-2 rounded-lg bg-green-50 p-3">
-                  <p className="text-center text-xs font-semibold text-green-900">{language === 'en' ? 'Demo Account:' : 'डेमो खाता:'}</p>
-                  <p className="text-center text-xs text-green-800">pharmacy@healthplus.com</p>
-                  <p className="text-center text-xs text-green-800">pharmacy123</p>
-                </div>
-
-                <p className="rounded-lg bg-amber-50 p-3 text-center text-xs text-amber-800">
-                  {language === 'en' 
-                    ? 'Contact MedsZop team to register your pharmacy'
-                    : 'अपनी फार्मेसी पंजीकृत करने के लिए MedsZop टीम से संपर्क करें'}
-                </p>
               </div>
             )}
 
@@ -734,9 +702,8 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
                 </div>
 
                 <div className="space-y-1 rounded-lg bg-purple-50 p-2">
-                  <p className="text-center text-xs font-semibold text-purple-900">{language === 'en' ? 'Demo Account:' : 'डेमो खाता:'}</p>
+                  <p className="text-center text-xs font-semibold text-purple-900">{language === 'en' ? 'Admin Account' : 'व्यवस्थापक खाता'}</p>
                   <p className="text-center text-xs text-purple-800">admin@medszop.com</p>
-                  <p className="text-center text-xs text-purple-800">admin123</p>
                 </div>
 
                 <p className="rounded-lg bg-red-50 p-2 text-center text-xs text-red-800">
@@ -758,42 +725,6 @@ export function Login({ onLogin, onRegister, language }: LoginProps) {
             </div>
           </CardContent>
         </Card>
-
-        {/* Quick Demo Access */}
-        <div className="mt-6 text-center">
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground mb-2">{language === 'en' ? 'Quick access to demo accounts:' : 'डेमो खातों तक त्वरित पहुंच:'}</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  onLogin(mockUser);
-                }}
-              >
-                {language === 'en' ? 'Demo Customer' : 'डेमो ग्राहक'}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  onLogin(mockPharmacyUser);
-                }}
-              >
-                {language === 'en' ? 'Demo Pharmacy' : 'डेमो फार्मेसी'}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  onLogin(mockAdminUser);
-                }}
-              >
-                {language === 'en' ? 'Demo Admin' : 'डेमो व्यवस्थापक'}
-              </Button>
-            </div>
-          </div>
-        </div>
 
         {/* Terms */}
         <p className="mt-6 text-center text-xs text-muted-foreground">

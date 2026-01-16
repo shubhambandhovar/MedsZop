@@ -9,7 +9,8 @@ import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
 import { OrderTracking } from './components/OrderTracking';
 import { UserProfile } from './components/UserProfile';
-import { Login } from './components/Login';
+import { NewLogin } from './components/NewLogin';
+import { NewRegister } from './components/NewRegister';
 import { PharmacyRegister } from './components/PharmacyRegister';
 import { AIChatbot } from './components/AIChatbot';
 import { EditProfileModal } from './components/EditProfileModal';
@@ -22,6 +23,8 @@ import { OrderSuccess } from './components/OrderSuccess';
 import { SubscriptionPlans } from './components/SubscriptionPlans';
 import { SubscriptionManager } from './components/SubscriptionManager';
 import { DoctorConsultationUI } from './components/DoctorConsultation';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from '../features/auth';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { authService } from '../services/authService';
@@ -48,6 +51,7 @@ import {
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('login');
+  const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [language, setLanguage] = useState<Language>('en');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User>(mockUser);
@@ -398,61 +402,78 @@ export default function App() {
   // Render login page if not authenticated
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen">
-        <Login 
-          onLogin={handleLogin} 
-          onBack={() => setCurrentView('login')} 
-          onRegister={() => setCurrentView('pharmacy-register')}
-          language={language} 
-        />
+      <AuthProvider>
+      <ThemeProvider>
+        {authView === 'login' ? (
+          <NewLogin
+            onLogin={handleLogin}
+            onNavigateToRegister={() => setAuthView('register')}
+          />
+        ) : (
+          <NewRegister
+            onRegister={handleLogin}
+            onNavigateToLogin={() => setAuthView('login')}
+          />
+        )}
         <Toaster position="top-right" richColors />
-      </div>
+      </ThemeProvider>
+      </AuthProvider>
     );
   }
 
   // Render pharmacy dashboard
   if (viewMode === 'pharmacy') {
     return (
-      <div className="min-h-screen">
-        <PharmacyDashboard
-          pharmacyName={mockPharmacies[0].name}
-          orders={mockPharmacyOrders}
-          inventory={mockMedicines}
-          onAcceptOrder={handleAcceptOrder}
-          onRejectOrder={handleRejectOrder}
-          onLogout={handleLogout}
-        />
-        <Toaster position="top-right" />
-      </div>
+      <AuthProvider>
+      <ThemeProvider>
+        <div className="min-h-screen">
+          <PharmacyDashboard
+            pharmacyName={mockPharmacies[0].name}
+            orders={mockPharmacyOrders}
+            inventory={mockMedicines}
+            onAcceptOrder={handleAcceptOrder}
+            onRejectOrder={handleRejectOrder}
+            onLogout={handleLogout}
+          />
+          <Toaster position="top-right" />
+        </div>
+      </ThemeProvider>
+      </AuthProvider>
     );
   }
 
   // Render admin dashboard
   if (viewMode === 'admin') {
     return (
-      <div className="min-h-screen">
-        <AdminDashboard onLogout={handleLogout} currentUser={user} />
-        <Toaster position="top-right" />
-      </div>
+      <AuthProvider>
+      <ThemeProvider>
+        <div className="min-h-screen">
+          <AdminDashboard onLogout={handleLogout} currentUser={user} />
+          <Toaster position="top-right" />
+        </div>
+      </ThemeProvider>
+      </AuthProvider>
     );
   }
 
   // Render user view (main app)
   return (
-    <div className="min-h-screen">
-      {currentView !== 'login' && (
-        <Header
-          cartCount={cartItems.length}
-          onCartClick={() => setCurrentView('cart')}
-          onProfileClick={() => setCurrentView('profile')}
-          onChatbotClick={() => setShowChatbot(true)}
-          onLoginClick={() => setCurrentView('login')}
-          onHomeClick={() => setCurrentView('home')}
-          isLoggedIn={isLoggedIn}
-          language={language}
-          onLanguageToggle={handleLanguageToggle}
-        />
-      )}
+    <AuthProvider>
+    <ThemeProvider>
+      <div className="min-h-screen">
+        {currentView !== 'login' && (
+          <Header
+            cartCount={cartItems.length}
+            onCartClick={() => setCurrentView('cart')}
+            onProfileClick={() => setCurrentView('profile')}
+            onChatbotClick={() => setShowChatbot(true)}
+            onLoginClick={() => setCurrentView('login')}
+            onHomeClick={() => setCurrentView('home')}
+            isLoggedIn={isLoggedIn}
+            language={language}
+            onLanguageToggle={handleLanguageToggle}
+          />
+        )}
 
       {currentView === 'home' && (
         <HomePage
@@ -632,5 +653,7 @@ export default function App() {
       <div id="recaptcha-container"></div>
 
     </div>
+    </ThemeProvider>
+    </AuthProvider>
   );
 }

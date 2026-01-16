@@ -1,6 +1,6 @@
 import api from './api';
 import { User } from '../app/types';
-import { mockAdminUser, mockPharmacyUser, mockUser } from '../app/data/mockData';
+import { mockAdminUser, mockUser, mockPharmacyUser } from '../app/data/mockData';
 
 interface AuthResponse {
   success: boolean;
@@ -27,9 +27,9 @@ export const authService = {
     return response.data;
   },
 
-  login: async (email: string, password: string, role: 'user' | 'pharmacy' | 'admin' = 'user'): Promise<AuthResponse> => {
-    // Demo accounts for different roles
-    if (role === 'admin' && email === 'admin@medszop.com' && password === 'Medsadmin@2026') {
+  login: async (email: string, password: string, role?: 'user' | 'pharmacy' | 'admin'): Promise<AuthResponse> => {
+    // Demo accounts for testing
+    if (email === 'admin@medszop.com' && password === 'Medsadmin@2026') {
       const mockResponse: AuthResponse = {
         success: true,
         message: 'Admin login successful',
@@ -43,13 +43,13 @@ export const authService = {
       return mockResponse;
     }
 
-    if (role === 'pharmacy' && email === 'pharmacy@healthplus.com' && password === 'Healthplus@2026') {
+    if (email === 'customer@medszop.com' && password === 'Customer@2026') {
       const mockResponse: AuthResponse = {
         success: true,
-        message: 'Pharmacy login successful',
+        message: 'Customer login successful',
         data: {
-          user: mockPharmacyUser,
-          token: 'mock-pharmacy-token'
+          user: mockUser,
+          token: 'mock-user-token'
         }
       };
       localStorage.setItem('token', mockResponse.data.token);
@@ -57,13 +57,13 @@ export const authService = {
       return mockResponse;
     }
 
-    if (role === 'user' && email === 'user@test.com' && password === 'password123') {
+    if (email === 'pharmacy@medszop.com' && password === 'Pharmacy@2026') {
       const mockResponse: AuthResponse = {
         success: true,
-        message: 'User login successful',
+        message: 'Pharmacy login successful',
         data: {
-          user: mockUser,
-          token: 'mock-user-token'
+          user: mockPharmacyUser,
+          token: 'mock-pharmacy-token'
         }
       };
       localStorage.setItem('token', mockResponse.data.token);

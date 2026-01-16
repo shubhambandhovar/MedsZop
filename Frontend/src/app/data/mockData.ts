@@ -150,16 +150,16 @@ export const mockMedicines: Medicine[] = [
 ];
 
 export const mockUser: User = {
-  id: 'user-1',
-  name: 'Rajesh Kumar',
-  email: 'rajesh@example.com',
+  id: 'demo-user-1',
+  name: 'Demo Customer',
+  email: 'customer@medszop.com',
   phone: '+91 98765 43210',
   role: 'user',
   addresses: [
     {
       id: 'addr-1',
       type: 'home',
-      name: 'Rajesh Kumar',
+      name: 'Demo Customer',
       phone: '+91 98765 43210',
       street: '123, MG Road, Apartment 4B',
       city: 'Bangalore',
@@ -167,18 +167,6 @@ export const mockUser: User = {
       pincode: '560001',
       landmark: 'Near City Hospital',
       isDefault: true,
-    },
-    {
-      id: 'addr-2',
-      type: 'work',
-      name: 'Rajesh Kumar',
-      phone: '+91 98765 43210',
-      street: '456, Tech Park, Building 2',
-      city: 'Bangalore',
-      state: 'Karnataka',
-      pincode: '560037',
-      landmark: 'Opposite Metro Station',
-      isDefault: false,
     },
   ],
   orders: [],
@@ -197,18 +185,18 @@ export const mockAdminUser: User = {
 };
 
 export const mockPharmacyUser: User = {
-  id: 'pharmacy-user-1',
-  name: 'HealthPlus Pharmacy',
-  email: 'pharmacy@healthplus.com',
+  id: 'demo-pharmacy-1',
+  name: 'Demo Pharmacy',
+  email: 'pharmacy@medszop.com',
   phone: '+91 98765 54321',
   role: 'pharmacy',
   addresses: [
     {
       id: 'pharmacy-addr-1',
       type: 'work',
-      name: 'HealthPlus Pharmacy',
+      name: 'Demo Pharmacy',
       phone: '+91 98765 54321',
-      street: '789, Pharmacy Lane, Suite 100',
+      street: '456, Pharmacy Lane, Suite 100',
       city: 'Bangalore',
       state: 'Karnataka',
       pincode: '560034',
@@ -239,39 +227,8 @@ export const mockPrescriptions: Prescription[] = [
   },
 ];
 
-export const mockOrders: Order[] = [
-  {
-    id: 'order-1',
-    orderNumber: 'MZ2026010001',
-    date: '2026-01-11T10:30:00',
-    items: [
-      { ...mockMedicines[0], quantity: 1 },
-      { ...mockMedicines[2], quantity: 2 },
-    ],
-    total: 88,
-    status: 'out_for_delivery',
-    deliveryAddress: mockUser.addresses[0],
-    estimatedDeliveryTime: 25,
-    paymentMethod: 'UPI',
-    prescriptionRequired: false,
-    prescriptionVerified: true,
-  },
-  {
-    id: 'order-2',
-    orderNumber: 'MZ2026010802',
-    date: '2026-01-08T14:20:00',
-    items: [
-      { ...mockMedicines[1], quantity: 1 },
-    ],
-    total: 145,
-    status: 'delivered',
-    deliveryAddress: mockUser.addresses[0],
-    estimatedDeliveryTime: 0,
-    paymentMethod: 'Card',
-    prescriptionRequired: true,
-    prescriptionVerified: true,
-  },
-];
+// Empty mock orders - will be populated when user places orders
+export const mockOrders: Order[] = [];
 
 export const mockPharmacies: Pharmacy[] = [
   {
