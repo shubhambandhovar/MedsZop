@@ -25,7 +25,9 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:5175',
     'https://medszop.vercel.app',
-    'https://medszop-frontend.vercel.app'
+    'https://medszop-frontend.vercel.app',
+    'https://medszop.site',
+    'https://www.medszop.site'
   ],
   credentials: true
 }));
