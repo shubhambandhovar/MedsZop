@@ -35,7 +35,7 @@ export function Header({
           <img 
             src="/assets/logo.png" 
             alt="MedsZop Logo"
-            className="h-16 w-auto object-contain dark:invert"
+            className="h-16 w-auto object-contain"
           />
         </div>
 
