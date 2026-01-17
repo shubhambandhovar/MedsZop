@@ -120,13 +120,13 @@ export function PrescriptionUpload({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-8 transition-colors duration-300">
       {/* Camera Modal */}
       {showCamera && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black dark:bg-black">
           <button
             onClick={closeCamera}
-            className="absolute top-4 right-4 z-10 rounded-full bg-white p-2 text-black hover:bg-gray-200"
+            className="absolute top-4 right-4 z-10 rounded-full bg-white dark:bg-slate-800 dark:border dark:border-slate-700 p-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-slate-700"
           >
             <X className="h-6 w-6" />
           </button>
@@ -139,9 +139,9 @@ export function PrescriptionUpload({
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
             <button
               onClick={capturePhoto}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-100"
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-lg hover:bg-gray-100 dark:hover:bg-slate-700"
             >
-              <div className="h-14 w-14 rounded-full border-4 border-black"></div>
+              <div className="h-14 w-14 rounded-full border-4 border-black dark:border-white"></div>
             </button>
           </div>
         </div>

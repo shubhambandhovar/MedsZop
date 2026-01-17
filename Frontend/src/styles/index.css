@@ -1,4 +1,6 @@
 @import './fonts.css';
 @import './tailwind.css';
+@import './theme-tokens.css';
 @import './theme.css';
 @import './medical-theme.css';
+@import './theme-utilities.css';

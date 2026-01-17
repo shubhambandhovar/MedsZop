@@ -147,9 +147,9 @@ export function Checkout({ items, addresses, onBack, onPlaceOrder, onAddAddress,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-32 transition-colors duration-300">
       {/* Header */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm">
+      <div className="sticky top-16 z-40 bg-white dark:bg-slate-800 dark:border-slate-700 shadow-sm dark:shadow-md border-b dark:border-slate-700">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={onBack}>

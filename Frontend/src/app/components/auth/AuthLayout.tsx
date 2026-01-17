@@ -3,12 +3,11 @@ import { Shield, Clock, CheckCircle } from 'lucide-react';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
-  isDarkMode?: boolean;
 }
 
-export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, isDarkMode = false }) => {
+export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
+    <div className="min-h-screen">
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 transition-colors duration-300">
         <div className="container mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[calc(100vh-4rem)]">

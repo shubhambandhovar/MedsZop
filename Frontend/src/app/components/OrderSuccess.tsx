@@ -21,31 +21,31 @@ export function OrderSuccess({
   language
 }: OrderSuccessProps) {
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-8 transition-colors duration-300">
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <div className="grid gap-6 md:grid-cols-3">
           {/* Left Section - Order Success */}
           <div className="md:col-span-2">
-            <Card>
+            <Card className="dark:bg-slate-800 dark:border-slate-700">
               <CardContent className="p-6">
                 {/* Success Icon */}
                 <div className="mb-6 flex justify-center">
                   <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-green-400 opacity-20"></div>
-                    <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-green-100">
-                      <Check className="h-12 w-12 text-green-600" />
+                    <div className="absolute inset-0 animate-ping rounded-full bg-green-400 dark:bg-green-500 opacity-20"></div>
+                    <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                      <Check className="h-12 w-12 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center">
+                    <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center">
                       <div className="h-4 w-4 text-white">✨</div>
                     </div>
-                    <div className="absolute -left-2 -bottom-2 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center">
+                    <div className="absolute -left-2 -bottom-2 h-8 w-8 rounded-full bg-green-500 dark:bg-green-600 flex items-center justify-center">
                       <div className="h-4 w-4 text-white">✨</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Success Message */}
-                <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+                <h1 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">
                   {language === 'en' ? 'Thanks for shopping with us!' : 'हमारे साथ खरीदारी के लिए धन्यवाद!'}
                 </h1>
                 

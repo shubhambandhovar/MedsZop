@@ -100,16 +100,16 @@ export function MedicineSearch({
   }, [searchQuery, selectedCategory, medicines]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-8 transition-colors duration-300">
       {/* Search Header */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm">
+      <div className="sticky top-16 z-40 bg-white dark:bg-slate-800 dark:border-slate-700 shadow-sm dark:shadow-md border-b dark:border-slate-700">
         <div className="container mx-auto px-4 py-4">
           <div className="mb-3 flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={onBack}>
+            <Button variant="ghost" size="icon" onClick={onBack} className="dark:hover:bg-slate-700 dark:text-slate-200">
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
               <Input
                 type="text"
                 placeholder={t.searchPlaceholder}

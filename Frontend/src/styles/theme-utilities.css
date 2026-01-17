@@ -1,0 +1,377 @@
+/**
+ * Theme Utilities
+ * Reusable utility patterns for dark mode and component styling
+ * Eliminates duplication from dark-mode-global.css
+ */
+
+/* ==========================================
+   BACKGROUND UTILITIES
+   Maps Tailwind colors to CSS variables
+   ========================================== */
+
+/* White backgrounds become dark surfaces */
+.dark .bg-white {
+  background-color: var(--color-surface);
+}
+
+/* Gray backgrounds scale in dark mode */
+.dark .bg-gray-50 {
+  background-color: var(--color-surface);
+}
+
+.dark .bg-gray-100 {
+  background-color: var(--color-surface);
+}
+
+.dark .bg-gray-200 {
+  background-color: var(--color-surface-hover);
+}
+
+.dark .bg-gray-300 {
+  background-color: var(--color-surface-active);
+}
+
+/* ==========================================
+   TEXT COLOR UTILITIES
+   Maps all text color scales to dark mode
+   ========================================== */
+
+.dark .text-gray-900,
+.dark .text-black {
+  color: var(--color-text-primary);
+}
+
+.dark .text-gray-800 {
+  color: var(--color-text-primary);
+}
+
+.dark .text-gray-700 {
+  color: var(--color-text-secondary);
+}
+
+.dark .text-gray-600 {
+  color: var(--color-text-secondary);
+}
+
+.dark .text-gray-500 {
+  color: var(--color-text-muted);
+}
+
+.dark .text-gray-400 {
+  color: var(--color-text-muted);
+}
+
+.dark .text-gray-300 {
+  color: var(--color-text-muted);
+}
+
+.dark .text-gray-200 {
+  color: var(--color-text-muted);
+}
+
+.dark .text-gray-100 {
+  color: #f1f5f9;
+}
+
+.dark .text-white {
+  color: var(--color-text-primary);
+}
+
+/* ==========================================
+   BORDER COLOR UTILITIES
+   Maps border colors to CSS variables
+   ========================================== */
+
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: var(--color-border);
+}
+
+.dark .border-gray-300 {
+  border-color: var(--color-border-light);
+}
+
+.dark .border-gray-400 {
+  border-color: var(--color-border-light);
+}
+
+.dark .border-gray-500 {
+  border-color: var(--color-border-medium);
+}
+
+.dark .divide-gray-200 > * {
+  border-color: var(--color-border);
+}
+
+/* ==========================================
+   SEMANTIC COLOR UTILITIES
+   ========================================== */
+
+/* Color shades for different use cases */
+.dark .bg-blue-50 {
+  background-color: #1e40af;
+}
+
+.dark .bg-blue-100 {
+  background-color: #1e3a8a;
+}
+
+.dark .bg-green-50 {
+  background-color: #047857;
+}
+
+.dark .bg-green-100 {
+  background-color: #064e3b;
+}
+
+.dark .bg-red-50 {
+  background-color: #991b1b;
+}
+
+.dark .bg-red-100 {
+  background-color: #7f1d1d;
+}
+
+.dark .bg-yellow-50 {
+  background-color: #92400e;
+}
+
+.dark .bg-yellow-100 {
+  background-color: #78350f;
+}
+
+/* ==========================================
+   FORM ELEMENT UTILITIES
+   ========================================== */
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-input-border);
+  transition: border-color var(--transition-normal);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder,
+.dark select::placeholder {
+  color: var(--color-text-muted);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--color-input-focus);
+  outline-color: var(--color-input-focus);
+}
+
+.dark input:disabled,
+.dark textarea:disabled,
+.dark select:disabled {
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   TABLE UTILITIES
+   ========================================== */
+
+.dark table {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.dark thead {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.dark tbody tr {
+  border-color: var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+.dark tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* ==========================================
+   LINK UTILITIES
+   ========================================== */
+
+.dark a {
+  color: var(--color-primary);
+  transition: color var(--transition-normal);
+}
+
+.dark a:hover {
+  color: var(--color-primary-light);
+}
+
+.dark a:visited {
+  color: var(--color-primary-dark);
+}
+
+/* ==========================================
+   CODE BLOCK UTILITIES
+   ========================================== */
+
+.dark code {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.dark pre {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  overflow-x: auto;
+}
+
+.dark pre code {
+  background-color: transparent;
+  color: inherit;
+}
+
+/* ==========================================
+   SHADOW UTILITIES
+   Uses CSS variables for consistent elevation
+   ========================================== */
+
+.dark .shadow-none {
+  box-shadow: none;
+}
+
+.dark .shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.dark .shadow {
+  box-shadow: var(--shadow-md);
+}
+
+.dark .shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.dark .shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.dark .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ==========================================
+   BUTTON & INTERACTIVE UTILITIES
+   ========================================== */
+
+.dark button {
+  transition: background-color var(--transition-normal),
+              color var(--transition-normal),
+              border-color var(--transition-normal);
+}
+
+.dark button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   FORM LABEL UTILITIES
+   ========================================== */
+
+.dark label,
+.dark legend {
+  color: var(--color-text-primary);
+}
+
+/* ==========================================
+   ACCESSIBILITY & SELECTION
+   Ensures proper contrast for selections
+   ========================================== */
+
+.dark ::selection {
+  background-color: var(--color-primary);
+  color: var(--color-bg-primary);
+}
+
+.dark ::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-bg-primary);
+}
+
+/* ==========================================
+   UTILITY CLASS HELPERS
+   ========================================== */
+
+/* Text truncation */
+.dark .truncate {
+  color: var(--color-text-primary);
+}
+
+.dark .line-clamp-2,
+.dark .line-clamp-3 {
+  color: var(--color-text-primary);
+}
+
+/* Opacity helpers with proper colors */
+.dark .opacity-50 {
+  color: var(--color-text-muted);
+}
+
+/* ==========================================
+   LAYER DEFINITIONS
+   Organize styles by layer priority
+   ========================================== */
+
+@layer components {
+  /* Reusable component patterns */
+  .dark .card-base {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+    transition: background-color var(--transition-normal),
+                border-color var(--transition-normal);
+  }
+
+  .dark .card-base:hover {
+    background-color: var(--color-surface-hover);
+  }
+
+  .dark .surface-base {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+  }
+
+  .dark .input-base {
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-border);
+    color: var(--color-text-primary);
+  }
+
+  .dark .input-base:focus {
+    border-color: var(--color-input-focus);
+  }
+
+  .dark .text-base {
+    color: var(--color-text-primary);
+  }
+
+  .dark .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .dark .text-muted {
+    color: var(--color-text-muted);
+  }
+}

@@ -466,7 +466,7 @@ export default function App() {
   return (
     <AuthProvider>
     <ThemeProvider>
-      <div className="min-h-screen">
+      <div className="min-h-screen dark:bg-slate-900 dark:text-slate-50 transition-colors duration-300">
         {currentView !== 'login' && (
           <Header
             cartCount={cartItems.length}
@@ -650,7 +650,7 @@ export default function App() {
       {showChatbot && <AIChatbot onClose={() => setShowChatbot(false)} language={language} />}
 
       {/* Beta Badge */}
-      <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-2 rounded text-xs font-semibold z-40">
+      <div className="fixed bottom-4 right-4 bg-yellow-100 dark:bg-yellow-900/30 dark:border-yellow-700 dark:text-yellow-300 border border-yellow-400 text-yellow-800 px-3 py-2 rounded text-xs font-semibold z-40">
         MedsZop v0.8 (Beta)
       </div>
 

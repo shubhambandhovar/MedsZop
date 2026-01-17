@@ -3,11 +3,10 @@ import { AuthLayout } from './auth/AuthLayout';
 import { FloatingInput } from './auth/FloatingInput';
 import { PasswordStrengthIndicator } from './auth/PasswordStrengthIndicator';
 import { FileUpload } from './auth/FileUpload';
-import { useTheme } from '../contexts/ThemeContext';
 import { authService } from '../../services/authService';
 import { toast } from 'sonner';
 import { User } from '../types';
-import { Moon, Sun, UserCircle, Store, Calendar } from 'lucide-react';
+import { UserCircle, Store, Calendar } from 'lucide-react';
 
 interface NewRegisterProps {
   onRegister: (user: User) => void;
@@ -17,7 +16,6 @@ interface NewRegisterProps {
 type UserType = 'customer' | 'pharmacy' | null;
 
 export const NewRegister: React.FC<NewRegisterProps> = ({ onRegister, onNavigateToLogin }) => {
-  const { actualTheme, toggleTheme } = useTheme();
   const [userType, setUserType] = useState<UserType>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -174,18 +172,7 @@ export const NewRegister: React.FC<NewRegisterProps> = ({ onRegister, onNavigate
   // User Type Selection Screen
   if (!userType) {
     return (
-      <AuthLayout isDarkMode={actualTheme === 'dark'}>
-        <button
-          onClick={toggleTheme}
-          className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-        >
-          {actualTheme === 'dark' ? (
-            <Sun className="h-5 w-5 text-yellow-500" />
-          ) : (
-            <Moon className="h-5 w-5 text-gray-700" />
-          )}
-        </button>
-
+      <AuthLayout>
         <div className="space-y-6">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -235,18 +222,7 @@ export const NewRegister: React.FC<NewRegisterProps> = ({ onRegister, onNavigate
   // Customer Registration Form
   if (userType === 'customer') {
     return (
-      <AuthLayout isDarkMode={actualTheme === 'dark'}>
-        <button
-          onClick={toggleTheme}
-          className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-        >
-          {actualTheme === 'dark' ? (
-            <Sun className="h-5 w-5 text-yellow-500" />
-          ) : (
-            <Moon className="h-5 w-5 text-gray-700" />
-          )}
-        </button>
-
+      <AuthLayout>
         <div className="space-y-6">
           <div>
             <button
@@ -378,18 +354,7 @@ export const NewRegister: React.FC<NewRegisterProps> = ({ onRegister, onNavigate
 
   // Pharmacy Registration Form
   return (
-    <AuthLayout isDarkMode={actualTheme === 'dark'}>
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-      >
-        {actualTheme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-500" />
-        ) : (
-          <Moon className="h-5 w-5 text-gray-700" />
-        )}
-      </button>
-
+    <AuthLayout>
       <div className="space-y-6">
         <div>
           <button

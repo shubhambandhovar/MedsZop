@@ -1,0 +1,288 @@
+/**
+ * Theme Tokens
+ * Single source of truth for all color and design tokens
+ * These tokens are used across all theme files and components
+ */
+
+:root {
+  /* ==========================================
+     LIGHT MODE (Default) - Base Tokens
+     ========================================== */
+
+  /* Core Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-bg-tertiary: #ececf0;
+  
+  --color-text-primary: #030213;
+  --color-text-secondary: #717182;
+  --color-text-muted: #94a3b8;
+  
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-surface-hover: #f3f3f5;
+  --color-surface-active: #ececf0;
+  
+  /* Semantic Colors */
+  --color-primary: #0369a1;
+  --color-primary-light: #0284c7;
+  --color-primary-dark: #075985;
+  
+  --color-success: #10b981;
+  --color-success-light: #22c55e;
+  --color-success-dark: #059669;
+  
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-dark: #d97706;
+  
+  --color-error: #d4183d;
+  --color-error-light: #ef4444;
+  --color-error-dark: #991b1b;
+  
+  /* Borders */
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-light: #ececf0;
+  --color-border-medium: #cbd5e1;
+  --color-border-dark: #94a3b8;
+  
+  /* Input States */
+  --color-input-bg: #f3f3f5;
+  --color-input-border: rgba(0, 0, 0, 0.1);
+  --color-input-focus: #0369a1;
+  
+  /* Backgrounds by Shade */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f3f5;
+  --color-gray-200: #ececf0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #717182;
+  --color-gray-600: #4a5568;
+  --color-gray-700: #2d3748;
+  --color-gray-800: #1a202c;
+  --color-gray-900: #030213;
+
+  /* Health/Medical Theme */
+  --color-health-blue: #0369a1;
+  --color-health-blue-light: #e0f2fe;
+  --color-health-green: #10b981;
+  --color-health-green-light: #d1fae5;
+  --color-health-amber: #f59e0b;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  /* Radius */
+  --radius-base: 0.625rem;
+  --radius-sm: calc(var(--radius-base) - 4px);
+  --radius-md: calc(var(--radius-base) - 2px);
+  --radius-lg: var(--radius-base);
+  --radius-xl: calc(var(--radius-base) + 4px);
+  
+  /* Transitions */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.2s;
+  --transition-slow: 0.3s;
+  
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/* ==========================================
+   DARK MODE - Override Tokens
+   ========================================== */
+.dark {
+  /* Core Colors */
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-bg-tertiary: #334155;
+  
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  
+  /* Surfaces */
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+  --color-surface-active: #475569;
+  
+  /* Semantic Colors */
+  --color-primary: #3b82f6;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #1e40af;
+  
+  --color-success: #10b981;
+  --color-success-light: #34d399;
+  --color-success-dark: #047857;
+  
+  --color-warning: #fbbf24;
+  --color-warning-light: #fcd34d;
+  --color-warning-dark: #d97706;
+  
+  --color-error: #f87171;
+  --color-error-light: #fca5a5;
+  --color-error-dark: #7f1d1d;
+  
+  /* Borders */
+  --color-border: #334155;
+  --color-border-light: #475569;
+  --color-border-medium: #64748b;
+  --color-border-dark: #475569;
+  
+  /* Input States */
+  --color-input-bg: #1e293b;
+  --color-input-border: #334155;
+  --color-input-focus: #3b82f6;
+  
+  /* Backgrounds by Shade */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #1e293b;
+  --color-gray-200: #334155;
+  --color-gray-300: #475569;
+  --color-gray-400: #64748b;
+  --color-gray-500: #94a3b8;
+  --color-gray-600: #cbd5e1;
+  --color-gray-700: #e2e8f0;
+  --color-gray-800: #f1f5f9;
+  --color-gray-900: #ffffff;
+
+  /* Health/Medical Theme */
+  --color-health-blue: #3b82f6;
+  --color-health-blue-light: #1e40af;
+  --color-health-green: #10b981;
+  --color-health-green-light: #047857;
+  --color-health-amber: #fbbf24;
+  
+  /* Shadows - Enhanced for Dark Mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================
+   LEGACY COMPATIBILITY - Maps old tokens to new ones
+   Keep for backward compatibility during transition
+   ========================================== */
+:root {
+  --font-size: 16px;
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-primary);
+  --primary-foreground: #ffffff;
+  --secondary: #e2e8f0;
+  --secondary-foreground: var(--color-text-primary);
+  --muted: #ececf0;
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-success);
+  --accent-foreground: #ffffff;
+  --destructive: var(--color-error);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-border);
+  --input: transparent;
+  --input-background: var(--color-input-bg);
+  --switch-background: #cbced4;
+  --ring: var(--color-primary);
+  --chart-1: #ff6b6b;
+  --chart-2: #4ecdc4;
+  --chart-3: #45b7d1;
+  --chart-4: #f9ca24;
+  --chart-5: #6c5ce7;
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--color-text-primary);
+  --sidebar-primary: var(--color-primary);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3f3f5;
+  --sidebar-accent-foreground: var(--color-text-secondary);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-primary);
+}
+
+.dark {
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-bg-primary);
+  --secondary: #475569;
+  --secondary-foreground: var(--color-text-primary);
+  --muted: #334155;
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-success);
+  --accent-foreground: var(--color-bg-primary);
+  --destructive: var(--color-error);
+  --destructive-foreground: #fecaca;
+  --border: var(--color-border);
+  --input: var(--color-surface);
+  --input-background: var(--color-bg-primary);
+  --switch-background: #475569;
+  --ring: var(--color-primary);
+  --chart-1: var(--color-primary);
+  --chart-2: var(--color-success);
+  --chart-3: var(--color-warning);
+  --chart-4: #8b5cf6;
+  --chart-5: #ec4899;
+  --sidebar: var(--color-surface);
+  --sidebar-foreground: var(--color-text-primary);
+  --sidebar-primary: var(--color-primary);
+  --sidebar-primary-foreground: var(--color-bg-primary);
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: var(--color-text-primary);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}

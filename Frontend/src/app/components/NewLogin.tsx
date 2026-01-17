@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { AuthLayout } from './auth/AuthLayout';
 import { FloatingInput } from './auth/FloatingInput';
 import { OTPModal } from './auth/OTPModal';
-import { useTheme } from '../contexts/ThemeContext';
 import { authService } from '../../services/authService';
 import { startPhoneLogin, confirmPhoneOtp } from '../../services/firebaseAuth';
 import { toast } from 'sonner';
 import { User } from '../types';
-import { Moon, Sun, Chrome } from 'lucide-react';
+import { Chrome } from 'lucide-react';
 
 interface NewLoginProps {
   onLogin: (user: User) => void;
@@ -15,7 +14,6 @@ interface NewLoginProps {
 }
 
 export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegister }) => {
-  const { actualTheme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -160,20 +158,7 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onLogin, onNavigateToRegiste
   };
 
   return (
-    <AuthLayout isDarkMode={actualTheme === 'dark'}>
-      {/* Theme Toggle */}
-      <button
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-        aria-label="Toggle theme"
-      >
-        {actualTheme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-500" />
-        ) : (
-          <Moon className="h-5 w-5 text-gray-700" />
-        )}
-      </button>
-
+    <AuthLayout>
       <div className="space-y-4">
         {/* Header */}
         <div className="text-center">

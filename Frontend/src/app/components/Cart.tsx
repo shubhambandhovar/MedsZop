@@ -33,16 +33,16 @@ export function Cart({
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-32 transition-colors duration-300">
       {/* Header */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm">
+      <div className="sticky top-16 z-40 bg-white dark:bg-slate-800 dark:border-slate-700 shadow-sm dark:shadow-md border-b dark:border-slate-700">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={onBack}>
+              <Button variant="ghost" size="icon" onClick={onBack} className="dark:hover:bg-slate-700 dark:text-slate-200">
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-lg font-semibold">
+              <h1 className="text-lg font-semibold dark:text-white">
                 {t.cart} ({items.length})
               </h1>
             </div>
@@ -53,13 +53,13 @@ export function Cart({
       {items.length === 0 ? (
         /* Empty Cart */
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-            <ShoppingBag className="h-12 w-12 text-muted-foreground" />
+          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800">
+            <ShoppingBag className="h-12 w-12 text-muted-foreground dark:text-slate-400" />
           </div>
-          <h2 className="mb-2 text-xl font-semibold">
+          <h2 className="mb-2 text-xl font-semibold dark:text-white">
             {language === 'en' ? 'Your cart is empty' : 'आपका कार्ट खाली है'}
           </h2>
-          <p className="mb-6 text-muted-foreground">
+          <p className="mb-6 text-muted-foreground dark:text-slate-400">
             {language === 'en' ? 'Add medicines to get started' : 'शुरू करने के लिए दवाएं जोड़ें'}
           </p>
           <Button onClick={onBack} className="bg-[var(--health-blue)] hover:bg-[var(--health-blue-dark)]">
@@ -69,16 +69,16 @@ export function Cart({
       ) : (
         <div className="container mx-auto px-4 py-4">
           {/* Delivery Time Banner */}
-          <Card className="mb-4 border-[var(--health-green)] bg-[var(--health-green-light)]">
+          <Card className="mb-4 border-[var(--health-green)] dark:border-green-600 bg-[var(--health-green-light)] dark:bg-green-900/20">
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-green)]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--health-green)] dark:bg-green-600">
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-[var(--health-green-dark)]">
+                <h3 className="font-semibold text-[var(--health-green-dark)] dark:text-green-300">
                   {language === 'en' ? 'Delivery Time' : 'डिलीवरी समय'}
                 </h3>
-                <p className="text-sm text-[var(--health-green-dark)]">
+                <p className="text-sm text-[var(--health-green-dark)] dark:text-green-200">
                   {language === 'en'
                     ? `Expected in ${estimatedDeliveryTime} minutes`
                     : `${estimatedDeliveryTime} मिनट में अपेक्षित`}
@@ -179,12 +179,12 @@ export function Cart({
                   </span>
                 </div>
 
-                <div className="border-t pt-3">
+                <div className="border-t dark:border-slate-700 pt-3">
                   <div className="flex justify-between text-base">
-                    <span className="font-semibold">
+                    <span className="font-semibold dark:text-white">
                       {language === 'en' ? 'Total Amount' : 'कुल राशि'}
                     </span>
-                    <span className="font-bold text-[var(--health-blue)]">₹{total.toFixed(2)}</span>
+                    <span className="font-bold text-[var(--health-blue)] dark:text-blue-400">₹{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -195,17 +195,17 @@ export function Cart({
 
       {/* Bottom Action Bar */}
       {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white shadow-lg">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg dark:shadow-2xl">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground dark:text-slate-400">
                   {language === 'en' ? 'Total Amount' : 'कुल राशि'}
                 </p>
-                <p className="text-2xl font-bold text-[var(--health-blue)]">₹{total.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-[var(--health-blue)] dark:text-blue-400">₹{total.toFixed(2)}</p>
               </div>
               <Button
-                className="h-12 flex-1 bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg"
+                className="h-12 flex-1 bg-[var(--health-green)] hover:bg-[var(--health-green-dark)] text-lg dark:bg-green-600 dark:hover:bg-green-700"
                 onClick={onCheckout}
               >
                 {t.checkout}

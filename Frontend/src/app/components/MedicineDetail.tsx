@@ -22,27 +22,27 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-24 transition-colors duration-300">
       {/* Header */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm">
+      <div className="sticky top-16 z-40 bg-white dark:bg-slate-800 dark:border-slate-700 shadow-sm dark:shadow-md border-b dark:border-slate-700">
         <div className="container mx-auto px-4 py-3">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={onBack} className="dark:hover:bg-slate-700 dark:text-slate-200">
             <ChevronLeft className="h-5 w-5" />
           </Button>
         </div>
       </div>
 
       {/* Medicine Image */}
-      <div className="relative bg-white">
+      <div className="relative bg-white dark:bg-slate-800">
         <div className="container mx-auto px-4 py-6">
-          <div className="relative mx-auto h-64 w-full max-w-md overflow-hidden rounded-lg bg-gray-100">
+          <div className="relative mx-auto h-64 w-full max-w-md overflow-hidden rounded-lg bg-gray-100 dark:bg-slate-700">
             <img
               src={medicine.imageUrl}
               alt={medicine.name}
               className="h-full w-full object-cover"
             />
             {medicine.discount > 0 && (
-              <Badge className="absolute right-4 top-4 bg-[var(--health-green)] text-base px-3 py-1">
+              <Badge className="absolute right-4 top-4 bg-[var(--health-green)] dark:bg-green-600 text-base px-3 py-1">
                 {medicine.discount}% OFF
               </Badge>
             )}
@@ -52,42 +52,42 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
 
       {/* Medicine Info */}
       <div className="container mx-auto px-4 py-4">
-        <Card className="mb-4">
+        <Card className="mb-4 dark:bg-slate-800 dark:border-slate-700">
           <CardContent className="p-6">
-            <h1 className="mb-2 text-2xl font-bold">{medicine.brand}</h1>
-            <p className="mb-4 text-muted-foreground">{medicine.genericName}</p>
+            <h1 className="mb-2 text-2xl font-bold dark:text-white">{medicine.brand}</h1>
+            <p className="mb-4 text-muted-foreground dark:text-slate-400">{medicine.genericName}</p>
 
-            <div className="mb-4 space-y-1 border-b pb-4 text-sm">
+            <div className="mb-4 space-y-1 border-b dark:border-slate-700 pb-4 text-sm">
               <div>
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground dark:text-slate-400">
                   {language === 'en' ? 'Manufacturer' : 'निर्माता'}
                 </span>
-                <span className="font-medium">: {medicine.manufacturer}</span>
+                <span className="font-medium dark:text-white">: {medicine.manufacturer}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground dark:text-slate-400">
                   {language === 'en' ? 'Pack Size' : 'पैक साइज़'}
                 </span>
-                <span className="font-medium">: {medicine.packSize}</span>
+                <span className="font-medium dark:text-white">: {medicine.packSize}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground dark:text-slate-400">
                   {language === 'en' ? 'Category' : 'श्रेणी'}
                 </span>
-                <span className="font-medium">: {medicine.category}</span>
+                <span className="font-medium dark:text-white">: {medicine.category}</span>
               </div>
             </div>
 
             <div className="mb-4 flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-[var(--health-blue)]">
+              <span className="text-3xl font-bold text-[var(--health-blue)] dark:text-blue-400">
                 ₹{medicine.price}
               </span>
               {medicine.discount > 0 && (
                 <>
-                  <span className="text-xl text-muted-foreground line-through">
+                  <span className="text-xl text-muted-foreground dark:text-slate-400 line-through">
                     ₹{medicine.mrp}
                   </span>
-                  <span className="text-lg text-[var(--health-green)] font-semibold">
+                  <span className="text-lg text-[var(--health-green)] dark:text-green-400 font-semibold">
                     Save ₹{(medicine.mrp - medicine.price).toFixed(2)}
                   </span>
                 </>
@@ -96,7 +96,7 @@ export function MedicineDetail({ medicine, onBack, onAddToCart, language }: Medi
 
             <div className="mb-4 flex flex-wrap gap-2">
               {medicine.nearbyAvailability ? (
-                <Badge className="bg-[var(--health-green-light)] text-[var(--health-green-dark)] border-[var(--health-green)]">
+                <Badge className="bg-[var(--health-green-light)] dark:bg-green-900/30 text-[var(--health-green-dark)] dark:text-green-300 border-[var(--health-green)] dark:border-green-600">
                   <Clock className="mr-1 h-3 w-3" />
                   {language === 'en' ? `Delivery in ${medicine.estimatedDeliveryTime} mins` : `${medicine.estimatedDeliveryTime} मिनट में डिलीवरी`}
                 </Badge>
