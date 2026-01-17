@@ -7,7 +7,7 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "postinstall": "[ \"$NODE_ENV\" = \"production\" ] && npm run build || true",
+    "postinstall": "node -e \"if (process.env.NODE_ENV === 'production') { require('child_process').spawnSync('npm', ['run', 'build'], { stdio: 'inherit' }); }\"",
     "seed": "ts-node src/seed.ts"
   },
   "keywords": [],
@@ -23,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.0.0",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.10.1"
+    "nodemailer": "^7.0.12",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

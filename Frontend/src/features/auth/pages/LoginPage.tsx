@@ -1,6 +1,28 @@
 /**
  * Refactored Login Component
  * Production-grade login with new auth architecture
+ * 
+ * ⚠️ CRITICAL: LOGIN PAGE DARK MODE IS LOCKED ⚠️
+ * 
+ * This component and its parent AuthLayout use INLINE STYLES with exact
+ * hex colors to maintain the approved dark mode design. The theme toggle
+ * button changes global theme state but does NOT affect login page appearance.
+ * 
+ * 🚫 DO NOT:
+ * - Replace inline styles with Tailwind dark: classes
+ * - Change any color values (hex codes are exact from approved design)
+ * - Remove inline style attributes
+ * - Apply global theme variables or classes
+ * - Refactor styles to external CSS
+ * 
+ * ✅ THEME TOGGLE BEHAVIOR:
+ * - Toggle changes theme for OTHER pages only
+ * - Login page appearance remains fixed
+ * - All login styles use inline CSS (highest specificity)
+ * - AuthLayout has isolation: 'isolate' to prevent cascade
+ * 
+ * If automated theme refactoring tools run, they must SKIP this file
+ * and AuthLayout.tsx. Consult project lead before making any style changes.
  */
 
 import React, { useState } from 'react';
@@ -134,17 +156,28 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
 
   return (
     <AuthLayout>
-      {/* Theme Toggle */}
-      <div className="absolute top-4 right-4">
+      {/* 
+        ⚠️ THEME TOGGLE - LOCKED STYLING ⚠️
+        This toggle changes global theme state for OTHER pages only.
+        Login page design is LOCKED and will NOT change with theme toggle.
+        Button colors are inline-styled to match locked dark theme.
+        DO NOT replace these inline styles with Tailwind classes.
+      */}
+      <div className="absolute top-4 right-4 z-10">
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          className="p-2 rounded-lg transition-colors"
+          style={{
+            backgroundColor: 'rgba(51, 65, 85, 0.8)',
+            border: '1px solid rgba(71, 85, 105, 0.5)'
+          }}
           aria-label="Toggle theme"
+          title="This toggle changes theme for other pages only. Login page design is locked."
         >
           {actualTheme === 'dark' ? (
-            <Sun className="w-5 h-5 text-yellow-500" />
+            <Sun className="w-5 h-5" style={{ color: '#fbbf24' }} />
           ) : (
-            <Moon className="w-5 h-5 text-gray-700" />
+            <Moon className="w-5 h-5" style={{ color: '#94a3b8' }} />
           )}
         </button>
       </div>
@@ -184,7 +217,8 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
               />
-              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+              {/* LOCKED COLOR: #cbd5e1 - Do not replace with Tailwind class */}
+              <span className="ml-2 text-sm" style={{ color: '#cbd5e1' }}>
                 Remember me
               </span>
             </label>
@@ -193,7 +227,8 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               onClick={() => {
                 ErrorHandler.showSuccess('Password reset feature coming soon! Please contact support at support@medszop.com');
               }}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm hover:underline"
+              style={{ color: '#60a5fa' }}
             >
               Forgot Password?
             </button>
@@ -221,10 +256,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
         {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            <div className="w-full" style={{ borderTop: '1px solid rgba(71, 85, 105, 0.6)' }}></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
+            <span className="px-2" style={{ backgroundColor: 'rgba(30, 41, 59, 0.9)', color: '#94a3b8' }}>Or continue with</span>
           </div>
         </div>
 
@@ -233,7 +268,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+            className="w-full flex items-center justify-center gap-3 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+            style={{
+              backgroundColor: 'rgba(51, 65, 85, 0.8)',
+              border: '1px solid rgba(71, 85, 105, 0.6)',
+              color: '#e2e8f0'
+            }}
           >
             <Chrome className="w-5 h-5" />
             Continue with Google
@@ -244,10 +284,10 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
         <div className="space-y-3">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="w-full" style={{ borderTop: '1px solid rgba(71, 85, 105, 0.6)' }}></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or use phone</span>
+              <span className="px-2" style={{ backgroundColor: 'rgba(30, 41, 59, 0.9)', color: '#94a3b8' }}>Or use phone</span>
             </div>
           </div>
 
@@ -256,7 +296,12 @@ export const NewLogin: React.FC<NewLoginProps> = ({ onNavigateToRegister }) => {
               <select
                 value={countryCode}
                 onChange={(e) => setCountryCode(e.target.value)}
-                className="w-24 px-2 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none dark:bg-gray-700 dark:text-white font-medium transition-all text-sm"
+                className="w-24 px-2 py-3 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none font-medium transition-all text-sm"
+                style={{
+                  backgroundColor: 'rgba(51, 65, 85, 0.8)',
+                  border: '2px solid rgba(71, 85, 105, 0.6)',
+                  color: '#f8fafc'
+                }}
               >
                 {countryCodes.map((item) => (
                   <option key={item.code} value={item.code}>

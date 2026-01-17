@@ -13,6 +13,8 @@ import prescriptionRoutes from './routes/prescription.routes';
 import subscriptionRoutes from './routes/subscription.routes';
 import consultationRoutes from './routes/consultation.routes';
 import adminRoutes from './routes/admin.routes';
+import paymentRoutes from './routes/paymentRoutes';
+import insuranceRoutes from './routes/insuranceRoutes';
 
 const app: Application = express();
 
@@ -38,6 +40,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/prescription', prescriptionRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/consultation', consultationRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/insurance', insuranceRoutes);
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {
