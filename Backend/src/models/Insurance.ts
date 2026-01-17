@@ -164,3 +164,4 @@ InsuranceSchema.pre('save', function (next) {
 });
 
 export const Insurance = mongoose.model<IInsurance>('Insurance', InsuranceSchema);
+export default Insurance;

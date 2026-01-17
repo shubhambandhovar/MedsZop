@@ -98,16 +98,16 @@ export class InsuranceValidator {
       );
     }
 
-    // Validate approval flag
-    if (typeof request.approved !== 'boolean') {
+    // Validate status
+    if (!request.status || !['approved', 'rejected'].includes(request.status)) {
       throw new InsuranceServiceError(
-        'Approval status is required',
+        'Valid status (approved/rejected) is required',
         InsuranceErrorCode.VERIFICATION_FAILED
       );
     }
 
     // If rejected, rejection reason is required
-    if (!request.approved && !request.rejectionReason) {
+    if (request.status === 'rejected' && !request.remarks) {
       throw new InsuranceServiceError(
         'Rejection reason is required when rejecting a policy',
         InsuranceErrorCode.VERIFICATION_FAILED
@@ -115,7 +115,7 @@ export class InsuranceValidator {
     }
 
     // If approved, validate coverage limit
-    if (request.approved && request.totalCoverageLimit) {
+    if (request.status === 'approved' && request.totalCoverageLimit) {
       if (
         request.totalCoverageLimit < this.MIN_COVERAGE_LIMIT ||
         request.totalCoverageLimit > this.MAX_COVERAGE_LIMIT

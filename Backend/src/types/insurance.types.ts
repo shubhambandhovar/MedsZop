@@ -13,13 +13,16 @@ export interface UploadPolicyRequest {
   policyNumber: string;
   policyDocumentUrl: string;
   policyDocumentType: 'pdf' | 'image';
+  totalCoverageLimit?: number;
+  policyStartDate?: Date;
+  policyEndDate?: Date;
 }
 
 export interface VerifyPolicyRequest {
   insuranceId: string;
   verifiedBy: string;
-  approved: boolean;
-  rejectionReason?: string;
+  status: 'approved' | 'rejected';
+  remarks?: string;
   totalCoverageLimit?: number;
   policyStartDate?: Date;
   policyEndDate?: Date;
@@ -52,17 +55,17 @@ export interface PolicyVerificationResponse {
 
 export interface CoverageCheckResponse {
   success: boolean;
-  coveredItems: ICoveredItem[];
-  totalOriginalAmount: number;
-  totalCoveredAmount: number;
-  userPayableAmount: number;
+  coveredItems: any[];
+  totalCoverage: number;
   remainingCoverage: number;
-  message: string;
+  provider: string;
+  policyNumber: string;
 }
 
 export interface DeactivationResponse {
   success: boolean;
   message: string;
+  insuranceId: string;
 }
 
 // Enums
@@ -101,6 +104,12 @@ export enum InsuranceErrorCode {
   INVALID_PROVIDER = 'INVALID_PROVIDER',
   INVALID_DOCUMENT = 'INVALID_DOCUMENT',
   POLICY_EXPIRED = 'POLICY_EXPIRED',
+  UPLOAD_FAILED = 'UPLOAD_FAILED',
+  POLICY_NOT_APPROVED = 'POLICY_NOT_APPROVED',
+  POLICY_INACTIVE = 'POLICY_INACTIVE',
+  INSUFFICIENT_COVERAGE = 'INSUFFICIENT_COVERAGE',
+  COVERAGE_CHECK_FAILED = 'COVERAGE_CHECK_FAILED',
+  DUPLICATE_POLICY = 'DUPLICATE_POLICY',
 }
 
 // Validation Rules

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { InsuranceService } from '../services/insuranceService';
+import { insuranceService } from '../services/insuranceService';
 
 export class InsuranceController {
   /**
@@ -19,7 +19,7 @@ export class InsuranceController {
         });
       }
 
-      const result = await InsuranceService.uploadPolicy({
+      const result = await insuranceService.uploadPolicy({
         userId,
         provider,
         providerCode,
@@ -49,11 +49,11 @@ export class InsuranceController {
         req.body;
       const verifiedBy = (req as any).user.id;
 
-      const result = await InsuranceService.verifyPolicy({
+      const result = await insuranceService.verifyPolicy({
         insuranceId,
         verifiedBy,
-        approved,
-        rejectionReason,
+        status: approved ? 'approved' : 'rejected',
+        remarks: rejectionReason,
         totalCoverageLimit,
         policyStartDate,
         policyEndDate,
@@ -85,7 +85,7 @@ export class InsuranceController {
         });
       }
 
-      const result = await InsuranceService.checkCoverage({
+      const result = await insuranceService.checkCoverage({
         insuranceId,
         items,
       });
@@ -107,7 +107,7 @@ export class InsuranceController {
   static async getUserInsurance(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
-      const insurances = await InsuranceService.getUserInsurance(userId);
+      const insurances = await insuranceService.getUserInsurance(userId);
 
       return res.status(200).json({
         success: true,
@@ -129,7 +129,7 @@ export class InsuranceController {
   static async getInsuranceById(req: Request, res: Response) {
     try {
       const { insuranceId } = req.params;
-      const insurance = await InsuranceService.getInsuranceById(insuranceId);
+      const insurance = await insuranceService.getInsuranceById(insuranceId);
 
       if (!insurance) {
         return res.status(404).json({
@@ -158,7 +158,7 @@ export class InsuranceController {
   static async getPendingVerifications(req: Request, res: Response) {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
-      const insurances = await InsuranceService.getPendingVerifications(limit);
+      const insurances = await insuranceService.getPendingVerifications(limit);
 
       return res.status(200).json({
         success: true,
@@ -181,7 +181,7 @@ export class InsuranceController {
   static async deactivateInsurance(req: Request, res: Response) {
     try {
       const { insuranceId } = req.params;
-      const result = await InsuranceService.deactivateInsurance(insuranceId);
+      const result = await insuranceService.deactivateInsurance(insuranceId);
 
       return res.status(200).json(result);
     } catch (error: any) {

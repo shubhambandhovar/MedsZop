@@ -1,4 +1,4 @@
-import Insurance, { IInsurance } from '../models/Insurance';
+import { Insurance, IInsurance } from '../models/Insurance';
 import mongoose from 'mongoose';
 import {
   UploadPolicyRequest,
@@ -35,21 +35,24 @@ export class InsuranceService {
       const insurance = await Insurance.create({
         userId: new mongoose.Types.ObjectId(request.userId),
         provider: request.provider,
+        providerCode: request.providerCode,
         policyNumber: request.policyNumber,
-        policyDocument: request.policyDocument,
-        coverageAmount: request.coverageAmount,
-        remainingCoverage: request.coverageAmount,
+        policyDocumentUrl: request.policyDocumentUrl,
+        policyDocumentType: request.policyDocumentType,
+        totalCoverageLimit: request.totalCoverageLimit || 100000,
         usedCoverage: 0,
+        remainingCoverage: request.totalCoverageLimit || 100000,
         verificationStatus: 'pending',
-        expiryDate: request.expiryDate,
+        policyStartDate: request.policyStartDate,
+        policyEndDate: request.policyEndDate,
         isActive: true,
+        coveredItems: [],
       });
 
       return {
         success: true,
         message: 'Policy uploaded successfully. Our team will verify it within 24-48 hours.',
-        insuranceId: insurance._id.toString(),
-        verificationStatus: 'pending',
+        insurance: insurance,
       };
     } catch (error: any) {
       if (error instanceof InsuranceServiceError) {
@@ -82,18 +85,36 @@ export class InsuranceService {
 
       // Update verification status
       insurance.verificationStatus = request.status;
-      if (request.remarks) {
-        insurance.verificationRemarks = request.remarks;
-      }
+      insurance.verifiedBy = new mongoose.Types.ObjectId(request.verifiedBy);
       insurance.verifiedAt = new Date();
+      
+      if (request.remarks) {
+        insurance.rejectionReason = request.remarks;
+      }
+      
+      if (request.totalCoverageLimit) {
+        insurance.totalCoverageLimit = request.totalCoverageLimit;
+        insurance.remainingCoverage = request.totalCoverageLimit;
+      }
+      
+      if (request.policyStartDate) {
+        insurance.policyStartDate = request.policyStartDate;
+      }
+      
+      if (request.policyEndDate) {
+        insurance.policyEndDate = request.policyEndDate;
+      }
+      
+      if (request.status === 'approved') {
+        insurance.isActive = true;
+      }
 
       await insurance.save();
 
       return {
         success: true,
         message: `Policy ${request.status} successfully`,
-        insuranceId: insurance._id.toString(),
-        verificationStatus: request.status,
+        insurance: insurance,
       };
     } catch (error: any) {
       if (error instanceof InsuranceServiceError) {
@@ -133,7 +154,9 @@ export class InsuranceService {
       }
 
       // Validate policy expiry
-      InsuranceValidator.validatePolicyExpiry(insurance.expiryDate);
+      if (insurance.policyEndDate) {
+        InsuranceValidator.validatePolicyExpiry(insurance.policyEndDate);
+      }
 
       if (!insurance.isActive) {
         throw new InsuranceServiceError(
@@ -295,7 +318,7 @@ export class InsuranceService {
    * Calculate coverage for a single item
    */
   private calculateItemCoverage(
-    item: { itemId: string; amount: number },
+    item: { itemId: string; itemType: 'medicine' | 'lab'; itemName: string; price: number },
     insurance: IInsurance
   ): {
     itemId: string;
@@ -304,15 +327,15 @@ export class InsuranceService {
     userPayableAmount: number;
   } {
     const coveredAmount = Math.min(
-      item.amount * this.COVERAGE_PERCENTAGE,
+      item.price * this.COVERAGE_PERCENTAGE,
       insurance.remainingCoverage
     );
 
     return {
       itemId: item.itemId,
-      originalAmount: item.amount,
+      originalAmount: item.price,
       coveredAmount,
-      userPayableAmount: item.amount - coveredAmount,
+      userPayableAmount: item.price - coveredAmount,
     };
   }
 }
