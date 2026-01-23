@@ -1,0 +1,197 @@
+{
+  "project_name": "MedsZop",
+  "design_philosophy": {
+    "identity": "E1 - The Anti-AI Designer",
+    "core_principles": [
+      "Fusion over Imitation: Mix Medical Trust with Tech Innovation",
+      "Emotion First: Every pixel must build trust and safety",
+      "Content is King: Data and Health info must be legible and clear",
+      "Zoom In: Focus on the details of medicine and care",
+      "Negative Space: Generous breathing room for clarity"
+    ],
+    "anti_patterns": [
+      "No generic 'Bootstrap' layouts",
+      "No 'Inter' for headings - use characterful fonts",
+      "No center-everything - use asymmetry for interest",
+      "No gradient overload - use subtle, functional gradients"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Plus Jakarta Sans, sans-serif",
+      "body": "Inter, sans-serif",
+      "accent": "Fraunces, serif"
+    },
+    "usage_rules": {
+      "headings": "Use 'Plus Jakarta Sans' for all H1-H6. Weights: Bold (700) or ExtraBold (800). Tracking: tight (-0.02em).",
+      "body": "Use 'Inter' for all paragraphs and UI text. Weights: Regular (400) or Medium (500). Line-height: relaxed (1.6).",
+      "accent": "Use 'Fraunces' for testimonials, quotes, or 'Trusted By' sections to add warmth and authority."
+    },
+    "scale": {
+      "h1": "text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight",
+      "h2": "text-4xl md:text-5xl font-bold tracking-tight",
+      "h3": "text-3xl md:text-4xl font-semibold tracking-tight",
+      "body_lg": "text-lg md:text-xl leading-relaxed",
+      "body_base": "text-base leading-relaxed",
+      "caption": "text-sm font-medium text-muted-foreground uppercase tracking-wider"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#0066FF",
+        "foreground": "#FFFFFF",
+        "50": "#EBF5FF",
+        "100": "#D1E9FF",
+        "200": "#A3D3FF",
+        "300": "#75BDFF",
+        "400": "#47A7FF",
+        "500": "#0066FF",
+        "600": "#0052CC",
+        "700": "#003D99",
+        "800": "#002966",
+        "900": "#001433"
+      },
+      "secondary": {
+        "DEFAULT": "#F1F5F9",
+        "foreground": "#0F172A"
+      },
+      "accent": {
+        "DEFAULT": "#06B6D4",
+        "foreground": "#FFFFFF",
+        "description": "Cyan/Teal for AI and Smart features"
+      },
+      "background": "#FFFFFF",
+      "foreground": "#0F172A",
+      "muted": "#F8FAFC",
+      "border": "#E2E8F0",
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444"
+    },
+    "theme_strategy": "Light Mode Primary. Use 'Medical Blue' (#0066FF) for primary actions. Use 'Cyan' (#06B6D4) for AI/Tech features. Backgrounds should be clean white or very light blue-grey (#F8FAFC). Dark mode should be deep slate (#0F172A), not pure black."
+  },
+  "layout_system": {
+    "spacing": {
+      "base": "0.25rem",
+      "container_padding": "p-6 md:p-12 lg:p-24",
+      "section_gap": "gap-12 md:gap-24",
+      "component_gap": "gap-4 md:gap-8"
+    },
+    "grids": {
+      "bento_marketing": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 md:gap-8",
+      "dashboard_dense": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
+    },
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 rounded-full font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 h-11 px-8 rounded-full font-medium transition-all",
+      "outline": "border-2 border-primary text-primary hover:bg-primary/5 h-11 px-8 rounded-full font-medium transition-all",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-11 px-4 rounded-lg font-medium transition-all"
+    },
+    "cards": {
+      "marketing": "bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-8 hover:shadow-2xl hover:shadow-slate-200/60 transition-all duration-300",
+      "dashboard": "bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+    },
+    "inputs": {
+      "default": "h-12 rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
+    },
+    "navigation": {
+      "header": "sticky top-0 z-50 w-full border-b border-slate-100 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60",
+      "sidebar": "fixed left-0 top-0 z-40 h-screen w-64 border-r border-slate-200 bg-white"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/70 border border-white/20 shadow-lg",
+    "gradients": {
+      "hero": "bg-gradient-to-br from-blue-50 via-white to-cyan-50",
+      "ai_glow": "bg-gradient-to-r from-blue-500 to-cyan-500 blur-3xl opacity-20"
+    },
+    "shadows": {
+      "soft": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+      "float": "shadow-[0_20px_50px_rgb(0,0,0,0.1)]"
+    },
+    "borders": "border border-slate-200"
+  },
+  "motion": {
+    "library": "framer-motion",
+    "transitions": {
+      "default": "transition-all duration-300 ease-out",
+      "hover": "hover:-translate-y-1 hover:shadow-lg"
+    },
+    "animations": {
+      "fade_in": {
+        "initial": { "opacity": 0, "y": 20 },
+        "animate": { "opacity": 1, "y": 0 },
+        "transition": { "duration": 0.5 }
+      },
+      "stagger_container": {
+        "hidden": { "opacity": 0 },
+        "show": {
+          "opacity": 1,
+          "transition": {
+            "staggerChildren": 0.1
+          }
+        }
+      }
+    }
+  },
+  "assets": {
+    "icons": "lucide-react",
+    "images": {
+      "hero_doctor": {
+        "url": "https://images.pexels.com/photos/8313184/pexels-photo-8313184.jpeg",
+        "alt": "Doctor consulting patient",
+        "category": "hero"
+      },
+      "delivery_agent": {
+        "url": "https://images.unsplash.com/photo-1616915939238-2a7a363d45c4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwxfHxkZWxpdmVyeSUyMGd1eSUyMHNjb290ZXIlMjBtZWRpY2FsfGVufDB8fHx8MTc2OTExNjIxMnww&ixlib=rb-4.1.0&q=85",
+        "alt": "Delivery agent on scooter",
+        "category": "delivery"
+      },
+      "pharmacy_interior": {
+        "url": "https://images.pexels.com/photos/14797854/pexels-photo-14797854.jpeg",
+        "alt": "Modern pharmacy shelves",
+        "category": "pharmacy"
+      },
+      "ai_abstract": {
+        "url": "https://images.unsplash.com/photo-1516192518150-0d8fee5425e3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlJTIwbWVkaWNhbCUyMGFic3RyYWN0fGVufDB8fHx8MTc2OTExNjIxNXww&ixlib=rb-4.1.0&q=85",
+        "alt": "AI Robot Illustration",
+        "category": "ai_feature"
+      },
+      "consultation": {
+        "url": "https://images.pexels.com/photos/6129040/pexels-photo-6129040.jpeg",
+        "alt": "Doctor consultation",
+        "category": "consultation"
+      }
+    }
+  },
+  "accessibility": {
+    "rules": [
+      "Ensure 4.5:1 contrast ratio for normal text",
+      "Use semantic HTML (main, section, article, nav)",
+      "All images must have alt text",
+      "Focus states must be visible (ring-2 ring-primary)",
+      "Do not rely on color alone for status (use icons + text)"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALL DEPENDENCIES: Run 'yarn add framer-motion lucide-react clsx tailwind-merge @radix-ui/react-slot class-variance-authority' if not present.",
+    "2. SETUP FONTS: Add 'Plus Jakarta Sans' and 'Inter' via Google Fonts in index.html or CSS.",
+    "3. CONFIGURE TAILWIND: Update tailwind.config.js with the colors and border radius defined above.",
+    "4. CREATE COMPONENTS: Build the UI using the 'components' rules. Do not use default Shadcn styles blindly; customize them to match the 'Medical Blue' theme.",
+    "5. IMPLEMENT LAYOUTS: Use the 'Bento' grid for the landing page and 'High Density' grid for dashboards.",
+    "6. ADD MOTION: Apply framer-motion to all major sections (fade-in, slide-up).",
+    "7. USE IMAGES: Use the provided image URLs for their respective sections.",
+    "8. DATA-TESTID: Add data-testid to all interactive elements (buttons, inputs, links)."
+  ],
+  "universal_guidelines": [
+    "Avoid 'AI Slop' - no generic centered layouts.",
+    "Use 2-3x more spacing than typical designs.",
+    "Dark colors look good when used independently without gradients.",
+    "Every interaction needs micro-animations.",
+    "Use 'sonner' for toasts."
+  ]
+}
