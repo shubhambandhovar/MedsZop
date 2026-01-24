@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 exports.doctorChat = async (req, res) => {
@@ -11,22 +11,21 @@ exports.doctorChat = async (req, res) => {
     if (!message) {
       return res.status(400).json({ message: "Message is required" });
     }
-
+// Use Gemini-2.5-Flash model for generating responses
     const model = genAI.getGenerativeModel({
-  model: "gemini-3-flash-preview"
-});
+      model: "gemini-2.5-flash",
+    });
 
     const result = await model.generateContent(message);
 
     const reply = result.response.text();
 
     res.json({ response: reply });
-
   } catch (error) {
     console.error("Gemini Error:", error);
 
     res.status(500).json({
-      message: "AI service temporarily unavailable"
+      message: "AI service temporarily unavailable",
     });
   }
 };
