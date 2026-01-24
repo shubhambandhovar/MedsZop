@@ -11,25 +11,23 @@ exports.doctorChat = async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-pro"
+      model: "gemini-1.5-flash"
     });
 
     const prompt = `
 You are a medical assistant.
-Give only general health information.
-Do NOT provide diagnosis.
-Suggest consulting a doctor when needed.
+Give general health information only.
+Do not diagnose.
+Always advise consulting a doctor.
 
 User question:
 ${message}
 `;
 
     const result = await model.generateContent(prompt);
-    const response = result.response.text();
+    const reply = result.response.text();
 
-    return res.json({
-      response
-    });
+    return res.json({ response: reply });
 
   } catch (error) {
     console.error("Gemini Doctor Chat Error:", error);
