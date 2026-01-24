@@ -1,5 +1,5 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-
+require("dotenv").config();
 const genAI = new GoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
@@ -11,7 +11,7 @@ exports.doctorChat = async (req, res) => {
     if (!message) {
       return res.status(400).json({ message: "Message is required" });
     }
-// Use Gemini-2.5-Flash model for generating responses
+//
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
