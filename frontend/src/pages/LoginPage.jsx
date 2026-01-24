@@ -5,7 +5,13 @@ import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/ui/card";
 import { Pill, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,13 +23,17 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+
+  if (loading) return; // 🔥 prevents double request
+
+  setLoading(true);
+
 
     try {
       const user = await login(email, password);
       toast.success("Welcome back!");
-      
+
       // Navigate based on role
       switch (user.role) {
         case "admin":
@@ -39,7 +49,7 @@ const LoginPage = () => {
           navigate("/dashboard");
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Invalid credentials");
+      toast.error(error || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -67,14 +77,20 @@ const LoginPage = () => {
             <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
               <Pill className="h-7 w-7 text-white" />
             </div>
-            <span className="font-heading text-2xl font-bold text-foreground">MedsZop</span>
+            <span className="font-heading text-2xl font-bold text-foreground">
+              MedsZop
+            </span>
           </Link>
         </div>
 
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="font-heading text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to your account to continue</CardDescription>
+            <CardTitle className="font-heading text-2xl">
+              Welcome Back
+            </CardTitle>
+            <CardDescription>
+              Sign in to your account to continue
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -134,7 +150,11 @@ const LoginPage = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link to="/register" className="text-primary font-medium hover:underline" data-testid="register-link">
+                <Link
+                  to="/register"
+                  className="text-primary font-medium hover:underline"
+                  data-testid="register-link"
+                >
                   Create account
                 </Link>
               </p>
@@ -142,8 +162,12 @@ const LoginPage = () => {
 
             {/* Demo Credentials */}
             <div className="mt-6 p-4 bg-muted rounded-xl">
-              <p className="text-xs font-medium text-muted-foreground mb-2">Demo Credentials:</p>
-              <p className="text-xs text-muted-foreground">Admin: admin@medszop.com / admin123</p>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Demo Credentials:
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Admin: admin@medszop.com / admin123
+              </p>
             </div>
           </CardContent>
         </Card>
