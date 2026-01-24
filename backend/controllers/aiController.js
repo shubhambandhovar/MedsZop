@@ -1,10 +1,11 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY
+});
 
 exports.doctorChat = async (req, res) => {
   try {
-    console.log("Gemini Key Exists:", !!process.env.GEMINI_API_KEY);
     const { message } = req.body;
 
     if (!message) {
@@ -12,28 +13,19 @@ exports.doctorChat = async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "models/gemini-1.5-flash"
+      model: "gemini-1.5-flash"
     });
 
-    const prompt = `
-You are a medical assistant.
-Give general health information only.
-Do not diagnose.
-Always advise consulting a doctor.
+    const result = await model.generateContent(message);
 
-User question:
-${message}
-`;
-
-    const result = await model.generateContent(prompt);
     const reply = result.response.text();
 
-    return res.json({ response: reply });
+    res.json({ response: reply });
 
   } catch (error) {
-    console.error("Gemini Doctor Chat Error:", error);
+    console.error("Gemini Error:", error);
 
-    return res.status(500).json({
+    res.status(500).json({
       message: "AI service temporarily unavailable"
     });
   }
