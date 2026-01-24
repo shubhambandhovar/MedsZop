@@ -6,10 +6,10 @@ const { scanPrescription } = require("../controllers/prescriptionController");
 
 const auth = require("../middleware/authMiddleware");
 
-router.post("/doctor-chat", (req, res) => {
-	res.json({ message: "Doctor chat placeholder" });
-});
+// ✅ Doctor Chat API
+router.post("/doctor-chat", auth, doctorChat);
 
-router.post("/scan-prescription", scanPrescription);
+// ✅ Prescription Scan API
+router.post("/scan-prescription", auth, scanPrescription);
 
 module.exports = router;
