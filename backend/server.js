@@ -30,7 +30,6 @@ app.use("/api/pharmacy", require("./routes/pharmacyRoutes"));
 app.use("/api/delivery", require("./routes/deliveryRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/ai", require("./routes/aiRoutes"));
-app.use("/api/gemini", require("./routes/geminiRoutes"));
 
 // Root route
 app.get("/", (req, res) => {
