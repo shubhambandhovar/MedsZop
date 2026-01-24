@@ -4,6 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 exports.doctorChat = async (req, res) => {
   try {
+    console.log("Gemini Key Exists:", !!process.env.GEMINI_API_KEY);
     const { message } = req.body;
 
     if (!message) {
@@ -11,7 +12,7 @@ exports.doctorChat = async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: "models/gemini-1.5-flash"
     });
 
     const prompt = `
