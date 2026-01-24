@@ -49,7 +49,8 @@ const LoginPage = () => {
           navigate("/dashboard");
       }
     } catch (error) {
-      toast.error(error || "Invalid credentials");
+      toast.error(error.message || "Invalid credentials");
+
     } finally {
       setLoading(false);
     }

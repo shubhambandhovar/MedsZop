@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
       login,
       register,
       logout,
-      isAuthenticated: !!user
+      isAuthenticated: !!user && !loading
     }}>
       {children}
     </AuthContext.Provider>
