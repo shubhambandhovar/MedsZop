@@ -13,7 +13,8 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: "*",
-  credentials: true
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json({ limit: "20mb" }));
@@ -30,16 +31,15 @@ app.use("/api/pharmacy", require("./routes/pharmacyRoutes"));
 app.use("/api/delivery", require("./routes/deliveryRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/ai", require("./routes/aiRoutes"));
-app.use("/api/seed", require("./routes/seed"));
 
 // Root route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to MedsZop API", version: "1.0.0" });
+  res.json({ message: "Welcome to MedsZop API", status: "running" });
 });
 
 // Health check
 app.get("/health", (req, res) => {
-  res.json({ status: "healthy", service: "medszop-api" });
+  res.json({ status: "healthy" });
 });
 
 const PORT = process.env.PORT || 5000;
