@@ -52,7 +52,7 @@ const DoctorChatPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/ai/chat`, {
+      const response = await axios.post(`${API_URL}/ai/doctor-chat`, {
         message: userMessage,
         session_id: sessionId
       }, {
