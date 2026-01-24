@@ -4,14 +4,15 @@ const router = express.Router();
 const {
   getMedicines,
   getMedicineById,
-  createMedicine
+  createMedicine,
+  getCategories
 } = require("../controllers/medicineController");
 
 const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
 
 router.get("/", getMedicines);
-
+router.get("/categories", getCategories);
 router.get("/:id", getMedicineById);
 
 router.post("/", auth, role(["admin", "pharmacy"]), createMedicine);

@@ -66,3 +66,12 @@ exports.createMedicine = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// GET MEDICINE CATEGORIES
+exports.getCategories = async (req, res) => {
+  try {
+    const categories = await Medicine.distinct("category");
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
