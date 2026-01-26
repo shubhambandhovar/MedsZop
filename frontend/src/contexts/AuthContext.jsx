@@ -8,7 +8,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
@@ -19,33 +18,23 @@ export const AuthProvider = ({ children }) => {
 
     if (storedToken) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-      fetchUser(storedToken);
+      fetchUser();
     } else {
       setLoading(false);
     }
-
   }, []);
 
   // ✅ Fetch user safely
-  const fetchUser = async (authToken) => {
+  const fetchUser = async () => {
     try {
-      const res = await axios.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`
-        }
-      });
-
+      const res = await axios.get(`${API_URL}/auth/me`);
       setUser(res.data);
-
     } catch (err) {
-
-      // ✅ Only logout if token is invalid
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
         setToken(null);
         setUser(null);
       }
-
     } finally {
       setLoading(false);
     }
@@ -56,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post(`${API_URL}/auth/login`, {
         email,
-        password
+        password,
       });
 
       const { access_token, user: userData } = res.data;
@@ -71,7 +60,6 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
 
       return userData;
-
     } catch (err) {
       throw err.response?.data?.message || "Login failed";
     }
@@ -91,7 +79,6 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
 
       return userData;
-
     } catch (err) {
       throw err.response?.data?.message || "Registration failed";
     }
@@ -105,15 +92,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      token,
-      loading,
-      login,
-      register,
-      logout,
-      isAuthenticated: !!user && !loading
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        register,
+        logout,
+        isAuthenticated: !!token && !!user && !loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

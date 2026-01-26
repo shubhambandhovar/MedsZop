@@ -32,65 +32,95 @@ function App() {
             <Route path="/medicines" element={<MedicinesPage />} />
             <Route path="/medicines/:id" element={<MedicineDetailPage />} />
 
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/cart" element={
-              <ProtectedRoute>
-                <CartPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <CartPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/checkout" element={
-              <ProtectedRoute>
-                <CheckoutPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <OrdersPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <OrdersPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/orders/:id" element={
-              <ProtectedRoute>
-                <OrderTrackingPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/orders/:id"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <OrderTrackingPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/prescription-scan" element={
-              <ProtectedRoute>
-                <PrescriptionScanPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/prescription-scan"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <PrescriptionScanPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/doctor-chat" element={
-              <ProtectedRoute>
-                <DoctorChatPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/doctor-chat"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <DoctorChatPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/pharmacy" element={
-              <ProtectedRoute allowedRoles={["pharmacy", "admin"]}>
-                <PharmacyDashboardPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/pharmacy"
+              element={
+                <ProtectedRoute allowedRoles={["pharmacy"]}>
+                  <PharmacyDashboardPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/delivery" element={
-              <ProtectedRoute allowedRoles={["delivery", "admin"]}>
-                <DeliveryDashboardPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/delivery"
+              element={
+                <ProtectedRoute allowedRoles={["delivery"]}>
+                  <DeliveryDashboardPage />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboardPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
 
           <Toaster position="top-right" richColors />

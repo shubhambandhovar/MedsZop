@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { email, password, name, phone, role } = req.body;
+    const { email, password, name, phone } = req.body;
 
     if (!email || !password || !name || !role) {
       return res.status(400).json({ message: "All required fields missing" });
@@ -22,7 +22,8 @@ exports.register = async (req, res) => {
       password: hashedPassword,
       name,
       phone,
-      role
+      role: "customer"
+
     });
 
     const token = jwt.sign(

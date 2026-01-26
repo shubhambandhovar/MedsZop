@@ -31,7 +31,7 @@ const MedicinesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
 
   const fetchMedicines = async () => {
@@ -51,23 +51,20 @@ const MedicinesPage = () => {
   };
 
   const fetchCategories = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/medicines/categories`);
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
+  try {
+    const response = await axios.get(`${API_URL}/medicines/categories`);
+    setCategories(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    setCategories([]);
+  }
+};
+
 
   useEffect(() => {
     fetchMedicines();
     fetchCategories();
   }, [selectedCategory]);
-
-  useEffect(() => {
-    // Seed data on first load
-    axios.post(`${API_URL}/seed`).catch(() => {});
-  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -79,7 +76,7 @@ const MedicinesPage = () => {
     setSearch(value);
     if (value.length >= 2) {
       try {
-        const response = await axios.get(`${API_URL}/medicines/search?q=${value}`);
+        const response = await axios.get(`${API_URL}/medicines?search=${value}`);
         setSearchResults(response.data);
         setShowSuggestions(true);
       } catch (error) {

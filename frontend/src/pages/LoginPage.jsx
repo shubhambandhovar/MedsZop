@@ -31,7 +31,7 @@ const LoginPage = () => {
 
 
     try {
-      const user = await login(email, password);
+      const user = await login(email.trim(), password);
       toast.success("Welcome back!");
 
       // Navigate based on role
@@ -158,16 +158,6 @@ const LoginPage = () => {
                 >
                   Create account
                 </Link>
-              </p>
-            </div>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-muted rounded-xl">
-              <p className="text-xs font-medium text-muted-foreground mb-2">
-                Demo Credentials:
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Admin: admin@medszop.com / admin123
               </p>
             </div>
           </CardContent>
