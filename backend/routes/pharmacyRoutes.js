@@ -4,12 +4,15 @@ const router = express.Router();
 const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
 
+const Pharmacy = require("../models/Pharmacy");
+const Order = require("../models/Order");
 const {
   registerPharmacy,
-  getDashboard
+  getDashboard,
+  getPharmacyOrders
 } = require("../controllers/pharmacyController");
 
-// Pharmacy Account Only
+router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
 
 router.post("/register", auth, role(["pharmacy"]), registerPharmacy);
 
