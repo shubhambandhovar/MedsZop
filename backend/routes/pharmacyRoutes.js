@@ -14,7 +14,7 @@ const {
 router.post("/register", auth, role(["pharmacy"]), registerPharmacy);
 
 // Pharmacy dashboard
-router.get("/dashboard", auth, role(["pharmacy"]), getDashboard);
+router.get("/dashboard", auth, role(["pharmacy","admin"]), getDashboard);
 
 // ✅ THIS IS REQUIRED
 router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
