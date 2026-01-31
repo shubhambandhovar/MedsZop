@@ -1,4 +1,3 @@
-// backend/models/Pharmacy.js
 const mongoose = require("mongoose");
 
 const MedicineSchema = new mongoose.Schema({
@@ -14,7 +13,7 @@ module.exports = mongoose.model(
     license_number: String,
     address: String,
     verified: Boolean,
-    medicines: [MedicineSchema], // <-- Add this line
+    medicines: [MedicineSchema], // <-- This line is required!
     createdAt: { type: Date, default: Date.now }
   })
 );
