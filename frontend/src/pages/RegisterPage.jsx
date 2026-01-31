@@ -23,7 +23,6 @@ const RegisterPage = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "customer"
   });
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -34,31 +33,38 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+  e.preventDefault();
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
+  if (formData.password !== formData.confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
 
-    setLoading(true);
+  if (formData.password.length < 6) {
+    toast.error("Password must be at least 6 characters");
+    return;
+  }
 
-    try {
-      const { confirmPassword, ...registerData } = formData;
-      await register(registerData);
-      toast.success("Account created successfully!");
-      navigate("/dashboard");
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+
+  try {
+    await register({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password
+      // ❌ DO NOT send role
+    });
+
+    toast.success("Account created successfully!");
+    navigate("/dashboard");
+
+  } catch (error) {
+    toast.error(error.message || "Registration failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen gradient-hero flex items-center justify-center p-4 py-12">
@@ -141,20 +147,6 @@ const RegisterPage = () => {
                     data-testid="register-phone"
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="role">I want to</Label>
-                <Select value={formData.role} onValueChange={(value) => handleChange("role", value)}>
-                  <SelectTrigger className="h-12" data-testid="register-role">
-                    <SelectValue placeholder="Select your role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="customer">Order Medicines (Customer)</SelectItem>
-                    <SelectItem value="pharmacy">Sell Medicines (Pharmacy)</SelectItem>
-                    <SelectItem value="delivery">Deliver Medicines (Delivery Agent)</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
