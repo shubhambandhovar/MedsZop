@@ -4,18 +4,19 @@ const router = express.Router();
 const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
 
-const Pharmacy = require("../models/Pharmacy");
-const Order = require("../models/Order");
 const {
   registerPharmacy,
   getDashboard,
   getPharmacyOrders
 } = require("../controllers/pharmacyController");
 
-router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
-
+// Register pharmacy
 router.post("/register", auth, role(["pharmacy"]), registerPharmacy);
 
-router.get("/dashboard", auth, role(["pharmacy","admin"]), getDashboard);
+// Pharmacy dashboard
+router.get("/dashboard", auth, role(["pharmacy"]), getDashboard);
+
+// ✅ THIS IS REQUIRED
+router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
 
 module.exports = router;

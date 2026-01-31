@@ -39,26 +39,27 @@ const PharmacyDashboardPage = () => {
   // ================= FETCH DATA =================
 
   const fetchData = async () => {
-    try {
-      const [dashboardRes, ordersRes] = await Promise.all([
-        axios.get(`${API_URL}/pharmacy/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${API_URL}/pharmacy/orders`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+  if (!token) return;
 
-      setDashboardData(dashboardRes.data);
-      setOrders(ordersRes.data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to load pharmacy data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const [dashboardRes, ordersRes] = await Promise.all([
+      axios.get(`${API_URL}/pharmacy/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      axios.get(`${API_URL}/pharmacy/orders`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
 
+    setDashboardData(dashboardRes.data);
+    setOrders(ordersRes.data || []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load pharmacy data");
+  } finally {
+    setLoading(false);
+  }
+};
   // ✅ ONLY FETCH WHEN TOKEN EXISTS
   useEffect(() => {
     if (token) {
