@@ -27,7 +27,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
 const PharmacyDashboardPage = () => {
   const { token } = useAuth();
 
@@ -35,6 +34,7 @@ const PharmacyDashboardPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [showAddMedicineModal, setShowAddMedicineModal] = useState(false);
 
   // ================= FETCH DATA =================
 
@@ -329,13 +329,26 @@ const PharmacyDashboardPage = () => {
                 <p className="text-muted-foreground mb-4">
                   Add and manage medicines
                 </p>
-                <Button>Add Medicine</Button>
+                <Button onClick={() => setShowAddMedicineModal(true)}>Add Medicine</Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </main>
-
+{showAddMedicineModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+      <h2 className="text-xl font-bold mb-4">Add Medicine</h2>
+      {/* Add your form fields here */}
+      <button
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        onClick={() => setShowAddMedicineModal(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
       <Footer />
     </div>
   );
