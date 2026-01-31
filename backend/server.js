@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-
+const pharmacyRoutes = require("./routes/pharmacyRoutes");
 dotenv.config();
 
 // Connect DB

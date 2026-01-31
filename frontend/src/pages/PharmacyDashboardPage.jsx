@@ -19,10 +19,9 @@ import {
   Package,
   TrendingUp,
   Clock,
-  CheckCircle,
   DollarSign,
   AlertCircle,
-  Eye
+  Eye,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
@@ -31,41 +30,60 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const PharmacyDashboardPage = () => {
   const { token } = useAuth();
+
   const [dashboardData, setDashboardData] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
-  const fetchData = async () => {
-  try {
-    const [dashboardRes, ordersRes] = await Promise.all([
-      axios.get(`${API_URL}/pharmacy/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`${API_URL}/pharmacy/orders`, { headers: { Authorization: `Bearer ${token}` } })
-    ]);
-    setDashboardData(dashboardRes.data);
-    setOrders(ordersRes.data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  // ================= FETCH DATA =================
 
-useEffect(() => {
-  fetchData();
-}, []); // Only run once on mount
+  const fetchData = async () => {
+    try {
+      const [dashboardRes, ordersRes] = await Promise.all([
+        axios.get(`${API_URL}/pharmacy/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(`${API_URL}/pharmacy/orders`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      setDashboardData(dashboardRes.data);
+      setOrders(ordersRes.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load pharmacy data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ ONLY FETCH WHEN TOKEN EXISTS
+  useEffect(() => {
+    if (token) {
+      fetchData();
+    }
+  }, [token]);
+
+  // ================= UPDATE ORDER STATUS =================
 
   const handleUpdateOrderStatus = async (orderId, status) => {
     try {
-      await axios.put(`${API_URL}/orders/${orderId}/status`, { status }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success("Order status updated");
+      await axios.put(
+        `${API_URL}/orders/${orderId}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Order updated");
       fetchData();
     } catch (error) {
-      toast.error("Failed to update order status");
+      toast.error("Failed to update order");
     }
   };
+
+  // ================= STATUS BADGE =================
 
   const getStatusBadge = (status) => {
     const colors = {
@@ -74,80 +92,95 @@ useEffect(() => {
       processing: "bg-purple-100 text-purple-800",
       out_for_delivery: "bg-cyan-100 text-cyan-800",
       delivered: "bg-emerald-100 text-emerald-800",
-      cancelled: "bg-red-100 text-red-800"
+      cancelled: "bg-red-100 text-red-800",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
 
-  const stats = dashboardData?.stats || { medicines_count: 0, total_orders: 0, pending_orders: 0, total_revenue: 0 };
+  // ================= STATS SAFE FALLBACK =================
+
+  const stats = dashboardData?.stats || {
+    medicines_count: 0,
+    total_orders: 0,
+    pending_orders: 0,
+    total_revenue: 0,
+  };
+
+  // ================= LOADING =================
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading Pharmacy Dashboard...
+      </div>
+    );
+  }
+
+  // ================= UI =================
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="pharmacy-dashboard-title">
-              <Store className="h-8 w-8 text-primary" />
-              Pharmacy Dashboard
-            </h1>
-            <p className="text-muted-foreground mt-1">Manage your pharmacy orders and inventory</p>
-          </div>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Store className="text-primary" />
+            Pharmacy Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            Manage your pharmacy orders and inventory
+          </p>
         </div>
 
-        {/* Stats */}
+        {/* ================= STATS ================= */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-100 text-sm">Total Orders</p>
-                  <p className="text-3xl font-bold">{stats.total_orders}</p>
-                </div>
-                <Package className="h-10 w-10 text-blue-200" />
+            <CardContent className="p-6 flex justify-between">
+              <div>
+                <p>Total Orders</p>
+                <h2 className="text-3xl font-bold">{stats.total_orders}</h2>
               </div>
+              <Package />
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-amber-100 text-sm">Pending Orders</p>
-                  <p className="text-3xl font-bold">{stats.pending_orders}</p>
-                </div>
-                <Clock className="h-10 w-10 text-amber-200" />
+            <CardContent className="p-6 flex justify-between">
+              <div>
+                <p>Pending Orders</p>
+                <h2 className="text-3xl font-bold">{stats.pending_orders}</h2>
               </div>
+              <Clock />
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-emerald-100 text-sm">Total Revenue</p>
-                  <p className="text-3xl font-bold">₹{stats.total_revenue.toFixed(0)}</p>
-                </div>
-                <DollarSign className="h-10 w-10 text-emerald-200" />
+            <CardContent className="p-6 flex justify-between">
+              <div>
+                <p>Total Revenue</p>
+                <h2 className="text-3xl font-bold">
+                  ₹{stats.total_revenue.toFixed(0)}
+                </h2>
               </div>
+              <DollarSign />
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-violet-500 to-violet-600 text-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-violet-100 text-sm">Medicines</p>
-                  <p className="text-3xl font-bold">{stats.medicines_count}</p>
-                </div>
-                <TrendingUp className="h-10 w-10 text-violet-200" />
+            <CardContent className="p-6 flex justify-between">
+              <div>
+                <p>Medicines</p>
+                <h2 className="text-3xl font-bold">{stats.medicines_count}</h2>
               </div>
+              <TrendingUp />
             </CardContent>
           </Card>
         </div>
 
-        {/* Tabs */}
+        {/* ================= TABS ================= */}
+
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -155,56 +188,62 @@ useEffect(() => {
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
           </TabsList>
 
+          {/* ================= OVERVIEW ================= */}
+
           <TabsContent value="overview">
             <Card>
               <CardHeader>
-                <CardTitle className="font-heading">Recent Orders</CardTitle>
+                <CardTitle>Recent Orders</CardTitle>
               </CardHeader>
+
               <CardContent>
                 {orders.length === 0 ? (
                   <div className="text-center py-8">
-                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">No orders yet</p>
+                    <Package className="mx-auto mb-2" />
+                    No orders yet
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Order ID</TableHead>
+                        <TableHead>ID</TableHead>
                         <TableHead>Items</TableHead>
                         <TableHead>Total</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>Action</TableHead>
                       </TableRow>
                     </TableHeader>
+
                     <TableBody>
                       {orders.slice(0, 5).map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-mono text-sm">
-                            {order.id.slice(0, 8)}...
-                          </TableCell>
-                          <TableCell>{order.items.length} items</TableCell>
-                          <TableCell className="font-semibold">₹{order.total.toFixed(2)}</TableCell>
+                        <TableRow key={order._id}>
                           <TableCell>
-                            <Badge className={getStatusBadge(order.order_status)}>
-                              {order.order_status.replace('_', ' ')}
+                            {order._id.slice(0, 8)}...
+                          </TableCell>
+
+                          <TableCell>{order.items.length}</TableCell>
+
+                          <TableCell>
+                            ₹{order.total.toFixed(2)}
+                          </TableCell>
+
+                          <TableCell>
+                            <Badge
+                              className={getStatusBadge(order.order_status)}
+                            >
+                              {order.order_status.replace("_", " ")}
                             </Badge>
                           </TableCell>
+
                           <TableCell>
                             {order.order_status === "pending" && (
                               <Button
                                 size="sm"
-                                onClick={() => handleUpdateOrderStatus(order.id, "confirmed")}
+                                onClick={() =>
+                                  handleUpdateOrderStatus(order._id, "confirmed")
+                                }
                               >
                                 Confirm
-                              </Button>
-                            )}
-                            {order.order_status === "confirmed" && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleUpdateOrderStatus(order.id, "processing")}
-                              >
-                                Process
                               </Button>
                             )}
                           </TableCell>
@@ -217,49 +256,59 @@ useEffect(() => {
             </Card>
           </TabsContent>
 
+          {/* ================= ALL ORDERS ================= */}
+
           <TabsContent value="orders">
             <Card>
               <CardHeader>
-                <CardTitle className="font-heading">All Orders</CardTitle>
+                <CardTitle>All Orders</CardTitle>
               </CardHeader>
+
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Order ID</TableHead>
+                      <TableHead>ID</TableHead>
                       <TableHead>Customer</TableHead>
-                      <TableHead>Items</TableHead>
                       <TableHead>Total</TableHead>
-                      <TableHead>Payment</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead></TableHead>
                     </TableRow>
                   </TableHeader>
+
                   <TableBody>
                     {orders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-mono text-sm">
-                          {order.id.slice(0, 8)}...
-                        </TableCell>
-                        <TableCell>{order.user_id.slice(0, 8)}...</TableCell>
-                        <TableCell>{order.items.length}</TableCell>
-                        <TableCell className="font-semibold">₹{order.total.toFixed(2)}</TableCell>
+                      <TableRow key={order._id}>
                         <TableCell>
-                          <Badge variant="outline">{order.payment_status}</Badge>
+                          {order._id.slice(0, 8)}...
                         </TableCell>
+
+                        {/* SAFE USER DISPLAY */}
                         <TableCell>
-                          <Badge className={getStatusBadge(order.order_status)}>
-                            {order.order_status.replace('_', ' ')}
+                          {order.user?._id
+                            ? order.user._id.slice(0, 8)
+                            : order.user?.slice(0, 8)}
+                        </TableCell>
+
+                        <TableCell>
+                          ₹{order.total.toFixed(2)}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge
+                            className={getStatusBadge(order.order_status)}
+                          >
+                            {order.order_status.replace("_", " ")}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
+
+                        <TableCell>
                           {new Date(order.created_at).toLocaleDateString()}
                         </TableCell>
+
                         <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <Eye size={18} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -269,13 +318,15 @@ useEffect(() => {
             </Card>
           </TabsContent>
 
+          {/* ================= INVENTORY ================= */}
+
           <TabsContent value="inventory">
             <Card>
               <CardContent className="p-8 text-center">
-                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-heading text-xl font-semibold mb-2">Inventory Management</h3>
+                <AlertCircle className="mx-auto mb-3" />
+                <h3 className="text-lg font-semibold">Inventory Management</h3>
                 <p className="text-muted-foreground mb-4">
-                  Add and manage your medicine inventory
+                  Add and manage medicines
                 </p>
                 <Button>Add Medicine</Button>
               </CardContent>
