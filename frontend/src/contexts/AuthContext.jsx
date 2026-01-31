@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  // ✅ Run only ONCE when app loads
+  // ✅ Run once on app load
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Fetch user safely
+  // ✅ Fetch logged-in user
   const fetchUser = async () => {
     try {
       const res = await axios.get(`${API_URL}/auth/me`);
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ LOGIN FIXED
+  // ✅ LOGIN
   const login = async (email, password) => {
     try {
       const res = await axios.post(`${API_URL}/auth/login`, {
@@ -50,10 +50,7 @@ export const AuthProvider = ({ children }) => {
 
       const { access_token, user: userData } = res.data;
 
-      // Save token
       localStorage.setItem("token", access_token);
-
-      // Set axios global header
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
 
       setToken(access_token);
@@ -65,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ REGISTER FIXED
+  // ✅ REGISTER (customer only)
   const register = async (data) => {
     try {
       const res = await axios.post(`${API_URL}/auth/register`, data);
@@ -84,6 +81,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
