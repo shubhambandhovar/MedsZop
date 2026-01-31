@@ -36,24 +36,24 @@ const PharmacyDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = async () => {
-    try {
-      const [dashboardRes, ordersRes] = await Promise.all([
-        axios.get(`${API_URL}/pharmacy/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API_URL}/pharmacy/orders`, { headers: { Authorization: `Bearer ${token}` } })
-      ]);
-      setDashboardData(dashboardRes.data);
-      setOrders(ordersRes.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const [dashboardRes, ordersRes] = await Promise.all([
+      axios.get(`${API_URL}/pharmacy/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${API_URL}/pharmacy/orders`, { headers: { Authorization: `Bearer ${token}` } })
+    ]);
+    setDashboardData(dashboardRes.data);
+    setOrders(ordersRes.data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchData();
+}, []); // Only run once on mount
 
   const handleUpdateOrderStatus = async (orderId, status) => {
     try {
