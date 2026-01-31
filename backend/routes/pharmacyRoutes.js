@@ -7,7 +7,8 @@ const role = require("../middleware/roleMiddleware");
 const {
   registerPharmacy,
   getDashboard,
-  getPharmacyOrders
+  getPharmacyOrders,
+  addMedicine
 } = require("../controllers/pharmacyController");
 
 // Register pharmacy
@@ -18,5 +19,7 @@ router.get("/dashboard", auth, role(["pharmacy","admin"]), getDashboard);
 
 // ✅ THIS IS REQUIRED
 router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
+
+router.post("/add-medicine", auth, role(["pharmacy"]), addMedicine);
 
 module.exports = router;

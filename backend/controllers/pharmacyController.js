@@ -48,3 +48,26 @@ exports.getPharmacyOrders = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.addMedicine = async (req, res) => {
+  try {
+    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+
+    if (!pharmacy) {
+      return res.status(404).json({ message: "Pharmacy not found" });
+    }
+
+    const { name, price } = req.body;
+
+    if (!name || !price) {
+      return res.status(400).json({ message: "Name and price required" });
+    }
+
+    pharmacy.medicines.push({ name, price });
+    await pharmacy.save();
+
+    res.json({ message: "Medicine added successfully" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
