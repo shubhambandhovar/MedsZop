@@ -4,7 +4,12 @@ import axios from "axios";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer";
 
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
@@ -74,6 +79,7 @@ const AdminDashboardPage = () => {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     role: "pharmacy",
   });
@@ -113,7 +119,7 @@ const AdminDashboardPage = () => {
       await axios.put(
         `${API_URL}/admin/pharmacies/${id}/verify`,
         {},
-        { headers: { Authorization: `Bearer ${authToken}` } }
+        { headers: { Authorization: `Bearer ${authToken}` } },
       );
       toast.success("Pharmacy verified");
       fetchData();
@@ -125,11 +131,9 @@ const AdminDashboardPage = () => {
   // ================= CREATE USER =================
   const handleCreateUser = async () => {
     try {
-      await axios.post(
-        `${API_URL}/admin/create-user`,
-        newUser,
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
+      await axios.post(`${API_URL}/admin/create-user`, newUser, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
 
       toast.success("User created");
       setNewUser({ name: "", email: "", password: "", role: "pharmacy" });
@@ -141,11 +145,20 @@ const AdminDashboardPage = () => {
   const COLORS = ["#0066FF", "#06B6D4", "#10B981", "#F59E0B"];
 
   const userRoleData = [
-    { name: "Customers", value: users.filter(u => u.role === "customer").length },
-    { name: "Pharmacies", value: users.filter(u => u.role === "pharmacy").length },
-    { name: "Delivery", value: users.filter(u => u.role === "delivery").length },
-    { name: "Admins", value: users.filter(u => u.role === "admin").length },
-  ].filter(d => d.value > 0);
+    {
+      name: "Customers",
+      value: users.filter((u) => u.role === "customer").length,
+    },
+    {
+      name: "Pharmacies",
+      value: users.filter((u) => u.role === "pharmacy").length,
+    },
+    {
+      name: "Delivery",
+      value: users.filter((u) => u.role === "delivery").length,
+    },
+    { name: "Admins", value: users.filter((u) => u.role === "admin").length },
+  ].filter((d) => d.value > 0);
 
   const orderData =
     stats?.recent_orders?.map((o, i) => ({
@@ -173,10 +186,30 @@ const AdminDashboardPage = () => {
 
         {/* STATS */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card><CardContent className="p-4"><p>Users</p><h2 className="text-2xl">{stats?.users_count}</h2></CardContent></Card>
-          <Card><CardContent className="p-4"><p>Orders</p><h2 className="text-2xl">{stats?.orders_count}</h2></CardContent></Card>
-          <Card><CardContent className="p-4"><p>Revenue</p><h2 className="text-2xl">₹{stats?.total_revenue}</h2></CardContent></Card>
-          <Card><CardContent className="p-4"><p>Pharmacies</p><h2 className="text-2xl">{pharmacies.length}</h2></CardContent></Card>
+          <Card>
+            <CardContent className="p-4">
+              <p>Users</p>
+              <h2 className="text-2xl">{stats?.users_count}</h2>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p>Orders</p>
+              <h2 className="text-2xl">{stats?.orders_count}</h2>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p>Revenue</p>
+              <h2 className="text-2xl">₹{stats?.total_revenue}</h2>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p>Pharmacies</p>
+              <h2 className="text-2xl">{pharmacies.length}</h2>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -191,7 +224,9 @@ const AdminDashboardPage = () => {
           <TabsContent value="overview">
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
-                <CardHeader><CardTitle>Revenue</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle>Revenue</CardTitle>
+                </CardHeader>
                 <CardContent className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={orderData}>
@@ -205,7 +240,9 @@ const AdminDashboardPage = () => {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle>User Distribution</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle>User Distribution</CardTitle>
+                </CardHeader>
                 <CardContent className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -232,11 +269,13 @@ const AdminDashboardPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map(u => (
+                {users.map((u) => (
                   <TableRow key={u._id}>
                     <TableCell>{u.name}</TableCell>
                     <TableCell>{u.email}</TableCell>
-                    <TableCell><Badge>{u.role}</Badge></TableCell>
+                    <TableCell>
+                      <Badge>{u.role}</Badge>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -254,15 +293,22 @@ const AdminDashboardPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pharmacies.map(p => (
+                {pharmacies.map((p) => (
                   <TableRow key={p._id}>
                     <TableCell>{p.name}</TableCell>
                     <TableCell>
-                      {p.verified ? <Badge>Verified</Badge> : <Badge variant="outline">Pending</Badge>}
+                      {p.verified ? (
+                        <Badge>Verified</Badge>
+                      ) : (
+                        <Badge variant="outline">Pending</Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       {!p.verified && (
-                        <Button size="sm" onClick={() => handleVerifyPharmacy(p._id)}>
+                        <Button
+                          size="sm"
+                          onClick={() => handleVerifyPharmacy(p._id)}
+                        >
                           Verify
                         </Button>
                       )}
@@ -276,12 +322,46 @@ const AdminDashboardPage = () => {
           {/* CREATE USER */}
           <TabsContent value="create">
             <div className="max-w-md space-y-4">
-              <Input placeholder="Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
-              <Input placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
-              <Input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
+              <Input
+                placeholder="Name"
+                value={newUser.name}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, name: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Email"
+                value={newUser.email}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, email: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Phone Number"
+                value={newUser.phone}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, phone: e.target.value })
+                }
+              />
 
-              <Select value={newUser.role} onValueChange={value => setNewUser({ ...newUser, role: value })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={newUser.password}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, password: e.target.value })
+                }
+              />
+
+              <Select
+                value={newUser.role}
+                onValueChange={(value) =>
+                  setNewUser({ ...newUser, role: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pharmacy">Pharmacy</SelectItem>
                   <SelectItem value="delivery">Delivery</SelectItem>
