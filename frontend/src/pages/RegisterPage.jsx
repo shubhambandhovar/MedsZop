@@ -5,7 +5,13 @@ import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,7 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { Pill, Mail, Lock, User, Phone, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Pill,
+  Mail,
+  Lock,
+  User,
+  Phone,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const RegisterPage = () => {
@@ -23,48 +37,48 @@ const RegisterPage = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "customer",
   });
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (formData.password !== formData.confirmPassword) {
-    toast.error("Passwords do not match");
-    return;
-  }
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-  if (formData.password.length < 6) {
-    toast.error("Password must be at least 6 characters");
-    return;
-  }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    await register({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      password: formData.password
-      // ❌ DO NOT send role
-    });
+    try {
+      await register({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.role, // ✅ Send role!
+      });
 
-    toast.success("Account created successfully!");
-    navigate("/dashboard");
-
-  } catch (error) {
-    toast.error(error.message || "Registration failed");
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success("Account created successfully!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen gradient-hero flex items-center justify-center p-4 py-12">
@@ -88,13 +102,17 @@ const RegisterPage = () => {
             <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
               <Pill className="h-7 w-7 text-white" />
             </div>
-            <span className="font-heading text-2xl font-bold text-foreground">MedsZop</span>
+            <span className="font-heading text-2xl font-bold text-foreground">
+              MedsZop
+            </span>
           </Link>
         </div>
 
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="font-heading text-2xl">Create Account</CardTitle>
+            <CardTitle className="font-heading text-2xl">
+              Create Account
+            </CardTitle>
             <CardDescription>Join MedsZop for smart healthcare</CardDescription>
           </CardHeader>
           <CardContent>
@@ -175,12 +193,36 @@ const RegisterPage = () => {
                     type="password"
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("confirmPassword", e.target.value)
+                    }
                     className="pl-10 h-12"
                     required
                     data-testid="register-confirm-password"
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">I want to</Label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => handleChange("role", value)}
+                >
+                  <SelectTrigger id="role" className="h-12">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="customer">
+                      Order Medicines (Customer)
+                    </SelectItem>
+                    <SelectItem value="pharmacy">
+                      Sell Medicines (Pharmacy)
+                    </SelectItem>
+                    <SelectItem value="delivery">
+                      Deliver Medicines (Delivery)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <Button
@@ -200,7 +242,11 @@ const RegisterPage = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login" className="text-primary font-medium hover:underline" data-testid="login-link">
+                <Link
+                  to="/login"
+                  className="text-primary font-medium hover:underline"
+                  data-testid="login-link"
+                >
                   Sign in
                 </Link>
               </p>
