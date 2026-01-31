@@ -11,19 +11,12 @@ exports.register = async (req, res) => {
   try {
     const { email, password, name, phone } = req.body;
 
-<<<<<<< HEAD
-    // ✅ Validate required fields
     if (!email || !password || !name) {
       return res.status(400).json({
         message: "Name, email and password are required"
       });
-=======
-    if (!email || !password || !name || !phone) {
-      return res.status(400).json({ message: "All required fields missing" });
->>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
     }
 
-    // ✅ Check existing user
     const userExist = await User.findOne({ email });
     if (userExist) {
       return res.status(400).json({
@@ -31,23 +24,17 @@ exports.register = async (req, res) => {
       });
     }
 
-    // ✅ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ FORCE customer role
+    // 🔒 FORCE customer role
     const user = await User.create({
       email,
       password: hashedPassword,
       name,
       phone,
       role: "customer"
-<<<<<<< HEAD
-=======
-
->>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
     });
 
-    // ✅ Create JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -69,7 +56,7 @@ exports.register = async (req, res) => {
 
 /**
  * =========================
- * LOGIN
+ * LOGIN (All roles)
  * =========================
  */
 exports.login = async (req, res) => {
