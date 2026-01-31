@@ -100,11 +100,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-<<<<<<< HEAD
-        isAuthenticated: !!token && !!user
-=======
         isAuthenticated: !!token && !!user && !loading,
->>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
       }}
     >
       {children}
