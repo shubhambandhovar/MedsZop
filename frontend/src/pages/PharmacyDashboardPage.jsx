@@ -2,10 +2,20 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -39,27 +49,27 @@ const PharmacyDashboardPage = () => {
   // ================= FETCH DATA =================
 
   const fetchData = async () => {
-  if (!token) return;
+    if (!token) return;
 
-  try {
-    const [dashboardRes, ordersRes] = await Promise.all([
-      axios.get(`${API_URL}/pharmacy/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      axios.get(`${API_URL}/pharmacy/orders`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-    ]);
+    try {
+      const [dashboardRes, ordersRes] = await Promise.all([
+        axios.get(`${API_URL}/pharmacy/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(`${API_URL}/pharmacy/orders`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-    setDashboardData(dashboardRes.data);
-    setOrders(ordersRes.data || []);
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to load pharmacy data");
-  } finally {
-    setLoading(false);
-  }
-};
+      setDashboardData(dashboardRes.data);
+      setOrders(ordersRes.data || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load pharmacy data");
+    } finally {
+      setLoading(false);
+    }
+  };
   // ✅ ONLY FETCH WHEN TOKEN EXISTS
   useEffect(() => {
     if (token) {
@@ -74,7 +84,7 @@ const PharmacyDashboardPage = () => {
       await axios.put(
         `${API_URL}/orders/${orderId}/status`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Order updated");
@@ -218,15 +228,11 @@ const PharmacyDashboardPage = () => {
                     <TableBody>
                       {orders.slice(0, 5).map((order) => (
                         <TableRow key={order._id}>
-                          <TableCell>
-                            {order._id.slice(0, 8)}...
-                          </TableCell>
+                          <TableCell>{order._id.slice(0, 8)}...</TableCell>
 
                           <TableCell>{order.items.length}</TableCell>
 
-                          <TableCell>
-                            ₹{order.total.toFixed(2)}
-                          </TableCell>
+                          <TableCell>₹{order.total.toFixed(2)}</TableCell>
 
                           <TableCell>
                             <Badge
@@ -241,7 +247,10 @@ const PharmacyDashboardPage = () => {
                               <Button
                                 size="sm"
                                 onClick={() =>
-                                  handleUpdateOrderStatus(order._id, "confirmed")
+                                  handleUpdateOrderStatus(
+                                    order._id,
+                                    "confirmed",
+                                  )
                                 }
                               >
                                 Confirm
@@ -281,9 +290,7 @@ const PharmacyDashboardPage = () => {
                   <TableBody>
                     {orders.map((order) => (
                       <TableRow key={order._id}>
-                        <TableCell>
-                          {order._id.slice(0, 8)}...
-                        </TableCell>
+                        <TableCell>{order._id.slice(0, 8)}...</TableCell>
 
                         {/* SAFE USER DISPLAY */}
                         <TableCell>
@@ -292,14 +299,10 @@ const PharmacyDashboardPage = () => {
                             : order.user?.slice(0, 8)}
                         </TableCell>
 
-                        <TableCell>
-                          ₹{order.total.toFixed(2)}
-                        </TableCell>
+                        <TableCell>₹{order.total.toFixed(2)}</TableCell>
 
                         <TableCell>
-                          <Badge
-                            className={getStatusBadge(order.order_status)}
-                          >
+                          <Badge className={getStatusBadge(order.order_status)}>
                             {order.order_status.replace("_", " ")}
                           </Badge>
                         </TableCell>
@@ -329,26 +332,45 @@ const PharmacyDashboardPage = () => {
                 <p className="text-muted-foreground mb-4">
                   Add and manage medicines
                 </p>
-                <Button onClick={() => setShowAddMedicineModal(true)}>Add Medicine</Button>
+                <Button onClick={() => setShowAddMedicineModal(true)}>
+                  Add Medicine
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </main>
-{showAddMedicineModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-      <h2 className="text-xl font-bold mb-4">Add Medicine</h2>
-      {/* Add your form fields here */}
-      <button
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-        onClick={() => setShowAddMedicineModal(false)}
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
+      {showAddMedicineModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Add Medicine</h2>
+            <form>
+              <input
+                className="border p-2 w-full mb-2"
+                placeholder="Medicine Name"
+              />
+              <input
+                className="border p-2 w-full mb-2"
+                placeholder="Price"
+                type="number"
+              />
+              {/* Add more fields as needed */}
+              <button
+                type="submit"
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+              >
+                Save
+              </button>
+            </form>
+            <button
+              className="mt-4 px-4 py-2 bg-gray-300 text-black rounded"
+              onClick={() => setShowAddMedicineModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );
