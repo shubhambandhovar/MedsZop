@@ -11,11 +11,16 @@ exports.register = async (req, res) => {
   try {
     const { email, password, name, phone } = req.body;
 
+<<<<<<< HEAD
     // ✅ Validate required fields
     if (!email || !password || !name) {
       return res.status(400).json({
         message: "Name, email and password are required"
       });
+=======
+    if (!email || !password || !name || !phone) {
+      return res.status(400).json({ message: "All required fields missing" });
+>>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
     }
 
     // ✅ Check existing user
@@ -36,6 +41,10 @@ exports.register = async (req, res) => {
       name,
       phone,
       role: "customer"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
     });
 
     // ✅ Create JWT

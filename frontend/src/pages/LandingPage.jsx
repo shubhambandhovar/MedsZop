@@ -95,8 +95,8 @@ const LandingPage = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden gradient-hero">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDY2RkYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      <section className="relative overflow-hidden gradient-hero z-10">
+        <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml;base64,...')] opacity-50" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -159,7 +159,8 @@ const LandingPage = () => {
               className="relative hidden lg:block"
             >
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
+                <div className="absolute -inset-4 pointer-events-none bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
+
                 <img
                   src="https://images.pexels.com/photos/8313184/pexels-photo-8313184.jpeg"
                   alt="Healthcare consultation"

@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
+axios.defaults.timeout = 15000;
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AuthContext = createContext(null);
@@ -10,59 +12,73 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
+  // ✅ Run only ONCE when app loads
   useEffect(() => {
-    if (token) {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
       fetchUser();
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
+  // ✅ Fetch user safely
   const fetchUser = async () => {
     try {
-      const res = await axios.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await axios.get(`${API_URL}/auth/me`);
       setUser(res.data);
     } catch (err) {
-      localStorage.removeItem("token");
-      setToken(null);
-      setUser(null);
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ LOGIN FIXED
   const login = async (email, password) => {
     try {
       const res = await axios.post(`${API_URL}/auth/login`, {
         email,
-        password
+        password,
       });
 
       const { access_token, user: userData } = res.data;
+
+      // Save token
       localStorage.setItem("token", access_token);
+
+      // Set axios global header
+      axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+
       setToken(access_token);
       setUser(userData);
-      return userData;
 
+      return userData;
     } catch (err) {
       throw err.response?.data?.message || "Login failed";
     }
   };
 
+  // ✅ REGISTER FIXED
   const register = async (data) => {
     try {
       const res = await axios.post(`${API_URL}/auth/register`, data);
 
       const { access_token, user: userData } = res.data;
+
       localStorage.setItem("token", access_token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+
       setToken(access_token);
       setUser(userData);
-      return userData;
 
+      return userData;
     } catch (err) {
       throw err.response?.data?.message || "Registration failed";
     }
@@ -70,6 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    delete axios.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);
   };
@@ -83,7 +100,11 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+<<<<<<< HEAD
         isAuthenticated: !!token && !!user
+=======
+        isAuthenticated: !!token && !!user && !loading,
+>>>>>>> 46e45db1aea87aa1bffa24d2cd6bcd16a28d9e49
       }}
     >
       {children}
