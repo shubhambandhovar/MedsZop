@@ -158,9 +158,53 @@ exports.changePassword = async (req, res) => {
     await user.save();
 
     res.json({ message: "Password updated successfully" });
-
   } catch (err) {
     console.error("Change password error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * =========================
+ * UPDATE PROFILE (Generic)
+ * =========================
+ */
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, phone, address } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+
+    // Handle single address update for simple profiles (like Delivery Agent)
+    if (address) {
+      if (user.addresses && user.addresses.length > 0) {
+        user.addresses[0].addressLine1 = address;
+      } else {
+        user.addresses.push({
+          addressLine1: address,
+          addressType: "Home", // Default
+          name: user.name,
+          mobile: user.phone
+        });
+      }
+    }
+
+    await user.save();
+
+    // Return updated user without password
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.json({ message: "Profile updated successfully", user: userResponse });
+  } catch (err) {
+    console.error("Update profile error:", err);
     res.status(500).json({ error: err.message });
   }
 };

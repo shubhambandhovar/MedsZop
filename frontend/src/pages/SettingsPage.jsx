@@ -39,21 +39,18 @@ const SettingsPage = () => {
         }
     };
 
-    // Initial Fetch (If pharmacy)
+    // Initial Fetch (If pharmacy or delivery)
     useEffect(() => {
         if (user?.role === 'pharmacy') {
             const fetchProfile = async () => {
                 try {
-                    // We'll use a new endpoint or the updated dashboard one. 
-                    // Let's assume we update GET /pharmacy/dashboard to return 'pharmacy' object
                     const res = await axios.get(`${API_URL}/pharmacy/dashboard`, { headers: { Authorization: `Bearer ${token}` } });
-
                     if (res.data.pharmacy) {
                         const p = res.data.pharmacy;
                         setProfileForm({
-                            name: user.name || "", // User name
+                            name: user.name || "",
                             store_name: p.name || "",
-                            pharmacist_name: p.pharmacist_name || user.name || "", // Fallback
+                            pharmacist_name: p.pharmacist_name || user.name || "",
                             address: p.address || "",
                             license_number: p.license_number || ""
                         });
@@ -61,6 +58,17 @@ const SettingsPage = () => {
                 } catch (e) { console.error(e); }
             }
             fetchProfile();
+        } else if (user?.role === 'delivery') {
+            setProfileForm({
+                name: user.name || "",
+                store_name: "",
+                pharmacist_name: "",
+                address: user.addresses?.[0]?.addressLine1 || "",
+                license_number: "",
+                phone: user.phone || ""
+            });
+        } else {
+            setProfileForm(prev => ({ ...prev, name: user?.name || "" }));
         }
     }, [user, token]);
 
@@ -70,7 +78,10 @@ const SettingsPage = () => {
         try {
             // Determine endpoint based on role
             let endpoint = `${API_URL}/pharmacy/profile`;
-            if (user.role === 'customer') endpoint = `${API_URL}/users/profile`; // Hypothetical
+            // For delivery agents and customers, use generic auth profile update
+            if (user.role !== 'pharmacy') {
+                endpoint = `${API_URL}/auth/profile`;
+            }
 
             await axios.put(endpoint, profileForm, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -78,7 +89,7 @@ const SettingsPage = () => {
             toast.success("Profile Updated Successfully");
             fetchUser(); // Refresh global user state
         } catch (err) {
-            toast.error("Failed to update profile");
+            toast.error(err.response?.data?.message || "Failed to update profile");
         } finally {
             setLoading(false);
         }
@@ -133,6 +144,36 @@ const SettingsPage = () => {
                                             value={profileForm.license_number}
                                             onChange={(e) => setProfileForm(p => ({ ...p, license_number: e.target.value }))}
                                             placeholder="DL No. / Registration No."
+                                        />
+                                    </div>
+                                </>
+                            ) : user?.role === 'delivery' ? (
+                                <>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Full Name</label>
+                                        <input
+                                            className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                                            value={profileForm.name}
+                                            onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
+                                            placeholder="Your Name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Mobile Number</label>
+                                        <input
+                                            className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                                            value={profileForm.phone || ""}
+                                            onChange={(e) => setProfileForm(p => ({ ...p, phone: e.target.value }))}
+                                            placeholder="e.g. 9876543210"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Address</label>
+                                        <textarea
+                                            className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
+                                            value={profileForm.address}
+                                            onChange={(e) => setProfileForm(p => ({ ...p, address: e.target.value }))}
+                                            placeholder="Your Residential Address..."
                                         />
                                     </div>
                                 </>
