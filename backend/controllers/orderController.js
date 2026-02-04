@@ -180,9 +180,12 @@ exports.updateOrderStatus = async (req, res) => {
       const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
       if (pharmacy && (!order.pharmacy_id || order.pharmacy_id === "")) {
         order.pharmacy_id = pharmacy._id.toString();
-        // Generate 4-digit OTP for delivery
-        order.delivery_otp = Math.floor(1000 + Math.random() * 9000).toString();
       }
+    }
+
+    // Ensure OTP is generated when order is confirmed/processing
+    if (["confirmed", "processing", "out_for_delivery"].includes(req.body.status) && !order.delivery_otp) {
+      order.delivery_otp = Math.floor(1000 + Math.random() * 9000).toString();
     }
 
     order.status_history.push({
