@@ -620,7 +620,7 @@ const PharmacyDashboardPage = () => {
           <DialogHeader>
             <DialogTitle>Order Details #{selectedOrder?.orderNumber || selectedOrder?._id?.slice(0, 8)}</DialogTitle>
             <DialogDescription>
-              Created on {selectedOrder && new Date(selectedOrder.created_at).toLocaleString()}
+              Created on {selectedOrder && new Date(selectedOrder.createdAt).toLocaleString()}
             </DialogDescription>
           </DialogHeader>
 
