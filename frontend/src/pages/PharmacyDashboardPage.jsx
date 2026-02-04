@@ -411,7 +411,7 @@ const PharmacyDashboardPage = () => {
                             </div>
                             <div>
                               <p className="font-medium">New Order #{order.orderNumber ? order.orderNumber.split('-')[1] : order._id.slice(-6)}</p>
-                              <p className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</p>
+                              <p className="text-sm text-muted-foreground">{new Date(order.createdAt).toLocaleDateString()}</p>
                             </div>
                           </div>
                           <div className="text-right">
@@ -512,7 +512,7 @@ const PharmacyDashboardPage = () => {
                           </Badge>
                         </TableCell>
 
-                        <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
 
                         <TableCell>
                           <Button size="sm" variant="outline" onClick={() => openOrderDetails(order)}>
