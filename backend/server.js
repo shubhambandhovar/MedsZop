@@ -27,6 +27,7 @@ app.use("/api/prescriptions", require("./routes/prescriptionRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/payments", require("./routes/paymentRoutes"));
+console.log("🛠️ Registering Pharmacy Routes...");
 app.use("/api/pharmacy", require("./routes/pharmacyRoutes"));
 app.use("/api/delivery", require("./routes/deliveryRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
