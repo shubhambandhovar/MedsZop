@@ -40,8 +40,21 @@ const DeliveryDashboardPage = () => {
   const centerLocation = [12.9716, 77.5946];
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/delivery/orders`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrders();
-  }, [fetchOrders]);
+  }, [token]);
 
   const fetchOrders = async () => {
     try {
@@ -122,7 +135,7 @@ const DeliveryDashboardPage = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -134,7 +147,7 @@ const DeliveryDashboardPage = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -146,7 +159,7 @@ const DeliveryDashboardPage = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-violet-500 to-violet-600 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -171,9 +184,9 @@ const DeliveryDashboardPage = () => {
             </CardHeader>
             <CardContent className="p-0">
               <div className="h-[400px] rounded-b-xl overflow-hidden">
-                <MapContainer 
-                  center={centerLocation} 
-                  zoom={12} 
+                <MapContainer
+                  center={centerLocation}
+                  zoom={12}
                   style={{ height: '100%', width: '100%' }}
                 >
                   <TileLayer
@@ -221,8 +234,8 @@ const DeliveryDashboardPage = () => {
                             <Navigation className="h-4 w-4 mr-1" />
                             Navigate
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             className="flex-1"
                             onClick={() => handleCompleteDelivery(order.id)}
                           >
@@ -263,8 +276,8 @@ const DeliveryDashboardPage = () => {
                             +₹50 earning
                           </span>
                         </div>
-                        <Button 
-                          className="w-full mt-2" 
+                        <Button
+                          className="w-full mt-2"
                           size="sm"
                           onClick={() => handleAcceptDelivery(order.id)}
                         >

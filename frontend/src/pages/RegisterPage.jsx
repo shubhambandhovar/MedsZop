@@ -12,13 +12,7 @@ import {
   CardTitle,
   CardDescription,
 } from "../components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
+
 import {
   Pill,
   Mail,
@@ -202,28 +196,7 @@ const RegisterPage = () => {
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">I want to</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => handleChange("role", value)}
-                >
-                  <SelectTrigger id="role" className="h-12">
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="customer">
-                      Order Medicines (Customer)
-                    </SelectItem>
-                    <SelectItem value="pharmacy">
-                      Sell Medicines (Pharmacy)
-                    </SelectItem>
-                    <SelectItem value="delivery">
-                      Deliver Medicines (Delivery)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
 
               <Button
                 type="submit"

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation, Trans } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
@@ -35,57 +36,59 @@ const staggerContainer = {
 };
 
 const LandingPage = () => {
+  const { t } = useTranslation();
+
   const features = [
     {
       icon: ScanLine,
-      title: "AI Prescription Scanner",
-      description: "Upload your prescription and let our AI extract medicines automatically",
+      title: t("landing.features.scanner_title"),
+      description: t("landing.features.scanner_desc"),
       color: "bg-blue-500"
     },
     {
       icon: MessageSquare,
-      title: "AI Doctor Chat",
-      description: "Get instant health guidance from our AI-powered assistant",
+      title: t("landing.features.chat_title"),
+      description: t("landing.features.chat_desc"),
       color: "bg-cyan-500"
     },
     {
       icon: Truck,
-      title: "Same-Hour Delivery",
-      description: "Priority delivery for emergency medicines within 60 minutes",
+      title: t("landing.features.delivery_title"),
+      description: t("landing.features.delivery_desc"),
       color: "bg-emerald-500"
     },
     {
       icon: Shield,
-      title: "100% Genuine",
-      description: "All medicines sourced from verified pharmacies only",
+      title: t("landing.features.genuine_title"),
+      description: t("landing.features.genuine_desc"),
       color: "bg-violet-500"
     }
   ];
 
   const stats = [
-    { value: "50K+", label: "Happy Customers" },
-    { value: "10K+", label: "Medicines" },
-    { value: "500+", label: "Partner Pharmacies" },
-    { value: "30min", label: "Avg. Delivery" }
+    { value: "50K+", label: t("landing.stats.customers") },
+    { value: "10K+", label: t("landing.stats.medicines") },
+    { value: "500+", label: t("landing.stats.pharmacies") },
+    { value: "30min", label: t("landing.stats.delivery") }
   ];
 
   const testimonials = [
     {
       name: "Priya Sharma",
-      role: "Regular Customer",
-      content: "MedsZop has been a lifesaver! The AI prescription scanner saved me so much time.",
+      role: t("landing.testimonials.role_1"),
+      content: t("landing.testimonials.content_1"),
       rating: 5
     },
     {
       name: "Dr. Rajesh Kumar",
-      role: "Healthcare Professional",
-      content: "Finally, a platform that understands healthcare needs. Highly recommended!",
+      role: t("landing.testimonials.role_2"),
+      content: t("landing.testimonials.content_2"),
       rating: 5
     },
     {
       name: "Amit Patel",
-      role: "Pharmacy Owner",
-      content: "As a pharmacy partner, the dashboard is intuitive and order management is seamless.",
+      role: t("landing.testimonials.role_3"),
+      content: t("landing.testimonials.content_3"),
       rating: 5
     }
   ];
@@ -97,7 +100,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden gradient-hero z-10">
         <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml;base64,...')] opacity-50" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -107,30 +110,30 @@ const LandingPage = () => {
             >
               <Badge className="mb-6 bg-primary/10 text-primary border-0 px-4 py-1.5">
                 <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                Smart HealthTech Platform
+                {t("landing.hero.badge")}
               </Badge>
-              
+
               <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
-                Your Health,{" "}
-                <span className="text-primary">Delivered</span>
-                <br />Smarter
+                <Trans i18nKey="landing.hero.title">
+                  Your Health, <span className="text-primary">Delivered</span><br />Smarter
+                </Trans>
               </h1>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 max-w-lg">
-                India's most intelligent medicine ordering platform. AI-powered prescription scanning, trusted pharmacies, and lightning-fast delivery.
+                {t("landing.hero.subtitle")}
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/medicines" data-testid="explore-medicines-btn">
                   <Button size="lg" className="rounded-full h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
-                    Explore Medicines
+                    {t("landing.hero.explore_btn")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/prescription-scan" data-testid="scan-prescription-btn">
                   <Button size="lg" variant="outline" className="rounded-full h-12 px-8 text-base">
                     <ScanLine className="mr-2 h-4 w-4" />
-                    Scan Prescription
+                    {t("landing.hero.scan_btn")}
                   </Button>
                 </Link>
               </div>
@@ -147,7 +150,7 @@ const LandingPage = () => {
                       <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <p className="text-sm text-muted-foreground">Trusted by 50,000+ users</p>
+                  <p className="text-sm text-muted-foreground">{t("landing.hero.trusted_by")}</p>
                 </div>
               </div>
             </motion.div>
@@ -166,7 +169,7 @@ const LandingPage = () => {
                   alt="Healthcare consultation"
                   className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]"
                 />
-                
+
                 {/* Floating Cards */}
                 <Card className="absolute -left-8 top-20 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
                   <CardContent className="p-4 flex items-center gap-3">
@@ -174,20 +177,20 @@ const LandingPage = () => {
                       <CheckCircle className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">Order Delivered</p>
-                      <p className="text-xs text-muted-foreground">In 28 minutes</p>
+                      <p className="font-semibold text-sm">{t("landing.hero.delivered_card")}</p>
+                      <p className="text-xs text-muted-foreground">{t("landing.hero.in_min")}</p>
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="absolute -right-4 bottom-20 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '4s' }}>
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                       <Brain className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm">AI Analysis</p>
-                      <p className="text-xs text-muted-foreground">Prescription scanned</p>
+                      <p className="font-semibold text-sm">{t("landing.hero.ai_card")}</p>
+                      <p className="text-xs text-muted-foreground">{t("landing.hero.scanned_status")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -232,12 +235,12 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 bg-primary/10 text-primary border-0">Features</Badge>
+            <Badge className="mb-4 bg-primary/10 text-primary border-0">{t("landing.features.badge")}</Badge>
             <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Why Choose MedsZop?
+              {t("landing.features.title")}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We combine cutting-edge technology with healthcare expertise to deliver the best experience
+              {t("landing.features.subtitle")}
             </p>
           </motion.div>
 
@@ -276,28 +279,27 @@ const LandingPage = () => {
             >
               <Badge className="mb-4 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-0">
                 <Brain className="h-3.5 w-3.5 mr-1.5" />
-                AI-Powered
+                {t("landing.ai.badge")}
               </Badge>
               <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                Healthcare Meets{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-500">
-                  Artificial Intelligence
-                </span>
+                <Trans i18nKey="landing.ai.title">
+                  Healthcare Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-500">Artificial Intelligence</span>
+                </Trans>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Our AI tools make healthcare more accessible. Scan prescriptions instantly, chat with our AI doctor for guidance, and get personalized medicine recommendations.
+                {t("landing.ai.description")}
               </p>
-              
+
               <div className="space-y-4">
                 {[
-                  "Instant prescription text extraction",
-                  "Medicine name recognition & matching",
-                  "Symptom-based health guidance",
-                  "Drug interaction warnings"
+                  "extraction",
+                  "recognition",
+                  "guidance",
+                  "warnings"
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-emerald-500" />
-                    <span>{item}</span>
+                    <span>{t(`landing.ai.list.${item}`)}</span>
                   </div>
                 ))}
               </div>
@@ -305,13 +307,13 @@ const LandingPage = () => {
               <div className="flex gap-4 mt-8">
                 <Link to="/prescription-scan">
                   <Button className="rounded-full">
-                    Try AI Scanner
+                    {t("landing.ai.scanner_btn")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/doctor-chat">
                   <Button variant="outline" className="rounded-full">
-                    Chat with AI Doctor
+                    {t("landing.ai.chat_btn")}
                   </Button>
                 </Link>
               </div>
@@ -343,12 +345,12 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 bg-primary/10 text-primary border-0">Testimonials</Badge>
+            <Badge className="mb-4 bg-primary/10 text-primary border-0">{t("landing.testimonials.badge")}</Badge>
             <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Loved by Thousands
+              {t("landing.testimonials.title")}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See what our customers and partners have to say about MedsZop
+              {t("landing.testimonials.subtitle")}
             </p>
           </motion.div>
 
@@ -400,21 +402,21 @@ const LandingPage = () => {
           >
             <Heart className="h-12 w-12 text-white/80 mx-auto mb-6" />
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-white mb-6">
-              Start Your Health Journey Today
+              {t("landing.cta.title")}
             </h2>
             <p className="text-xl text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Join thousands of happy customers who trust MedsZop for their healthcare needs
+              {t("landing.cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register" data-testid="cta-get-started">
                 <Button size="lg" variant="secondary" className="rounded-full h-12 px-8 text-base">
-                  Get Started Free
+                  {t("landing.cta.get_started")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/medicines">
                 <Button size="lg" variant="outline" className="rounded-full h-12 px-8 text-base bg-transparent text-white border-white hover:bg-white hover:text-primary">
-                  Browse Medicines
+                  {t("landing.cta.browse")}
                 </Button>
               </Link>
             </div>

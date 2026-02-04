@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
@@ -9,6 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import {
   Pill,
@@ -22,11 +30,13 @@ import {
   MessageSquare,
   Moon,
   Sun,
+  Globe,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "./ui/badge";
 
 const Navbar = () => {
+  const { t, i18n } = useTranslation();
   const { user, logout, isAuthenticated } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
@@ -58,10 +68,28 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { href: "/medicines", label: "Medicines" },
-    { href: "/prescription-scan", label: "Scan Prescription", auth: true },
-    { href: "/doctor-chat", label: "AI Doctor", auth: true },
+    { href: "/medicines", label: "nav.medicines" },
+    { href: "/prescription-scan", label: "nav.scan_prescription", auth: true },
+    { href: "/doctor-chat", label: "nav.ai_doctor", auth: true },
   ];
+
+  // Helper to handle language change via Google Translate Cookie
+  // Common languages for the dropdown
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "hi", name: "Hindi (हिंदी)" },
+    { code: "bn", name: "Bengali (বাংলা)" },
+  ];
+
+  /*
+    Other languages can be added here if translations are available in i18n.js
+    { code: "te", name: "Telugu (తెలుగు)" },
+    { code: "mr", name: "Marathi (मराठी)" },
+    ...
+  */
+
+  // Common languages for the dropdown
+
 
   const getDashboardLink = () => {
     if (!user?.role) return "/dashboard";
@@ -84,7 +112,7 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link
-            to="/"
+            to={user?.role === "delivery" ? "/delivery" : user?.role === "pharmacy" ? "/pharmacy" : "/"}
             className="flex items-center gap-2"
             data-testid="logo-link"
           >
@@ -98,7 +126,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map(
+            {(!user || user.role === "customer") && navLinks.map(
               (link) =>
                 (!link.auth || isAuthenticated) && (
                   <Link
@@ -107,7 +135,7 @@ const Navbar = () => {
                     className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                     data-testid={`nav-${link.label.toLowerCase().replace(" ", "-")}`}
                   >
-                    {link.label}
+                    {t(link.label)}
                   </Link>
                 ),
             )}
@@ -115,6 +143,21 @@ const Navbar = () => {
 
           {/* Right Side */}
           <div className="flex items-center gap-3">
+            {/* Language Toggle - Custom Select */}
+            <Select onValueChange={(value) => i18n.changeLanguage(value)} defaultValue={i18n.language || "en"}>
+              <SelectTrigger className="w-[140px] h-9">
+                <Globe className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Language" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {languages.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {/* Theme Toggle */}
             <Button
               variant="ghost"
@@ -175,37 +218,41 @@ const Navbar = () => {
                       className="flex items-center gap-2"
                     >
                       <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
+                      {t('nav.dashboard')}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/orders" className="flex items-center gap-2">
-                      <Package className="h-4 w-4" />
-                      My Orders
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      to="/prescription-scan"
-                      className="flex items-center gap-2"
-                    >
-                      <FileText className="h-4 w-4" />
-                      Prescriptions
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/doctor-chat" className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      AI Doctor
-                    </Link>
-                  </DropdownMenuItem>
+                  {user.role === "customer" && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/orders" className="flex items-center gap-2">
+                          <Package className="h-4 w-4" />
+                          {t('nav.my_orders')}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          to="/prescription-scan"
+                          className="flex items-center gap-2"
+                        >
+                          <FileText className="h-4 w-4" />
+                          {t('nav.scan_prescription')}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/doctor-chat" className="flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4" />
+                          {t('nav.ai_doctor')}
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogout}
                     className="text-destructive"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
-                    Log Out
+                    {t('nav.log_out')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -213,7 +260,7 @@ const Navbar = () => {
               <div className="hidden sm:flex items-center gap-2">
                 <Link to="/login">
                   <Button variant="ghost" size="sm" data-testid="login-btn">
-                    Log In
+                    {t('nav.log_in')}
                   </Button>
                 </Link>
                 <Link to="/register">
@@ -222,7 +269,7 @@ const Navbar = () => {
                     className="rounded-full"
                     data-testid="signup-btn"
                   >
-                    Get Started
+                    {t('nav.get_started')}
                   </Button>
                 </Link>
               </div>
@@ -246,7 +293,7 @@ const Navbar = () => {
                           onClick={() => setIsOpen(false)}
                           className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                          {link.label}
+                          {t(link.label)}
                         </Link>
                       ),
                   )}
@@ -254,11 +301,11 @@ const Navbar = () => {
                     <>
                       <Link to="/login" onClick={() => setIsOpen(false)}>
                         <Button variant="outline" className="w-full">
-                          Log In
+                          {t('nav.log_in')}
                         </Button>
                       </Link>
                       <Link to="/register" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full">Get Started</Button>
+                        <Button className="w-full">{t('nav.get_started')}</Button>
                       </Link>
                     </>
                   )}
