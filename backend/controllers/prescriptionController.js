@@ -12,67 +12,59 @@ exports.scanPrescription = async (req, res) => {
       return res.status(400).json({ message: "No image provided" });
     }
 
-    // 2️⃣ Convert base64 → buffer
-    const imageBuffer = Buffer.from(base64Image, "base64");
-
-    if (!imageBuffer || imageBuffer.length === 0) {
-      return res.status(400).json({ message: "Invalid image data" });
-    }
-
-    // 3️⃣ OCR with Tesseract (SAFE)
-    const ocrResult = await Tesseract.recognize(imageBuffer, "eng");
-    const extractedText = ocrResult?.data?.text || "";
-
-    if (!extractedText.trim()) {
-      return res.json({
-        rawText: "",
-        parsed: { medicines: [] }
-      });
-    }
-
-    // 4️⃣ Gemini AI (USE STABLE MODEL)
+    // 2️⃣ Prepare Gemini Vision
     const model = genAI.getGenerativeModel({
-      model: "gemini-pro"
+      model: "gemini-2.5-flash"
     });
 
+    // Remove data:image/jpeg;base64, prefix if exists
+    const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+
     const prompt = `
-Extract medicines from the prescription text below.
-
-Return ONLY valid JSON in this format:
-
-{
-  "medicines": [
+    You are an expert medical pharmacist. Analyze this prescription image (which might be handwritten) and extract all medicines listed.
+    
+    Return ONLY valid JSON in this format:
     {
-      "name": "",
-      "dosage": "",
-      "frequency": "",
-      "duration": ""
+      "medicines": [
+        {
+          "name": "Full name of the medicine",
+          "dosage": "e.g., 500mg",
+          "frequency": "e.g., twice a day",
+          "duration": "e.g., 5 days"
+        }
+      ]
     }
-  ]
-}
+    
+    If it's handwritten, look closely at the medication names. If no medicines are found, return an empty list.
+    `;
 
-Prescription text:
-${extractedText}
-`;
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg"
+        }
+      }
+    ]);
 
-    const result = await model.generateContent(prompt);
     const textOutput = result.response.text();
+    console.log("Gemini Raw Output:", textOutput);
 
-    // 5️⃣ SAFE JSON extraction
+    // 3️⃣ SAFE JSON extraction
     let parsed = { medicines: [] };
-
     try {
       const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[0]);
+        parsed = JSON.parse(jsonMatch[0].trim());
       }
     } catch (err) {
-      console.error("❌ Gemini JSON parse failed");
+      console.error("❌ Gemini Vision JSON parse failed", textOutput);
     }
 
-    // 6️⃣ Final response (matches frontend)
+    // 4️⃣ Response
     return res.json({
-      rawText: extractedText,
+      rawText: "Extracted via Gemini Vision",
       parsed
     });
 
