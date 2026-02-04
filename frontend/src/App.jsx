@@ -18,6 +18,7 @@ import DoctorChatPage from "./pages/DoctorChatPage.jsx";
 import PharmacyDashboardPage from "./pages/PharmacyDashboardPage.jsx";
 import DeliveryDashboardPage from "./pages/DeliveryDashboardPage.jsx";
 import AdminDashboardPage from "./pages/AdminDashboardPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
@@ -118,6 +119,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "pharmacy", "delivery", "admin"]}>
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />
