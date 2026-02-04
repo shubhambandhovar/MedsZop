@@ -9,6 +9,11 @@ exports.createOrder = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
+    if (!user) {
+      console.error(`❌ User not found for ID: ${req.user.id}`);
+      return res.status(401).json({ message: "User not found. Please log in again." });
+    }
+
     if (!user.cart || !user.cart.length) {
       return res.status(400).json({ message: "Cart is empty" });
     }
