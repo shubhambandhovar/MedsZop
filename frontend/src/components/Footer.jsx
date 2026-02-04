@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { Pill, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 const Footer = () => {
+  const { user } = useAuth();
+  const role = user?.role;
+
   return (
     <footer className="bg-slate-900 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -39,11 +43,29 @@ const Footer = () => {
           <div>
             <h4 className="font-heading font-semibold text-white mb-6">Quick Links</h4>
             <ul className="space-y-3">
-              <li><Link to="/medicines" className="text-sm hover:text-primary transition-colors">Browse Medicines</Link></li>
-              <li><Link to="/prescription-scan" className="text-sm hover:text-primary transition-colors">Upload Prescription</Link></li>
-              <li><Link to="/doctor-chat" className="text-sm hover:text-primary transition-colors">AI Doctor Chat</Link></li>
-              <li><Link to="/orders" className="text-sm hover:text-primary transition-colors">Track Order</Link></li>
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">Partner with Us</a></li>
+              {role === "pharmacy" ? (
+                <>
+                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Dashboard</Link></li>
+                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Inventory</Link></li>
+                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Orders</Link></li>
+                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">Settings</Link></li>
+                </>
+              ) : role === "delivery" ? (
+                <>
+                  <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Dashboard</Link></li>
+                  <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Active Deliveries</Link></li>
+                  <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Earnings History</Link></li>
+                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">Profile</Link></li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/medicines" className="text-sm hover:text-primary transition-colors">Browse Medicines</Link></li>
+                  <li><Link to="/prescription-scan" className="text-sm hover:text-primary transition-colors">Upload Prescription</Link></li>
+                  <li><Link to="/doctor-chat" className="text-sm hover:text-primary transition-colors">AI Doctor Chat</Link></li>
+                  <li><Link to="/orders" className="text-sm hover:text-primary transition-colors">Track Order</Link></li>
+                  <li><a href="#" className="text-sm hover:text-primary transition-colors">Partner with Us</a></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -52,10 +74,15 @@ const Footer = () => {
             <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
             <ul className="space-y-3">
               <li><a href="#" className="text-sm hover:text-primary transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">FAQs</a></li>
+              {/* Only show refund/browse policies for customers */}
+              {(!role || role === "customer") && (
+                <>
+                  <li><a href="#" className="text-sm hover:text-primary transition-colors">FAQs</a></li>
+                  <li><a href="#" className="text-sm hover:text-primary transition-colors">Refund Policy</a></li>
+                </>
+              )}
               <li><a href="#" className="text-sm hover:text-primary transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="text-sm hover:text-primary transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">Refund Policy</a></li>
             </ul>
           </div>
 
