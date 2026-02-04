@@ -14,11 +14,30 @@ const SettingsPage = () => {
     const { token, user } = useAuth();
     const [profileForm, setProfileForm] = useState({
         name: user?.name || "",
+        store_name: "",
+        pharmacist_name: "",
         address: "",
         license_number: ""
     });
 
     const [loading, setLoading] = useState(false);
+    const [showChangePassword, setShowChangePassword] = useState(false);
+    const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "" });
+
+    const handleChangePasswordSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Basic upgrade: Call backend endpoint
+            await axios.post(`${API_URL}/auth/change-password`, passwordForm, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success("Password Updated Successfully");
+            setShowChangePassword(false);
+            setPasswordForm({ currentPassword: "", newPassword: "" });
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Failed to update password");
+        }
+    };
 
     // Initial Fetch (If pharmacy)
     useEffect(() => {
@@ -66,23 +85,33 @@ const SettingsPage = () => {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-lg">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Name / Business Name</label>
-                                <input
-                                    className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                                    value={profileForm.name}
-                                    onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
-                                />
-                            </div>
-
-                            {user?.role === 'pharmacy' && (
+                            {user?.role === 'pharmacy' ? (
                                 <>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Pharmacy Store Name</label>
+                                        <input
+                                            className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                                            value={profileForm.store_name}
+                                            onChange={(e) => setProfileForm(p => ({ ...p, store_name: e.target.value }))}
+                                            placeholder="e.g. Apollo Pharmacy"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Pharmacist Name</label>
+                                        <input
+                                            className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                                            value={profileForm.pharmacist_name}
+                                            onChange={(e) => setProfileForm(p => ({ ...p, pharmacist_name: e.target.value }))}
+                                            placeholder="e.g. John Doe"
+                                        />
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">Store Address</label>
                                         <textarea
                                             className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
                                             value={profileForm.address}
                                             onChange={(e) => setProfileForm(p => ({ ...p, address: e.target.value }))}
+                                            placeholder="Full Store Address..."
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -91,9 +120,19 @@ const SettingsPage = () => {
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.license_number}
                                             onChange={(e) => setProfileForm(p => ({ ...p, license_number: e.target.value }))}
+                                            placeholder="DL No. / Registration No."
                                         />
                                     </div>
                                 </>
+                            ) : (
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Name</label>
+                                    <input
+                                        className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                                        value={profileForm.name}
+                                        onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
+                                    />
+                                </div>
                             )}
 
                             <Button type="submit" disabled={loading}>
@@ -103,24 +142,69 @@ const SettingsPage = () => {
                     </CardContent>
                 </Card>
 
-                {/* Security Section Placeholder */}
+                {/* Security Section */}
                 <Card className="mt-6 border-red-100 dark:border-red-900/30">
                     <CardHeader>
                         <CardTitle className="flex items-center text-red-600">
                             <ShieldCheck className="w-5 h-5 mr-2" /> Security Zone
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground text-sm mb-4">
-                            Manage your password and active sessions.
+                    <CardContent className="space-y-4">
+                        <p className="text-muted-foreground text-sm">
+                            Manage your password.
                         </p>
-                        <Button variant="destructive">Reset Password</Button>
+                        <div className="flex gap-4">
+                            <Button variant="outline" onClick={() => setShowChangePassword(true)}>
+                                Change Password
+                            </Button>
+                            {/* "Reset Password" typically implies a forgot password flow, but sticking to user request. 
+                                I'll adding a dummy handler for now or same modal. */ }
+                            <Button variant="destructive" onClick={() => toast.info("To reset a forgotten password, please logout and use the 'Forgot Password' link on the login page.")}>
+                                Reset Password
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
-
             </main>
+
+            {/* Change Password Modal */}
+            {showChangePassword && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl w-full max-w-md">
+                        <h2 className="text-xl font-bold mb-4">Change Password</h2>
+                        <form onSubmit={handleChangePasswordSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Current Password</label>
+                                <input
+                                    type="password"
+                                    className="w-full h-10 px-3 rounded-md border"
+                                    value={passwordForm.currentPassword}
+                                    onChange={e => setPasswordForm(p => ({ ...p, currentPassword: e.target.value }))}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">New Password</label>
+                                <input
+                                    type="password"
+                                    className="w-full h-10 px-3 rounded-md border"
+                                    value={passwordForm.newPassword}
+                                    onChange={e => setPasswordForm(p => ({ ...p, newPassword: e.target.value }))}
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 pt-2">
+                                <Button type="button" variant="ghost" onClick={() => setShowChangePassword(false)}>Cancel</Button>
+                                <Button type="submit">Update Password</Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+
             <Footer />
-        </div>
+        </div >
     );
 };
 
