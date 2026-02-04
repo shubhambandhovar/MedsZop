@@ -40,14 +40,14 @@ exports.getCart = async (req, res) => {
             };
           }
         } catch (e) {
-          console.error("Pharmacy lookup error for", item.medicine_id, e);
+          console.error("Pharmacy lookup error for", cartItem.medicine_id, e);
         }
       }
 
       if (medicine) {
         cartItems.push({
           medicine: medicine,
-          quantity: item.quantity || 1
+          quantity: cartItem.quantity || 1
         });
       }
     }
