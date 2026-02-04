@@ -89,21 +89,38 @@ exports.reverseGeocode = async (req, res) => {
         const { lat, lon } = req.query;
         if (!lat || !lon) return res.status(400).json({ message: "Lat and Lon are required" });
 
+        console.log(`🌍 Attempting reverse geocode: lat=${lat}, lon=${lon}`);
+
         const response = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`,
             {
                 headers: {
-                    'User-Agent': 'MedsZop-Healthcare-App/1.0 (contact: support@medszop.com)'
+                    'User-Agent': `MedsZop-App-${Math.random().toString(36).substring(7)}` // Dynamic User-Agent to avoid blocks
                 },
-                timeout: 10000
+                timeout: 15000 // Increased timeout
             }
         );
+
+        if (!response.data) {
+            throw new Error("No data received from geocoding service");
+        }
+
         res.json(response.data);
     } catch (error) {
-        console.error("Reverse Geocode Error:", error.message);
-        if (error.code === 'ECONNABORTED') {
-            return res.status(504).json({ error: "Location detection timed out" });
+        console.error("❌ Reverse Geocode Error:", error.message);
+        if (error.response) {
+            console.error("Response data:", error.response.data);
+            console.error("Response status:", error.response.status);
         }
-        res.status(500).json({ error: "Failed to fetch address from location" });
+
+        if (error.code === 'ECONNABORTED') {
+            return res.status(504).json({ error: "Location detection timed out (OSM is busy)" });
+        }
+
+        // If OSM fails, we still want to return a 500 but with a better message
+        res.status(500).json({
+            error: "Failed to fetch address from location",
+            details: error.message
+        });
     }
 };
