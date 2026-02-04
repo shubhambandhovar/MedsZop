@@ -99,7 +99,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden gradient-hero z-10">
-        <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml;base64,...')] opacity-50" />
+        <div className="absolute inset-0 pointer-events-none opacity-50" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
