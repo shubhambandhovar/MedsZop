@@ -105,7 +105,8 @@ exports.createOrder = async (req, res) => {
       payment_method: payment_method || "cod",
       order_status: "pending",
       payment_status: payment_method === "cod" ? "pending" : "processing",
-      status_history: [{ status: "pending", timestamp: new Date() }]
+      status_history: [{ status: "pending", timestamp: new Date() }],
+      orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     });
 
     // Clear cart

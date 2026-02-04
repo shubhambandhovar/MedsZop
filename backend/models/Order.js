@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
 
   user_id: String,
+  orderNumber: { type: String, unique: true },
   pharmacy_id: String,
 
   items: [
