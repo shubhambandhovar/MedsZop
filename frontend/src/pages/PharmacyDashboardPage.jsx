@@ -337,11 +337,7 @@ const PharmacyDashboardPage = () => {
               Manage your pharmacy orders and inventory
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setActiveTab("settings")}>
-              <Settings className="w-4 h-4 mr-2" /> Settings
-            </Button>
-          </div>
+
         </div>
 
         {/* ================= STATS ================= */}
@@ -393,7 +389,6 @@ const PharmacyDashboardPage = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           {/* ================= OVERVIEW ================= */}
@@ -440,9 +435,6 @@ const PharmacyDashboardPage = () => {
                   </Button>
                   <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('orders')}>
                     <Clock className="mr-2 h-4 w-4" /> View Pending Orders
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('settings')}>
-                    <User className="mr-2 h-4 w-4" /> Update Profile
                   </Button>
                 </CardContent>
               </Card>
@@ -617,57 +609,7 @@ const PharmacyDashboardPage = () => {
           </TabsContent>
 
           {/* ================= SETTINGS ================= */}
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pharmacy Profile</CardTitle>
-                <CardDescription>Manage your pharmacy details and visibility</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-xl">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Pharmacy Name</label>
-                    <input
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                      value={profileForm.name}
-                      onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Location / Address</label>
-                    <textarea
-                      className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
-                      value={profileForm.address}
-                      onChange={(e) => setProfileForm(p => ({ ...p, address: e.target.value }))}
-                      placeholder="Full Store Address..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">License Number</label>
-                    <input
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                      value={profileForm.license_number}
-                      onChange={(e) => setProfileForm(p => ({ ...p, license_number: e.target.value }))}
-                      placeholder="DL No. / Registration No."
-                    />
-                  </div>
 
-                  <Button type="submit">
-                    Save Changes
-                  </Button>
-                </form>
-
-                <div className="pt-6 border-t">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center text-red-600">
-                    <ShieldCheck className="mr-2" /> Security
-                  </h3>
-                  <Button variant="destructive" onClick={logout}>
-                    <LogOut className="mr-2 h-4 w-4" /> Logout from Dashboard
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
         </Tabs>
       </main>
