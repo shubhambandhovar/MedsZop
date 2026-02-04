@@ -2,6 +2,7 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const Medicine = require("../models/Medicine");
 const Pharmacy = require("../models/Pharmacy");
+const mongoose = require("mongoose");
 
 // CREATE ORDER
 exports.createOrder = async (req, res) => {
@@ -16,12 +17,15 @@ exports.createOrder = async (req, res) => {
 
     // Find the actual address object from user's addresses
     const address = user.addresses.find(
-      (addr) => addr._id.toString() === address_id
+      (addr) => addr._id && addr._id.toString() === address_id
     );
 
     if (!address) {
-      return res.status(400).json({ message: "Invalid delivery address" });
+      console.error(`❌ Address ID ${address_id} not found for user ${user._id}`);
+      return res.status(400).json({ message: "Invalid delivery address. Please re-select your address." });
     }
+
+    console.log(`📦 Creating order with ${user.cart.length} items...`);
 
     let items = [];
     let total = 0;
@@ -33,23 +37,30 @@ exports.createOrder = async (req, res) => {
         continue;
       }
       // 1. Try Global Medicine
-      let medicine = await Medicine.findById(cartItem.medicine_id).lean();
+      let medicine = null;
+      if (mongoose.Types.ObjectId.isValid(cartItem.medicine_id)) {
+        medicine = await Medicine.findById(cartItem.medicine_id).lean();
+      }
 
       // 2. Try Pharmacy Medicine
       if (!medicine) {
-        const pharmacy = await Pharmacy.findOne(
-          { "medicines._id": cartItem.medicine_id },
-          { "medicines.$": 1, name: 1 }
-        );
-        if (pharmacy && pharmacy.medicines && pharmacy.medicines.length > 0) {
-          const m = pharmacy.medicines[0];
-          medicine = {
-            _id: m._id,
-            name: m.name,
-            price: m.price,
-            discount_price: m.mrp > m.price ? m.price : null,
-            pharmacy_id: pharmacy._id
-          };
+        try {
+          const pharmacy = await Pharmacy.findOne(
+            { "medicines._id": cartItem.medicine_id },
+            { "medicines.$": 1, name: 1 }
+          );
+          if (pharmacy && pharmacy.medicines && pharmacy.medicines.length > 0) {
+            const m = pharmacy.medicines[0];
+            medicine = {
+              _id: m._id,
+              name: m.name,
+              price: m.price || 0,
+              discount_price: (m.mrp && m.mrp > m.price) ? m.price : null,
+              pharmacy_id: pharmacy._id
+            };
+          }
+        } catch (e) {
+          console.error(`Error looking up pharmacy medicine ${cartItem.medicine_id}:`, e.message);
         }
       }
 
@@ -58,7 +69,12 @@ exports.createOrder = async (req, res) => {
         return res.status(400).json({ message: `Medicine not found: ${cartItem.medicine_id}. Please clear your cart and try again.` });
       }
 
-      const price = medicine.discount_price || medicine.price;
+      const price = Number(medicine.discount_price || medicine.price || 0);
+
+      if (isNaN(price)) {
+        console.error(`❌ Invalid price for medicine ${medicine.name}: ${price}`);
+        return res.status(400).json({ message: `Invalid price for ${medicine.name}` });
+      }
 
       // Set the pharmacy_id for the whole order if not set
       if (!pharmacyId && medicine.pharmacy_id) {
