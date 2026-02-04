@@ -96,7 +96,9 @@ const CheckoutPage = () => {
           toast.success("Location detected!");
           setAddressStep('form');
         } catch (error) {
-          toast.error("Failed to detect address details");
+          console.error("Location detection error:", error);
+          toast.error("Could not auto-detect address. Please enter details manually.");
+          setAddressStep('form'); // Let user type manually if auto-detection fails
         } finally {
           setGettingLocation(false);
         }
@@ -367,7 +369,10 @@ const CheckoutPage = () => {
                             style={{ height: '100%', width: '100%' }}
                             key={`${mapPosition[0]}-${mapPosition[1]}`}
                           >
-                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                            <TileLayer
+                              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                            />
                             <LocationMarker />
                           </MapContainer>
 
