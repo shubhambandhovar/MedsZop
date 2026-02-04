@@ -138,3 +138,77 @@ exports.addMedicine = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.updateMedicine = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+
+    if (!pharmacy) return res.status(404).json({ message: "Pharmacy not found" });
+
+    const medicine = pharmacy.medicines.id(id);
+    if (!medicine) return res.status(404).json({ message: "Medicine not found" });
+
+    // Update fields
+    if (updates.name) medicine.name = updates.name;
+    if (updates.price) medicine.price = updates.price;
+    if (updates.company) medicine.company = updates.company;
+    if (updates.genericName) medicine.genericName = updates.genericName;
+    if (updates.description) medicine.description = updates.description;
+    if (updates.image) medicine.image = updates.image;
+    if (updates.mrp) medicine.mrp = updates.mrp;
+
+    // Recalculate discount
+    if (updates.mrp || updates.price) {
+      const m = updates.mrp || medicine.mrp;
+      const p = updates.price || medicine.price;
+      if (m && p && m > p) {
+        medicine.discount = Math.round(((m - p) / m) * 100);
+      } else {
+        medicine.discount = 0;
+      }
+    }
+
+    // Stock management
+    if (updates.inStock !== undefined) medicine.inStock = updates.inStock;
+
+    await pharmacy.save();
+    res.json({ message: "Medicine updated", medicine });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteMedicine = async (req, res) => {
+  try {
+    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    if (!pharmacy) return res.status(404).json({ message: "Pharmacy not found" });
+
+    pharmacy.medicines.pull(req.params.id);
+    await pharmacy.save();
+
+    res.json({ message: "Medicine deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const updates = req.body;
+    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    if (!pharmacy) return res.status(404).json({ message: "Pharmacy not found" });
+
+    if (updates.name) pharmacy.name = updates.name;
+    if (updates.address) pharmacy.address = updates.address;
+    if (updates.license_number) pharmacy.license_number = updates.license_number;
+
+    await pharmacy.save();
+    res.json({ message: "Profile updated", pharmacy });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

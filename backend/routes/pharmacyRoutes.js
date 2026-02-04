@@ -11,7 +11,10 @@ const {
   registerPharmacy,
   getDashboard,
   getPharmacyOrders,
-  addMedicine
+  addMedicine,
+  updateMedicine,
+  deleteMedicine,
+  updateProfile
 } = require("../controllers/pharmacyController");
 
 // Register pharmacy
@@ -24,5 +27,10 @@ router.get("/dashboard", auth, role(["pharmacy", "admin"]), getDashboard);
 router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
 
 router.post("/add-medicine", auth, role(["pharmacy"]), addMedicine);
+router.put("/medicine/:id", auth, role(["pharmacy"]), updateMedicine);
+router.delete("/medicine/:id", auth, role(["pharmacy"]), deleteMedicine);
+
+// Profile
+router.put("/profile", auth, role(["pharmacy"]), updateProfile);
 
 module.exports = router;
