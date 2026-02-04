@@ -20,7 +20,7 @@ const CartPage = () => {
 
   const handleQuantityChange = async (medicineId, newQuantity) => {
     if (newQuantity < 1) return;
-    
+
     try {
       setUpdating(true);
       const updatedItems = cart.items.map(item => ({
@@ -89,10 +89,10 @@ const CartPage = () => {
               Shopping Cart
             </h1>
             <p className="text-muted-foreground mt-1">
-              {cart.items.length} {cart.items.length === 1 ? "item" : "items"} in your cart
+              {cart.items?.length || 0} {cart.items?.length === 1 ? "item" : "items"} in your cart
             </p>
           </div>
-          {cart.items.length > 0 && (
+          {cart.items?.length > 0 && (
             <Button variant="outline" onClick={handleClearCart} className="text-destructive">
               <Trash2 className="h-4 w-4 mr-2" />
               Clear Cart
@@ -100,7 +100,7 @@ const CartPage = () => {
           )}
         </div>
 
-        {cart.items.length === 0 ? (
+        {!cart.items?.length ? (
           <Card className="text-center py-16">
             <CardContent>
               <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -218,7 +218,7 @@ const CartPage = () => {
                     <span>Total</span>
                     <span className="text-primary" data-testid="cart-total">₹{cart.total.toFixed(2)}</span>
                   </div>
-                  
+
                   <Button
                     className="w-full h-12 rounded-xl text-base"
                     onClick={() => navigate("/checkout")}

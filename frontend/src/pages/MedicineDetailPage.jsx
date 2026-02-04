@@ -36,22 +36,22 @@ const MedicineDetailPage = () => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    fetchMedicine();
-  }, [id, fetchMedicine]);
+    const fetchMedicine = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/medicines/${id}`);
+        setMedicine(response.data);
+      } catch (error) {
+        console.error("Error fetching medicine:", error);
+        toast.error("Medicine not found");
+        navigate("/medicines");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchMedicine = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${API_URL}/medicines/${id}`);
-      setMedicine(response.data);
-    } catch (error) {
-      console.error("Error fetching medicine:", error);
-      toast.error("Medicine not found");
-      navigate("/medicines");
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchMedicine();
+  }, [id, navigate]);
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
@@ -59,7 +59,7 @@ const MedicineDetailPage = () => {
       navigate("/login");
       return;
     }
-    
+
     try {
       setAddingToCart(true);
       await addToCart(medicine.id, quantity);
@@ -93,8 +93,8 @@ const MedicineDetailPage = () => {
   if (!medicine) return null;
 
   const finalPrice = medicine.discount_price || medicine.price;
-  const discount = medicine.discount_price 
-    ? Math.round((1 - medicine.discount_price / medicine.price) * 100) 
+  const discount = medicine.discount_price
+    ? Math.round((1 - medicine.discount_price / medicine.price) * 100)
     : 0;
 
   return (
@@ -138,11 +138,11 @@ const MedicineDetailPage = () => {
           {/* Details Section */}
           <div>
             <Badge variant="outline" className="mb-4">{medicine.category}</Badge>
-            
+
             <h1 className="font-heading text-3xl md:text-4xl font-bold mb-2" data-testid="medicine-name">
               {medicine.name}
             </h1>
-            
+
             <p className="text-lg text-muted-foreground mb-1">{medicine.brand}</p>
             <p className="text-muted-foreground mb-6">
               Generic: {medicine.generic_name} • {medicine.strength}
@@ -164,7 +164,7 @@ const MedicineDetailPage = () => {
                     </>
                   )}
                 </div>
-                
+
                 <p className="text-sm text-muted-foreground">Inclusive of all taxes</p>
               </CardContent>
             </Card>

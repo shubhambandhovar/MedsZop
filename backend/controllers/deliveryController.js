@@ -5,7 +5,13 @@ exports.getOrders = async (req, res) => {
     const orders = await Order.find({
       $or: [
         { delivery_agent_id: req.user.id },
-        { delivery_agent_id: null, order_status: "processing" }
+        {
+          delivery_agent_id: null,
+          $or: [
+            { order_status: { $in: ["confirmed", "processing"] } },
+            { order_status: "pending", pharmacy_id: null }
+          ]
+        }
       ]
     }).sort({ createdAt: -1 });
     res.json(orders);
@@ -15,16 +21,39 @@ exports.getOrders = async (req, res) => {
 };
 
 exports.acceptDelivery = async (req, res) => {
-  await Order.findByIdAndUpdate(req.params.id, {
-    delivery_agent_id: req.user.id,
-    order_status: "out_for_delivery"
-  });
-  res.json({ message: "Delivery accepted" });
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.delivery_agent_id) return res.status(400).json({ message: "Order already accepted by another agent" });
+
+    order.delivery_agent_id = req.user.id;
+    order.order_status = "out_for_delivery";
+    order.status_history.push({
+      status: "out_for_delivery",
+      timestamp: new Date()
+    });
+
+    await order.save();
+    res.json({ message: "Delivery accepted", order });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to accept delivery", error: error.message });
+  }
 };
 
 exports.completeDelivery = async (req, res) => {
-  await Order.findByIdAndUpdate(req.params.id, {
-    order_status: "delivered"
-  });
-  res.json({ message: "Delivered" });
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.order_status = "delivered";
+    order.status_history.push({
+      status: "delivered",
+      timestamp: new Date()
+    });
+
+    await order.save();
+    res.json({ message: "Order delivered successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to complete delivery", error: error.message });
+  }
 };

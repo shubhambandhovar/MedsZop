@@ -1,29 +1,67 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
 const Medicine = require("../models/Medicine");
-
+const Pharmacy = require("../models/Pharmacy");
 
 // CREATE ORDER
 exports.createOrder = async (req, res) => {
-
   try {
-
     const user = await User.findById(req.user.id);
 
-    if (!user.cart.length)
-      return res.status(400).json({ message: "Cart empty" });
+    if (!user.cart || !user.cart.length) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
+
+    const { address_id, payment_method } = req.body;
+
+    // Find the actual address object from user's addresses
+    const address = user.addresses.find(
+      (addr) => addr._id.toString() === address_id
+    );
+
+    if (!address) {
+      return res.status(400).json({ message: "Invalid delivery address" });
+    }
 
     let items = [];
     let total = 0;
+    let pharmacyId = null;
 
     for (let cartItem of user.cart) {
+      // 1. Try Global Medicine
+      let medicine = await Medicine.findById(cartItem.medicine_id).lean();
 
-      const medicine = await Medicine.findById(cartItem.medicine_id);
+      // 2. Try Pharmacy Medicine
+      if (!medicine) {
+        const pharmacy = await Pharmacy.findOne(
+          { "medicines._id": cartItem.medicine_id },
+          { "medicines.$": 1, name: 1 }
+        );
+        if (pharmacy && pharmacy.medicines && pharmacy.medicines.length > 0) {
+          const m = pharmacy.medicines[0];
+          medicine = {
+            _id: m._id,
+            name: m.name,
+            price: m.price,
+            discount_price: m.mrp > m.price ? m.price : null,
+            pharmacy_id: pharmacy._id
+          };
+        }
+      }
+
+      if (!medicine) {
+        return res.status(404).json({ message: `Medicine ${cartItem.medicine_id} not found` });
+      }
 
       const price = medicine.discount_price || medicine.price;
 
+      // Set the pharmacy_id for the whole order if not set
+      if (!pharmacyId && medicine.pharmacy_id) {
+        pharmacyId = medicine.pharmacy_id.toString();
+      }
+
       items.push({
-        medicine_id: medicine._id,
+        medicine_id: medicine._id.toString(),
         name: medicine.name,
         price,
         quantity: cartItem.quantity
@@ -34,19 +72,28 @@ exports.createOrder = async (req, res) => {
 
     const order = await Order.create({
       user_id: user._id,
+      pharmacy_id: pharmacyId,
       items,
       total,
-      address: req.body.address,
-      payment_method: req.body.payment_method
+      address,
+      payment_method: payment_method || "cod",
+      order_status: "pending",
+      payment_status: payment_method === "cod" ? "pending" : "processing",
+      status_history: [{ status: "pending", timestamp: new Date() }]
     });
 
     // Clear cart
     user.cart = [];
     await user.save();
 
-    res.status(201).json(order);
+    res.status(201).json({
+      message: "Order placed successfully",
+      order_id: order._id,
+      order
+    });
 
   } catch (err) {
+    console.error("Create Order Error:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -58,7 +105,7 @@ exports.getOrders = async (req, res) => {
   try {
 
     const orders = await Order.find({ user_id: req.user.id })
-                              .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 });
 
     res.json(orders);
 
@@ -67,6 +114,23 @@ exports.getOrders = async (req, res) => {
   }
 };
 
+
+// GET SINGLE ORDER
+exports.getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    // Ensure user can only see their own order
+    if (order.user_id !== req.user.id && req.user.role === "customer") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // UPDATE ORDER STATUS (Admin / Pharmacy / Delivery)
 exports.updateOrderStatus = async (req, res) => {
@@ -79,6 +143,14 @@ exports.updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
 
     order.order_status = req.body.status;
+
+    // 🔥 AUTO-ASSIGN PHARMACY: If a pharmacy confirms an unassigned order, claim it
+    if (req.user.role === "pharmacy" && req.body.status === "confirmed") {
+      const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+      if (pharmacy && (!order.pharmacy_id || order.pharmacy_id === "")) {
+        order.pharmacy_id = pharmacy._id.toString();
+      }
+    }
 
     order.status_history.push({
       status: req.body.status,

@@ -101,7 +101,7 @@ const OrdersPage = () => {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <Card key={order.id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`order-${order.id}`}>
+              <Card key={order._id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`order-${order._id}`}>
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1">
@@ -116,7 +116,7 @@ const OrdersPage = () => {
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
-                        Order ID: {order.id.slice(0, 8)}... • {formatDate(order.created_at)}
+                        Order ID: {order._id?.slice(0, 8)}... • {formatDate(order.createdAt)}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {order.items.slice(0, 3).map((item, index) => (
@@ -136,8 +136,8 @@ const OrdersPage = () => {
                         <p className="text-2xl font-bold text-primary">₹{order.total.toFixed(2)}</p>
                         <p className="text-sm text-muted-foreground">{order.items.length} items</p>
                       </div>
-                      <Link to={`/orders/${order.id}`}>
-                        <Button variant="outline" data-testid={`view-order-${order.id}`}>
+                      <Link to={`/orders/${order._id}`}>
+                        <Button variant="outline" data-testid={`view-order-${order._id}`}>
                           <Eye className="h-4 w-4 mr-2" />
                           Track
                         </Button>

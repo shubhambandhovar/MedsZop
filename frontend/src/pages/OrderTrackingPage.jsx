@@ -8,12 +8,12 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { Skeleton } from "../components/ui/skeleton";
-import { 
-  Package, 
-  Clock, 
-  CheckCircle, 
-  Truck, 
-  MapPin, 
+import {
+  Package,
+  Clock,
+  CheckCircle,
+  Truck,
+  MapPin,
   ArrowLeft,
   Phone,
   Box
@@ -38,13 +38,30 @@ const OrderTrackingPage = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
-
-  // Demo coordinates (Bangalore)
-  const deliveryLocation = [12.9716, 77.5946];
+  const [mapCenter, setMapCenter] = useState([12.9716, 77.5946]); // Default Bangalore
 
   useEffect(() => {
-    fetchOrder();
-  }, [id, fetchOrder]);
+    if (order?.address) {
+      const fetchCoords = async () => {
+        try {
+          const query = `${order.address.addressLine1}, ${order.address.city}, ${order.address.pincode}, India`;
+          const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+          if (res.data && res.data.length > 0) {
+            setMapCenter([parseFloat(res.data[0].lat), parseFloat(res.data[0].lon)]);
+          } else {
+            // Fallback to City level if full address fails
+            const cityRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(order.address.city + ", India")}&limit=1`);
+            if (cityRes.data && cityRes.data.length > 0) {
+              setMapCenter([parseFloat(cityRes.data[0].lat), parseFloat(cityRes.data[0].lon)]);
+            }
+          }
+        } catch (error) {
+          console.error("Geocoding error:", error);
+        }
+      };
+      fetchCoords();
+    }
+  }, [order]);
 
   const fetchOrder = async () => {
     try {
@@ -59,6 +76,12 @@ const OrderTrackingPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (id && token) {
+      fetchOrder();
+    }
+  }, [id, token]);
+
   const orderSteps = [
     { status: "pending", label: "Order Placed", icon: Package },
     { status: "confirmed", label: "Confirmed", icon: CheckCircle },
@@ -71,7 +94,7 @@ const OrderTrackingPage = () => {
     const statusOrder = ["pending", "confirmed", "processing", "out_for_delivery", "delivered"];
     const currentIndex = statusOrder.indexOf(order?.order_status);
     const stepIndex = statusOrder.indexOf(stepStatus);
-    
+
     if (order?.order_status === "cancelled") return "cancelled";
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "current";
@@ -133,7 +156,7 @@ const OrderTrackingPage = () => {
           <h1 className="font-heading text-3xl font-bold" data-testid="order-tracking-title">
             Track Order
           </h1>
-          <p className="text-muted-foreground">Order ID: {order.id.slice(0, 8)}...</p>
+          <p className="text-muted-foreground">Order ID: {order._id.slice(0, 8)}...</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -151,33 +174,28 @@ const OrderTrackingPage = () => {
                   {orderSteps.map((step, index) => {
                     const status = getStepStatus(step.status);
                     const isLast = index === orderSteps.length - 1;
-                    
+
                     return (
-                      <div key={step.status} className="flex gap-4 pb-8 last:pb-0">
+                      <div key={step.status} className="relative flex gap-4 pb-8 last:pb-0">
                         {/* Line */}
                         {!isLast && (
-                          <div className="absolute left-5 mt-10 h-[calc(100%-2.5rem)]">
-                            <div className={`w-0.5 h-full ${
-                              status === "completed" ? "bg-primary" : "bg-muted"
+                          <div className={`absolute left-[19px] top-10 h-full w-0.5 ${status === "completed" ? "bg-primary" : "bg-muted"
                             }`} />
-                          </div>
                         )}
-                        
+
                         {/* Icon */}
-                        <div className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                          status === "completed" ? "bg-primary text-white" :
+                        <div className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${status === "completed" ? "bg-primary text-white" :
                           status === "current" ? "bg-primary text-white animate-pulse" :
-                          status === "cancelled" ? "bg-destructive text-white" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
+                            status === "cancelled" ? "bg-destructive text-white" :
+                              "bg-muted text-muted-foreground"
+                          }`}>
                           <step.icon className="h-5 w-5" />
                         </div>
-                        
+
                         {/* Content */}
                         <div className="flex-1 pt-1.5">
-                          <p className={`font-medium ${
-                            status === "completed" || status === "current" ? "text-foreground" : "text-muted-foreground"
-                          }`}>
+                          <p className={`font-medium ${status === "completed" || status === "current" ? "text-foreground" : "text-muted-foreground"
+                            }`}>
                             {step.label}
                           </p>
                           {order.status_history?.find(h => h.status === step.status) && (
@@ -234,16 +252,17 @@ const OrderTrackingPage = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="h-[300px] rounded-b-xl overflow-hidden">
-                  <MapContainer 
-                    center={deliveryLocation} 
-                    zoom={13} 
+                  <MapContainer
+                    key={mapCenter.join(',')}
+                    center={mapCenter}
+                    zoom={15}
                     style={{ height: '100%', width: '100%' }}
                   >
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <Marker position={deliveryLocation}>
+                    <Marker position={mapCenter}>
                       <Popup>Delivery Location</Popup>
                     </Marker>
                   </MapContainer>
@@ -257,7 +276,8 @@ const OrderTrackingPage = () => {
                 <CardTitle className="font-heading">Delivery Address</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-medium">{order.address.street}</p>
+                <p className="font-medium">{order.address.addressLine1}</p>
+                {order.address.addressLine2 && <p className="text-sm">{order.address.addressLine2}</p>}
                 <p className="text-muted-foreground">
                   {order.address.city}, {order.address.state} - {order.address.pincode}
                 </p>

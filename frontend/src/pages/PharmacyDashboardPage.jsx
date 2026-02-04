@@ -119,6 +119,80 @@ const PharmacyDashboardPage = () => {
 
   // ================= LOADING =================
 
+
+
+  // ================= UI =================
+
+  // ================= MEDICINE FORM STATE =================
+  const [medicineForm, setMedicineForm] = useState({
+    name: "",
+    genericName: "",
+    company: "",
+    mrp: "",
+    price: "",
+    discount: 0,
+    description: "",
+    image: ""
+  });
+
+  const handleMedicineChange = (e) => {
+    const { name, value } = e.target;
+    setMedicineForm((prev) => {
+      const newData = { ...prev, [name]: value };
+
+      // Auto-calculate discount
+      if (name === "mrp" || name === "price") {
+        const m = name === "mrp" ? parseFloat(value) : parseFloat(prev.mrp);
+        const p = name === "price" ? parseFloat(value) : parseFloat(prev.price);
+
+        if (m && p && m > p) {
+          newData.discount = Math.round(((m - p) / m) * 100);
+        } else {
+          newData.discount = 0;
+        }
+      }
+      return newData;
+    });
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMedicineForm((prev) => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMedicineSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API_URL}/pharmacy/add-medicine`, medicineForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Medicine Added Successfully!");
+      setShowAddMedicineModal(false);
+      fetchData();
+      setMedicineForm({
+        name: "",
+        genericName: "",
+        company: "",
+        mrp: "",
+        price: "",
+        discount: 0,
+        description: "",
+        image: ""
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add medicine");
+    }
+  };
+
+  // ================= UI =================
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -126,8 +200,6 @@ const PharmacyDashboardPage = () => {
       </div>
     );
   }
-
-  // ================= UI =================
 
   return (
     <div className="min-h-screen bg-background">
@@ -326,48 +398,217 @@ const PharmacyDashboardPage = () => {
 
           <TabsContent value="inventory">
             <Card>
-              <CardContent className="p-8 text-center">
-                <AlertCircle className="mx-auto mb-3" />
-                <h3 className="text-lg font-semibold">Inventory Management</h3>
-                <p className="text-muted-foreground mb-4">
-                  Add and manage medicines
-                </p>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Inventory Management</CardTitle>
                 <Button onClick={() => setShowAddMedicineModal(true)}>
+                  <Package className="h-4 w-4 mr-2" />
                   Add Medicine
                 </Button>
+              </CardHeader>
+              <CardContent>
+                {!dashboardData?.medicines || dashboardData.medicines.length === 0 ? (
+                  <div className="text-center py-12">
+                    <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
+                    <h3 className="text-lg font-semibold">No Medicines Added</h3>
+                    <p className="text-muted-foreground mb-4">Start by adding medicines to your inventory.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Image</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>MRP</TableHead>
+                        <TableHead>Discount</TableHead>
+                        <TableHead>Stock</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dashboardData.medicines.map((med) => (
+                        <TableRow key={med._id}>
+                          <TableCell>
+                            {med.image ? (
+                              <img src={med.image} alt={med.name} className="h-10 w-10 object-contain rounded-md bg-white border" />
+                            ) : (
+                              <div className="h-10 w-10 bg-slate-100 rounded-md flex items-center justify-center">
+                                <Package className="h-5 w-5 text-slate-400" />
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            <div className="flex flex-col">
+                              <span>{med.name}</span>
+                              <span className="text-xs text-muted-foreground">{med.genericName}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{med.company || "-"}</TableCell>
+                          <TableCell className="font-bold text-emerald-600">₹{med.price}</TableCell>
+                          <TableCell className="text-muted-foreground line-through">₹{med.mrp || med.price}</TableCell>
+                          <TableCell>
+                            {med.discount > 0 ? (
+                              <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200">
+                                {med.discount}% Off
+                              </Badge>
+                            ) : (
+                              "-"
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={med.inStock ? "outline" : "destructive"}>
+                              {med.inStock ? "In Stock" : "Out of Stock"}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* ================= ADD MEDICINE MODAL ================= */}
       {showAddMedicineModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add Medicine</h2>
-            <form>
-              <input
-                className="border p-2 w-full mb-2"
-                placeholder="Medicine Name"
-              />
-              <input
-                className="border p-2 w-full mb-2"
-                placeholder="Price"
-                type="number"
-              />
-              {/* Add more fields as needed */}
-              <button
-                type="submit"
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold font-heading">Add Medicine</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowAddMedicineModal(false)}
               >
-                Save
-              </button>
+                X
+              </Button>
+            </div>
+
+            <form onSubmit={handleMedicineSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Name */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Medicine Name *</label>
+                  <input
+                    name="name"
+                    value={medicineForm.name}
+                    onChange={handleMedicineChange}
+                    className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                    placeholder="e.g. Dolo 650"
+                    required
+                  />
+                </div>
+                {/* Generic Name */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Generic Name</label>
+                  <input
+                    name="genericName"
+                    value={medicineForm.genericName}
+                    onChange={handleMedicineChange}
+                    className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                    placeholder="e.g. Paracetamol"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Company */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Manufacturer / Company</label>
+                  <input
+                    name="company"
+                    value={medicineForm.company}
+                    onChange={handleMedicineChange}
+                    className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                    placeholder="e.g. Micro Labs"
+                  />
+                </div>
+                {/* Price Calculation Row */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">MRP (₹)</label>
+                    <input
+                      name="mrp"
+                      type="number"
+                      value={medicineForm.mrp}
+                      onChange={handleMedicineChange}
+                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Selling Price (₹) *</label>
+                    <input
+                      name="price"
+                      type="number"
+                      value={medicineForm.price}
+                      onChange={handleMedicineChange}
+                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                      placeholder="0.00"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <label className="text-sm font-medium">Discount (%)</label>
+                  <span className="text-sm font-bold text-emerald-600">{medicineForm.discount}% Off</span>
+                </div>
+                <input
+                  name="discount"
+                  type="number"
+                  value={medicineForm.discount}
+                  readOnly
+                  className="w-full h-10 px-3 rounded-md border border-input bg-slate-100 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  name="description"
+                  value={medicineForm.description}
+                  onChange={handleMedicineChange}
+                  className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
+                  placeholder="Medicine details, dosage, usage..."
+                />
+              </div>
+
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Medicine Image</label>
+                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                  {medicineForm.image ? (
+                    <img src={medicineForm.image} alt="Preview" className="h-24 mx-auto object-contain" />
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <Package className="h-8 w-8 text-slate-400 mb-2" />
+                      <span className="text-sm text-muted-foreground">Click to upload image</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setShowAddMedicineModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Save Medicine
+                </Button>
+              </div>
             </form>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-300 text-black rounded"
-              onClick={() => setShowAddMedicineModal(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

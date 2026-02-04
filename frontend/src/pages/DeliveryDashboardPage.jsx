@@ -12,8 +12,27 @@ import {
   CheckCircle,
   Navigation,
   Clock,
-  DollarSign
+  DollarSign,
+  History,
+  User,
+  Phone,
+  Info,
+  ExternalLink,
+  Eye
 } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../components/ui/dialog";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -35,26 +54,59 @@ const DeliveryDashboardPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
 
-  // Demo coordinates (Bangalore)
-  const centerLocation = [12.9716, 77.5946];
+  const [mapCenter, setMapCenter] = useState([12.9716, 77.5946]); // Default Bangalore
+  const [userLocation, setUserLocation] = useState(null);
 
+  // Get agent's current location
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/delivery/orders`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setOrders(response.data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = [pos.coords.latitude, pos.coords.longitude];
+          setUserLocation(coords);
+          // Only center on user if no orders have been loaded yet
+          if (orders.length === 0) {
+            setMapCenter(coords);
+          }
+        },
+        (err) => console.error("Geolocation error:", err)
+      );
+    }
+  }, []);
 
-    fetchOrders();
-  }, [token]);
+  const agentIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  const orderIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  // Center on first active/available order when orders load
+  useEffect(() => {
+    const currentOrders = orders.filter(o => o.order_status !== "delivered");
+    if (currentOrders.length > 0) {
+      const firstWithCoords = currentOrders.find(o => o.address?.coordinates?.lat && o.address?.coordinates?.lon);
+      if (firstWithCoords) {
+        setMapCenter([firstWithCoords.address.coordinates.lat, firstWithCoords.address.coordinates.lon]);
+      }
+    } else if (userLocation) {
+      // If no pending orders, center on user
+      setMapCenter(userLocation);
+    }
+  }, [orders, userLocation]);
 
   const fetchOrders = async () => {
     try {
@@ -68,6 +120,10 @@ const DeliveryDashboardPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (token) fetchOrders();
+  }, [token]);
 
   const handleAcceptDelivery = async (orderId) => {
     try {
@@ -93,9 +149,15 @@ const DeliveryDashboardPage = () => {
     }
   };
 
-  const assignedOrders = orders.filter(o => o.delivery_agent_id === user?.id);
-  const availableOrders = orders.filter(o => !o.delivery_agent_id && o.order_status === "processing");
-  const completedOrders = orders.filter(o => o.delivery_agent_id === user?.id && o.order_status === "delivered");
+  const assignedOrders = orders.filter(o => o.delivery_agent_id === user?._id);
+  const availableOrders = orders.filter(o =>
+    !o.delivery_agent_id &&
+    (
+      ["confirmed", "processing"].includes(o.order_status) ||
+      (o.order_status === "pending" && !o.pharmacy_id)
+    )
+  );
+  const completedOrders = orders.filter(o => o.delivery_agent_id === user?._id && o.order_status === "delivered");
 
   const getStatusBadge = (status) => {
     const colors = {
@@ -185,7 +247,8 @@ const DeliveryDashboardPage = () => {
             <CardContent className="p-0">
               <div className="h-[400px] rounded-b-xl overflow-hidden">
                 <MapContainer
-                  center={centerLocation}
+                  key={mapCenter.join(',')}
+                  center={mapCenter}
                   zoom={12}
                   style={{ height: '100%', width: '100%' }}
                 >
@@ -193,107 +256,366 @@ const DeliveryDashboardPage = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <Marker position={centerLocation}>
-                    <Popup>Your Location</Popup>
-                  </Marker>
+                  {/* Your Location */}
+                  {userLocation && (
+                    <Marker position={userLocation} icon={agentIcon}>
+                      <Popup>Your Location (Agent)</Popup>
+                    </Marker>
+                  )}
+                  {/* Order Locations */}
+                  {orders.filter(o => o.order_status !== "delivered").map((order) => {
+                    if (order.address?.coordinates?.lat && order.address?.coordinates?.lon) {
+                      return (
+                        <Marker
+                          key={order._id}
+                          position={[order.address.coordinates.lat, order.address.coordinates.lon]}
+                          icon={orderIcon}
+                        >
+                          <Popup>
+                            <div className="p-2">
+                              <p className="font-bold">Order #{order._id.slice(0, 8)}</p>
+                              <p className="text-xs">{order.address.addressLine1}</p>
+                              <Badge className="mt-2 scale-75 origin-left">
+                                {order.order_status}
+                              </Badge>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      );
+                    }
+                    return null;
+                  })}
                 </MapContainer>
               </div>
             </CardContent>
           </Card>
 
-          {/* Orders List */}
+          {/* Orders List / Tabs */}
           <div className="space-y-6">
-            {/* Active Deliveries */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <Truck className="h-5 w-5 text-cyan-500" />
-                  Active Deliveries
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {assignedOrders.filter(o => o.order_status === "out_for_delivery").length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">No active deliveries</p>
-                ) : (
-                  <div className="space-y-3">
-                    {assignedOrders.filter(o => o.order_status === "out_for_delivery").map((order) => (
-                      <div key={order.id} className="p-4 bg-muted/50 rounded-xl">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {order.address?.street}, {order.address?.city}
-                            </p>
-                          </div>
-                          <Badge className={getStatusBadge(order.order_status)}>
-                            {order.order_status.replace('_', ' ')}
-                          </Badge>
-                        </div>
-                        <div className="flex gap-2 mt-3">
-                          <Button size="sm" variant="outline" className="flex-1">
-                            <Navigation className="h-4 w-4 mr-1" />
-                            Navigate
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => handleCompleteDelivery(order.id)}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Complete
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <Tabs defaultValue="available" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-4">
+                <TabsTrigger value="available" className="flex gap-2">
+                  <Package className="h-4 w-4" />
+                  Available ({availableOrders.length})
+                </TabsTrigger>
+                <TabsTrigger value="active" className="flex gap-2">
+                  <Navigation className="h-4 w-4" />
+                  Active ({assignedOrders.filter(o => o.order_status === "out_for_delivery").length})
+                </TabsTrigger>
+                <TabsTrigger value="completed" className="flex gap-2">
+                  <History className="h-4 w-4" />
+                  History ({completedOrders.length})
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Available Orders */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-amber-500" />
-                  Available Orders
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {availableOrders.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">No orders available</p>
-                ) : (
-                  <div className="space-y-3">
-                    {availableOrders.map((order) => (
-                      <div key={order.id} className="p-4 bg-muted/50 rounded-xl">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {order.items.length} items • ₹{order.total.toFixed(2)}
-                            </p>
+              {/* Available Orders Tab */}
+              <TabsContent value="available">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-heading flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-amber-500" />
+                      Available for Pickup
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {availableOrders.length === 0 ? (
+                      <p className="text-muted-foreground text-center py-8">No orders available</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {availableOrders.map((order) => (
+                          <div key={order._id} className="p-4 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {order.items.length} items • ₹{order.total.toFixed(2)}
+                                </p>
+                              </div>
+                              <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
+                                +₹50 earning
+                              </span>
+                            </div>
+                            <div className="text-sm mb-3 text-muted-foreground flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5" />
+                              {order.address?.city}, {order.address?.pincode}
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                className="flex-1"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowDetails(true);
+                                }}
+                              >
+                                <Info className="h-4 w-4 mr-1" />
+                                Details
+                              </Button>
+                              <Button
+                                className="flex-1"
+                                size="sm"
+                                onClick={() => handleAcceptDelivery(order._id)}
+                              >
+                                Accept Pickup
+                              </Button>
+                            </div>
                           </div>
-                          <span className="text-sm font-semibold text-emerald-600">
-                            +₹50 earning
-                          </span>
-                        </div>
-                        <Button
-                          className="w-full mt-2"
-                          size="sm"
-                          onClick={() => handleAcceptDelivery(order.id)}
-                        >
-                          Accept Delivery
-                        </Button>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Active Deliveries Tab */}
+              <TabsContent value="active">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-heading flex items-center gap-2">
+                      <Truck className="h-5 w-5 text-cyan-500" />
+                      En-route Deliveries
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {assignedOrders.filter(o => o.order_status === "out_for_delivery").length === 0 ? (
+                      <p className="text-muted-foreground text-center py-8">No active deliveries</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {assignedOrders.filter(o => o.order_status === "out_for_delivery").map((order) => (
+                          <div key={order._id} className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {order.address?.addressLine1}
+                                </p>
+                              </div>
+                              <Badge className={getStatusBadge(order.order_status)}>
+                                {order.order_status.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                            <div className="flex flex-col gap-2 mt-4">
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1 bg-white hover:bg-muted"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedOrder(order);
+                                    setShowDetails(true);
+                                  }}
+                                >
+                                  <Info className="h-4 w-4 mr-2" />
+                                  Details
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white border-none"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log("Map button clicked for order:", order._id);
+                                    if (order.address?.coordinates?.lat) {
+                                      setMapCenter([order.address.coordinates.lat, order.address.coordinates.lon]);
+                                      toast.info("Map focused on delivery location");
+                                    } else {
+                                      toast.error("No coordinates found for this order");
+                                    }
+                                  }}
+                                >
+                                  <Navigation className="h-4 w-4 mr-2" />
+                                  Map
+                                </Button>
+                              </div>
+                              <Button
+                                size="sm"
+                                className="w-full bg-primary hover:bg-primary/90"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCompleteDelivery(order._id);
+                                }}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Mark Delivered
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Completed Deliveries Tab */}
+              <TabsContent value="completed">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-heading flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-emerald-500" />
+                      Completed Deliveries
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {completedOrders.length === 0 ? (
+                      <div className="text-center py-12">
+                        <History className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+                        <p className="text-muted-foreground">No completed deliveries yet</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {completedOrders.map((order) => (
+                          <div key={order._id} className="p-4 border border-border/50 rounded-xl opacity-80">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-medium">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Delivered on {new Date(order.status_history?.find(h => h.status === 'delivered')?.timestamp || order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-3 text-right">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => {
+                                    setSelectedOrder(order);
+                                    setShowDetails(true);
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <div>
+                                  <p className="font-bold text-emerald-600">₹50.00</p>
+                                  <Badge variant="secondary" className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-100">Paid out</Badge>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </main>
 
       <Footer />
+
+      {/* Order Details Dialog */}
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-heading">
+              <Package className="h-5 w-5 text-primary" />
+              Order Details
+            </DialogTitle>
+            <DialogDescription>
+              Order ID: {selectedOrder?._id.toUpperCase()}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-6 pt-4">
+              {/* Customer Info */}
+              <div className="bg-muted/50 p-4 rounded-xl space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Customer Name</p>
+                    <p className="font-medium">{selectedOrder.address?.name}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-600">
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Mobile Number</p>
+                    <p className="font-medium">{selectedOrder.address?.mobile}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Delivery Address */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                  <MapPin className="h-4 w-4" />
+                  Delivery Address
+                </div>
+                <div className="p-4 border rounded-xl bg-card">
+                  <p className="font-medium">{selectedOrder.address?.addressLine1}</p>
+                  {selectedOrder.address?.addressLine2 && (
+                    <p className="text-sm text-muted-foreground">{selectedOrder.address.addressLine2}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    {selectedOrder.address?.city}, {selectedOrder.address?.state} - {selectedOrder.address?.pincode}
+                  </p>
+                  {selectedOrder.address?.landmark && (
+                    <div className="mt-2 pt-2 border-t text-sm">
+                      <span className="font-bold text-primary">Landmark:</span> {selectedOrder.address.landmark}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Items Summary */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                  <Package className="h-4 w-4" />
+                  Order Summary
+                </div>
+                <div className="max-h-[150px] overflow-y-auto space-y-2 pr-2">
+                  {selectedOrder.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-sm p-2 hover:bg-muted/50 rounded-lg transition-colors">
+                      <span className="font-medium">{item.name} × {item.quantity}</span>
+                      <span className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-3 border-t flex justify-between items-center">
+                  <span className="font-bold">Total Amount</span>
+                  <span className="text-xl font-bold text-primary italic">₹{selectedOrder.total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex gap-3">
+                <Button className="flex-1 h-12 rounded-xl" onClick={() => setShowDetails(false)}>
+                  Close
+                </Button>
+                {selectedOrder.order_status !== 'delivered' && (
+                  <Button
+                    className="h-12 w-12 rounded-xl flex items-center justify-center p-0 border-primary text-primary"
+                    variant="outline"
+                    asChild
+                  >
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedOrder.address?.coordinates?.lat},${selectedOrder.address?.coordinates?.lon}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Navigation className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+                {selectedOrder.order_status === 'out_for_delivery' && (
+                  <Button className="h-12 w-12 rounded-xl flex items-center justify-center p-0" variant="secondary" asChild>
+                    <a href={`tel:${selectedOrder.address?.mobile}`}>
+                      <Phone className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

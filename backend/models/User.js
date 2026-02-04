@@ -32,11 +32,19 @@ const userSchema = new mongoose.Schema({
 
   addresses: [
     {
-      street: String,
+      name: String,
+      mobile: String,
+      addressLine1: String,
+      addressLine2: String,
       city: String,
       state: String,
       pincode: String,
-      landmark: String
+      landmark: String,
+      addressType: { type: String, enum: ["Home", "Work", "Other"], default: "Home" },
+      coordinates: {
+        lat: Number,
+        lon: Number
+      }
     }
   ],
 
