@@ -233,7 +233,7 @@ const DashboardPage = () => {
               ) : (
                 <div className="space-y-4">
                   {recentOrders.map((order) => (
-                    <Link key={order.id} to={`/orders/${order.id}`}>
+                    <Link key={order._id} to={`/orders/${order._id}`}>
                       <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors">
                         <div>
                           <p className="font-medium">
