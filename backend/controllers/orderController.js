@@ -50,7 +50,8 @@ exports.createOrder = async (req, res) => {
       }
 
       if (!medicine) {
-        return res.status(404).json({ message: `Medicine ${cartItem.medicine_id} not found` });
+        console.error(`❌ Medicine with ID ${cartItem.medicine_id} not found in global or pharmacy stocks.`);
+        return res.status(400).json({ message: `Medicine not found: ${cartItem.medicine_id}. Please clear your cart and try again.` });
       }
 
       const price = medicine.discount_price || medicine.price;
