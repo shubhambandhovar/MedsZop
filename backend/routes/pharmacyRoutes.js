@@ -4,6 +4,9 @@ const router = express.Router();
 const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
 
+// Debug route
+router.get("/ping", (req, res) => res.json({ message: "Pharmacy routes are working!" }));
+
 const {
   registerPharmacy,
   getDashboard,
@@ -15,7 +18,7 @@ const {
 router.post("/register", auth, role(["pharmacy"]), registerPharmacy);
 
 // Pharmacy dashboard
-router.get("/dashboard", auth, role(["pharmacy","admin"]), getDashboard);
+router.get("/dashboard", auth, role(["pharmacy", "admin"]), getDashboard);
 
 // ✅ THIS IS REQUIRED
 router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
