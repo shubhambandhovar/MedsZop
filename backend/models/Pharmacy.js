@@ -17,6 +17,7 @@ module.exports = mongoose.model(
   new mongoose.Schema({
     user_id: String,
     name: String,
+    pharmacist_name: String,
     license_number: String,
     address: String,
     verified: Boolean,

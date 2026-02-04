@@ -44,7 +44,7 @@ exports.getDashboard = async (req, res) => {
       total_revenue: assignedOrders.reduce((sum, o) => sum + o.total, 0)
     };
 
-    res.json({ stats, medicines: pharmacy.medicines });
+    res.json({ stats, medicines: pharmacy.medicines, pharmacy });
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -202,11 +202,22 @@ exports.updateProfile = async (req, res) => {
     const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
     if (!pharmacy) return res.status(404).json({ message: "Pharmacy not found" });
 
-    if (updates.name) pharmacy.name = updates.name;
+    // Update Pharmacy Fields
+    if (updates.store_name) pharmacy.name = updates.store_name;
+    if (updates.pharmacist_name) pharmacy.pharmacist_name = updates.pharmacist_name;
     if (updates.address) pharmacy.address = updates.address;
     if (updates.license_number) pharmacy.license_number = updates.license_number;
 
     await pharmacy.save();
+
+    // Update User Name (for top right display)
+    if (updates.pharmacist_name || updates.name) {
+      const User = require("../models/User");
+      await User.findByIdAndUpdate(req.user.id, {
+        name: updates.pharmacist_name || updates.name
+      });
+    }
+
     res.json({ message: "Profile updated", pharmacy });
   } catch (err) {
     res.status(500).json({ error: err.message });

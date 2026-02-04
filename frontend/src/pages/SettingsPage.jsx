@@ -11,7 +11,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SettingsPage = () => {
-    const { token, user } = useAuth();
+    const { token, user, fetchUser } = useAuth();
     const [profileForm, setProfileForm] = useState({
         name: user?.name || "",
         store_name: "",
@@ -44,9 +44,20 @@ const SettingsPage = () => {
         if (user?.role === 'pharmacy') {
             const fetchProfile = async () => {
                 try {
+                    // We'll use a new endpoint or the updated dashboard one. 
+                    // Let's assume we update GET /pharmacy/dashboard to return 'pharmacy' object
                     const res = await axios.get(`${API_URL}/pharmacy/dashboard`, { headers: { Authorization: `Bearer ${token}` } });
-                    // Typically dashboard returns stats, but let's assume if we had a dedicated profile endpoint
-                    // For now, we manually fill what we can or wait for user input
+
+                    if (res.data.pharmacy) {
+                        const p = res.data.pharmacy;
+                        setProfileForm({
+                            name: user.name || "", // User name
+                            store_name: p.name || "",
+                            pharmacist_name: p.pharmacist_name || user.name || "", // Fallback
+                            address: p.address || "",
+                            license_number: p.license_number || ""
+                        });
+                    }
                 } catch (e) { console.error(e); }
             }
             fetchProfile();
@@ -65,6 +76,7 @@ const SettingsPage = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Profile Updated Successfully");
+            fetchUser(); // Refresh global user state
         } catch (err) {
             toast.error("Failed to update profile");
         } finally {
