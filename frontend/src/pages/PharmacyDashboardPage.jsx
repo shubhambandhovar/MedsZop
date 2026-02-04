@@ -105,6 +105,8 @@ const PharmacyDashboardPage = () => {
   useEffect(() => {
     if (token) {
       fetchData();
+      const interval = setInterval(fetchData, 5000); // Auto-refresh every 5 seconds
+      return () => clearInterval(interval);
     }
   }, [token]);
 

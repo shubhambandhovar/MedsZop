@@ -128,7 +128,11 @@ const DeliveryDashboardPage = () => {
   };
 
   useEffect(() => {
-    if (token) fetchOrders();
+    if (token) {
+      fetchOrders();
+      const interval = setInterval(fetchOrders, 5000);
+      return () => clearInterval(interval);
+    }
   }, [token]);
 
   const handleAcceptDelivery = async (orderId) => {

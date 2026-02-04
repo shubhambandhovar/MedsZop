@@ -79,6 +79,8 @@ const OrderTrackingPage = () => {
   useEffect(() => {
     if (id && token) {
       fetchOrder();
+      const interval = setInterval(fetchOrder, 5000); // Poll status every 5s
+      return () => clearInterval(interval);
     }
   }, [id, token]);
 
