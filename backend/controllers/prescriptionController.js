@@ -14,18 +14,11 @@ exports.scanPrescription = async (req, res) => {
 
     // 2️⃣ Prepare Gemini Vision
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: "gemini-2.5-flash"
     });
 
-    // Detect MimeType - handling both full data URL and raw base64
-    let mimeType = "image/jpeg";
-    let base64Data = base64Image;
-
-    if (base64Image.includes("base64,")) {
-      const parts = base64Image.split(";base64,");
-      mimeType = parts[0].split(":")[1] || "image/jpeg";
-      base64Data = parts[1];
-    }
+    // Remove data:image/jpeg;base64, prefix if exists
+    const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
 
     const prompt = `
     You are an expert medical pharmacist. Analyze this prescription image (which might be handwritten) and extract all medicines listed.
@@ -45,14 +38,12 @@ exports.scanPrescription = async (req, res) => {
     If it's handwritten, look closely at the medication names. If no medicines are found, return an empty list.
     `;
 
-    console.log("🚀 Calling Gemini for prescription scan with mimeType:", mimeType);
-
     const result = await model.generateContent([
       prompt,
       {
         inlineData: {
           data: base64Data,
-          mimeType: mimeType
+          mimeType: "image/jpeg"
         }
       }
     ]);
@@ -78,11 +69,10 @@ exports.scanPrescription = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Prescription scan fatal error:", error);
+    console.error("❌ Prescription scan error:", error);
     return res.status(500).json({
-      message: "Prescription scanning failed on server",
-      error: error.message,
-      stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+      message: "Prescription scanning failed",
+      error: error.message
     });
   }
 };

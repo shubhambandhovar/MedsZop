@@ -11,7 +11,7 @@ exports.doctorChat = async (req, res) => {
     }
     //
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
     });
 
     const result = await model.generateContent(message);
@@ -21,9 +21,9 @@ exports.doctorChat = async (req, res) => {
     res.json({ response: reply });
   } catch (error) {
     console.error("Gemini Error:", error);
+
     res.status(500).json({
       message: "AI service temporarily unavailable",
-      error: error.message
     });
   }
 };
