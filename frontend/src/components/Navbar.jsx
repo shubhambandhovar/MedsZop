@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import axios from "axios";
 import {
   Pill,
   ShoppingCart,
@@ -31,7 +32,8 @@ import {
   Moon,
   Sun,
   Globe,
-  Settings
+  Settings,
+  X
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "./ui/badge";
@@ -354,7 +356,7 @@ const Navbar = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[100] p-4">
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl w-full max-w-md relative">
             <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => setShowProfileModal(false)}>
-              <Menu className="h-4 w-4 rotate-45" /> {/* Close Icon Simulation */}
+              <X className="h-4 w-4" />
             </Button>
             <div className="text-center mb-6">
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
