@@ -77,6 +77,13 @@ exports.completeDelivery = async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
+    // Validate OTP
+    if (order.delivery_otp) {
+      if (!req.body.otp || req.body.otp.toString() !== order.delivery_otp.toString()) {
+        return res.status(400).json({ message: "Invalid OTP. Delivery verification failed." });
+      }
+    }
+
     order.order_status = "delivered";
     order.status_history.push({
       status: "delivered",
