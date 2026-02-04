@@ -78,9 +78,10 @@ const CheckoutPage = () => {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          const res = await axios.get(`${API_URL}/addresses/reverse?lat=${latitude}&lon=${longitude}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 20000 // Match/Exceed backend timeout for slow OSM responses
+
+          // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend to bypass Render Backend IP blocks
+          const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`, {
+            headers: { 'User-Agent': 'MedsZop-App-Frontend' }
           });
 
           const addr = res.data.address;
@@ -125,9 +126,9 @@ const CheckoutPage = () => {
   const searchAddress = async (query) => {
     try {
       setSearchingAddress(true);
-      const res = await axios.get(`${API_URL}/addresses/search?q=${encodeURIComponent(query)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        timeout: 10000
+      // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
+      const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=in&addressdetails=1&limit=10`, {
+        headers: { 'User-Agent': 'MedsZop-App-Frontend' }
       });
       setSuggestions(res.data);
       setShowAddressSuggestions(true);
@@ -168,9 +169,9 @@ const CheckoutPage = () => {
   const handleMapMove = async (lat, lon) => {
     try {
       setMapPosition([lat, lon]);
-      const res = await axios.get(`${API_URL}/addresses/reverse?lat=${lat}&lon=${lon}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        timeout: 10000
+      // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
+      const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`, {
+        headers: { 'User-Agent': 'MedsZop-App-Frontend' }
       });
       const addr = res.data.address;
       setNewAddress(prev => ({
@@ -222,9 +223,8 @@ const CheckoutPage = () => {
 
   const lookupPincode = async (pincode) => {
     try {
-      const response = await axios.get(`${API_URL}/addresses/pincode?pincode=${pincode}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // 🔥 DEPLOYMENT FIX: Call Pincode API directly from Frontend to bypass Render block
+      const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
       const data = response.data;
 
       if (data && data[0].Status === "Success") {
