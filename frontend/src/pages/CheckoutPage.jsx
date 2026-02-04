@@ -315,7 +315,7 @@ const CheckoutPage = () => {
 
       refreshCart();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to place order");
+      toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
