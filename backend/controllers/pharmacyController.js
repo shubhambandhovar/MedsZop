@@ -12,10 +12,22 @@ exports.registerPharmacy = async (req, res) => {
 
 exports.getDashboard = async (req, res) => {
   try {
-    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    let pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+
+    if (!pharmacy && req.user.role === "pharmacy") {
+      // Auto-create if missing for pharmacy users
+      const User = require("../models/User");
+      const user = await User.findById(req.user.id);
+      pharmacy = await Pharmacy.create({
+        user_id: req.user.id,
+        name: user?.name || "My Pharmacy",
+        verified: false,
+        medicines: []
+      });
+    }
 
     if (!pharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
+      return res.status(404).json({ message: "Pharmacy profile not found. Please log in as a pharmacy." });
     }
 
     // 1. Get truly assigned orders for revenue/stats
@@ -42,9 +54,19 @@ exports.getDashboard = async (req, res) => {
 exports.getPharmacyOrders = async (req, res) => {
   try {
     // Find the pharmacy for the logged-in user
-    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    let pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    if (!pharmacy && req.user.role === "pharmacy") {
+      const User = require("../models/User");
+      const user = await User.findById(req.user.id);
+      pharmacy = await Pharmacy.create({
+        user_id: req.user.id,
+        name: user?.name || "My Pharmacy",
+        verified: false,
+        medicines: []
+      });
+    }
     if (!pharmacy) {
-      return res.status(404).json({ error: "Pharmacy not found" });
+      return res.status(404).json({ error: "Pharmacy profile not found" });
     }
     // Find orders for this pharmacy
     // Find orders for this pharmacy OR unassigned pool orders
@@ -61,10 +83,21 @@ exports.getPharmacyOrders = async (req, res) => {
 };
 exports.addMedicine = async (req, res) => {
   try {
-    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+    let pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+
+    if (!pharmacy && req.user.role === "pharmacy") {
+      const User = require("../models/User");
+      const user = await User.findById(req.user.id);
+      pharmacy = await Pharmacy.create({
+        user_id: req.user.id,
+        name: user?.name || "My Pharmacy",
+        verified: false,
+        medicines: []
+      });
+    }
 
     if (!pharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
+      return res.status(404).json({ message: "Pharmacy profile not found" });
     }
 
     const {
