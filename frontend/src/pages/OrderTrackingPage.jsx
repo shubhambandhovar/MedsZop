@@ -91,13 +91,32 @@ const OrderTrackingPage = () => {
   ];
 
   const getStepStatus = (stepStatus) => {
-    const statusOrder = ["pending", "confirmed", "processing", "out_for_delivery", "delivered"];
-    const currentIndex = statusOrder.indexOf(order?.order_status);
-    const stepIndex = statusOrder.indexOf(stepStatus);
+    const statusWeight = {
+      "pending": 0,
+      "confirmed": 1,
+      "accepted": 2,
+      "processing": 2,
+      "picked_up": 2,
+      "shipped": 2,
+      "on_the_way": 2,
+      "out_for_delivery": 3,
+      "delivered": 4
+    };
+
+    const uiStepWeight = {
+      "pending": 0,
+      "confirmed": 1,
+      "processing": 2,
+      "out_for_delivery": 3,
+      "delivered": 4
+    };
+
+    const currentWeight = statusWeight[order?.order_status] || 0;
+    const stepWeight = uiStepWeight[stepStatus];
 
     if (order?.order_status === "cancelled") return "cancelled";
-    if (stepIndex < currentIndex) return "completed";
-    if (stepIndex === currentIndex) return "current";
+    if (currentWeight > stepWeight) return "completed";
+    if (currentWeight === stepWeight) return "current";
     return "upcoming";
   };
 
