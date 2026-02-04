@@ -80,7 +80,7 @@ const CheckoutPage = () => {
           const { latitude, longitude } = position.coords;
           const res = await axios.get(`${API_URL}/addresses/reverse?lat=${latitude}&lon=${longitude}`, {
             headers: { Authorization: `Bearer ${token}` },
-            timeout: 10000
+            timeout: 20000 // Match/Exceed backend timeout for slow OSM responses
           });
 
           const addr = res.data.address;
