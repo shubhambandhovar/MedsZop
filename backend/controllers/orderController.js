@@ -119,8 +119,12 @@ exports.createOrder = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Create Order Error:", err);
-    res.status(500).json({ error: err.message });
+    console.error("Create Order Fatal Error:", err);
+    res.status(500).json({
+      message: "Order placement failed on server",
+      error: err.message,
+      stack: process.env.NODE_ENV === "development" ? err.stack : undefined
+    });
   }
 };
 
