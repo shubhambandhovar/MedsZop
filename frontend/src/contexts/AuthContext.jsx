@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-axios.defaults.timeout = 15000;
+axios.defaults.timeout = 30000; // Increased for Render Cold Starts
 
 const API_URL = import.meta.env.VITE_API_URL;
 
