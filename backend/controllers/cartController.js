@@ -8,17 +8,20 @@ exports.getCart = async (req, res) => {
     const user = await User.findById(req.user.id);
     const cartItems = [];
 
-    for (const item of user.cart) {
-      if (!item.medicine_id) continue;
+    for (let cartItem of user.cart) {
+      if (!cartItem.medicine_id || cartItem.medicine_id === "undefined") {
+        console.warn("⚠️ Skipping malformed cart item:", cartItem);
+        continue;
+      }
 
       // 1. Try Global Medicine
-      let medicine = await Medicine.findById(item.medicine_id).lean();
+      let medicine = await Medicine.findById(cartItem.medicine_id).lean();
 
       // 2. Try Pharmacy Medicine
       if (!medicine) {
         try {
           const pharmacy = await Pharmacy.findOne(
-            { "medicines._id": item.medicine_id },
+            { "medicines._id": cartItem.medicine_id },
             { "medicines.$": 1, name: 1 }
           );
           if (pharmacy && pharmacy.medicines && pharmacy.medicines.length > 0) {
@@ -81,8 +84,9 @@ exports.addToCart = async (req, res) => {
     if (!userId) return res.status(401).json({ message: "User not authenticated" });
 
     const { medicine_id, quantity } = req.body;
-    if (!medicine_id) {
-      return res.status(400).json({ message: "Medicine ID is required" });
+
+    if (!medicine_id || medicine_id === "undefined" || medicine_id === "null") {
+      return res.status(400).json({ message: "Valid Medicine ID is required" });
     }
 
     const qty = Number(quantity) || 1;

@@ -28,6 +28,10 @@ exports.createOrder = async (req, res) => {
     let pharmacyId = null;
 
     for (let cartItem of user.cart) {
+      if (!cartItem.medicine_id || cartItem.medicine_id === "undefined") {
+        console.warn("⚠️ Skipping invalid cart item:", cartItem);
+        continue;
+      }
       // 1. Try Global Medicine
       let medicine = await Medicine.findById(cartItem.medicine_id).lean();
 
