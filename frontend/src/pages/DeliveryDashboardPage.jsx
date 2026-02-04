@@ -18,7 +18,9 @@ import {
   Phone,
   Info,
   ExternalLink,
-  Eye
+  Eye,
+  Store,
+  Key
 } from "lucide-react";
 import {
   Tabs,
@@ -32,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter
 } from "../components/ui/dialog";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
@@ -55,6 +58,9 @@ const DeliveryDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showOTPDialog, setShowOTPDialog] = useState(false);
+  const [deliveryOTP, setDeliveryOTP] = useState("");
+  const [orderToComplete, setOrderToComplete] = useState(null);
 
   const [mapCenter, setMapCenter] = useState([12.9716, 77.5946]); // Default Bangalore
   const [userLocation, setUserLocation] = useState(null);
@@ -149,15 +155,29 @@ const DeliveryDashboardPage = () => {
     }
   };
 
-  const handleCompleteDelivery = async (orderId) => {
+  const initiateCompletion = (orderId) => {
+    setOrderToComplete(orderId);
+    setDeliveryOTP("");
+    setShowOTPDialog(true);
+  };
+
+  const handleCompleteDelivery = async () => {
     try {
-      await axios.post(`${API_URL}/delivery/complete/${orderId}`, {}, {
+      if (!deliveryOTP || deliveryOTP.length !== 4) {
+        toast.error("Please enter a valid 4-digit OTP");
+        return;
+      }
+
+      await axios.post(`${API_URL}/delivery/complete/${orderToComplete}`, { otp: deliveryOTP }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success("Delivery completed!");
+
+      toast.success("Delivery completed successfully!");
+      setShowOTPDialog(false);
+      setOrderToComplete(null);
       fetchOrders();
     } catch (error) {
-      toast.error("Failed to complete delivery");
+      toast.error(error.response?.data?.message || "Failed to complete delivery. Check OTP.");
     }
   };
 
@@ -465,8 +485,15 @@ const DeliveryDashboardPage = () => {
                                 </Button>
                               )}
                               {order.order_status === "out_for_delivery" && (
-                                <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={(e) => { e.stopPropagation(); handleCompleteDelivery(order._id); }}>
-                                  <CheckCircle className="h-4 w-4 mr-2" /> Mark Delivered
+                                <Button
+                                  size="sm"
+                                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    initiateCompletion(order._id);
+                                  }}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" /> Mark Delivered (Enter OTP)
                                 </Button>
                               )}
                             </div>
@@ -551,6 +578,25 @@ const DeliveryDashboardPage = () => {
 
           {selectedOrder && (
             <div className="space-y-6 pt-4">
+              {/* Pharmacy Info (Pickup) */}
+              {selectedOrder.pharmacy && (
+                <div className="bg-amber-500/10 p-4 rounded-xl space-y-3 border border-amber-500/20">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-amber-500/20 p-2 rounded-lg text-amber-700">
+                      <Store className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-amber-800 uppercase font-bold tracking-wider">Pickup Location</p>
+                      <p className="font-medium text-amber-900">{selectedOrder.pharmacy.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 pl-1">
+                    <MapPin className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-800">{selectedOrder.pharmacy.address}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Customer Info */}
               <div className="bg-muted/50 p-4 rounded-xl space-y-3">
                 <div className="flex items-center gap-3">
@@ -646,6 +692,36 @@ const DeliveryDashboardPage = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* OTP Dialog */}
+      <Dialog open={showOTPDialog} onOpenChange={setShowOTPDialog}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-heading">
+              <Key className="h-5 w-5 text-emerald-600" />
+              Verify Delivery
+            </DialogTitle>
+            <DialogDescription>
+              Ask the customer for the 4-digit OTP sent to their app.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <input
+              type="text"
+              maxLength="4"
+              className="w-full h-14 text-center text-3xl tracking-[1em] font-bold border-2 rounded-xl focus:border-primary focus:outline-none"
+              placeholder="0000"
+              value={deliveryOTP}
+              onChange={(e) => setDeliveryOTP(e.target.value.replace(/[^0-9]/g, ''))}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowOTPDialog(false)}>Cancel</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleCompleteDelivery}>Verify & Complete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

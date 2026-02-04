@@ -38,6 +38,8 @@ const orderSchema = new mongoose.Schema({
 
   delivery_agent_id: String,
 
+  delivery_otp: String,
+
   status_history: Array,
 
   createdAt: {

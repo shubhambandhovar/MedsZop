@@ -13,8 +13,21 @@ exports.getOrders = async (req, res) => {
           ]
         }
       ]
-    }).sort({ createdAt: -1 });
-    res.json(orders);
+    }).sort({ createdAt: -1 }).lean();
+
+    // Manual populate for pharmacy details
+    const Pharmacy = require("../models/Pharmacy");
+    const pharmacyIds = orders.map(o => o.pharmacy_id).filter(id => id);
+    const pharmacies = await Pharmacy.find({ _id: { $in: pharmacyIds } });
+    const pharmacyMap = {};
+    pharmacies.forEach(p => pharmacyMap[p._id.toString()] = p);
+
+    const ordersWithPharmacy = orders.map(o => ({
+      ...o,
+      pharmacy: pharmacyMap[o.pharmacy_id] || null
+    }));
+
+    res.json(ordersWithPharmacy);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }

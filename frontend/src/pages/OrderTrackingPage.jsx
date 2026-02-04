@@ -227,6 +227,18 @@ const OrderTrackingPage = () => {
                     );
                   })}
                 </div>
+
+                {/* OTP Display for Customer */}
+                {order.delivery_otp && order.order_status !== "delivered" && (
+                  <div className="mt-8 bg-emerald-100 border-2 border-emerald-500 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                    <p className="text-emerald-800 text-sm font-bold uppercase tracking-widest mb-1">
+                      Share this OTP with Delivery Agent
+                    </p>
+                    <div className="text-4xl font-mono font-black text-emerald-700 tracking-[0.2em]">
+                      {order.delivery_otp}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

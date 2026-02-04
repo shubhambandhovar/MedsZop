@@ -177,9 +177,10 @@ exports.updateOrderStatus = async (req, res) => {
 
     // 🔥 AUTO-ASSIGN PHARMACY: If a pharmacy confirms an unassigned order, claim it
     if (req.user.role === "pharmacy" && req.body.status === "confirmed") {
-      const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
       if (pharmacy && (!order.pharmacy_id || order.pharmacy_id === "")) {
         order.pharmacy_id = pharmacy._id.toString();
+        // Generate 4-digit OTP for delivery
+        order.delivery_otp = Math.floor(1000 + Math.random() * 9000).toString();
       }
     }
 
