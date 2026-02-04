@@ -494,7 +494,7 @@ const PharmacyDashboardPage = () => {
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium">{order.address?.name || "Customer"}</span>
-                            <span className="text-xs text-muted-foreground">{order.address?.phone || "No Phone"}</span>
+                            <span className="text-xs text-muted-foreground">{order.address?.mobile || order.address?.phone || "No Phone"}</span>
                           </div>
                         </TableCell>
 
@@ -636,12 +636,8 @@ const PharmacyDashboardPage = () => {
                   {selectedOrder.order_status === "pending" && (
                     <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}>Confirm Order</Button>
                   )}
-                  {selectedOrder.order_status === "confirmed" && (
-                    <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "out_for_delivery")}>Send for Delivery</Button>
-                  )}
-                  {selectedOrder.order_status === "out_for_delivery" && (
-                    <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "delivered")}>Mark Delivered</Button>
-                  )}
+
+
                 </div>
               </div>
 

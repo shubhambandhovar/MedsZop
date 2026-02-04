@@ -7,7 +7,8 @@ const role = require("../middleware/roleMiddleware");
 const {
   acceptDelivery,
   completeDelivery,
-  getOrders
+  getOrders,
+  updateDeliveryStatus
 } = require("../controllers/deliveryController");
 
 // Delivery Agent Only
@@ -15,6 +16,8 @@ const {
 router.get("/orders", auth, role(["delivery"]), getOrders);
 
 router.post("/accept/:id", auth, role(["delivery"]), acceptDelivery);
+
+router.post("/status/:id", auth, role(["delivery"]), updateDeliveryStatus);
 
 router.post("/complete/:id", auth, role(["delivery"]), completeDelivery);
 

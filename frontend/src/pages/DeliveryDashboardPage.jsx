@@ -137,6 +137,18 @@ const DeliveryDashboardPage = () => {
     }
   };
 
+  const handleUpdateStatus = async (orderId, status) => {
+    try {
+      await axios.post(`${API_URL}/delivery/status/${orderId}`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Status updated to ${status.replace(/_/g, ' ')}`);
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
+  };
+
   const handleCompleteDelivery = async (orderId) => {
     try {
       await axios.post(`${API_URL}/delivery/complete/${orderId}`, {}, {
@@ -150,6 +162,8 @@ const DeliveryDashboardPage = () => {
   };
 
   const assignedOrders = orders.filter(o => o.delivery_agent_id === user?._id);
+  const activeOrders = assignedOrders.filter(o => ["accepted", "picked_up", "shipped", "on_the_way", "out_for_delivery"].includes(o.order_status));
+
   const availableOrders = orders.filter(o =>
     !o.delivery_agent_id &&
     (
@@ -191,7 +205,7 @@ const DeliveryDashboardPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-cyan-100 text-sm">Active Deliveries</p>
-                  <p className="text-3xl font-bold">{assignedOrders.filter(o => o.order_status === "out_for_delivery").length}</p>
+                  <p className="text-3xl font-bold">{activeOrders.length}</p>
                 </div>
                 <Truck className="h-10 w-10 text-cyan-200" />
               </div>
@@ -300,7 +314,7 @@ const DeliveryDashboardPage = () => {
                 </TabsTrigger>
                 <TabsTrigger value="active" className="flex gap-2">
                   <Navigation className="h-4 w-4" />
-                  Active ({assignedOrders.filter(o => o.order_status === "out_for_delivery").length})
+                  Active ({activeOrders.length})
                 </TabsTrigger>
                 <TabsTrigger value="completed" className="flex gap-2">
                   <History className="h-4 w-4" />
@@ -378,11 +392,11 @@ const DeliveryDashboardPage = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {assignedOrders.filter(o => o.order_status === "out_for_delivery").length === 0 ? (
+                    {activeOrders.length === 0 ? (
                       <p className="text-muted-foreground text-center py-8">No active deliveries</p>
                     ) : (
                       <div className="space-y-3">
-                        {assignedOrders.filter(o => o.order_status === "out_for_delivery").map((order) => (
+                        {activeOrders.map((order) => (
                           <div key={order._id} className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
                             <div className="flex justify-between items-start mb-2">
                               <div>
@@ -428,17 +442,33 @@ const DeliveryDashboardPage = () => {
                                   Map
                                 </Button>
                               </div>
-                              <Button
-                                size="sm"
-                                className="w-full bg-primary hover:bg-primary/90"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleCompleteDelivery(order._id);
-                                }}
-                              >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Mark Delivered
-                              </Button>
+
+                              {/* Dynamic Status Buttons */}
+                              {order.order_status === "accepted" && (
+                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "picked_up"); }}>
+                                  <Package className="h-4 w-4 mr-2" /> Mark Picked Up
+                                </Button>
+                              )}
+                              {order.order_status === "picked_up" && (
+                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "shipped"); }}>
+                                  <Truck className="h-4 w-4 mr-2" /> Mark Shipped
+                                </Button>
+                              )}
+                              {order.order_status === "shipped" && (
+                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "on_the_way"); }}>
+                                  <Navigation className="h-4 w-4 mr-2" /> Mark On The Way
+                                </Button>
+                              )}
+                              {order.order_status === "on_the_way" && (
+                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "out_for_delivery"); }}>
+                                  <Truck className="h-4 w-4 mr-2" /> Mark Out For Delivery
+                                </Button>
+                              )}
+                              {order.order_status === "out_for_delivery" && (
+                                <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={(e) => { e.stopPropagation(); handleCompleteDelivery(order._id); }}>
+                                  <CheckCircle className="h-4 w-4 mr-2" /> Mark Delivered
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}

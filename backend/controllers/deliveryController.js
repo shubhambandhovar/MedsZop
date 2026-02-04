@@ -8,7 +8,7 @@ exports.getOrders = async (req, res) => {
         {
           delivery_agent_id: null,
           $or: [
-            { order_status: { $in: ["confirmed", "processing"] } },
+            { order_status: { $in: ["confirmed", "processing", "out_for_delivery"] } },
             { order_status: "pending", pharmacy_id: null }
           ]
         }
@@ -27,9 +27,9 @@ exports.acceptDelivery = async (req, res) => {
     if (order.delivery_agent_id) return res.status(400).json({ message: "Order already accepted by another agent" });
 
     order.delivery_agent_id = req.user.id;
-    order.order_status = "out_for_delivery";
+    order.order_status = "accepted";
     order.status_history.push({
-      status: "out_for_delivery",
+      status: "accepted",
       timestamp: new Date()
     });
 
@@ -37,6 +37,25 @@ exports.acceptDelivery = async (req, res) => {
     res.json({ message: "Delivery accepted", order });
   } catch (error) {
     res.status(500).json({ message: "Failed to accept delivery", error: error.message });
+  }
+};
+
+exports.updateDeliveryStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.order_status = status;
+    order.status_history.push({
+      status: status,
+      timestamp: new Date()
+    });
+
+    await order.save();
+    res.json({ message: "Status updated", order });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update status", error: error.message });
   }
 };
 
