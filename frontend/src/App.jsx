@@ -1,3 +1,9 @@
+import HelpCenterPage from "./pages/support/HelpCenterPage";
+import FaqsPage from "./pages/support/FaqsPage";
+import RefundPolicyPage from "./pages/support/RefundPolicyPage";
+import PrivacyPolicyPage from "./pages/support/PrivacyPolicyPage";
+import TermsPage from "./pages/support/TermsPage";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
@@ -32,6 +38,12 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/medicines" element={<MedicinesPage />} />
             <Route path="/medicines/:id" element={<MedicineDetailPage />} />
+            <Route path="/help" element={<HelpCenterPage />} />
+            <Route path="/faqs" element={<FaqsPage />} />
+            <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+
 
             <Route
               path="/dashboard"

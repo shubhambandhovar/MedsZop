@@ -70,21 +70,41 @@ const Footer = () => {
           </div>
 
           {/* Support */}
-          <div>
-            <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">Help Center</a></li>
-              {/* Only show refund/browse policies for customers */}
-              {(!role || role === "customer") && (
-                <>
-                  <li><a href="#" className="text-sm hover:text-primary transition-colors">FAQs</a></li>
-                  <li><a href="#" className="text-sm hover:text-primary transition-colors">Refund Policy</a></li>
-                </>
-              )}
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-sm hover:text-primary transition-colors">Terms of Service</a></li>
-            </ul>
-          </div>
+         
+<div>
+  <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
+  <ul className="space-y-3">
+    <li>
+      <Link to="/help" className="text-sm hover:text-primary transition-colors">
+        Help Center
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/faqs" className="text-sm hover:text-primary transition-colors">
+        FAQs
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/refund-policy" className="text-sm hover:text-primary transition-colors">
+        Refund Policy
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/privacy-policy" className="text-sm hover:text-primary transition-colors">
+        Privacy Policy
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/terms" className="text-sm hover:text-primary transition-colors">
+        Terms of Service
+      </Link>
+    </li>
+  </ul>
+</div>
 
           {/* Contact */}
           <div>
