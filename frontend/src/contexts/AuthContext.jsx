@@ -62,10 +62,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ GOOGLE LOGIN
+  // ✅ GOOGLE LOGIN (existing users only)
   const googleLogin = async (credential) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/google`, { credential });
+      const res = await axios.post(`${API_URL}/auth/google/login`, { credential });
       const { access_token, user: userData } = res.data;
       localStorage.setItem("token", access_token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
@@ -74,6 +74,21 @@ export const AuthProvider = ({ children }) => {
       return userData;
     } catch (err) {
       throw err.response?.data?.message || "Google login failed";
+    }
+  };
+
+  // ✅ GOOGLE SIGNUP (new users only)
+  const googleSignup = async (credential) => {
+    try {
+      const res = await axios.post(`${API_URL}/auth/google/signup`, { credential });
+      const { access_token, user: userData } = res.data;
+      localStorage.setItem("token", access_token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+      setToken(access_token);
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      throw err.response?.data?.message || "Google signup failed";
     }
   };
 
@@ -112,6 +127,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         googleLogin,
+        googleSignup,
         register,
         logout,
         isAuthenticated: !!token && !!user && !loading,

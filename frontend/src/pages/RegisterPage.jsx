@@ -35,7 +35,7 @@ const RegisterPage = () => {
     role: "customer",
   });
   const [loading, setLoading] = useState(false);
-  const { register, googleLogin } = useAuth();
+  const { register, googleSignup } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field, value) => {
@@ -77,11 +77,11 @@ const RegisterPage = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const user = await googleLogin(credentialResponse.credential);
+      const user = await googleSignup(credentialResponse.credential);
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message || "Google sign-up failed");
+      toast.error(error || "Google sign-up failed");
     }
   };
 

@@ -214,10 +214,10 @@ exports.updateProfile = async (req, res) => {
 
 /**
  * =========================
- * GOOGLE OAuth LOGIN/REGISTER
+ * GOOGLE OAuth LOGIN (existing users only)
  * =========================
  */
-exports.googleAuth = async (req, res) => {
+exports.googleLogin = async (req, res) => {
   try {
     const { credential } = req.body;
 
@@ -225,37 +225,26 @@ exports.googleAuth = async (req, res) => {
       return res.status(400).json({ message: "Google credential is required" });
     }
 
-    // Verify the Google token
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-    const { sub: googleId, email, name } = payload;
+    const { sub: googleId, email } = payload;
 
-    // Check if user already exists
     let user = await User.findOne({ email });
 
-    if (user) {
-      // User exists - update googleId if not set
-      if (!user.googleId) {
-        user.googleId = googleId;
-        user.authProvider = "google";
-        await user.save();
-      }
-    } else {
-      // Create new user
-      user = await User.create({
-        email,
-        name,
-        googleId,
-        authProvider: "google",
-        role: "customer",
-      });
+    if (!user) {
+      return res.status(404).json({ message: "No account found with this email. Please sign up first." });
     }
 
-    // Generate JWT
+    if (!user.googleId) {
+      user.googleId = googleId;
+      user.authProvider = "google";
+      await user.save();
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -264,12 +253,59 @@ exports.googleAuth = async (req, res) => {
 
     user.password = undefined;
 
-    return res.json({
-      access_token: token,
-      user,
-    });
+    return res.json({ access_token: token, user });
   } catch (err) {
-    console.error("Google Auth error:", err);
+    console.error("Google Login error:", err);
+    return res.status(500).json({ message: "Google authentication failed", error: err.message });
+  }
+};
+
+/**
+ * =========================
+ * GOOGLE OAuth SIGNUP (new users only)
+ * =========================
+ */
+exports.googleSignup = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({ message: "An account with this email already exists. Please sign in instead." });
+    }
+
+    user = await User.create({
+      email,
+      name,
+      googleId,
+      authProvider: "google",
+      role: "customer",
+    });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE || "7d" }
+    );
+
+    user.password = undefined;
+
+    return res.status(201).json({ access_token: token, user });
+  } catch (err) {
+    console.error("Google Signup error:", err);
     return res.status(500).json({ message: "Google authentication failed", error: err.message });
   }
 };

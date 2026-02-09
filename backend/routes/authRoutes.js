@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
-const { register, login, getMe, changePassword, updateProfile, googleAuth } = require("../controllers/authController");
+const { register, login, getMe, changePassword, updateProfile, googleLogin, googleSignup } = require("../controllers/authController");
 
 // Customer register
 router.post("/register", register);
@@ -11,7 +11,8 @@ router.post("/register", register);
 router.post("/login", login);
 
 // Google OAuth
-router.post("/google", googleAuth);
+router.post("/google/login", googleLogin);
+router.post("/google/signup", googleSignup);
 
 // Get logged-in user
 router.get("/me", auth, getMe);
