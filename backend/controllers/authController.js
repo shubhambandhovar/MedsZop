@@ -2,6 +2,9 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Pharmacy = require("../models/Pharmacy");
+const { OAuth2Client } = require("google-auth-library");
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 /**
  * =========================
  * REGISTER (Customer only)
@@ -206,5 +209,67 @@ exports.updateProfile = async (req, res) => {
   } catch (err) {
     console.error("Update profile error:", err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * =========================
+ * GOOGLE OAuth LOGIN/REGISTER
+ * =========================
+ */
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    // Verify the Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists - update googleId if not set
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.authProvider = "google";
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = await User.create({
+        email,
+        name,
+        googleId,
+        authProvider: "google",
+        role: "customer",
+      });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE || "7d" }
+    );
+
+    user.password = undefined;
+
+    return res.json({
+      access_token: token,
+      user,
+    });
+  } catch (err) {
+    console.error("Google Auth error:", err);
+    return res.status(500).json({ message: "Google authentication failed", error: err.message });
   }
 };

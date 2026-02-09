@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
 
   password: {
     type: String,
-    required: true
+    required: false
   },
 
   name: {
@@ -21,13 +21,24 @@ const userSchema = new mongoose.Schema({
 
   phone: {
     type: String,
-    required: true
+    required: false
   },
 
   role: {
     type: String,
     enum: ["customer", "pharmacy", "delivery", "admin"],
     default: "customer"
+  },
+
+  googleId: {
+    type: String,
+    default: null
+  },
+
+  authProvider: {
+    type: String,
+    enum: ["local", "google"],
+    default: "local"
   },
 
   addresses: [

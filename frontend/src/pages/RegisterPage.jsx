@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -34,7 +35,7 @@ const RegisterPage = () => {
     role: "customer",
   });
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field, value) => {
@@ -72,6 +73,20 @@ const RegisterPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const user = await googleLogin(credentialResponse.credential);
+      toast.success("Account created successfully!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error.message || "Google sign-up failed");
+    }
+  };
+
+  const handleGoogleError = () => {
+    toast.error("Google sign-up failed. Please try again.");
   };
 
   return (
@@ -211,6 +226,30 @@ const RegisterPage = () => {
                 )}
               </Button>
             </form>
+
+            {/* Google OAuth Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            {/* Google Sign-Up Button */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="outline"
+                size="large"
+                width="100%"
+                text="signup_with"
+              />
+            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">

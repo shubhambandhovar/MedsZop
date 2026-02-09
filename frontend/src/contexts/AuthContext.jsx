@@ -62,6 +62,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ GOOGLE LOGIN
+  const googleLogin = async (credential) => {
+    try {
+      const res = await axios.post(`${API_URL}/auth/google`, { credential });
+      const { access_token, user: userData } = res.data;
+      localStorage.setItem("token", access_token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+      setToken(access_token);
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      throw err.response?.data?.message || "Google login failed";
+    }
+  };
+
   // ✅ REGISTER (customer only)
   const register = async (data) => {
     try {
@@ -96,6 +111,7 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         login,
+        googleLogin,
         register,
         logout,
         isAuthenticated: !!token && !!user && !loading,

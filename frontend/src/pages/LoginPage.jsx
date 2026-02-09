@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -19,41 +20,53 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
+  const navigateByRole = (user) => {
+    switch (user.role) {
+      case "admin":
+        navigate("/admin");
+        break;
+      case "pharmacy":
+        navigate("/pharmacy");
+        break;
+      case "delivery":
+        navigate("/delivery");
+        break;
+      default:
+        navigate("/dashboard");
+    }
+  };
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (loading) return; // 🔥 prevents double request
-
-  setLoading(true);
-
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
 
     try {
       const user = await login(email.trim(), password);
       toast.success("Welcome back!");
-
-      // Navigate based on role
-      switch (user.role) {
-        case "admin":
-          navigate("/admin");
-          break;
-        case "pharmacy":
-          navigate("/pharmacy");
-          break;
-        case "delivery":
-          navigate("/delivery");
-          break;
-        default:
-          navigate("/dashboard");
-      }
+      navigateByRole(user);
     } catch (error) {
       toast.error(error.message || "Invalid credentials");
-
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const user = await googleLogin(credentialResponse.credential);
+      toast.success("Welcome back!");
+      navigateByRole(user);
+    } catch (error) {
+      toast.error(error.message || "Google login failed");
+    }
+  };
+
+  const handleGoogleError = () => {
+    toast.error("Google login failed. Please try again.");
   };
 
   return (
@@ -147,6 +160,30 @@ const LoginPage = () => {
                 )}
               </Button>
             </form>
+
+            {/* Google OAuth Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            {/* Google Login Button */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="outline"
+                size="large"
+                width="100%"
+                text="signin_with"
+              />
+            </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
