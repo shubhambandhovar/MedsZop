@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -81,7 +81,17 @@ const RegisterPage = () => {
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error || "Google sign-up failed");
+      if (typeof error === "string" && error.includes("already exists")) {
+        toast.info("An account with this email already exists. Please sign in instead.", {
+          duration: 5000,
+          action: {
+            label: "Sign In",
+            onClick: () => navigate("/login"),
+          },
+        });
+      } else {
+        toast.error(error || "Google sign-up failed");
+      }
     }
   };
 
@@ -248,6 +258,8 @@ const RegisterPage = () => {
                 size="large"
                 width="100%"
                 text="signup_with"
+                shape="rectangular"
+                use_fedcm_for_prompt={false}
               />
             </div>
 

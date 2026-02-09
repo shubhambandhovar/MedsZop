@@ -61,7 +61,18 @@ const LoginPage = () => {
       toast.success("Welcome back!");
       navigateByRole(user);
     } catch (error) {
-      toast.error(error.message || "Google login failed");
+      const msg = typeof error === "string" ? error : error?.message;
+      if (msg && msg.includes("No account found")) {
+        toast.info(msg, {
+          duration: 5000,
+          action: {
+            label: "Sign Up",
+            onClick: () => navigate("/register"),
+          },
+        });
+      } else {
+        toast.error(msg || "Google login failed");
+      }
     }
   };
 
