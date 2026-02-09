@@ -24,16 +24,16 @@ const Footer = () => {
               Your trusted digital healthcare partner. Fast medicine delivery, AI-powered health tools, and 24/7 support.
             </p>
             <div className="flex gap-4">
-              <a href="https://www.facebook.com/profile.php?id=61588069821433" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href="https://www.facebook.com/profile.php?id=61588069821433" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="https://x.com/MedsZopIndia" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href="https://x.com/MedsZopIndia" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="https://www.instagram.com/medszop/" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href="https://www.instagram.com/medszop/" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="https://www.linkedin.com/company/medszop" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href="https://www.linkedin.com/company/medszop" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
                 <Linkedin className="h-4 w-4" />
               </a>
             </div>
