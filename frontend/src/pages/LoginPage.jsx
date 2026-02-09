@@ -63,13 +63,19 @@ const LoginPage = () => {
     } catch (error) {
       const msg = typeof error === "string" ? error : error?.message;
       if (msg && msg.includes("No account found")) {
-        toast.info(msg, {
-          duration: 5000,
-          action: {
-            label: "Sign Up",
-            onClick: () => navigate("/register"),
-          },
-        });
+        toast.custom(() => (
+          <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border px-8 py-6 w-[340px]">
+            <p className="text-sm text-center text-foreground font-medium">
+              No account found with this email. Please sign up first.
+            </p>
+            <button
+              onClick={() => { toast.dismiss(); navigate("/register"); }}
+              className="bg-primary text-white text-sm font-medium px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Sign Up
+            </button>
+          </div>
+        ), { position: "top-center", duration: 5000 });
       } else {
         toast.error(msg || "Google login failed");
       }

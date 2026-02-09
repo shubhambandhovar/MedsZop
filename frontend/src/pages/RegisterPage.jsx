@@ -81,16 +81,23 @@ const RegisterPage = () => {
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error) {
-      if (typeof error === "string" && error.includes("already exists")) {
-        toast.info("An account with this email already exists. Please sign in instead.", {
-          duration: 5000,
-          action: {
-            label: "Sign In",
-            onClick: () => navigate("/login"),
-          },
-        });
+      const msg = typeof error === "string" ? error : error?.message;
+      if (msg && msg.includes("already exists")) {
+        toast.custom(() => (
+          <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border px-8 py-6 w-[340px]">
+            <p className="text-sm text-center text-foreground font-medium">
+              An account with this email already exists. Please sign in instead.
+            </p>
+            <button
+              onClick={() => { toast.dismiss(); navigate("/login"); }}
+              className="bg-primary text-white text-sm font-medium px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Sign In
+            </button>
+          </div>
+        ), { position: "top-center", duration: 5000 });
       } else {
-        toast.error(error || "Google sign-up failed");
+        toast.error(msg || "Google sign-up failed");
       }
     }
   };
