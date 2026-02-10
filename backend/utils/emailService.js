@@ -1,17 +1,24 @@
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT),
-  secure: parseInt(process.env.SMTP_PORT) === 465, // true for 465, false for 587
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false, // Allow self-signed certificates
-  },
-});
+const createTransporter = () => {
+  const port = parseInt(process.env.SMTP_PORT) || 587;
+  console.log(`[Email] Creating SMTP transporter: ${process.env.SMTP_HOST}:${port}, user: ${process.env.SMTP_USER}`);
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000, // 10s
+    greetingTimeout: 10000, // 10s
+    socketTimeout: 15000, // 15s
+  });
+};
 
 /**
  * Send OTP email
@@ -46,7 +53,10 @@ const sendOTPEmail = async (email, otp) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  const transporter = createTransporter();
+  const info = await transporter.sendMail(mailOptions);
+  console.log(`[Email] OTP sent to ${email}, messageId: ${info.messageId}`);
+  return info;
 };
 
 module.exports = { sendOTPEmail };

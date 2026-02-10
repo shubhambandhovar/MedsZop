@@ -60,8 +60,11 @@ exports.sendOTP = async (req, res) => {
 
     return res.json({ message: "OTP sent successfully" });
   } catch (err) {
-    console.error("Send OTP error:", err);
-    return res.status(500).json({ message: "Failed to send OTP. Please try again." });
+    console.error("Send OTP error:", err.message, err.code);
+    return res.status(500).json({ 
+      message: "Failed to send OTP. Please try again.",
+      error: process.env.NODE_ENV !== "production" ? err.message : undefined
+    });
   }
 };
 
