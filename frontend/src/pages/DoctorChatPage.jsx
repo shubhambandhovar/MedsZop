@@ -22,6 +22,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const DoctorChatPage = () => {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const [messages, setMessages] = useState([
     {
@@ -71,10 +72,10 @@ const DoctorChatPage = () => {
       console.error("Chat error:", error);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        content: t("doctor_chat.error_message"),
         error: true
       }]);
-      toast.error("Failed to get response");
+      toast.error(t("doctor_chat.failed_response"));
     } finally {
       setLoading(false);
       inputRef.current?.focus();
@@ -89,10 +90,10 @@ const DoctorChatPage = () => {
   };
 
   const quickQuestions = [
-    "What are the side effects of Paracetamol?",
-    "How much water should I drink daily?",
-    "I have a headache, what should I do?",
-    "What foods are good for immunity?"
+    t("doctor_chat.quick1"),
+    t("doctor_chat.quick2"),
+    t("doctor_chat.quick3"),
+    t("doctor_chat.quick4")
   ];
 
   return (
@@ -103,13 +104,13 @@ const DoctorChatPage = () => {
         <div className="mb-6">
           <Badge className="mb-4 bg-emerald-500/10 text-emerald-600 border-0">
             <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-            AI-Powered
+            {t("doctor_chat.badge")}
           </Badge>
           <h1 className="font-heading text-3xl font-bold mb-2" data-testid="doctor-chat-title">
-            AI Doctor Chat
+            {t("doctor_chat.title")}
           </h1>
           <p className="text-muted-foreground">
-            Get instant health guidance from our AI assistant
+            {t("doctor_chat.subtitle")}
           </p>
         </div>
 
@@ -120,10 +121,10 @@ const DoctorChatPage = () => {
                 <Bot className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <CardTitle className="font-heading text-lg">Dr. MedsZop</CardTitle>
+                <CardTitle className="font-heading text-lg">{t("doctor_chat.bot_name")}</CardTitle>
                 <p className="text-sm text-emerald-600 flex items-center gap-1">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Online
+                  {t("doctor_chat.online")}
                 </p>
               </div>
             </div>
@@ -179,7 +180,7 @@ const DoctorChatPage = () => {
             {/* Quick Questions */}
             {messages.length <= 2 && (
               <div className="px-4 pb-2">
-                <p className="text-xs text-muted-foreground mb-2">Quick questions:</p>
+                <p className="text-xs text-muted-foreground mb-2">{t("doctor_chat.quick_questions")}</p>
                 <div className="flex flex-wrap gap-2">
                   {quickQuestions.map((q, index) => (
                     <Button
@@ -204,7 +205,7 @@ const DoctorChatPage = () => {
               <div className="flex gap-2">
                 <Input
                   ref={inputRef}
-                  placeholder="Type your health question..."
+                  placeholder={t("doctor_chat.input_placeholder")}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -233,7 +234,7 @@ const DoctorChatPage = () => {
         <div className="mt-4 flex items-start gap-2 p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-sm">
           <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
           <p className="text-amber-800 dark:text-amber-200">
-            <strong>Disclaimer:</strong> This AI assistant provides general health information only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical concerns.
+            <strong>{t("doctor_chat.disclaimer_title")}</strong> {t("doctor_chat.disclaimer_body")}
           </p>
         </div>
       </main>

@@ -24,6 +24,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const MedicinesPage = () => {
+  const { t } = useTranslation();
   const [medicines, setMedicines] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,14 +90,14 @@ const MedicinesPage = () => {
 
   const handleAddToCart = async (medicineId) => {
     if (!isAuthenticated) {
-      toast.error("Please login to add items to cart");
+      toast.error(t("medicines.login_required"));
       return;
     }
     try {
       await addToCart(medicineId, 1);
-      toast.success("Added to cart");
+      toast.success(t("medicines.added_to_cart"));
     } catch (error) {
-      toast.error("Failed to add to cart");
+      toast.error(t("medicines.add_failed"));
     }
   };
 
@@ -108,10 +109,10 @@ const MedicinesPage = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-heading text-3xl md:text-4xl font-bold mb-2" data-testid="medicines-title">
-            Browse Medicines
+            {t("medicines.title")}
           </h1>
           <p className="text-muted-foreground">
-            Find and order from our wide range of genuine medicines
+            {t("medicines.subtitle")}
           </p>
         </div>
 
@@ -121,7 +122,7 @@ const MedicinesPage = () => {
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search medicines, brands, or generic names..."
+                placeholder={t("medicines.search_placeholder")}
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-11 h-12 rounded-xl"
@@ -156,10 +157,10 @@ const MedicinesPage = () => {
           <Select value={selectedCategory || "all"} onValueChange={(val) => setSelectedCategory(val === "all" ? "" : val)}>
             <SelectTrigger className="w-full md:w-[200px] h-12 rounded-xl" data-testid="category-filter">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder={t("medicines.all_categories")}/>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">{t("medicines.all_categories")}</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
@@ -184,10 +185,10 @@ const MedicinesPage = () => {
         ) : medicines.length === 0 ? (
           <div className="text-center py-16">
             <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-heading text-xl font-semibold mb-2">No medicines found</h3>
-            <p className="text-muted-foreground mb-4">Try adjusting your search or filters</p>
+            <h3 className="font-heading text-xl font-semibold mb-2">{t("medicines.no_found")}</h3>
+            <p className="text-muted-foreground mb-4">{t("medicines.try_adjusting")}</p>
             <Button onClick={() => { setSearch(""); setSelectedCategory(""); }}>
-              Clear Filters
+              {t("medicines.clear_filters")}
             </Button>
           </div>
         ) : (
@@ -213,12 +214,12 @@ const MedicinesPage = () => {
                       />
                       {medicine.requires_prescription && (
                         <Badge className="absolute top-3 left-3 bg-amber-500">
-                          Rx Required
+                          {t("medicines.rx_required")}
                         </Badge>
                       )}
                       {medicine.discount_price && (
                         <Badge className="absolute top-3 right-3 bg-emerald-500">
-                          {Math.round((1 - medicine.discount_price / medicine.price) * 100)}% OFF
+                          {t("medicines.discount", { discount: Math.round((1 - medicine.discount_price / medicine.price) * 100) })}
                         </Badge>
                       )}
                     </div>

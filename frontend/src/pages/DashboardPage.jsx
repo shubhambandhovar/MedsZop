@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar.jsx";
@@ -28,6 +29,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const DashboardPage = () => {
   const { user, token } = useAuth();
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     orders: [],
     prescriptions: [],
@@ -118,10 +120,10 @@ const DashboardPage = () => {
             className="font-heading text-3xl font-bold mb-2"
             data-testid="dashboard-title"
           >
-            Welcome back, {user.name?.split(" ")[0]}! 👋
+            {t("dashboard.welcome", { name: user.name?.split(" ")[0] })}
           </h1>
           <p className="text-muted-foreground">
-            Here's your health dashboard overview
+            {t("dashboard.overview")}
           </p>
         </div>
 
@@ -131,7 +133,7 @@ const DashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm">Total Orders</p>
+                  <p className="text-blue-100 text-sm">{t("dashboard.total_orders")}</p>
                   <p className="text-3xl font-bold">{stats.orders.length}</p>
                 </div>
                 <Package className="h-10 w-10 text-blue-200" />
@@ -143,7 +145,7 @@ const DashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm">Total Spent</p>
+                  <p className="text-emerald-100 text-sm">{t("dashboard.total_spent")}</p>
                   <p className="text-3xl font-bold">₹{totalSpent.toFixed(0)}</p>
                 </div>
                 <TrendingUp className="h-10 w-10 text-emerald-200" />
@@ -155,7 +157,7 @@ const DashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-violet-100 text-sm">Prescriptions</p>
+                  <p className="text-violet-100 text-sm">{t("dashboard.prescriptions")}</p>
                   <p className="text-3xl font-bold">
                     {stats.prescriptions.length}
                   </p>
@@ -169,7 +171,7 @@ const DashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-100 text-sm">Active Orders</p>
+                  <p className="text-amber-100 text-sm">{t("dashboard.active_orders")}</p>
                   <p className="text-3xl font-bold">
                     {
                       stats.orders.filter(
@@ -188,7 +190,7 @@ const DashboardPage = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="font-heading text-xl font-semibold mb-4">
-            Quick Actions
+            {t("dashboard.quick_actions")}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
@@ -200,7 +202,7 @@ const DashboardPage = () => {
                     >
                       <action.icon className="h-6 w-6 text-white" />
                     </div>
-                    <p className="font-medium text-sm">{action.label}</p>
+                    <p className="font-medium text-sm">{t(action.label)}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -212,10 +214,10 @@ const DashboardPage = () => {
           {/* Recent Orders */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="font-heading">Recent Orders</CardTitle>
+              <CardTitle className="font-heading">{t("dashboard.recent_orders")}</CardTitle>
               <Link to="/orders">
                 <Button variant="ghost" size="sm">
-                  View All
+                  {t("dashboard.view_all")}
                 </Button>
               </Link>
             </CardHeader>
@@ -223,10 +225,10 @@ const DashboardPage = () => {
               {recentOrders.length === 0 ? (
                 <div className="text-center py-8">
                   <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground">No orders yet</p>
+                  <p className="text-muted-foreground">{t("dashboard.no_orders")}</p>
                   <Link to="/medicines">
                     <Button className="mt-4" size="sm">
-                      Start Shopping
+                      {t("dashboard.start_shopping")}
                     </Button>
                   </Link>
                 </div>
@@ -237,18 +239,18 @@ const DashboardPage = () => {
                       <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors">
                         <div>
                           <p className="font-medium">
-                            {order.items.length} items
+                            {t("dashboard.items_count", { count: order.items.length })}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(order.created_at).toLocaleDateString()}
+                            {t("dashboard.order_date", { date: new Date(order.created_at).toLocaleDateString() })}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="font-semibold text-primary">
-                            ₹{order.total.toFixed(2)}
+                            {t("dashboard.order_total", { total: order.total.toFixed(2) })}
                           </p>
                           <Badge variant="outline" className="capitalize">
-                            {order.order_status.replace("_", " ")}
+                            {t(`order.status.${order.order_status}`)}
                           </Badge>
                         </div>
                       </div>
@@ -264,7 +266,7 @@ const DashboardPage = () => {
             <CardHeader>
               <CardTitle className="font-heading flex items-center gap-2">
                 <Heart className="h-5 w-5 text-primary" />
-                Health Hub
+                {t("dashboard.health_hub")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -275,9 +277,9 @@ const DashboardPage = () => {
                       <ScanLine className="h-6 w-6 text-cyan-600" />
                     </div>
                     <div>
-                      <p className="font-semibold">AI Prescription Scanner</p>
+                      <p className="font-semibold">{t("dashboard.ai_prescription_scanner")}</p>
                       <p className="text-sm text-muted-foreground">
-                        Upload & extract medicines instantly
+                        {t("dashboard.upload_extract")}
                       </p>
                     </div>
                   </div>
@@ -289,9 +291,9 @@ const DashboardPage = () => {
                       <MessageSquare className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="font-semibold">AI Doctor Chat</p>
+                      <p className="font-semibold">{t("dashboard.ai_doctor_chat")}</p>
                       <p className="text-sm text-muted-foreground">
-                        Get instant health guidance
+                        {t("dashboard.instant_guidance")}
                       </p>
                     </div>
                   </div>
@@ -299,12 +301,10 @@ const DashboardPage = () => {
 
                 <div className="p-4 bg-white dark:bg-slate-800 rounded-xl">
                   <p className="font-semibold text-primary mb-2">
-                    💡 Health Tip of the Day
+                    {t("dashboard.health_tip_title")}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Stay hydrated! Drinking 8 glasses of water daily helps
-                    maintain optimal body function and can improve your energy
-                    levels.
+                    {t("dashboard.health_tip_body")}
                   </p>
                 </div>
               </div>

@@ -40,6 +40,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CheckoutPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { token } = useAuth();
   const { cart, refreshCart } = useCart();
@@ -69,7 +70,7 @@ const CheckoutPage = () => {
 
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
+      toast.error(t("checkout.geo_not_supported"));
       return;
     }
 
@@ -93,18 +94,18 @@ const CheckoutPage = () => {
             coordinates: { lat: latitude, lon: longitude }
           }));
           setMapPosition([latitude, longitude]);
-          toast.success("Location detected!");
+          toast.success(t("checkout.location_detected"));
           setAddressStep('form');
         } catch (error) {
           console.error("Location detection error:", error);
-          toast.error("Could not auto-detect address. Please enter details manually.");
+          toast.error(t("checkout.location_failed"));
           setAddressStep('form'); // Let user type manually if auto-detection fails
         } finally {
           setGettingLocation(false);
         }
       },
       (error) => {
-        toast.error("Location access denied or unavailable");
+        toast.error(t("checkout.location_denied"));
         setGettingLocation(false);
       }
     );
@@ -133,7 +134,7 @@ const CheckoutPage = () => {
     } catch (error) {
       console.error("Address search error:", error);
       if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-        toast.error("Search timed out. Please try again.");
+        toast.error(t("checkout.search_timeout"));
       }
       setSuggestions([]);
     } finally {
@@ -234,9 +235,9 @@ const CheckoutPage = () => {
           city: postOffice.District,
           state: postOffice.State,
         }));
-        toast.success("Area details fetched successfully");
+        toast.success(t("checkout.area_fetched"));
       } else {
-        toast.error("Invalid Pincode");
+        toast.error(t("checkout.invalid_pincode"));
       }
     } catch (error) {
       console.error("Error fetching pincode details:", error);
@@ -256,7 +257,7 @@ const CheckoutPage = () => {
       const response = await axios.post(`${API_URL}/addresses`, newAddress, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success("Address added successfully");
+      toast.success(t("checkout.address_added"));
       setShowAddressForm(false);
       setNewAddress({
         name: "",
@@ -274,7 +275,7 @@ const CheckoutPage = () => {
       fetchAddresses();
       setSelectedAddress(response.data._id);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add address");
+      toast.error(error.response?.data?.message || t("checkout.address_failed"));
     } finally {
       setLoading(false);
     }
@@ -282,7 +283,7 @@ const CheckoutPage = () => {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
-      toast.error("Please select a delivery address");
+      toast.error(t("checkout.select_address"));
       return;
     }
 
@@ -305,17 +306,17 @@ const CheckoutPage = () => {
         });
 
         // For demo, skip actual Razorpay integration
-        toast.success("Order placed successfully!");
+        toast.success(t("checkout.order_placed"));
         navigate(`/orders/${orderResponse.data.order_id}`);
       } else {
         // COD order
-        toast.success("Order placed successfully!");
+        toast.success(t("checkout.order_placed"));
         navigate(`/orders/${orderResponse.data.order_id}`);
       }
 
       refreshCart();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to place order");
+      toast.error(error.response?.data?.message || t("checkout.order_failed"));
     } finally {
       setLoading(false);
     }
@@ -327,7 +328,7 @@ const CheckoutPage = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="font-heading text-3xl font-bold mb-8" data-testid="checkout-title">
-          Checkout
+          {t("checkout.title")}
         </h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -335,10 +336,10 @@ const CheckoutPage = () => {
             {/* Delivery Address */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Delivery Address
-                </CardTitle>
+                  <CardTitle className="font-heading flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    {t("checkout.delivery_address")}
+                  </CardTitle>
                 <Dialog open={showAddressForm} onOpenChange={setShowAddressForm}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm">
@@ -349,12 +350,12 @@ const CheckoutPage = () => {
                   <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-3xl border-none shadow-2xl">
                     <DialogHeader className="p-4 border-b bg-white">
                       <DialogTitle className="flex items-center gap-2 font-heading text-xl">
-                        {addressStep === 'map' ? 'Select Delivery Location' : 'Enter Address Details'}
+                        {addressStep === 'map' ? t("checkout.select_location") : t("checkout.enter_address")}
                       </DialogTitle>
                       <DialogDescription className="sr-only">
                         {addressStep === 'map'
-                          ? 'Use the map to pick your exact delivery location'
-                          : 'Provide building name and contact information for your delivery'}
+                          ? t("checkout.map_instruction")
+                          : t("checkout.form_instruction")}
                       </DialogDescription>
                     </DialogHeader>
                     {addressStep === 'map' ? (
@@ -454,7 +455,7 @@ const CheckoutPage = () => {
                             onClick={() => setAddressStep('form')}
                             disabled={!newAddress.addressLine1 || gettingLocation}
                           >
-                            Add address Details
+                            {t("checkout.add_address_details")}
                           </Button>
                         </div>
                       </div>
@@ -555,7 +556,7 @@ const CheckoutPage = () => {
               <CardContent>
                 {addresses.length === 0 ? (
                   <p className="text-muted-foreground text-center py-4">
-                    No addresses found. Add a new address to continue.
+                    {t("checkout.no_addresses")}
                   </p>
                 ) : (
                   <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
@@ -601,10 +602,10 @@ const CheckoutPage = () => {
             {/* Payment Method */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  Payment Method
-                </CardTitle>
+                  <CardTitle className="font-heading flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    {t("checkout.payment_method")}
+                  </CardTitle>
               </CardHeader>
               <CardContent>
                 <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
@@ -619,8 +620,8 @@ const CheckoutPage = () => {
                       <RadioGroupItem value="cod" id="cod" />
                       <Wallet className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="font-medium">Cash on Delivery</p>
-                        <p className="text-sm text-muted-foreground">Pay when you receive</p>
+                        <p className="font-medium">{t("checkout.cod")}</p>
+                        <p className="text-sm text-muted-foreground">{t("checkout.pay_on_receive")}</p>
                       </div>
                     </div>
                     <div
@@ -633,8 +634,8 @@ const CheckoutPage = () => {
                       <RadioGroupItem value="razorpay" id="razorpay" />
                       <CreditCard className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="font-medium">Pay Online</p>
-                        <p className="text-sm text-muted-foreground">UPI, Cards, Net Banking, Wallets</p>
+                        <p className="font-medium">{t("checkout.pay_online")}</p>
+                        <p className="text-sm text-muted-foreground">{t("checkout.pay_online_desc")}</p>
                       </div>
                     </div>
                   </div>
@@ -647,7 +648,7 @@ const CheckoutPage = () => {
           <div>
             <Card className="sticky top-24">
               <CardHeader>
-                <CardTitle className="font-heading">Order Summary</CardTitle>
+                <CardTitle className="font-heading">{t("checkout.order_summary")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {cart.items.map((item) => (
@@ -660,16 +661,16 @@ const CheckoutPage = () => {
                 ))}
                 <Separator />
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t("checkout.subtotal")}</span>
                   <span>₹{cart.total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span className="text-emerald-600">FREE</span>
+                  <span className="text-muted-foreground">{t("checkout.delivery")}</span>
+                  <span className="text-emerald-600">{t("checkout.free")}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t("checkout.total")}</span>
                   <span className="text-primary">₹{cart.total.toFixed(2)}</span>
                 </div>
 
@@ -684,7 +685,7 @@ const CheckoutPage = () => {
                   ) : (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4" />
-                      Place Order
+                      {t("checkout.place_order")}
                     </>
                   )}
                 </Button>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
@@ -62,13 +63,14 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const { t } = useTranslation();
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error(t("register.passwords_no_match"));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+      toast.error(t("register.password_too_short"));
       return;
     }
 
@@ -79,9 +81,9 @@ const RegisterPage = () => {
       await axios.post(`${API_URL}/auth/send-otp`, { email: formData.email });
       setOtpSent(true);
       setResendTimer(60);
-      toast.success("OTP sent to your email!");
+      toast.success(t("register.otp_sent"));
     } catch (error) {
-      const msg = error.response?.data?.message || "Failed to send OTP";
+      const msg = error.response?.data?.message || t("register.send_otp_error");
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -121,7 +123,7 @@ const RegisterPage = () => {
   const handleVerifyOtp = async () => {
     const otpString = otp.join("");
     if (otpString.length !== 6) {
-      toast.error("Please enter the complete 6-digit OTP");
+      toast.error(t("register.otp_incomplete"));
       return;
     }
 
@@ -143,10 +145,10 @@ const RegisterPage = () => {
         role: formData.role,
       });
 
-      toast.success("Account created successfully!");
+      toast.success(t("register.account_created"));
       navigate("/dashboard");
     } catch (error) {
-      const msg = typeof error === "string" ? error : error.response?.data?.message || error.message || "Verification failed";
+      const msg = typeof error === "string" ? error : error.response?.data?.message || error.message || t("register.verification_failed");
       toast.error(msg);
     } finally {
       setOtpLoading(false);
@@ -160,9 +162,9 @@ const RegisterPage = () => {
       await axios.post(`${API_URL}/auth/send-otp`, { email: formData.email });
       setOtp(["", "", "", "", "", ""]);
       setResendTimer(60);
-      toast.success("OTP resent to your email!");
+      toast.success(t("register.otp_resent"));
     } catch (error) {
-      const msg = error.response?.data?.message || "Failed to resend OTP";
+      const msg = error.response?.data?.message || t("register.resend_otp_error");
       toast.error(msg);
     }
   };
@@ -170,7 +172,7 @@ const RegisterPage = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const user = await googleSignup(credentialResponse.credential);
-      toast.success("Account created successfully!");
+      toast.success(t("register.account_created"));
       navigate("/dashboard");
     } catch (error) {
       const msg = typeof error === "string" ? error : error?.message;
@@ -178,24 +180,24 @@ const RegisterPage = () => {
         toast.custom(() => (
           <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border px-8 py-6 w-[340px]">
             <p className="text-sm text-center text-foreground font-medium">
-              An account with this email already exists. Please sign in instead.
+              {t("register.account_exists")}
             </p>
             <button
               onClick={() => { toast.dismiss(); navigate("/login"); }}
               className="bg-primary text-white text-sm font-medium px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              Sign In
+              {t("register.sign_in")}
             </button>
           </div>
         ), { position: "top-center", duration: 5000 });
       } else {
-        toast.error(msg || "Google sign-up failed");
+        toast.error(msg || t("register.google_signup_failed"));
       }
     }
   };
 
   const handleGoogleError = () => {
-    toast.error("Google sign-up failed. Please try again.");
+    toast.error(t("register.google_signup_failed_retry"));
   };
 
   return (
@@ -204,7 +206,7 @@ const RegisterPage = () => {
         <Link to="/">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            {t("register.back_to_home")}
           </Button>
         </Link>
       </div>
@@ -221,7 +223,7 @@ const RegisterPage = () => {
               <Pill className="h-7 w-7 text-white" />
             </div>
             <span className="font-heading text-2xl font-bold text-foreground">
-              MedsZop
+              {t("register.brand")}
             </span>
           </Link>
         </div>
@@ -229,19 +231,19 @@ const RegisterPage = () => {
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-4">
             <CardTitle className="font-heading text-2xl">
-              Create Account
+              {t("register.create_account")}
             </CardTitle>
-            <CardDescription>Join MedsZop for smart healthcare</CardDescription>
+            <CardDescription>{t("register.join_slogan")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t("register.full_name")}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="name"
-                    placeholder="John Doe"
+                    placeholder={t("register.name_placeholder")}
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     className="pl-10 h-12"
@@ -252,13 +254,13 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("register.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="name@example.com"
+                    placeholder={t("register.email_placeholder")}
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     className="pl-10 h-12"
@@ -269,13 +271,13 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t("register.phone")}</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="9876543210"
+                    placeholder={t("register.phone_placeholder")}
                     value={formData.phone}
                     onChange={(e) => handleChange("phone", e.target.value)}
                     className="pl-10 h-12"
@@ -286,13 +288,13 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("register.password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a strong password"
+                    placeholder={t("register.password_placeholder")}
                     value={formData.password}
                     onChange={(e) => handleChange("password", e.target.value)}
                     className="pl-10 h-12"
@@ -303,13 +305,13 @@ const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">{t("register.confirm_password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="Confirm your password"
+                    placeholder={t("register.confirm_password_placeholder")}
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       handleChange("confirmPassword", e.target.value)
@@ -331,7 +333,7 @@ const RegisterPage = () => {
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  "Create Account"
+                  t("register.create_account")
                 )}
               </Button>
             </form>
@@ -343,7 +345,7 @@ const RegisterPage = () => {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {t("register.or_continue_with")}
                 </span>
               </div>
             </div>
@@ -364,13 +366,13 @@ const RegisterPage = () => {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
+                {t("register.already_have_account")}{" "}
                 <Link
                   to="/login"
                   className="text-primary font-medium hover:underline"
                   data-testid="login-link"
                 >
-                  Sign in
+                  {t("register.sign_in")}
                 </Link>
               </p>
             </div>
@@ -399,13 +401,10 @@ const RegisterPage = () => {
                     <ShieldCheck className="h-7 w-7 text-primary" />
                   </div>
                   <CardTitle className="font-heading text-xl">
-                    Verify Your Email
+                    {t("register.verify_email")}
                   </CardTitle>
                   <CardDescription>
-                    We've sent a 6-digit code to{" "}
-                    <span className="font-medium text-foreground">
-                      {formData.email}
-                    </span>
+                    {t("register.otp_sent_to", { email: formData.email })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -440,13 +439,13 @@ const RegisterPage = () => {
                     ) : (
                       <ShieldCheck className="h-4 w-4 mr-2" />
                     )}
-                    {otpLoading ? "Verifying..." : "Verify & Create Account"}
+                    {otpLoading ? t("register.verifying") : t("register.verify_and_create")}
                   </Button>
 
                   {/* Resend & Back */}
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm text-muted-foreground">
-                      Didn't receive the code?{" "}
+                      {t("register.didnt_receive_code")}{" "}
                       <button
                         onClick={handleResendOtp}
                         disabled={resendTimer > 0}
@@ -457,8 +456,8 @@ const RegisterPage = () => {
                         }`}
                       >
                         {resendTimer > 0
-                          ? `Resend in ${resendTimer}s`
-                          : "Resend OTP"}
+                          ? t("register.resend_in", { seconds: resendTimer })
+                          : t("register.resend_otp")}
                       </button>
                     </p>
                     <button
@@ -468,7 +467,7 @@ const RegisterPage = () => {
                       }}
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      ← Back to form
+                      {t("register.back_to_form")}
                     </button>
                   </div>
                 </CardContent>

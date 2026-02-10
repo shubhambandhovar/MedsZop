@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -85,11 +86,11 @@ const OrderTrackingPage = () => {
   }, [id, token]);
 
   const orderSteps = [
-    { status: "pending", label: "Order Placed", icon: Package },
-    { status: "confirmed", label: "Confirmed", icon: CheckCircle },
-    { status: "processing", label: "Processing", icon: Box },
-    { status: "out_for_delivery", label: "Out for Delivery", icon: Truck },
-    { status: "delivered", label: "Delivered", icon: CheckCircle }
+    { status: "pending", labelKey: "order_tracking.steps.placed", icon: Package },
+    { status: "confirmed", labelKey: "order_tracking.steps.confirmed", icon: CheckCircle },
+    { status: "processing", labelKey: "order_tracking.steps.processing", icon: Box },
+    { status: "out_for_delivery", labelKey: "order_tracking.steps.out_for_delivery", icon: Truck },
+    { status: "delivered", labelKey: "order_tracking.steps.delivered", icon: CheckCircle }
   ];
 
   const getStepStatus = (stepStatus) => {
@@ -132,6 +133,7 @@ const OrderTrackingPage = () => {
     });
   };
 
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -152,9 +154,9 @@ const OrderTrackingPage = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Order not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t("order_tracking.not_found")}</h1>
           <Link to="/orders">
-            <Button>View All Orders</Button>
+            <Button>{t("order_tracking.view_all_orders")}</Button>
           </Link>
         </main>
       </div>
@@ -171,13 +173,13 @@ const OrderTrackingPage = () => {
           <Link to="/orders">
             <Button variant="ghost" className="pl-0 mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Orders
+              {t("order_tracking.back_to_orders")}
             </Button>
           </Link>
           <h1 className="font-heading text-3xl font-bold" data-testid="order-tracking-title">
-            Track Order
+            {t("order_tracking.title")}
           </h1>
-          <p className="text-muted-foreground">Order ID: {order._id.slice(0, 8)}...</p>
+          <p className="text-muted-foreground">{t("order_tracking.order_id", { id: order._id.slice(0, 8) })}</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -187,7 +189,7 @@ const OrderTrackingPage = () => {
               <CardHeader>
                 <CardTitle className="font-heading flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
-                  Order Status
+                  {t("order_tracking.status")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -217,7 +219,7 @@ const OrderTrackingPage = () => {
                         <div className="flex-1 pt-1.5">
                           <p className={`font-medium ${status === "completed" || status === "current" ? "text-foreground" : "text-muted-foreground"
                             }`}>
-                            {step.label}
+                            {t(step.labelKey)}
                           </p>
                           {order.status_history?.find(h => h.status === step.status) && (
                             <p className="text-sm text-muted-foreground">
@@ -234,7 +236,7 @@ const OrderTrackingPage = () => {
                 {order.delivery_otp && order.order_status !== "delivered" && (
                   <div className="mt-8 bg-emerald-100 border-2 border-emerald-500 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center">
                     <p className="text-emerald-800 text-sm font-bold uppercase tracking-widest mb-1">
-                      Share this OTP with Delivery Agent
+                      {t("order_tracking.share_otp")}
                     </p>
                     <div className="text-4xl font-mono font-black text-emerald-700 tracking-[0.2em]">
                       {order.delivery_otp}
@@ -249,7 +251,7 @@ const OrderTrackingPage = () => {
               <CardHeader>
                 <CardTitle className="font-heading flex items-center gap-2">
                   <Package className="h-5 w-5 text-primary" />
-                  Order Items
+                  {t("order_tracking.items")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -258,7 +260,7 @@ const OrderTrackingPage = () => {
                     <div key={index} className="flex justify-between items-center py-2">
                       <div>
                         <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                        <p className="text-sm text-muted-foreground">{t("order_tracking.quantity", { quantity: item.quantity })}</p>
                       </div>
                       <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
@@ -266,7 +268,7 @@ const OrderTrackingPage = () => {
                 </div>
                 <Separator className="my-4" />
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t("order_tracking.total")}</span>
                   <span className="text-primary">₹{order.total.toFixed(2)}</span>
                 </div>
               </CardContent>
@@ -280,7 +282,7 @@ const OrderTrackingPage = () => {
               <CardHeader>
                 <CardTitle className="font-heading flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  Delivery Location
+                  {t("order_tracking.delivery_location")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -296,7 +298,7 @@ const OrderTrackingPage = () => {
                       url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                     />
                     <Marker position={mapCenter}>
-                      <Popup>Delivery Location</Popup>
+                      <Popup>{t("order_tracking.delivery_location_popup")}</Popup>
                     </Marker>
                   </MapContainer>
                 </div>
@@ -306,7 +308,7 @@ const OrderTrackingPage = () => {
             {/* Delivery Address */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-heading">Delivery Address</CardTitle>
+                <CardTitle className="font-heading">{t("order_tracking.delivery_address")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="font-medium">{order.address.addressLine1}</p>
@@ -316,7 +318,7 @@ const OrderTrackingPage = () => {
                 </p>
                 {order.address.landmark && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    Near: {order.address.landmark}
+                    {t("order_tracking.near_landmark", { landmark: order.address.landmark })}
                   </p>
                 )}
               </CardContent>
@@ -325,14 +327,14 @@ const OrderTrackingPage = () => {
             {/* Payment Info */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-heading">Payment Details</CardTitle>
+                <CardTitle className="font-heading">{t("order_tracking.payment_details")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium capitalize">{order.payment_method === "cod" ? "Cash on Delivery" : "Razorpay"}</p>
+                    <p className="font-medium capitalize">{order.payment_method === "cod" ? t("order_tracking.cash_on_delivery") : t("order_tracking.razorpay")}</p>
                     <Badge className={order.payment_status === "paid" ? "bg-emerald-100 text-emerald-800" : "bg-yellow-100 text-yellow-800"}>
-                      {order.payment_status}
+                      {t(`order_tracking.payment_status.${order.payment_status}`)}
                     </Badge>
                   </div>
                   <p className="text-2xl font-bold text-primary">₹{order.total.toFixed(2)}</p>
@@ -344,12 +346,12 @@ const OrderTrackingPage = () => {
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="p-6 text-center">
                 <Phone className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h3 className="font-semibold mb-1">Need Help?</h3>
+                <h3 className="font-semibold mb-1">{t("order_tracking.need_help")}</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Contact our support team for any queries
+                  {t("order_tracking.contact_support")}
                 </p>
                 <Button variant="outline">
-                  Call Support
+                  {t("order_tracking.call_support")}
                 </Button>
               </CardContent>
             </Card>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -31,11 +32,12 @@ const SettingsPage = () => {
             await axios.post(`${API_URL}/auth/change-password`, passwordForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success("Password Updated Successfully");
+            const { t } = useTranslation();
+            toast.success(t("settings.password_updated"));
             setShowChangePassword(false);
             setPasswordForm({ currentPassword: "", newPassword: "" });
         } catch (err) {
-            toast.error(err.response?.data?.message || "Failed to update password");
+            toast.error(err.response?.data?.message || t("settings.password_update_failed"));
         }
     };
 
@@ -86,110 +88,112 @@ const SettingsPage = () => {
             await axios.put(endpoint, profileForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success("Profile Updated Successfully");
+            toast.success(t("settings.profile_updated"));
             fetchUser(); // Refresh global user state
         } catch (err) {
-            toast.error(err.response?.data?.message || "Failed to update profile");
+            toast.error(err.response?.data?.message || t("settings.profile_update_failed"));
         } finally {
             setLoading(false);
         }
     };
 
+    const { t } = useTranslation();
     return (
         <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-4xl mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+                <h1 className="text-3xl font-bold mb-6">{t("settings.account_settings")}</h1>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Profile Information</CardTitle>
-                        <CardDescription>Update your personal or business details</CardDescription>
+                        <CardTitle>{t("settings.profile_information")}</CardTitle>
+                        <CardDescription>{t("settings.profile_information_desc")}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-lg">
                             {user?.role === 'pharmacy' ? (
                                 <>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Pharmacy Store Name</label>
+                                        <label className="text-sm font-medium">{t("settings.pharmacy_store_name")}</label>
                                         <input
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.store_name}
                                             onChange={(e) => setProfileForm(p => ({ ...p, store_name: e.target.value }))}
-                                            placeholder="e.g. Apollo Pharmacy"
+                                            placeholder={t("settings.store_name_placeholder")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Pharmacist Name</label>
+                                        <label className="text-sm font-medium">{t("settings.pharmacist_name")}</label>
                                         <input
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.pharmacist_name}
                                             onChange={(e) => setProfileForm(p => ({ ...p, pharmacist_name: e.target.value }))}
-                                            placeholder="e.g. John Doe"
+                                            placeholder={t("settings.pharmacist_name_placeholder")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Store Address</label>
+                                        <label className="text-sm font-medium">{t("settings.store_address")}</label>
                                         <textarea
                                             className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
                                             value={profileForm.address}
                                             onChange={(e) => setProfileForm(p => ({ ...p, address: e.target.value }))}
-                                            placeholder="Full Store Address..."
+                                            placeholder={t("settings.store_address_placeholder")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">License Number</label>
+                                        <label className="text-sm font-medium">{t("settings.license_number")}</label>
                                         <input
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.license_number}
                                             onChange={(e) => setProfileForm(p => ({ ...p, license_number: e.target.value }))}
-                                            placeholder="DL No. / Registration No."
+                                            placeholder={t("settings.license_number_placeholder")}
                                         />
                                     </div>
                                 </>
                             ) : user?.role === 'delivery' ? (
                                 <>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Full Name</label>
+                                        <label className="text-sm font-medium">{t("settings.full_name")}</label>
                                         <input
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.name}
                                             onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
-                                            placeholder="Your Name"
+                                            placeholder={t("settings.name_placeholder")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Mobile Number</label>
+                                        <label className="text-sm font-medium">{t("settings.mobile_number")}</label>
                                         <input
                                             className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                             value={profileForm.phone || ""}
                                             onChange={(e) => setProfileForm(p => ({ ...p, phone: e.target.value }))}
-                                            placeholder="e.g. 9876543210"
+                                            placeholder={t("settings.mobile_placeholder")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Address</label>
+                                        <label className="text-sm font-medium">{t("settings.address")}</label>
                                         <textarea
                                             className="w-full min-h-[80px] px-3 py-2 rounded-md border border-input bg-background"
                                             value={profileForm.address}
                                             onChange={(e) => setProfileForm(p => ({ ...p, address: e.target.value }))}
-                                            placeholder="Your Residential Address..."
+                                            placeholder={t("settings.address_placeholder")}
                                         />
                                     </div>
                                 </>
                             ) : (
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Name</label>
+                                    <label className="text-sm font-medium">{t("settings.name")}</label>
                                     <input
                                         className="w-full h-10 px-3 rounded-md border border-input bg-background"
                                         value={profileForm.name}
                                         onChange={(e) => setProfileForm(p => ({ ...p, name: e.target.value }))}
+                                        placeholder={t("settings.name_placeholder")}
                                     />
                                 </div>
                             )}
 
                             <Button type="submit" disabled={loading}>
-                                {loading ? "Saving..." : "Save Changes"}
+                                {loading ? t("settings.saving") : t("settings.save_changes")}
                             </Button>
                         </form>
                     </CardContent>
@@ -199,21 +203,21 @@ const SettingsPage = () => {
                 <Card className="mt-6 border-red-100 dark:border-red-900/30">
                     <CardHeader>
                         <CardTitle className="flex items-center text-red-600">
-                            <ShieldCheck className="w-5 h-5 mr-2" /> Security Zone
+                            <ShieldCheck className="w-5 h-5 mr-2" /> {t("settings.security_zone")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-muted-foreground text-sm">
-                            Manage your password.
+                            {t("settings.manage_password")}
                         </p>
                         <div className="flex gap-4">
                             <Button variant="outline" onClick={() => setShowChangePassword(true)}>
-                                Change Password
+                                {t("settings.change_password")}
                             </Button>
                             {/* "Reset Password" typically implies a forgot password flow, but sticking to user request. 
                                 I'll adding a dummy handler for now or same modal. */ }
-                            <Button variant="destructive" onClick={() => toast.info("To reset a forgotten password, please logout and use the 'Forgot Password' link on the login page.")}>
-                                Reset Password
+                            <Button variant="destructive" onClick={() => toast.info(t("settings.reset_password_info"))}> 
+                                {t("settings.reset_password")}
                             </Button>
                         </div>
                     </CardContent>
@@ -224,10 +228,10 @@ const SettingsPage = () => {
             {showChangePassword && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
                     <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">Change Password</h2>
+                        <h2 className="text-xl font-bold mb-4">{t("settings.change_password_modal_title")}</h2>
                         <form onSubmit={handleChangePasswordSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Current Password</label>
+                                <label className="text-sm font-medium">{t("settings.current_password")}</label>
                                 <input
                                     type="password"
                                     className="w-full h-10 px-3 rounded-md border"
@@ -237,7 +241,7 @@ const SettingsPage = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">New Password</label>
+                                <label className="text-sm font-medium">{t("settings.new_password")}</label>
                                 <input
                                     type="password"
                                     className="w-full h-10 px-3 rounded-md border"
@@ -247,8 +251,8 @@ const SettingsPage = () => {
                                 />
                             </div>
                             <div className="flex justify-end gap-2 pt-2">
-                                <Button type="button" variant="ghost" onClick={() => setShowChangePassword(false)}>Cancel</Button>
-                                <Button type="submit">Update Password</Button>
+                                <Button type="button" variant="ghost" onClick={() => setShowChangePassword(false)}>{t("settings.cancel")}</Button>
+                                <Button type="submit">{t("settings.update_password")}</Button>
                             </div>
                         </form>
                     </div>
