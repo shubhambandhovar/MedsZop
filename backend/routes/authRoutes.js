@@ -3,6 +3,11 @@ const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
 const { register, login, getMe, changePassword, updateProfile, googleLogin, googleSignup } = require("../controllers/authController");
+const { sendOTP, verifyOTP } = require("../controllers/otpController");
+
+// OTP routes
+router.post("/send-otp", sendOTP);
+router.post("/verify-otp", verifyOTP);
 
 // Customer register
 router.post("/register", register);
