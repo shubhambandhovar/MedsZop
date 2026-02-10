@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -97,7 +96,7 @@ const PharmacyDashboardPage = () => {
       setOrders(ordersRes.data || []);
     } catch (error) {
       console.error(error);
-      toast.error(t("pharmacy_dashboard.load_error"));
+      toast.error("Failed to load pharmacy data");
     } finally {
       setLoading(false);
     }
@@ -121,13 +120,13 @@ const PharmacyDashboardPage = () => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(t("pharmacy_dashboard.order_marked", { status: status.replace("_", " ") }));
+      toast.success(`Order marked as ${status.replace("_", " ")}`);
       fetchData();
       if (selectedOrder && selectedOrder._id === orderId) {
         setSelectedOrder(prev => ({ ...prev, order_status: status }));
       }
     } catch (error) {
-      toast.error(t("pharmacy_dashboard.update_order_error"));
+      toast.error("Failed to update order");
     }
   };
 
@@ -208,12 +207,12 @@ const PharmacyDashboardPage = () => {
       await axios.post(`${API_URL}/pharmacy/add-medicine`, medicineForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success(t("pharmacy_dashboard.medicine_added"));
+      toast.success("Medicine Added Successfully!");
       setShowAddMedicineModal(false);
       resetForm();
       fetchData();
     } catch (err) {
-      toast.error(t("pharmacy_dashboard.add_medicine_error"));
+      toast.error("Failed to add medicine");
     }
   };
 
@@ -239,25 +238,25 @@ const PharmacyDashboardPage = () => {
       await axios.put(`${API_URL}/pharmacy/medicine/${medicineForm.id}`, medicineForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success(t("pharmacy_dashboard.medicine_updated"));
+      toast.success("Medicine Updated!");
       setShowEditMedicineModal(false);
       resetForm();
       fetchData();
     } catch (err) {
-      toast.error(t("pharmacy_dashboard.update_medicine_error"));
+      toast.error("Failed to update medicine");
     }
   };
 
   const handleDeleteMedicine = async (id) => {
-    if (!confirm(t("pharmacy_dashboard.delete_confirm"))) return;
+    if (!confirm("Are you sure you want to delete this medicine?")) return;
     try {
       await axios.delete(`${API_URL}/pharmacy/medicine/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success(t("pharmacy_dashboard.medicine_deleted"));
+      toast.success("Medicine Deleted");
       fetchData();
     } catch (err) {
-      toast.error(t("pharmacy_dashboard.delete_medicine_error"));
+      toast.error("Failed to delete medicine");
     }
   };
 
@@ -289,9 +288,9 @@ const PharmacyDashboardPage = () => {
       await axios.put(`${API_URL}/pharmacy/profile`, profileForm, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(t("pharmacy_dashboard.profile_updated"));
+      toast.success("Profile Updated");
     } catch (err) {
-      toast.error(t("pharmacy_dashboard.update_profile_error"));
+      toast.error("Failed to update profile");
     }
   };
 
@@ -317,11 +316,10 @@ const PharmacyDashboardPage = () => {
   };
 
 
-  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {t("pharmacy_dashboard.loading")}
+        Loading Pharmacy Dashboard...
       </div>
     );
   }
@@ -335,10 +333,10 @@ const PharmacyDashboardPage = () => {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Store className="text-primary" />
-              {t("pharmacy_dashboard.title")}
+              Pharmacy Dashboard
             </h1>
             <p className="text-muted-foreground">
-              {t("pharmacy_dashboard.subtitle")}
+              Manage your pharmacy orders and inventory
             </p>
           </div>
 
@@ -349,7 +347,7 @@ const PharmacyDashboardPage = () => {
           <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
             <CardContent className="p-6 flex justify-between">
               <div>
-                <p className="text-blue-100">{t("pharmacy_dashboard.stats.total_orders")}</p>
+                <p className="text-blue-100">Total Orders</p>
                 <h2 className="text-3xl font-bold">{stats.total_orders}</h2>
               </div>
               <Package className="text-blue-200 w-8 h-8" />
@@ -359,7 +357,7 @@ const PharmacyDashboardPage = () => {
           <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white">
             <CardContent className="p-6 flex justify-between">
               <div>
-                <p className="text-amber-100">{t("pharmacy_dashboard.stats.pending_orders")}</p>
+                <p className="text-amber-100">Pending Orders</p>
                 <h2 className="text-3xl font-bold">{stats.pending_orders}</h2>
               </div>
               <Clock className="text-amber-200 w-8 h-8" />
@@ -369,7 +367,7 @@ const PharmacyDashboardPage = () => {
           <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
             <CardContent className="p-6 flex justify-between">
               <div>
-                <p className="text-emerald-100">{t("pharmacy_dashboard.stats.total_revenue")}</p>
+                <p className="text-emerald-100">Total Revenue</p>
                 <h2 className="text-3xl font-bold">₹{stats.total_revenue.toFixed(0)}</h2>
               </div>
               <DollarSign className="text-emerald-200 w-8 h-8" />
@@ -379,7 +377,7 @@ const PharmacyDashboardPage = () => {
           <Card className="bg-gradient-to-br from-violet-500 to-violet-600 text-white">
             <CardContent className="p-6 flex justify-between">
               <div>
-                <p className="text-violet-100">{t("pharmacy_dashboard.stats.medicines")}</p>
+                <p className="text-violet-100">Medicines</p>
                 <h2 className="text-3xl font-bold">{stats.medicines_count}</h2>
               </div>
               <TrendingUp className="text-violet-200 w-8 h-8" />
@@ -400,11 +398,11 @@ const PharmacyDashboardPage = () => {
             <div className="grid lg:grid-cols-3 gap-6">
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>{t("pharmacy_dashboard.recent_activity")}</CardTitle>
+                  <CardTitle>Recent Activity</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {orders.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">{t("pharmacy_dashboard.no_activity")}</div>
+                    <div className="text-center py-8 text-muted-foreground">No recent activity</div>
                   ) : (
                     <div className="space-y-4">
                       {orders.slice(0, 5).map(order => (
@@ -414,7 +412,7 @@ const PharmacyDashboardPage = () => {
                               <Package className="h-5 w-5" />
                             </div>
                             <div>
-                              <p className="font-medium">{t("pharmacy_dashboard.new_order", { id: order.orderNumber ? order.orderNumber.split('-')[1] : order._id.slice(-6) })}</p>
+                              <p className="font-medium">New Order #{order.orderNumber ? order.orderNumber.split('-')[1] : order._id.slice(-6)}</p>
                               <p className="text-sm text-muted-foreground">{new Date(order.createdAt).toLocaleDateString()}</p>
                             </div>
                           </div>
@@ -431,14 +429,14 @@ const PharmacyDashboardPage = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("pharmacy_dashboard.quick_actions")}</CardTitle>
+                  <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button className="w-full justify-start" onClick={() => setShowAddMedicineModal(true)}>
-                    <Package className="mr-2 h-4 w-4" /> {t("pharmacy_dashboard.add_medicine")}
+                    <Package className="mr-2 h-4 w-4" /> Add Medicine
                   </Button>
                   <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('orders')}>
-                    <Clock className="mr-2 h-4 w-4" /> {t("pharmacy_dashboard.view_pending_orders")}
+                    <Clock className="mr-2 h-4 w-4" /> View Pending Orders
                   </Button>
                 </CardContent>
               </Card>
@@ -450,8 +448,8 @@ const PharmacyDashboardPage = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>{t("pharmacy_dashboard.orders_management")}</CardTitle>
-                  <CardDescription>{t("pharmacy_dashboard.orders_management_desc")}</CardDescription>
+                  <CardTitle>Orders Management</CardTitle>
+                  <CardDescription>View and manage all your customer orders</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-muted-foreground" />
@@ -460,12 +458,12 @@ const PharmacyDashboardPage = () => {
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                   >
-                    <option value="all">{t("pharmacy_dashboard.status.all")}</option>
-                    <option value="pending">{t("pharmacy_dashboard.status.pending")}</option>
-                    <option value="confirmed">{t("pharmacy_dashboard.status.confirmed")}</option>
-                    <option value="out_for_delivery">{t("pharmacy_dashboard.status.out_for_delivery")}</option>
-                    <option value="delivered">{t("pharmacy_dashboard.status.delivered")}</option>
-                    <option value="cancelled">{t("pharmacy_dashboard.status.cancelled")}</option>
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
               </CardHeader>
@@ -474,13 +472,13 @@ const PharmacyDashboardPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t("pharmacy_dashboard.table.order_id")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.customer")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.amount")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.payment")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.status")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.date")}</TableHead>
-                      <TableHead>{t("pharmacy_dashboard.table.action")}</TableHead>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Payment</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
 
@@ -497,8 +495,8 @@ const PharmacyDashboardPage = () => {
 
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="font-medium">{order.address?.name || t("pharmacy_dashboard.customer")}</span>
-                            <span className="text-xs text-muted-foreground">{order.address?.mobile || order.address?.phone || t("pharmacy_dashboard.no_phone")}</span>
+                            <span className="font-medium">{order.address?.name || "Customer"}</span>
+                            <span className="text-xs text-muted-foreground">{order.address?.mobile || order.address?.phone || "No Phone"}</span>
                           </div>
                         </TableCell>
 
@@ -506,13 +504,13 @@ const PharmacyDashboardPage = () => {
 
                         <TableCell>
                           <Badge variant="outline" className="uppercase text-[10px]">
-                            {t(`pharmacy_dashboard.payment_method.${order.payment_method}`)}
+                            {order.payment_method}
                           </Badge>
                         </TableCell>
 
                         <TableCell>
                           <Badge className={getStatusBadge(order.order_status)}>
-                            {t(`pharmacy_dashboard.order_status.${order.order_status}`)}
+                            {order.order_status.replace("_", " ")}
                           </Badge>
                         </TableCell>
 
@@ -520,7 +518,7 @@ const PharmacyDashboardPage = () => {
 
                         <TableCell>
                           <Button size="sm" variant="outline" onClick={() => openOrderDetails(order)}>
-                            <Eye className="w-4 h-4 mr-1" /> {t("pharmacy_dashboard.view")}
+                            <Eye className="w-4 h-4 mr-1" /> View
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -536,20 +534,20 @@ const PharmacyDashboardPage = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>{t("pharmacy_dashboard.inventory")}</CardTitle>
-                  <CardDescription>{t("pharmacy_dashboard.inventory_desc")}</CardDescription>
+                  <CardTitle>Inventory</CardTitle>
+                  <CardDescription>Track stock, update prices, and manage medicines</CardDescription>
                 </div>
                 <Button onClick={() => { resetForm(); setShowAddMedicineModal(true); }}>
                   <Package className="h-4 w-4 mr-2" />
-                  {t("pharmacy_dashboard.add_medicine")}
+                  Add Medicine
                 </Button>
               </CardHeader>
               <CardContent>
                 {!dashboardData?.medicines || dashboardData.medicines.length === 0 ? (
                   <div className="text-center py-16">
                     <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
-                    <h3 className="text-lg font-semibold">{t("pharmacy_dashboard.empty_inventory")}</h3>
-                    <p className="text-muted-foreground mb-4">{t("pharmacy_dashboard.empty_inventory_desc")}</p>
+                    <h3 className="text-lg font-semibold">Empty Inventory</h3>
+                    <p className="text-muted-foreground mb-4">Start by adding medicines to your inventory.</p>
                   </div>
                 ) : (
                   <Table>
@@ -575,7 +573,7 @@ const PharmacyDashboardPage = () => {
                               )}
                               <div>
                                 <p className="font-semibold">{med.name}</p>
-                                <p className="text-xs text-muted-foreground">{med.company || t("pharmacy_dashboard.generic")}</p>
+                                <p className="text-xs text-muted-foreground">{med.company || "Generic"}</p>
                               </div>
                             </div>
                           </TableCell>
@@ -589,7 +587,7 @@ const PharmacyDashboardPage = () => {
 
                           <TableCell>
                             <Badge variant={med.inStock ? "outline" : "destructive"}>
-                              {med.inStock ? t("pharmacy_dashboard.in_stock") : t("pharmacy_dashboard.out_of_stock")}
+                              {med.inStock ? "In Stock" : "Out of Stock"}
                             </Badge>
                           </TableCell>
 
@@ -622,9 +620,9 @@ const PharmacyDashboardPage = () => {
       <Dialog open={showOrderDetailsModal} onOpenChange={setShowOrderDetailsModal}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t("pharmacy_dashboard.order_details", { id: selectedOrder?.orderNumber || selectedOrder?._id?.slice(0, 8) })}</DialogTitle>
+            <DialogTitle>Order Details #{selectedOrder?.orderNumber || selectedOrder?._id?.slice(0, 8)}</DialogTitle>
             <DialogDescription>
-              {t("pharmacy_dashboard.order_created", { date: selectedOrder && new Date(selectedOrder.createdAt).toLocaleString() })}
+              Created on {selectedOrder && new Date(selectedOrder.createdAt).toLocaleString()}
             </DialogDescription>
           </DialogHeader>
 
@@ -633,12 +631,12 @@ const PharmacyDashboardPage = () => {
               {/* Status & Actions */}
               <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium mb-1">{t("pharmacy_dashboard.current_status")}</p>
-                  <Badge className={getStatusBadge(selectedOrder.order_status)}>{t(`pharmacy_dashboard.order_status.${selectedOrder.order_status}`)}</Badge>
+                  <p className="text-sm font-medium mb-1">Current Status</p>
+                  <Badge className={getStatusBadge(selectedOrder.order_status)}>{selectedOrder.order_status.replace('_', ' ')}</Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedOrder.order_status === "pending" && (
-                    <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}>{t("pharmacy_dashboard.confirm_order")}</Button>
+                    <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}>Confirm Order</Button>
                   )}
 
 
@@ -648,16 +646,16 @@ const PharmacyDashboardPage = () => {
               {/* Customer Info */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <h3 className="font-semibold flex items-center"><User className="w-4 h-4 mr-2" /> {t("pharmacy_dashboard.customer")}</h3>
+                  <h3 className="font-semibold flex items-center"><User className="w-4 h-4 mr-2" /> Customer</h3>
                   <div className="p-3 border rounded-md">
-                    <p className="font-medium">{selectedOrder.address?.name || t("pharmacy_dashboard.guest")}</p>
+                    <p className="font-medium">{selectedOrder.address?.name || "Guest"}</p>
                     <p className="text-sm text-muted-foreground flex items-center mt-1">
-                      <Phone className="w-3 h-3 mr-1" /> {selectedOrder.address?.phone || selectedOrder.address?.mobile || t("pharmacy_dashboard.not_available")}
+                      <Phone className="w-3 h-3 mr-1" /> {selectedOrder.address?.phone || selectedOrder.address?.mobile || "N/A"}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-semibold flex items-center"><MapPin className="w-4 h-4 mr-2" /> {t("pharmacy_dashboard.delivery_address")}</h3>
+                  <h3 className="font-semibold flex items-center"><MapPin className="w-4 h-4 mr-2" /> Delivery Address</h3>
                   <div className="p-3 border rounded-md text-sm text-muted-foreground">
                     <p>{selectedOrder.address?.addressLine1}</p>
                     <p>{selectedOrder.address?.city}, {selectedOrder.address?.state} - {selectedOrder.address?.pincode}</p>
@@ -667,9 +665,9 @@ const PharmacyDashboardPage = () => {
 
               {/* Items */}
               <div>
-                <h3 className="font-semibold mb-2">{t("pharmacy_dashboard.order_items")}</h3>
+                <h3 className="font-semibold mb-2">Order Items</h3>
                 <Table>
-                  <TableHeader><TableRow><TableHead>{t("pharmacy_dashboard.table.item")}</TableHead><TableHead>{t("pharmacy_dashboard.table.qty")}</TableHead><TableHead className="text-right">{t("pharmacy_dashboard.table.price")}</TableHead></TableRow></TableHeader>
+                  <TableHeader><TableRow><TableHead>Item</TableHead><TableHead>Qty</TableHead><TableHead className="text-right">Price</TableHead></TableRow></TableHeader>
                   <TableBody>
                     {selectedOrder.items.map((item, i) => (
                       <TableRow key={i}>
@@ -681,7 +679,7 @@ const PharmacyDashboardPage = () => {
                   </TableBody>
                 </Table>
                 <div className="flex justify-end mt-4">
-                  <p className="text-xl font-bold">{t("pharmacy_dashboard.total")}: ₹{selectedOrder.total}</p>
+                  <p className="text-xl font-bold">Total: ₹{selectedOrder.total}</p>
                 </div>
               </div>
             </div>
@@ -695,7 +693,7 @@ const PharmacyDashboardPage = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold font-heading">{showEditMedicineModal ? t("pharmacy_dashboard.edit_medicine") : t("pharmacy_dashboard.add_medicine")}</h2>
+              <h2 className="text-2xl font-bold font-heading">{showEditMedicineModal ? "Edit Medicine" : "Add Medicine"}</h2>
               <Button variant="ghost" size="icon" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>X</Button>
             </div>
 
@@ -703,11 +701,11 @@ const PharmacyDashboardPage = () => {
               {/* NAME & GENERIC */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("pharmacy_dashboard.form.medicine_name")}</label>
+                  <label className="text-sm font-medium">Medicine Name *</label>
                   <input name="name" value={medicineForm.name} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("pharmacy_dashboard.form.generic_name")}</label>
+                  <label className="text-sm font-medium">Generic Name</label>
                   <input name="genericName" value={medicineForm.genericName} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
                 </div>
               </div>
@@ -715,16 +713,16 @@ const PharmacyDashboardPage = () => {
               {/* DETAILS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("pharmacy_dashboard.form.company")}</label>
+                  <label className="text-sm font-medium">Company</label>
                   <input name="company" value={medicineForm.company} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("pharmacy_dashboard.form.mrp")}</label>
+                    <label className="text-sm font-medium">MRP</label>
                     <input name="mrp" type="number" value={medicineForm.mrp} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("pharmacy_dashboard.form.price")}</label>
+                    <label className="text-sm font-medium">Price *</label>
                     <input name="price" type="number" value={medicineForm.price} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
                   </div>
                 </div>
@@ -742,26 +740,26 @@ const PharmacyDashboardPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t("pharmacy_dashboard.form.description")}</label>
+                <label className="text-sm font-medium">Description</label>
                 <textarea name="description" value={medicineForm.description} onChange={handleMedicineChange} className="w-full min-h-[80px] px-3 py-2 rounded-md border" />
               </div>
 
               {/* IMAGE */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t("pharmacy_dashboard.form.image")}</label>
+                <label className="text-sm font-medium">Image</label>
                 <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer relative hover:bg-muted/50">
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                   {medicineForm.image ? (
                     <img src={medicineForm.image} alt="Preview" className="h-20 mx-auto object-contain" />
                   ) : (
-                                <span className="text-sm text-muted-foreground">{t("pharmacy_dashboard.form.click_to_upload")}</span>
+                    <span className="text-sm text-muted-foreground">Click to upload</span>
                   )}
                 </div>
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>{t("pharmacy_dashboard.cancel")}</Button>
-                <Button type="submit" className="flex-1">{showEditMedicineModal ? t("pharmacy_dashboard.update") : t("pharmacy_dashboard.save")}</Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>Cancel</Button>
+                <Button type="submit" className="flex-1">{showEditMedicineModal ? "Update" : "Save"}</Button>
               </div>
             </form>
           </div>

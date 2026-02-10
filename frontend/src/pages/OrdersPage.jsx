@@ -13,7 +13,6 @@ import { useAuth } from "../contexts/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const OrdersPage = () => {
-  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
@@ -77,9 +76,9 @@ const OrdersPage = () => {
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="orders-title">
             <Package className="h-8 w-8 text-primary" />
-            {t("orders.title")}
+            My Orders
           </h1>
-          <p className="text-muted-foreground mt-1">{t("orders.subtitle")}</p>
+          <p className="text-muted-foreground mt-1">Track and manage your medicine orders</p>
         </div>
 
         {loading ? (
@@ -92,10 +91,10 @@ const OrdersPage = () => {
           <Card className="text-center py-16">
             <CardContent>
               <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-heading text-xl font-semibold mb-2">{t("orders.no_orders")}</h3>
-              <p className="text-muted-foreground mb-6">{t("orders.start_shopping")}</p>
+              <h3 className="font-heading text-xl font-semibold mb-2">No orders yet</h3>
+              <p className="text-muted-foreground mb-6">Start shopping to see your orders here</p>
               <Link to="/medicines">
-                <Button>{t("orders.browse_medicines")}</Button>
+                <Button>Browse Medicines</Button>
               </Link>
             </CardContent>
           </Card>
@@ -109,25 +108,25 @@ const OrdersPage = () => {
                       <div className="flex items-center gap-3 mb-2">
                         <Badge className={getStatusColor(order.order_status)}>
                           {getStatusIcon(order.order_status)}
-                          <span className="ml-1 capitalize">{t(`order.status.${order.order_status}`)}</span>
+                          <span className="ml-1 capitalize">{order.order_status.replace('_', ' ')}</span>
                         </Badge>
-                        <Badge variant="outline">{t(`orders.payment_method.${order.payment_method}`)}</Badge>
+                        <Badge variant="outline">{order.payment_method.toUpperCase()}</Badge>
                         {order.payment_status === "paid" && (
-                          <Badge className="bg-emerald-100 text-emerald-800">{t("orders.paid")}</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-800">Paid</Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
-                        {t("orders.order_id", { id: order._id?.slice(0, 8), date: formatDate(order.createdAt) })}
+                        Order ID: {order._id?.slice(0, 8)}... • {formatDate(order.createdAt)}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {order.items.slice(0, 3).map((item, index) => (
                           <span key={index} className="text-sm bg-muted px-2 py-1 rounded">
-                            {t("orders.item_quantity", { name: item.name, quantity: item.quantity })}
+                            {item.name} x{item.quantity}
                           </span>
                         ))}
                         {order.items.length > 3 && (
                           <span className="text-sm text-muted-foreground">
-                            {t("orders.more_items", { count: order.items.length - 3 })}
+                            +{order.items.length - 3} more
                           </span>
                         )}
                       </div>
@@ -135,12 +134,12 @@ const OrdersPage = () => {
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-2xl font-bold text-primary">₹{order.total.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">{t("orders.items_count", { count: order.items.length })}</p>
+                        <p className="text-sm text-muted-foreground">{order.items.length} items</p>
                       </div>
                       <Link to={`/orders/${order._id}`}>
                         <Button variant="outline" data-testid={`view-order-${order._id}`}>
                           <Eye className="h-4 w-4 mr-2" />
-                          {t("orders.track")}
+                          Track
                         </Button>
                       </Link>
                     </div>

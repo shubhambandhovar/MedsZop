@@ -17,7 +17,6 @@ import { Pill, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 const LoginPage = () => {
-  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,10 +46,10 @@ const LoginPage = () => {
 
     try {
       const user = await login(email.trim(), password);
-      toast.success(t("login.welcome_back"));
+      toast.success("Welcome back!");
       navigateByRole(user);
     } catch (error) {
-      toast.error(error.message || t("login.invalid_credentials"));
+      toast.error(error.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,7 @@ const LoginPage = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const user = await googleLogin(credentialResponse.credential);
-      toast.success(t("login.welcome_back"));
+      toast.success("Welcome back!");
       navigateByRole(user);
     } catch (error) {
       const msg = typeof error === "string" ? error : error?.message;
@@ -67,24 +66,24 @@ const LoginPage = () => {
         toast.custom(() => (
           <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border px-8 py-6 w-[340px]">
             <p className="text-sm text-center text-foreground font-medium">
-              {t("login.no_account_found")}
+              No account found with this email. Please sign up first.
             </p>
             <button
               onClick={() => { toast.dismiss(); navigate("/register"); }}
               className="bg-primary text-white text-sm font-medium px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              {t("login.sign_up")}
+              Sign Up
             </button>
           </div>
         ), { position: "top-center", duration: 5000 });
       } else {
-        toast.error(msg || t("login.google_failed"));
+        toast.error(msg || "Google login failed");
       }
     }
   };
 
   const handleGoogleError = () => {
-    toast.error(t("login.google_failed_retry"));
+    toast.error("Google login failed. Please try again.");
   };
 
   return (
@@ -93,7 +92,7 @@ const LoginPage = () => {
         <Link to="/">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("login.back_to_home")}
+            Back to Home
           </Button>
         </Link>
       </div>
@@ -118,22 +117,22 @@ const LoginPage = () => {
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-4">
             <CardTitle className="font-heading text-2xl">
-              {t("login.title")}
+              Welcome Back
             </CardTitle>
             <CardDescription>
-              {t("login.subtitle")}
+              Sign in to your account to continue
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">{t("login.email_label")}</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder={t("login.email_placeholder")}
+                    placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-12"
@@ -145,9 +144,9 @@ const LoginPage = () => {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{t("login.password_label")}</Label>
+                  <Label htmlFor="password">Password</Label>
                   <a href="#" className="text-xs text-primary hover:underline">
-                    {t("login.forgot_password")}
+                    Forgot password?
                   </a>
                 </div>
                 <div className="relative">
@@ -155,7 +154,7 @@ const LoginPage = () => {
                   <Input
                     id="password"
                     type="password"
-                    placeholder={t("login.password_placeholder")}
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 h-12"
@@ -174,7 +173,7 @@ const LoginPage = () => {
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  {t("login.sign_in")}
+                  "Sign In"
                 )}
               </Button>
             </form>
@@ -186,7 +185,7 @@ const LoginPage = () => {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  {t("login.or_continue_with")}
+                  Or continue with
                 </span>
               </div>
             </div>
@@ -205,13 +204,13 @@ const LoginPage = () => {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                {t("login.no_account")}{" "}
+                Don't have an account?{" "}
                 <Link
                   to="/register"
                   className="text-primary font-medium hover:underline"
                   data-testid="register-link"
                 >
-                  {t("login.create_account")}
+                  Create account
                 </Link>
               </p>
             </div>

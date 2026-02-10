@@ -53,7 +53,6 @@ L.Icon.Default.mergeOptions({
 const API_URL = import.meta.env.VITE_API_URL;
 
 const DeliveryDashboardPage = () => {
-  const { t } = useTranslation();
   const { token, user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -141,10 +140,10 @@ const DeliveryDashboardPage = () => {
       await axios.post(`${API_URL}/delivery/accept/${orderId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(t("delivery.accepted"));
+      toast.success("Delivery accepted!");
       fetchOrders();
     } catch (error) {
-      toast.error(t("delivery.accept_failed"));
+      toast.error("Failed to accept delivery");
     }
   };
 
@@ -153,10 +152,10 @@ const DeliveryDashboardPage = () => {
       await axios.post(`${API_URL}/delivery/status/${orderId}`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(t("delivery.status_updated", { status: t(`order.status.${status}`) }));
+      toast.success(`Status updated to ${status.replace(/_/g, ' ')}`);
       fetchOrders();
     } catch (error) {
-      toast.error(t("delivery.status_failed"));
+      toast.error("Failed to update status");
     }
   };
 
@@ -169,7 +168,7 @@ const DeliveryDashboardPage = () => {
   const handleCompleteDelivery = async () => {
     try {
       if (!deliveryOTP || deliveryOTP.length !== 4) {
-        toast.error(t("delivery.invalid_otp"));
+        toast.error("Please enter a valid 4-digit OTP");
         return;
       }
 
@@ -177,12 +176,12 @@ const DeliveryDashboardPage = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      toast.success(t("delivery.completed"));
+      toast.success("Delivery completed successfully!");
       setShowOTPDialog(false);
       setOrderToComplete(null);
       fetchOrders();
     } catch (error) {
-      toast.error(error.response?.data?.message || t("delivery.complete_failed"));
+      toast.error(error.response?.data?.message || "Failed to complete delivery. Check OTP.");
     }
   };
 
@@ -216,11 +215,11 @@ const DeliveryDashboardPage = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-            <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="delivery-dashboard-title">
-              <Truck className="h-8 w-8 text-primary" />
-              {t("delivery.title")}
-            </h1>
-            <p className="text-muted-foreground mt-1">{t("delivery.subtitle")}</p>
+          <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="delivery-dashboard-title">
+            <Truck className="h-8 w-8 text-primary" />
+            Delivery Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">Manage your deliveries and track earnings</p>
         </div>
 
         {/* Stats */}
@@ -229,7 +228,7 @@ const DeliveryDashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-cyan-100 text-sm">{t("delivery.active_deliveries")}</p>
+                  <p className="text-cyan-100 text-sm">Active Deliveries</p>
                   <p className="text-3xl font-bold">{activeOrders.length}</p>
                 </div>
                 <Truck className="h-10 w-10 text-cyan-200" />
@@ -241,7 +240,7 @@ const DeliveryDashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-100 text-sm">{t("delivery.available")}</p>
+                  <p className="text-amber-100 text-sm">Available</p>
                   <p className="text-3xl font-bold">{availableOrders.length}</p>
                 </div>
                 <Package className="h-10 w-10 text-amber-200" />
@@ -253,7 +252,7 @@ const DeliveryDashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm">{t("delivery.completed_today")}</p>
+                  <p className="text-emerald-100 text-sm">Completed Today</p>
                   <p className="text-3xl font-bold">{completedOrders.length}</p>
                 </div>
                 <CheckCircle className="h-10 w-10 text-emerald-200" />
@@ -265,7 +264,7 @@ const DeliveryDashboardPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-violet-100 text-sm">{t("delivery.earnings")}</p>
+                  <p className="text-violet-100 text-sm">Earnings</p>
                   <p className="text-3xl font-bold">₹{(completedOrders.length * 50).toFixed(0)}</p>
                 </div>
                 <DollarSign className="h-10 w-10 text-violet-200" />
@@ -278,10 +277,10 @@ const DeliveryDashboardPage = () => {
           {/* Map */}
           <Card>
             <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  {t("delivery.map")}
-                </CardTitle>
+              <CardTitle className="font-heading flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                Delivery Map
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="h-[400px] rounded-b-xl overflow-hidden">
@@ -298,7 +297,7 @@ const DeliveryDashboardPage = () => {
                   {/* Your Location */}
                   {userLocation && (
                     <Marker position={userLocation} icon={agentIcon}>
-                      <Popup>{t("delivery.agent_location")}</Popup>
+                      <Popup>Your Location (Agent)</Popup>
                     </Marker>
                   )}
                   {/* Order Locations */}
@@ -312,10 +311,10 @@ const DeliveryDashboardPage = () => {
                         >
                           <Popup>
                             <div className="p-2">
-                              <p className="font-bold">{t("delivery.order_id", { id: order._id.slice(0, 8) })}</p>
+                              <p className="font-bold">Order #{order._id.slice(0, 8)}</p>
                               <p className="text-xs">{order.address.addressLine1}</p>
                               <Badge className="mt-2 scale-75 origin-left">
-                                {t(`order.status.${order.order_status}`)}
+                                {order.order_status}
                               </Badge>
                             </div>
                           </Popup>
@@ -335,15 +334,15 @@ const DeliveryDashboardPage = () => {
               <TabsList className="grid w-full grid-cols-3 mb-4">
                 <TabsTrigger value="available" className="flex gap-2">
                   <Package className="h-4 w-4" />
-                  {t("delivery.tab_available")} ({availableOrders.length})
+                  Available ({availableOrders.length})
                 </TabsTrigger>
                 <TabsTrigger value="active" className="flex gap-2">
                   <Navigation className="h-4 w-4" />
-                  {t("delivery.tab_active")} ({activeOrders.length})
+                  Active ({activeOrders.length})
                 </TabsTrigger>
                 <TabsTrigger value="completed" className="flex gap-2">
                   <History className="h-4 w-4" />
-                  {t("delivery.tab_completed")} ({completedOrders.length})
+                  History ({completedOrders.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -353,25 +352,25 @@ const DeliveryDashboardPage = () => {
                   <CardHeader>
                     <CardTitle className="font-heading flex items-center gap-2">
                       <Clock className="h-5 w-5 text-amber-500" />
-                      {t("delivery.available_pickup")}
+                      Available for Pickup
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {availableOrders.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">{t("delivery.no_orders_available")}</p>
+                      <p className="text-muted-foreground text-center py-8">No orders available</p>
                     ) : (
                       <div className="space-y-3">
                         {availableOrders.map((order) => (
                           <div key={order._id} className="p-4 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted transition-colors">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <p className="font-medium text-lg">{t("delivery.order_id", { id: order._id.slice(-6).toUpperCase() })}</p>
+                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {t("delivery.items_count", { count: order.items.length })} • ₹{order.total.toFixed(2)}
+                                  {order.items.length} items • ₹{order.total.toFixed(2)}
                                 </p>
                               </div>
                               <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-                                {t("delivery.earning")}
+                                +₹50 earning
                               </span>
                             </div>
                             <div className="text-sm mb-3 text-muted-foreground flex items-center gap-1.5">
@@ -389,14 +388,14 @@ const DeliveryDashboardPage = () => {
                                 }}
                               >
                                 <Info className="h-4 w-4 mr-1" />
-                                {t("delivery.details")}
+                                Details
                               </Button>
                               <Button
                                 className="flex-1"
                                 size="sm"
                                 onClick={() => handleAcceptDelivery(order._id)}
                               >
-                                {t("delivery.accept_pickup")}
+                                Accept Pickup
                               </Button>
                             </div>
                           </div>
@@ -413,26 +412,26 @@ const DeliveryDashboardPage = () => {
                   <CardHeader>
                     <CardTitle className="font-heading flex items-center gap-2">
                       <Truck className="h-5 w-5 text-cyan-500" />
-                      {t("delivery.enroute_deliveries")}
+                      En-route Deliveries
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {activeOrders.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">{t("delivery.no_active_deliveries")}</p>
+                      <p className="text-muted-foreground text-center py-8">No active deliveries</p>
                     ) : (
                       <div className="space-y-3">
                         {activeOrders.map((order) => (
                           <div key={order._id} className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <p className="font-medium text-lg">{t("delivery.order_id", { id: order._id.slice(-6).toUpperCase() })}</p>
+                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
                                 <p className="text-sm text-muted-foreground">
                                   {order.address?.addressLine1}
                                 </p>
                               </div>
-                                <Badge className={getStatusBadge(order.order_status)}>
-                                  {t(`order.status.${order.order_status}`)}
-                                </Badge>
+                              <Badge className={getStatusBadge(order.order_status)}>
+                                {order.order_status.replace('_', ' ')}
+                              </Badge>
                             </div>
                             <div className="flex flex-col gap-2 mt-4">
                               <div className="flex gap-2">
@@ -447,7 +446,7 @@ const DeliveryDashboardPage = () => {
                                   }}
                                 >
                                   <Info className="h-4 w-4 mr-2" />
-                                  {t("delivery.details")}
+                                  Details
                                 </Button>
                                 <Button
                                   size="sm"
@@ -457,9 +456,9 @@ const DeliveryDashboardPage = () => {
                                     console.log("Map button clicked for order:", order._id);
                                     if (order.address?.coordinates?.lat) {
                                       setMapCenter([order.address.coordinates.lat, order.address.coordinates.lon]);
-                                      toast.info(t("delivery.map_focused"));
+                                      toast.info("Map focused on delivery location");
                                     } else {
-                                      toast.error(t("delivery.no_coords"));
+                                      toast.error("No coordinates found for this order");
                                     }
                                   }}
                                 >
@@ -471,22 +470,22 @@ const DeliveryDashboardPage = () => {
                               {/* Dynamic Status Buttons */}
                               {order.order_status === "accepted" && (
                                 <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "picked_up"); }}>
-                                  <Package className="h-4 w-4 mr-2" /> {t("delivery.mark_picked_up")}
+                                  <Package className="h-4 w-4 mr-2" /> Mark Picked Up
                                 </Button>
                               )}
                               {order.order_status === "picked_up" && (
                                 <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "shipped"); }}>
-                                  <Truck className="h-4 w-4 mr-2" /> {t("delivery.mark_shipped")}
+                                  <Truck className="h-4 w-4 mr-2" /> Mark Shipped
                                 </Button>
                               )}
                               {order.order_status === "shipped" && (
                                 <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "on_the_way"); }}>
-                                  <Navigation className="h-4 w-4 mr-2" /> {t("delivery.mark_on_the_way")}
+                                  <Navigation className="h-4 w-4 mr-2" /> Mark On The Way
                                 </Button>
                               )}
                               {order.order_status === "on_the_way" && (
                                 <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "out_for_delivery"); }}>
-                                  <Truck className="h-4 w-4 mr-2" /> {t("delivery.mark_out_for_delivery")}
+                                  <Truck className="h-4 w-4 mr-2" /> Mark Out For Delivery
                                 </Button>
                               )}
                               {order.order_status === "out_for_delivery" && (
@@ -498,7 +497,7 @@ const DeliveryDashboardPage = () => {
                                     initiateCompletion(order._id);
                                   }}
                                 >
-                                  <CheckCircle className="h-4 w-4 mr-2" /> {t("delivery.mark_delivered_otp")}
+                                  <CheckCircle className="h-4 w-4 mr-2" /> Mark Delivered (Enter OTP)
                                 </Button>
                               )}
                             </div>

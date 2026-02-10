@@ -26,7 +26,6 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const MedicineDetailPage = () => {
-  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [medicine, setMedicine] = useState(null);
@@ -44,7 +43,7 @@ const MedicineDetailPage = () => {
         setMedicine(response.data);
       } catch (error) {
         console.error("Error fetching medicine:", error);
-        toast.error(t("medicine_detail.not_found"));
+        toast.error("Medicine not found");
         navigate("/medicines");
       } finally {
         setLoading(false);
@@ -56,7 +55,7 @@ const MedicineDetailPage = () => {
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error(t("medicine_detail.login_required"));
+      toast.error("Please login to add items to cart");
       navigate("/login");
       return;
     }
@@ -64,9 +63,9 @@ const MedicineDetailPage = () => {
     try {
       setAddingToCart(true);
       await addToCart(medicine.id, quantity);
-      toast.success(t("medicine_detail.added_to_cart", { quantity, name: medicine.name }));
+      toast.success(`Added ${quantity} ${medicine.name} to cart`);
     } catch (error) {
-      toast.error(t("medicine_detail.add_failed"));
+      toast.error("Failed to add to cart");
     } finally {
       setAddingToCart(false);
     }
@@ -107,7 +106,7 @@ const MedicineDetailPage = () => {
         <div className="mb-6">
           <Button variant="ghost" onClick={() => navigate(-1)} className="pl-0">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("medicine_detail.back_to_medicines")}
+            Back to Medicines
           </Button>
         </div>
 
@@ -124,12 +123,12 @@ const MedicineDetailPage = () => {
                 {medicine.requires_prescription && (
                   <Badge className="absolute top-4 left-4 bg-amber-500 text-white">
                     <AlertTriangle className="h-3 w-3 mr-1" />
-                    {t("medicine_detail.prescription_required")}
+                    Prescription Required
                   </Badge>
                 )}
                 {discount > 0 && (
                   <Badge className="absolute top-4 right-4 bg-emerald-500 text-white text-lg px-4 py-1">
-                    {t("medicine_detail.discount", { discount })}
+                    {discount}% OFF
                   </Badge>
                 )}
               </div>
@@ -166,13 +165,13 @@ const MedicineDetailPage = () => {
                   )}
                 </div>
 
-                <p className="text-sm text-muted-foreground">{t("medicine_detail.inclusive_taxes")}</p>
+                <p className="text-sm text-muted-foreground">Inclusive of all taxes</p>
               </CardContent>
             </Card>
 
             {/* Quantity Selector */}
             <div className="flex items-center gap-6 mb-6">
-              <span className="font-medium">{t("medicine_detail.quantity")}</span>
+              <span className="font-medium">Quantity:</span>
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
@@ -207,7 +206,7 @@ const MedicineDetailPage = () => {
                 data-testid="add-to-cart-btn"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {medicine.stock === 0 ? t("medicine_detail.out_of_stock") : t("medicine_detail.add_to_cart")}
+                {medicine.stock === 0 ? "Out of Stock" : "Add to Cart"}
               </Button>
               <Link to="/cart" className="flex-1">
                 <Button
@@ -215,7 +214,7 @@ const MedicineDetailPage = () => {
                   variant="outline"
                   className="w-full h-14 rounded-xl text-base"
                 >
-                  {t("medicine_detail.buy_now")}
+                  Buy Now
                 </Button>
               </Link>
             </div>
@@ -224,7 +223,7 @@ const MedicineDetailPage = () => {
 
             {/* Description */}
             <div className="mb-8">
-              <h3 className="font-heading font-semibold text-lg mb-3">{t("medicine_detail.description")}</h3>
+              <h3 className="font-heading font-semibold text-lg mb-3">Description</h3>
               <p className="text-muted-foreground leading-relaxed">
                 {medicine.description}
               </p>
@@ -232,23 +231,23 @@ const MedicineDetailPage = () => {
 
             {/* Product Details */}
             <div className="mb-8">
-              <h3 className="font-heading font-semibold text-lg mb-3">{t("medicine_detail.product_details")}</h3>
+              <h3 className="font-heading font-semibold text-lg mb-3">Product Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">{t("medicine_detail.dosage_form")}</span>
+                  <span className="text-muted-foreground">Dosage Form:</span>
                   <p className="font-medium">{medicine.dosage_form}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">{t("medicine_detail.strength")}</span>
+                  <span className="text-muted-foreground">Strength:</span>
                   <p className="font-medium">{medicine.strength}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">{t("medicine_detail.manufacturer")}</span>
+                  <span className="text-muted-foreground">Manufacturer:</span>
                   <p className="font-medium">{medicine.manufacturer}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">{t("medicine_detail.in_stock")}</span>
-                  <p className="font-medium">{medicine.stock > 0 ? t("medicine_detail.units", { units: medicine.stock }) : t("medicine_detail.out_of_stock")}</p>
+                  <span className="text-muted-foreground">In Stock:</span>
+                  <p className="font-medium">{medicine.stock > 0 ? `${medicine.stock} units` : "Out of Stock"}</p>
                 </div>
               </div>
             </div>
@@ -256,10 +255,10 @@ const MedicineDetailPage = () => {
             {/* Trust Badges */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { icon: Shield, label: t("medicine_detail.badge_genuine") },
-                { icon: Truck, label: t("medicine_detail.badge_delivery") },
-                { icon: Clock, label: t("medicine_detail.badge_same_day") },
-                { icon: Package, label: t("medicine_detail.badge_returns") }
+                { icon: Shield, label: "100% Genuine" },
+                { icon: Truck, label: "Free Delivery" },
+                { icon: Clock, label: "Same Day" },
+                { icon: Package, label: "Easy Returns" }
               ].map((item, index) => (
                 <div key={index} className="flex flex-col items-center text-center p-4 bg-muted rounded-xl">
                   <item.icon className="h-6 w-6 text-primary mb-2" />

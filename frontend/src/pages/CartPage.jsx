@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar.jsx";
@@ -18,7 +17,6 @@ const CartPage = () => {
   const { token } = useAuth();
   const { cart, loading, updateCart, clearCart } = useCart();
   const [updating, setUpdating] = useState(false);
-  const { t } = useTranslation();
 
   const handleQuantityChange = async (medicineId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -47,9 +45,9 @@ const CartPage = () => {
           quantity: item.quantity
         }));
       await updateCart(updatedItems);
-      toast.success(t("cart.item_removed"));
+      toast.success("Item removed from cart");
     } catch (error) {
-      toast.error(t("cart.remove_failed"));
+      toast.error("Failed to remove item");
     } finally {
       setUpdating(false);
     }
@@ -58,9 +56,9 @@ const CartPage = () => {
   const handleClearCart = async () => {
     try {
       await clearCart();
-      toast.success(t("cart.cleared"));
+      toast.success("Cart cleared");
     } catch (error) {
-      toast.error(t("cart.clear_failed"));
+      toast.error("Failed to clear cart");
     }
   };
 
@@ -88,16 +86,16 @@ const CartPage = () => {
           <div>
             <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="cart-title">
               <ShoppingCart className="h-8 w-8 text-primary" />
-              {t("cart.title")}
+              Shopping Cart
             </h1>
             <p className="text-muted-foreground mt-1">
-              {t("cart.items_count", { count: cart.items?.length || 0 })}
+              {cart.items?.length || 0} {cart.items?.length === 1 ? "item" : "items"} in your cart
             </p>
           </div>
           {cart.items?.length > 0 && (
             <Button variant="outline" onClick={handleClearCart} className="text-destructive">
               <Trash2 className="h-4 w-4 mr-2" />
-              {t("cart.clear")}
+              Clear Cart
             </Button>
           )}
         </div>
@@ -106,10 +104,10 @@ const CartPage = () => {
           <Card className="text-center py-16">
             <CardContent>
               <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-heading text-xl font-semibold mb-2">{t("cart.empty")}</h3>
-              <p className="text-muted-foreground mb-6">{t("cart.empty_desc")}</p>
+              <h3 className="font-heading text-xl font-semibold mb-2">Your cart is empty</h3>
+              <p className="text-muted-foreground mb-6">Looks like you haven't added any medicines yet</p>
               <Link to="/medicines">
-                <Button>{t("cart.browse_medicines")}</Button>
+                <Button>Browse Medicines</Button>
               </Link>
             </CardContent>
           </Card>
@@ -142,7 +140,7 @@ const CartPage = () => {
                           <p className="text-sm text-muted-foreground">{item.medicine.strength}</p>
                           {item.medicine.requires_prescription && (
                             <Badge variant="outline" className="mt-1 text-amber-600 border-amber-200">
-                              {t("cart.rx_required")}
+                              Rx Required
                             </Badge>
                           )}
                         </div>
@@ -187,7 +185,7 @@ const CartPage = () => {
                           disabled={updating}
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
-                          {t("cart.remove")}
+                          Remove
                         </Button>
                       </div>
                     </CardContent>
@@ -200,24 +198,24 @@ const CartPage = () => {
             <div>
               <Card className="sticky top-24">
                 <CardHeader>
-                  <CardTitle className="font-heading">{t("cart.order_summary")}</CardTitle>
+                  <CardTitle className="font-heading">Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t("cart.subtotal")}</span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span>₹{cart.total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t("cart.delivery")}</span>
-                    <span className="text-emerald-600">{t("cart.free")}</span>
+                    <span className="text-muted-foreground">Delivery</span>
+                    <span className="text-emerald-600">FREE</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t("cart.tax")}</span>
-                    <span>{t("cart.included")}</span>
+                    <span className="text-muted-foreground">Tax</span>
+                    <span>Included</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
-                    <span>{t("cart.total")}</span>
+                    <span>Total</span>
                     <span className="text-primary" data-testid="cart-total">₹{cart.total.toFixed(2)}</span>
                   </div>
 
@@ -226,13 +224,13 @@ const CartPage = () => {
                     onClick={() => navigate("/checkout")}
                     data-testid="proceed-to-checkout"
                   >
-                    {t("cart.proceed_checkout")}
+                    Proceed to Checkout
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
 
                   <Link to="/medicines" className="block">
                     <Button variant="outline" className="w-full">
-                      {t("cart.continue_shopping")}
+                      Continue Shopping
                     </Button>
                   </Link>
                 </CardContent>

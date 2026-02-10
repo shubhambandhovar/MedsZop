@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -47,7 +46,7 @@ const PrescriptionScanPage = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/")) {
-      toast.error(t("prescription_scan.invalid_image"));
+      toast.error("Please select a valid image file");
       return;
     }
     setSelectedFile(file);
@@ -79,10 +78,10 @@ const PrescriptionScanPage = () => {
         );
 
         setResult(res.data);
-        toast.success(t("prescription_scan.scan_success"));
+        toast.success("Prescription scanned successfully!");
       } catch (err) {
         console.error(err);
-        toast.error(t("prescription_scan.scan_error"));
+        toast.error("Failed to scan prescription");
       } finally {
         setScanning(false);
       }
@@ -98,12 +97,12 @@ const PrescriptionScanPage = () => {
 
       if (res.data?.length > 0) {
         await addToCart(res.data[0]._id, 1);
-        toast.success(t("prescription_scan.added_to_cart", { name: res.data[0].name }));
+        toast.success(`${res.data[0].name} added to cart`);
       } else {
-        toast.error(t("prescription_scan.not_found", { name: medicineName }));
+        toast.error(`"${medicineName}" not found`);
       }
     } catch {
-      toast.error(t("prescription_scan.add_medicine_error"));
+      toast.error("Failed to add medicine");
     }
   };
 
@@ -115,7 +114,6 @@ const PrescriptionScanPage = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -123,12 +121,12 @@ const PrescriptionScanPage = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Badge className="mb-4 bg-cyan-500/10 text-cyan-600 border-0">
           <ScanLine className="h-4 w-4 mr-2" />
-          {t("prescription_scan.ai_powered")}
+          AI Powered
         </Badge>
 
-        <h1 className="text-3xl font-bold mb-2">{t("prescription_scan.title")}</h1>
+        <h1 className="text-3xl font-bold mb-2">Prescription Scanner</h1>
         <p className="text-muted-foreground mb-8">
-          {t("prescription_scan.subtitle")}
+          Upload a prescription image and extract medicines automatically
         </p>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -136,9 +134,9 @@ const PrescriptionScanPage = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Upload className="h-5 w-5" /> {t("prescription_scan.upload_title")}
+                <Upload className="h-5 w-5" /> Upload Prescription
               </CardTitle>
-              <CardDescription>{t("prescription_scan.upload_desc")}</CardDescription>
+              <CardDescription>PNG / JPG images supported</CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -148,9 +146,9 @@ const PrescriptionScanPage = () => {
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <ImageIcon className="h-14 w-14 mx-auto mb-4 text-muted-foreground" />
-                  <p>{t("prescription_scan.select_image")}</p>
+                  <p>Select an image</p>
                   <Button variant="outline" className="mt-4">
-                    {t("prescription_scan.browse")}
+                    Browse
                   </Button>
                 </div>
               ) : (
@@ -188,12 +186,12 @@ const PrescriptionScanPage = () => {
                   {scanning ? (
                     <>
                       <Loader2 className="mr-2 animate-spin" />
-                      {t("prescription_scan.scanning")}
+                      Scanning...
                     </>
                   ) : (
                     <>
                       <ScanLine className="mr-2" />
-                      {t("prescription_scan.scan_button")}
+                      Scan Prescription
                     </>
                   )}
                 </Button>
@@ -205,20 +203,20 @@ const PrescriptionScanPage = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" /> {t("prescription_scan.results_title")}
+                <FileText className="h-5 w-5" /> Scan Results
               </CardTitle>
             </CardHeader>
 
             <CardContent>
               {!result ? (
                 <p className="text-muted-foreground text-center">
-                  {t("prescription_scan.no_results")}
+                  Scan a prescription to see results
                 </p>
               ) : (
                 <>
                   <h4 className="font-medium mb-2 flex items-center gap-2">
                     <CheckCircle className="text-green-500 h-4 w-4" />
-                    {t("prescription_scan.extracted_text")}
+                    Extracted Text
                   </h4>
                   <div className="p-3 bg-muted rounded text-sm mb-4 max-h-32 overflow-auto">
                     {result.rawText}
@@ -227,7 +225,7 @@ const PrescriptionScanPage = () => {
                   <Separator />
 
                   <h4 className="font-medium mt-4 mb-3 flex items-center gap-2">
-                    <Pill className="h-4 w-4" /> {t("prescription_scan.medicines_title")}
+                    <Pill className="h-4 w-4" /> Medicines
                   </h4>
 
                   {result.parsed?.medicines?.length > 0 ? (
@@ -248,27 +246,27 @@ const PrescriptionScanPage = () => {
                           onClick={() => handleAddMedicineToCart(med.name)}
                         >
                           <ShoppingCart className="h-4 w-4 mr-1" />
-                          {t("prescription_scan.add")}
+                          Add
                         </Button>
                       </div>
                     ))
                   ) : (
                     <div className="text-center text-sm text-muted-foreground mt-4">
                       <AlertTriangle className="mx-auto mb-2" />
-                      {t("prescription_scan.no_medicines")}
+                      No medicines detected
                     </div>
                   )}
 
                   <div className="flex gap-3 mt-4">
                     <Button onClick={() => navigate("/cart")} className="flex-1">
-                      {t("prescription_scan.go_to_cart")}
+                      Go to Cart
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => navigate("/medicines")}
                       className="flex-1"
                     >
-                      {t("prescription_scan.browse_medicines")}
+                      Browse Medicines
                     </Button>
                   </div>
                 </>
