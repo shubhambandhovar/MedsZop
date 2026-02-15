@@ -11,7 +11,7 @@ import { useAuth } from "../contexts/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const ChangePasswordPage = () => {
-    const { token, logout } = useAuth();
+    const { token, logout, user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -32,10 +32,17 @@ const ChangePasswordPage = () => {
 
         setLoading(true);
         try {
-            await axios.put(`${API_URL}/auth/change-password`, {
-                currentPassword: formData.currentPassword,
+            // Updated endpoint to POST and conditional payload
+            const payload = {
                 newPassword: formData.newPassword
-            }, {
+            };
+
+            // Only send current password if NOT first login
+            if (!user?.is_first_login) {
+                payload.currentPassword = formData.currentPassword;
+            }
+
+            await axios.post(`${API_URL}/auth/change-password`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -56,20 +63,25 @@ const ChangePasswordPage = () => {
                 <CardHeader>
                     <CardTitle className="text-2xl text-center">Change Password Required</CardTitle>
                     <CardDescription className="text-center">
-                        For security reasons, you must change your temporary password on first login.
+                        {user?.is_first_login
+                            ? "Please set a new password for your account."
+                            : "For security reasons, please update your password."}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Current (Temporary) Password</label>
-                            <Input
-                                type="password"
-                                name="currentPassword"
-                                required
-                                onChange={handleChange}
-                            />
-                        </div>
+                        {/* Only show Current Password if NOT first login */}
+                        {!user?.is_first_login && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Current Password</label>
+                                <Input
+                                    type="password"
+                                    name="currentPassword"
+                                    required
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        )}
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium">New Password</label>
