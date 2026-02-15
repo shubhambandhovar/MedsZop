@@ -24,7 +24,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const navigateByRole = (user) => {
-    switch (user.role) {
+    switch (user.role.toLowerCase()) {
       case "admin":
         navigate("/admin");
         break;

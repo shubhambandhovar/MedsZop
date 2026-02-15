@@ -115,7 +115,11 @@ const Navbar = () => {
   const getDashboardLink = () => {
     if (!user?.role) return "/dashboard";
 
-    switch (user.role) {
+    const role = user?.role?.toLowerCase();
+
+    if (role === 'doctor') return "/doctor-dashboard";
+
+    switch (role) {
       case "admin":
         return "/admin";
       case "pharmacy":
