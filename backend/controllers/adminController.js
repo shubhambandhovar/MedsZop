@@ -96,9 +96,8 @@ exports.stats = async (req, res) => {
     .limit(10);
 
   const orders_count = recent_orders.length;
-  const total_revenue = recent_orders.reduce(
-    (sum, o) => sum + (o.total || 0),
-    0
+  const total_revenue = parseFloat(
+    recent_orders.reduce((sum, o) => sum + (o.total || 0), 0).toFixed(2)
   );
 
   res.json({

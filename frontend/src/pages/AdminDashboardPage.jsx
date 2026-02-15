@@ -201,7 +201,7 @@ const AdminDashboardPage = () => {
           <Card>
             <CardContent className="p-4">
               <p>Revenue</p>
-              <h2 className="text-2xl">₹{stats?.total_revenue}</h2>
+              <h2 className="text-2xl">₹{stats?.total_revenue?.toFixed(2)}</h2>
             </CardContent>
           </Card>
           <Card>
