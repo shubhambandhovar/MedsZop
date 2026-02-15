@@ -108,7 +108,7 @@ const AdminDashboardPage = () => {
   // ================= FETCH DATA =================
   const fetchData = async () => {
     try {
-      const [statsRes, usersRes, pharmaciesRes] = await Promise.all([
+      const [statsRes, usersRes, pharmaciesRes, applicationsRes] = await Promise.all([
         axios.get(`${API_URL}/admin/stats`, {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
