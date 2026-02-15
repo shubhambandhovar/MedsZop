@@ -174,7 +174,7 @@ const DoctorDashboardPage = () => {
                                                     <Button size="sm" onClick={() => setSelectedChat(appt)}>
                                                         <MessageSquare className="w-4 h-4 mr-1" /> Chat
                                                     </Button>
-                                                    <Button size="sm" variant="outline" onClick={() => window.open('/video-call-placeholder', '_blank')}>
+                                                    <Button size="sm" variant="outline" onClick={() => window.open(`/video-call/${appt._id}`, '_blank')}>
                                                         <Video className="w-4 h-4 mr-1" /> Video
                                                     </Button>
                                                     <Button size="sm" variant="secondary" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200" onClick={() => handleStatusUpdate(appt._id, 'COMPLETED')}>

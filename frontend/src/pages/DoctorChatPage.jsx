@@ -399,9 +399,14 @@ const DoctorChatPage = () => {
                         {/* ACTIVE / PENDING STATUS & NEW REQUEST */}
                         {activeConsultation ? (
                           activeConsultation.status === 'ACCEPTED' ? (
-                            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(activeConsultation)}>
-                              <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(activeConsultation)}>
+                                <MessageSquare className="w-4 h-4 mr-2" /> Chat
+                              </Button>
+                              <Button className="flex-1" variant="outline" onClick={() => window.open(`/video-call/${activeConsultation._id}`, '_blank')}>
+                                <Video className="w-4 h-4 mr-2" /> Video
+                              </Button>
+                            </div>
                           ) : (
                             <Button className="w-full" variant="outline" disabled>Request Pending</Button>
                           )

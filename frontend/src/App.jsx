@@ -27,6 +27,7 @@ import OrdersPage from "./pages/OrdersPage.jsx";
 import OrderTrackingPage from "./pages/OrderTrackingPage.jsx";
 import PrescriptionScanPage from "./pages/PrescriptionScanPage.jsx";
 import DoctorChatPage from "./pages/DoctorChatPage.jsx";
+import VideoCallPage from "./pages/VideoCallPage.jsx";
 import PharmacyDashboardPage from "./pages/PharmacyDashboardPage.jsx";
 import DeliveryDashboardPage from "./pages/DeliveryDashboardPage.jsx";
 import DoctorDashboardPage from "./pages/DoctorDashboardPage.jsx";
@@ -126,6 +127,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["customer"]}>
                   <DoctorChatPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/video-call/:id"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "doctor"]}>
+                  <VideoCallPage />
                 </ProtectedRoute>
               }
             />
