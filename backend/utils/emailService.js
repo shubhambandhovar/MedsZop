@@ -191,4 +191,112 @@ const sendWelcomeEmail = async (email, name) => {
   return sendEmail(email, "Welcome to MedsZop 🎉", buildWelcomeEmailHTML(name));
 };
 
-module.exports = { sendOTPEmail, sendEmail, sendWelcomeEmail };
+/* =========================
+ * ORDER PLACED EMAIL
+ * ========================= */
+const buildOrderPlacedEmail = (name, orderIdNumber) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Order Received! 📦</h1>
+    <p style="color: #bfdbfe; margin: 5px 0 0;">Thank you for shopping with MedsZop</p>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hi ${name},</p>
+    <p>We've received your order <strong>#${orderIdNumber}</strong> and sent it to the pharmacy for confirmation.</p>
+    <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://medszop.site/orders/${orderIdNumber}" style="color: #2563eb; text-decoration: none; font-weight: 600;">Track Your Order</a>
+    </div>
+    <p style="color: #6b7280; font-size: 14px;">We'll notify you once the pharmacy confirms your order.</p>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">Team MedsZop</p>
+  </div>
+</div>
+`;
+
+/* =========================
+ * ORDER CONFIRMED EMAIL
+ * ========================= */
+const buildOrderConfirmedEmail = (name, orderIdNumber) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Order Confirmed! ✅</h1>
+    <p style="color: #d1fae5; margin: 5px 0 0;">Your medicines are being packed.</p>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hi ${name},</p>
+    <p>Great news! The pharmacy has accepted your order <strong>#${orderIdNumber}</strong>.</p>
+    <p>A delivery partner will be assigned shortly.</p>
+    <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://medszop.site/orders/${orderIdNumber}" style="color: #059669; text-decoration: none; font-weight: 600;">Track Status</a>
+    </div>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">Team MedsZop</p>
+  </div>
+</div>
+`;
+
+/* =========================
+ * ORDER CANCELLED EMAIL
+ * ========================= */
+const buildOrderCancelledEmail = (name, orderIdNumber) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Order Cancelled ❌</h1>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hi ${name},</p>
+    <p>We're sorry, but your order <strong>#${orderIdNumber}</strong> was cancelled by the pharmacy (likely due to stock unavailability).</p>
+    <p>Any amount paid will be refunded within 3-5 business days.</p>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">Team MedsZop</p>
+  </div>
+</div>
+`;
+
+/* =========================
+ * ORDER DELIVERED EMAIL
+ * ========================= */
+const buildOrderDeliveredEmail = (name, orderIdNumber) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Order Delivered! 🎉</h1>
+    <p style="color: #e9d5ff; margin: 5px 0 0;">Enjoy your health & wellness.</p>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hi ${name},</p>
+    <p>Your order <strong>#${orderIdNumber}</strong> has been successfully delivered.</p>
+    <p>Thank you for choosing MedsZop for your healthcare needs.</p>
+    <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://medszop.site/orders/${orderIdNumber}" style="color: #7c3aed; text-decoration: none; font-weight: 600;">View Order Details</a>
+    </div>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">Team MedsZop</p>
+  </div>
+</div>
+`;
+
+const sendOrderPlacedEmail = async (email, name, orderId) => {
+  return sendEmail(email, "Thank you for your order with MedsZop 💊", buildOrderPlacedEmail(name, orderId));
+};
+
+const sendOrderConfirmedEmail = async (email, name, orderId) => {
+  return sendEmail(email, "Your MedsZop order is confirmed ✅", buildOrderConfirmedEmail(name, orderId));
+};
+
+const sendOrderCancelledEmail = async (email, name, orderId) => {
+  return sendEmail(email, "Your MedsZop order was cancelled ❌", buildOrderCancelledEmail(name, orderId));
+};
+
+const sendOrderDeliveredEmail = async (email, name, orderId) => {
+  return sendEmail(email, "Your MedsZop order has been delivered 🎉", buildOrderDeliveredEmail(name, orderId));
+};
+
+module.exports = {
+  sendOTPEmail,
+  sendEmail,
+  sendWelcomeEmail,
+  sendOrderPlacedEmail,
+  sendOrderConfirmedEmail,
+  sendOrderCancelledEmail,
+  sendOrderDeliveredEmail
+};

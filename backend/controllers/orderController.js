@@ -3,6 +3,12 @@ const User = require("../models/User");
 const Medicine = require("../models/Medicine");
 const Pharmacy = require("../models/Pharmacy");
 const mongoose = require("mongoose");
+const {
+  sendOrderPlacedEmail,
+  sendOrderConfirmedEmail,
+  sendOrderCancelledEmail,
+  sendOrderDeliveredEmail
+} = require("../utils/emailService");
 
 // CREATE ORDER
 exports.createOrder = async (req, res) => {
@@ -109,6 +115,21 @@ exports.createOrder = async (req, res) => {
       orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     });
 
+    // EMAIL NOTIFICATION - PLACED
+    try {
+      if (!order.emailSent?.placed) {
+        // user object is already available in this scope
+        await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
+
+        // Update flag - requires re-saving or updating the instance if I want to persist it immediately
+        order.emailSent = order.emailSent || {};
+        order.emailSent.placed = true;
+        await order.save();
+      }
+    } catch (emailErr) {
+      console.error("Failed to send Order Placed email:", emailErr.message);
+    }
+
     // Clear cart
     user.cart = [];
     await user.save();
@@ -192,6 +213,45 @@ exports.updateOrderStatus = async (req, res) => {
       status: req.body.status,
       timestamp: new Date()
     });
+
+    // EMAIL NOTIFICATIONS
+    try {
+      const user = await User.findById(order.user_id);
+      if (user) {
+        const status = req.body.status;
+
+        // Initialize emailSent if missing (for old orders)
+        if (!order.emailSent) {
+          order.emailSent = {
+            placed: true, // Assume placed email sent or skipped for old orders
+            confirmed: false,
+            cancelled: false,
+            outForDelivery: false,
+            delivered: false
+          };
+        }
+
+        // CONFIRMED
+        if (status === "confirmed" && !order.emailSent.confirmed) {
+          await sendOrderConfirmedEmail(user.email, user.name, order.orderNumber);
+          order.emailSent.confirmed = true;
+        }
+
+        // CANCELLED
+        if (status === "cancelled" && !order.emailSent.cancelled) {
+          await sendOrderCancelledEmail(user.email, user.name, order.orderNumber);
+          order.emailSent.cancelled = true;
+        }
+
+        // DELIVERED
+        if (status === "delivered" && !order.emailSent.delivered) {
+          await sendOrderDeliveredEmail(user.email, user.name, order.orderNumber);
+          order.emailSent.delivered = true;
+        }
+      }
+    } catch (emailErr) {
+      console.error(`Failed to send email for order status ${req.body.status}:`, emailErr.message);
+    }
 
     await order.save();
 

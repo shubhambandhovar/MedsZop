@@ -36,6 +36,14 @@ const orderSchema = new mongoose.Schema({
     default: "pending"
   },
 
+  emailSent: {
+    placed: { type: Boolean, default: false },
+    confirmed: { type: Boolean, default: false },
+    cancelled: { type: Boolean, default: false },
+    outForDelivery: { type: Boolean, default: false },
+    delivered: { type: Boolean, default: false }
+  },
+
   delivery_agent_id: String,
 
   delivery_otp: String,
