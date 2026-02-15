@@ -138,19 +138,19 @@ const Navbar = () => {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-14 items-center justify-between">
             {/* Logo */}
             <Link
               to={user?.role === "delivery" ? "/delivery" : user?.role === "pharmacy" ? "/pharmacy" : "/"}
               className="flex items-center gap-2"
               data-testid="logo-link"
             >
-              <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center">
-                <Pill className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-heading text-xl font-bold text-foreground">
-                MedsZop
-              </span>
+              <img
+                src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
+                alt="MedsZop Logo"
+                className="h-10 w-auto object-contain min-w-[60px]"
+                style={{ maxWidth: '160px' }}
+              />
             </Link>
 
             {/* Desktop Navigation */}

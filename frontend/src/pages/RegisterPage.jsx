@@ -217,12 +217,12 @@ const RegisterPage = () => {
       >
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
-              <Pill className="h-7 w-7 text-white" />
-            </div>
-            <span className="font-heading text-2xl font-bold text-foreground">
-              MedsZop
-            </span>
+            <img
+              src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
+              alt="MedsZop Logo"
+              className="h-20 w-auto object-contain block mx-auto"
+              style={{ maxWidth: '320px', marginBottom: 0 }}
+            />
           </Link>
         </div>
 
