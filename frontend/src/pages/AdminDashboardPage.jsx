@@ -59,7 +59,23 @@ import {
   DollarSign,
   CheckCircle,
   Eye,
+  FileText,
+  X,
+  Check,
+  AlertCircle
 } from "lucide-react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
@@ -84,6 +100,11 @@ const AdminDashboardPage = () => {
     role: "pharmacy",
   });
 
+  const [applications, setApplications] = useState({ doctors: [], pharmacists: [], delivery: [] });
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+
   // ================= FETCH DATA =================
   const fetchData = async () => {
     try {
@@ -97,21 +118,51 @@ const AdminDashboardPage = () => {
         axios.get(`${API_URL}/admin/pharmacies`, {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
+        axios.get(`${API_URL}/onboarding/admin/applications`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }),
       ]);
 
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setPharmacies(pharmaciesRes.data);
+      setApplications(applicationsRes.data);
     } catch (err) {
-      toast.error("Failed to load admin data");
+      console.error(err);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (authToken) fetchData();
-  }, [authToken]);
+    fetchData();
+  }, [authToken]); // Added dependency for safety
+
+  // ================= ADMIN ACTIONS =================
+  const handleReviewApp = async (id, role, action) => {
+    if (action === "REJECT" && !rejectReason) return toast.error("Rejection reason is required");
+
+    setReviewLoading(true);
+    try {
+      await axios.post(`${API_URL}/onboarding/admin/review/${id}`, {
+        role,
+        action,
+        remarks: rejectReason
+      }, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+
+      toast.success(`Application ${action === "APPROVE" ? "Approved" : "Rejected"}`);
+      setSelectedApp(null); // Close dialog
+      setRejectReason("");
+      fetchData(); // Refresh list
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Action failed");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   // ================= VERIFY PHARMACY =================
   const handleVerifyPharmacy = async (id) => {
@@ -166,48 +217,88 @@ const AdminDashboardPage = () => {
       revenue: o.total,
     })) || [];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading Admin Dashboard...
-      </div>
-    );
-  }
+  // ================= RENDER HELPERS =================
+  const renderAppTable = (apps, type) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Action</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {apps.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">No pending applications</TableCell>
+          </TableRow>
+        ) : apps.map(app => (
+          <TableRow key={app._id}>
+            <TableCell>{app.name || app.owner_name}</TableCell>
+            <TableCell>{app.email}</TableCell>
+            <TableCell>{new Date(app.createdAt).toLocaleDateString()}</TableCell>
+            <TableCell><Badge variant="outline">{app.status}</Badge></TableCell>
+            <TableCell>
+              <Button size="sm" onClick={() => setSelectedApp({ ...app, appType: type })}>View</Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
+  if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-slate-50/50">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2 mb-6">
-          <Shield className="text-primary" />
-          Admin Dashboard
-        </h1>
+      <main className="flex-1 container py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-muted-foreground">{new Date().toDateString()}</p>
+        </div>
 
-        {/* STATS */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        {/* Stats Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <Card>
-            <CardContent className="p-4">
-              <p>Users</p>
-              <h2 className="text-2xl">{stats?.users_count}</h2>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.users_count || 0}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4">
-              <p>Orders</p>
-              <h2 className="text-2xl">{stats?.orders_count}</h2>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Apps</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {(applications.doctors.length + applications.pharmacists.length + applications.delivery.length) || 0}
+              </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4">
-              <p>Revenue</p>
-              <h2 className="text-2xl">₹{stats?.total_revenue?.toFixed(2)}</h2>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">₹{stats?.total_revenue?.toFixed(2) || "0.00"}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4">
-              <p>Pharmacies</p>
-              <h2 className="text-2xl">{pharmacies.length}</h2>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Pharmacies</CardTitle>
+              <Store className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{pharmacies.length}</div>
             </CardContent>
           </Card>
         </div>
@@ -217,7 +308,8 @@ const AdminDashboardPage = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
-            <TabsTrigger value="create">Create User</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="create-user">Create User</TabsTrigger>
           </TabsList>
 
           {/* OVERVIEW */}
@@ -320,7 +412,7 @@ const AdminDashboardPage = () => {
           </TabsContent>
 
           {/* CREATE USER */}
-          <TabsContent value="create">
+          <TabsContent value="create-user">
             <div className="max-w-md space-y-4">
               <Input
                 placeholder="Name"
@@ -371,9 +463,100 @@ const AdminDashboardPage = () => {
               <Button onClick={handleCreateUser}>Create User</Button>
             </div>
           </TabsContent>
+          {/* ================= APPLICATIONS TAB ================= */}
+          <TabsContent value="applications">
+            <Card>
+              <CardHeader>
+                <CardTitle>Join Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="doctors">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="doctors">Doctors ({applications.doctors.length})</TabsTrigger>
+                    <TabsTrigger value="pharmacists">Pharmacists ({applications.pharmacists.length})</TabsTrigger>
+                    <TabsTrigger value="delivery">Delivery ({applications.delivery.length})</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="doctors">{renderAppTable(applications.doctors, "doctor")}</TabsContent>
+                  <TabsContent value="pharmacists">{renderAppTable(applications.pharmacists, "pharmacist")}</TabsContent>
+                  <TabsContent value="delivery">{renderAppTable(applications.delivery, "delivery")}</TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {/* APP DETAILS DIALOG */}
+            <Dialog open={!!selectedApp} onOpenChange={(o) => !o && setSelectedApp(null)}>
+              <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Application Details</DialogTitle>
+                  <DialogDescription>Review application for {selectedApp?.appType}</DialogDescription>
+                </DialogHeader>
+
+                {selectedApp && (
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div><Label>Name</Label><p className="font-medium">{selectedApp.name || selectedApp.owner_name}</p></div>
+                      <div><Label>Email</Label><p className="font-medium">{selectedApp.email}</p></div>
+                      <div><Label>Phone</Label><p className="font-medium">{selectedApp.phone}</p></div>
+                      <div><Label>Status</Label><Badge>{selectedApp.status}</Badge></div>
+
+                      {/* Dynamic Fields */}
+                      {selectedApp.registration_number && <div><Label>Reg No</Label><p>{selectedApp.registration_number}</p></div>}
+                      {selectedApp.specialization && <div><Label>Specialization</Label><p>{selectedApp.specialization}</p></div>}
+                      {selectedApp.pharmacy_name && <div><Label>Pharmacy</Label><p>{selectedApp.pharmacy_name}</p></div>}
+                      {selectedApp.license_number && <div><Label>License</Label><p>{selectedApp.license_number}</p></div>}
+                      {selectedApp.vehicle_type && <div><Label>Vehicle</Label><p>{selectedApp.vehicle_type}</p></div>}
+                    </div>
+
+                    {/* Documents */}
+                    <div className="space-y-4 border-t pt-4">
+                      <Label className="text-lg">Documents</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(selectedApp).filter(([k, v]) =>
+                          (k.includes("certificate") || k.includes("proof") || k.includes("license")) &&
+                          typeof v === 'string' && v.startsWith("data:")
+                        ).map(([key, val]) => (
+                          <div key={key} className="border p-2 rounded">
+                            <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">{key.replace(/_/g, " ")}</p>
+                            <img src={val} alt={key} className="max-w-full h-auto max-h-48 object-contain" />
+                            <a href={val} download={`${key}.jpg`} className="text-xs text-blue-500 mt-1 block">Download</a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Area */}
+                    <div className="space-y-4 border-t pt-4 bg-muted/30 p-4 rounded-lg">
+                      <Label>Admin Remarks (Required for Rejection)</Label>
+                      <Textarea
+                        placeholder="Enter remarks..."
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                      />
+                      <div className="flex gap-4 justify-end">
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleReviewApp(selectedApp._id, selectedApp.appType, "REJECT")}
+                          disabled={reviewLoading}
+                        >
+                          Reject
+                        </Button>
+                        <Button
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => handleReviewApp(selectedApp._id, selectedApp.appType, "APPROVE")}
+                          disabled={reviewLoading}
+                        >
+                          Approve & Create Account
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
         </Tabs>
       </main>
-
       <Footer />
     </div>
   );

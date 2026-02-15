@@ -4,6 +4,12 @@ import RefundPolicyPage from "./pages/support/RefundPolicyPage";
 import PrivacyPolicyPage from "./pages/support/PrivacyPolicyPage";
 import TermsPage from "./pages/support/TermsPage";
 
+import DoctorApplicationPage from "./pages/onboarding/DoctorApplicationPage";
+import PharmacistApplicationPage from "./pages/onboarding/PharmacistApplicationPage";
+import DeliveryApplicationPage from "./pages/onboarding/DeliveryApplicationPage";
+import ApplicationStatusPage from "./pages/onboarding/ApplicationStatusPage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
@@ -23,6 +29,7 @@ import PrescriptionScanPage from "./pages/PrescriptionScanPage.jsx";
 import DoctorChatPage from "./pages/DoctorChatPage.jsx";
 import PharmacyDashboardPage from "./pages/PharmacyDashboardPage.jsx";
 import DeliveryDashboardPage from "./pages/DeliveryDashboardPage.jsx";
+import DoctorDashboardPage from "./pages/DoctorDashboardPage.jsx";
 import AdminDashboardPage from "./pages/AdminDashboardPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -44,6 +51,21 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
 
+            {/* Application Routes */}
+            <Route path="/apply/doctor" element={<DoctorApplicationPage />} />
+            <Route path="/apply/pharmacist" element={<PharmacistApplicationPage />} />
+            <Route path="/apply/delivery" element={<DeliveryApplicationPage />} />
+            <Route path="/application-status/:id" element={<ApplicationStatusPage />} />
+
+            {/* Change Password Route */}
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <ChangePasswordPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/dashboard"
@@ -122,6 +144,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["delivery"]}>
                   <DeliveryDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["doctor"]}>
+                  <DoctorDashboardPage />
                 </ProtectedRoute>
               }
             />

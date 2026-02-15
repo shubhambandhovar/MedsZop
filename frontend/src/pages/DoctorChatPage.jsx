@@ -14,12 +14,18 @@ import {
   Bot,
   User,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  Stethoscope,
+  Video,
+  Clock
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
+import { Textarea } from "../components/ui/textarea";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,8 +40,40 @@ const DoctorChatPage = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+  const [symptoms, setSymptoms] = useState("");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/doctor/list`);
+        setDoctors(res.data);
+      } catch (err) {
+        console.error("Failed to fetch doctors", err);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  const handleConsultRequest = async (doctorId) => {
+    if (!token) return toast.error("Please login to consulting a doctor");
+    if (!symptoms) return toast.error("Please describe your symptoms");
+
+    try {
+      await axios.post(`${API_URL}/doctor/consult`, {
+        doctor_id: doctorId,
+        symptoms
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Consultation requested! The doctor will review shortly.");
+      setSymptoms("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to request consultation");
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -115,133 +153,203 @@ const DoctorChatPage = () => {
           </p>
         </div>
 
-        <Card className="flex-1 flex flex-col overflow-hidden">
-          <CardHeader className="border-b py-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                <Bot className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <CardTitle className="font-heading text-lg">Dr. MedsZop</CardTitle>
-                <p className="text-sm text-emerald-600 flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Online
-                </p>
-              </div>
-            </div>
-          </CardHeader>
+        <Tabs defaultValue="ai" className="flex-1 flex flex-col">
+          <TabsList className="mb-4 w-full justify-start">
+            <TabsTrigger value="ai" className="flex-1 md:flex-none">AI Assistant</TabsTrigger>
+            <TabsTrigger value="human" className="flex-1 md:flex-none">Specialist Doctors</TabsTrigger>
+          </TabsList>
 
-          <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-            {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
-                  >
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${message.role === "user"
-                      ? "bg-primary text-white"
-                      : "bg-emerald-100"
-                      }`}>
-                      {message.role === "user" ? (
-                        <User className="h-4 w-4" />
-                      ) : (
-                        <Bot className="h-4 w-4 text-emerald-600" />
-                      )}
-                    </div>
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user"
-                      ? "bg-primary text-white"
-                      : message.error
-                        ? "bg-destructive/10 border border-destructive/20"
-                        : "bg-muted"
-                      }`}>
-                      <div className="text-sm markdown-content max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-                      </div>
-                    </div>
+          <TabsContent value="ai" className="flex-1 flex flex-col data-[state=active]:flex">
+
+            <Card className="flex-1 flex flex-col overflow-hidden">
+              <CardHeader className="border-b py-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <Bot className="h-5 w-5 text-emerald-600" />
                   </div>
-                ))}
+                  <div>
+                    <CardTitle className="font-heading text-lg">Dr. MedsZop</CardTitle>
+                    <p className="text-sm text-emerald-600 flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Online
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
 
-                {loading && (
-                  <div className="flex gap-3">
-                    <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                      <Bot className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    <div className="bg-muted rounded-2xl px-4 py-3">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+              <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+                {/* Messages */}
+                <ScrollArea className="flex-1 p-4">
+                  <div className="space-y-4">
+                    {messages.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                      >
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${message.role === "user"
+                          ? "bg-primary text-white"
+                          : "bg-emerald-100"
+                          }`}>
+                          {message.role === "user" ? (
+                            <User className="h-4 w-4" />
+                          ) : (
+                            <Bot className="h-4 w-4 text-emerald-600" />
+                          )}
+                        </div>
+                        <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user"
+                          ? "bg-primary text-white"
+                          : message.error
+                            ? "bg-destructive/10 border border-destructive/20"
+                            : "bg-muted"
+                          }`}>
+                          <div className="text-sm markdown-content max-w-none">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {loading && (
+                      <div className="flex gap-3">
+                        <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                          <Bot className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <div className="bg-muted rounded-2xl px-4 py-3">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div ref={messagesEndRef} />
+                  </div>
+                </ScrollArea>
+
+                {/* Quick Questions */}
+                {messages.length <= 2 && (
+                  <div className="px-4 pb-2">
+                    <p className="text-xs text-muted-foreground mb-2">Quick questions:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {quickQuestions.map((q, index) => (
+                        <Button
+                          key={index}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-auto py-1.5 rounded-full"
+                          onClick={() => {
+                            setInput(q);
+                            inputRef.current?.focus();
+                          }}
+                        >
+                          {q}
+                        </Button>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
-
-            {/* Quick Questions */}
-            {messages.length <= 2 && (
-              <div className="px-4 pb-2">
-                <p className="text-xs text-muted-foreground mb-2">Quick questions:</p>
-                <div className="flex flex-wrap gap-2">
-                  {quickQuestions.map((q, index) => (
+                {/* Input */}
+                <div className="border-t p-4">
+                  <div className="flex gap-2">
+                    <Input
+                      ref={inputRef}
+                      placeholder="Type your health question..."
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      disabled={loading}
+                      className="h-12 rounded-xl"
+                      data-testid="chat-input"
+                    />
                     <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs h-auto py-1.5 rounded-full"
-                      onClick={() => {
-                        setInput(q);
-                        inputRef.current?.focus();
-                      }}
+                      onClick={handleSend}
+                      disabled={!input.trim() || loading}
+                      className="h-12 w-12 rounded-xl"
+                      data-testid="send-btn"
                     >
-                      {q}
+                      {loading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
                     </Button>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              </CardContent>
+            </Card>
 
-            {/* Input */}
-            <div className="border-t p-4">
-              <div className="flex gap-2">
-                <Input
-                  ref={inputRef}
-                  placeholder="Type your health question..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  disabled={loading}
-                  className="h-12 rounded-xl"
-                  data-testid="chat-input"
-                />
-                <Button
-                  onClick={handleSend}
-                  disabled={!input.trim() || loading}
-                  className="h-12 w-12 rounded-xl"
-                  data-testid="send-btn"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+            {/* Disclaimer */}
+            <div className="mt-4 flex items-start gap-2 p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-sm">
+              <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-amber-800 dark:text-amber-200">
+                <strong>Disclaimer:</strong> This AI assistant provides general health information only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical concerns.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </TabsContent>
 
-        {/* Disclaimer */}
-        <div className="mt-4 flex items-start gap-2 p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-sm">
-          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-amber-800 dark:text-amber-200">
-            <strong>Disclaimer:</strong> This AI assistant provides general health information only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical concerns.
-          </p>
-        </div>
-      </main>
+          {/* HUMAN DOCTORS TAB */}
+          <TabsContent value="human">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {doctors.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-muted-foreground">
+                  No verified doctors available at the moment.
+                </div>
+              ) : doctors.map(doc => (
+                <Card key={doc._id} className="hover:shadow-md transition-all">
+                  <CardHeader className="flex flex-row items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                      {doc.name[0]}
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">{doc.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{doc.specialization || "General Physician"}</p>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Stethoscope className="h-4 w-4" />
+                        <span>{doc.qualification || "MBBS"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="h-4 w-4" />
+                        <span>{doc.experience_years || 1}+ Years Exp</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Video className="h-4 w-4" />
+                        <span>Video / Chat</span>
+                      </div>
+                    </div>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="w-full">Consult Now</Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Describe your symptoms for {doc.name}.
+                        </p>
+                        <Textarea
+                          placeholder="I have a fever and headache since yesterday..."
+                          value={symptoms}
+                          onChange={(e) => setSymptoms(e.target.value)}
+                          className="mb-4"
+                        />
+                        <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
+                          Send Request
+                        </Button>
+                      </DialogContent>
+                    </Dialog>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </main >
 
       <Footer />
-    </div>
+    </div >
   );
 };
 

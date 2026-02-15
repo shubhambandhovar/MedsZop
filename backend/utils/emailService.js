@@ -86,20 +86,52 @@ const sendViaSMTP = async (email, otp) => {
 };
 
 /**
- * Send OTP Email - auto-selects Resend (production) or SMTP (local)
+ * Generic Send Email function (Internal use)
  */
-const sendOTPEmail = async (email, otp) => {
+const sendEmail = async (to, subject, html) => {
   if (process.env.RESEND_API_KEY) {
-    console.log("[Email] Using Resend API");
-    return sendViaResend(email, otp);
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { data, error } = await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: [to],
+      subject,
+      html,
+    });
+    if (error) throw new Error(`Resend error: ${error.message}`);
+    console.log(`[Email] Sent via Resend to ${to}`);
+    return data;
   }
 
   if (process.env.SMTP_HOST) {
-    console.log("[Email] Using SMTP (local)");
-    return sendViaSMTP(email, otp);
+    // Reuse SMTP transporter logic
+    const port = parseInt(process.env.SMTP_PORT) || 465;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port,
+      secure: port === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      tls: { rejectUnauthorized: false }
+    });
+    const info = await transporter.sendMail({
+      from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`[Email] Sent via SMTP to ${to}`);
+    return info;
   }
 
-  throw new Error("No email provider configured. Set RESEND_API_KEY or SMTP_HOST.");
+  // Fallback for development if no creds
+  console.log(`[Email Mock] To: ${to}, Subject: ${subject}`);
+  return { id: "mock-email" };
 };
 
-module.exports = { sendOTPEmail };
+/**
+ * Send OTP Email
+ */
+const sendOTPEmail = async (email, otp) => {
+  return sendEmail(email, "Your MedsZop Verification Code", buildOTPEmailHTML(otp));
+};
+
+module.exports = { sendOTPEmail, sendEmail };

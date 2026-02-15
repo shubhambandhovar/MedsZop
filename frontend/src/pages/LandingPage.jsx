@@ -18,7 +18,8 @@ import {
   ArrowRight,
   CheckCircle,
   Sparkles,
-  Heart
+  Heart,
+  Store
 } from "lucide-react";
 
 const fadeIn = {
@@ -332,6 +333,71 @@ const LandingPage = () => {
                 className="relative rounded-3xl shadow-2xl w-full object-cover h-[450px]"
               />
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partner Section */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-0">Partner with Us</Badge>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              Join the MedsZop Ecosystem
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Whether you're a doctor, pharmacist, or delivery partner, we have the right tools for you.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Doctor Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-blue-500">
+              <CardContent className="p-6 text-center">
+                <div className="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <Brain className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">For Doctors</h3>
+                <p className="text-muted-foreground mb-6">
+                  Expand your practice with digital consultations and smart prescription tools.
+                </p>
+                <Link to="/apply/doctor">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Join as Doctor</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Pharmacist Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-emerald-500">
+              <CardContent className="p-6 text-center">
+                <div className="mx-auto h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                  <Store className="h-8 w-8 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">For Pharmacists</h3>
+                <p className="text-muted-foreground mb-6">
+                  Grow your pharmacy business with our online ordering and delivery network.
+                </p>
+                <Link to="/apply/pharmacist">
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">Join as Pharmacist</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Delivery Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-amber-500">
+              <CardContent className="p-6 text-center">
+                <div className="mx-auto h-16 w-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                  <Truck className="h-8 w-8 text-amber-600" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">For Delivery Partners</h3>
+                <p className="text-muted-foreground mb-6">
+                  Earn money by delivering medicines with flexible working hours.
+                </p>
+                <Link to="/apply/delivery">
+                  <Button className="w-full bg-amber-600 hover:bg-amber-700">Join as Delivery Partner</Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
