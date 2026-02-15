@@ -17,6 +17,7 @@ import { CartProvider } from "./contexts/CartContext.jsx";
 
 import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import MedicinesPage from "./pages/MedicinesPage.jsx";
@@ -43,6 +44,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/medicines" element={<MedicinesPage />} />
             <Route path="/medicines/:id" element={<MedicineDetailPage />} />

@@ -46,6 +46,9 @@ const userSchema = new mongoose.Schema({
     default: "local"
   },
 
+  resetPasswordOtp: String,
+  resetPasswordExpire: Date,
+
   addresses: [
     {
       name: String,

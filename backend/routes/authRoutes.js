@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
-const { register, login, getMe, changePassword, updateProfile, googleLogin, googleSignup } = require("../controllers/authController");
+const { register, login, getMe, changePassword, updateProfile, googleLogin, googleSignup, forgotPassword, verifyResetOTP, resetPassword } = require("../controllers/authController");
 const { sendOTP, verifyOTP } = require("../controllers/otpController");
 
 // OTP routes
@@ -25,7 +25,12 @@ router.get("/me", auth, getMe);
 // Update Profile (Generic)
 router.put("/profile", auth, updateProfile);
 
-// Change Password
+// Change Password (Authenticated)
 router.post("/change-password", auth, changePassword);
+
+// Forgot Password Flow
+router.post("/forgot-password", forgotPassword);
+router.post("/verify-reset-otp", verifyResetOTP);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;
