@@ -63,7 +63,13 @@ const DoctorChatPage = () => {
       }
     };
     fetchDoctors();
-    if (token) fetchConsultations();
+
+    let interval;
+    if (token) {
+      fetchConsultations();
+      interval = setInterval(fetchConsultations, 3000); // Poll every 3 seconds for status updates
+    }
+    return () => clearInterval(interval);
   }, [token]);
 
   const fetchConsultations = async () => {
@@ -354,57 +360,55 @@ const DoctorChatPage = () => {
                 <div className="col-span-full text-center py-12 text-muted-foreground">
                   No verified doctors available at the moment.
                 </div>
-              ) : doctors.map(doc => (
-                <Card key={doc._id} className="hover:shadow-md transition-all">
-                  <CardHeader className="flex flex-row items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
-                      {doc.name[0]}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{doc.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{doc.specialization || "General Physician"}</p>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Stethoscope className="h-4 w-4" />
-                        <span>{doc.qualification || "MBBS"}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="h-4 w-4" />
-                        <span>{doc.experience_years || 1}+ Years Exp</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Video className="h-4 w-4" />
-                        <span>Video / Chat</span>
-                      </div>
-                    </div>
+              ) : doctors.map(doc => {
+                const docConsultations = consultations.filter(c => (c.doctor_id?._id || c.doctor_id) === doc._id);
+                // Sort descending just to be safe, though backend does it
+                docConsultations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                    {(() => {
-                      const existing = consultations.find(c => c.doctor_id?._id === doc._id || c.doctor_id === doc._id);
+                const activeConsultation = docConsultations.find(c => ['PENDING', 'ACCEPTED'].includes(c.status));
+                const lastCompleted = docConsultations.find(c => c.status === 'COMPLETED');
 
-                      if (existing && existing.status === 'ACCEPTED') {
-                        return (
-                          <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(existing)}>
-                            <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
-                          </Button>
-                        );
-                      } else if (existing && existing.status === 'PENDING') {
-                        return <Button className="w-full" variant="outline" disabled>Request Pending</Button>;
-                      }
+                return (
+                  <Card key={doc._id} className="hover:shadow-md transition-all">
+                    <CardHeader className="flex flex-row items-center gap-4">
+                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                        {doc.name[0]}
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{doc.name}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{doc.specialization || "General Physician"}</p>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Stethoscope className="h-4 w-4" />
+                          <span>{doc.qualification || "MBBS"}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Clock className="h-4 w-4" />
+                          <span>{doc.experience_years || 1}+ Years Exp</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Video className="h-4 w-4" />
+                          <span>Video / Chat</span>
+                        </div>
+                      </div>
 
-                      return (
-                        <div className="space-y-2">
-                          {existing && existing.status === 'COMPLETED' && (
-                            <Button className="w-full" variant="outline" onClick={() => setSelectedChat(existing)}>
-                              View Past Chat
+                      <div className="space-y-2">
+                        {/* ACTIVE / PENDING STATUS & NEW REQUEST */}
+                        {activeConsultation ? (
+                          activeConsultation.status === 'ACCEPTED' ? (
+                            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(activeConsultation)}>
+                              <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
                             </Button>
-                          )}
-
+                          ) : (
+                            <Button className="w-full" variant="outline" disabled>Request Pending</Button>
+                          )
+                        ) : (
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button className="w-full">{existing?.status === 'COMPLETED' ? "Consult Again" : "Consult Now"}</Button>
+                              <Button className="w-full">Consult Now</Button>
                             </DialogTrigger>
                             <DialogContent>
                               <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
@@ -422,13 +426,19 @@ const DoctorChatPage = () => {
                               </Button>
                             </DialogContent>
                           </Dialog>
-                        </div>
-                      );
-                    })()}
+                        )}
 
-                  </CardContent>
-                </Card>
-              ))}
+                        {/* PAST HISTORY BUTTON */}
+                        {lastCompleted && (
+                          <Button className="w-full" variant="secondary" onClick={() => setSelectedChat(lastCompleted)}>
+                            View Past Chat
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
             {/* CHAT DIALOG */}
