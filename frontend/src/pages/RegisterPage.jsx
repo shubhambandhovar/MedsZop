@@ -220,8 +220,8 @@ const RegisterPage = () => {
             <img
               src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
               alt="MedsZop Logo"
-              className="h-20 w-auto object-contain block mx-auto"
-              style={{ maxWidth: '320px', marginBottom: 0 }}
+              className="h-28 w-auto object-contain block mx-auto"
+              style={{ maxWidth: '480px', marginBottom: 0 }}
             />
           </Link>
         </div>

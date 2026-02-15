@@ -148,8 +148,8 @@ const Navbar = () => {
               <img
                 src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
                 alt="MedsZop Logo"
-                className="h-10 w-auto object-contain min-w-[60px]"
-                style={{ maxWidth: '160px' }}
+                className="h-20 w-auto object-contain min-w-[120px]"
+                style={{ maxWidth: '190px' }}
               />
             </Link>
 
