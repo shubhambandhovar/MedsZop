@@ -34,6 +34,9 @@ const LoginPage = () => {
       case "delivery":
         navigate("/delivery");
         break;
+      case "doctor":
+        navigate("/doctor-dashboard");
+        break;
       default:
         navigate("/dashboard");
     }

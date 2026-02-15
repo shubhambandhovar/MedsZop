@@ -122,6 +122,8 @@ const Navbar = () => {
         return "/pharmacy";
       case "delivery":
         return "/delivery";
+      case "doctor":
+        return "/doctor-dashboard";
       default:
         return "/dashboard";
     }

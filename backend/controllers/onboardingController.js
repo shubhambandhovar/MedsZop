@@ -183,7 +183,7 @@ exports.reviewApplication = async (req, res) => {
                 phone: app.phone,
                 password: hashedPassword,
                 role: role === "pharmacist" ? "pharmacy" : role,
-                is_first_login: true,
+                is_first_login: false,
                 authProvider: "local"
             });
 
