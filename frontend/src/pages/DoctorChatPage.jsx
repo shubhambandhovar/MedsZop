@@ -16,6 +16,8 @@ import {
   Sparkles,
   AlertCircle
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -36,7 +38,7 @@ const DoctorChatPage = () => {
   const inputRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   useEffect(() => {
@@ -63,7 +65,7 @@ const DoctorChatPage = () => {
         role: "assistant",
         content: response.data.response
       }]);
-      
+
       if (response.data.session_id) {
         setSessionId(response.data.session_id);
       }
@@ -128,7 +130,7 @@ const DoctorChatPage = () => {
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
             {/* Messages */}
             <ScrollArea className="flex-1 p-4">
@@ -138,29 +140,29 @@ const DoctorChatPage = () => {
                     key={index}
                     className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
                   >
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
-                      message.role === "user" 
-                        ? "bg-primary text-white" 
-                        : "bg-emerald-100"
-                    }`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${message.role === "user"
+                      ? "bg-primary text-white"
+                      : "bg-emerald-100"
+                      }`}>
                       {message.role === "user" ? (
                         <User className="h-4 w-4" />
                       ) : (
                         <Bot className="h-4 w-4 text-emerald-600" />
                       )}
                     </div>
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-primary text-white"
-                        : message.error
+                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user"
+                      ? "bg-primary text-white"
+                      : message.error
                         ? "bg-destructive/10 border border-destructive/20"
                         : "bg-muted"
-                    }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      }`}>
+                      <div className="text-sm markdown-content max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}
-                
+
                 {loading && (
                   <div className="flex gap-3">
                     <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
@@ -171,7 +173,7 @@ const DoctorChatPage = () => {
                     </div>
                   </div>
                 )}
-                
+
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
