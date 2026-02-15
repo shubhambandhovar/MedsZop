@@ -24,7 +24,7 @@ import remarkGfm from "remark-gfm";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Textarea } from "../components/ui/textarea";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -42,6 +42,14 @@ const DoctorChatPage = () => {
   const [sessionId, setSessionId] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [symptoms, setSymptoms] = useState("");
+  const [consultations, setConsultations] = useState([]); // Track user's consultations
+
+  // Chat State
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const chatScrollRef = useRef(null);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -55,7 +63,59 @@ const DoctorChatPage = () => {
       }
     };
     fetchDoctors();
-  }, []);
+    if (token) fetchConsultations();
+  }, [token]);
+
+  const fetchConsultations = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/doctor/my-consultations`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setConsultations(res.data);
+    } catch (err) {
+      console.error("Failed fetch consultations");
+    }
+  };
+
+  // Chat Logic
+  const fetchChatMessages = async (id) => {
+    try {
+      const res = await axios.get(`${API_URL}/doctor/consultation/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setChatMessages(res.data.messages || []);
+    } catch (err) {
+      console.error("Failed to fetch messages", err);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return;
+    try {
+      const res = await axios.post(`${API_URL}/doctor/consultation/${selectedChat._id}/chat`, {
+        message: newMessage
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setChatMessages(res.data.messages || []);
+      setNewMessage("");
+    } catch (err) {
+      toast.error("Failed to send message");
+    }
+  };
+
+  useEffect(() => {
+    let interval;
+    if (selectedChat) {
+      fetchChatMessages(selectedChat._id);
+      interval = setInterval(() => fetchChatMessages(selectedChat._id), 3000);
+    }
+    return () => clearInterval(interval);
+  }, [selectedChat]);
+
+  useEffect(() => {
+    chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
 
   const handleConsultRequest = async (doctorId) => {
     if (!token) return toast.error("Please login to consulting a doctor");
@@ -70,6 +130,7 @@ const DoctorChatPage = () => {
       });
       toast.success("Consultation requested! The doctor will review shortly.");
       setSymptoms("");
+      fetchConsultations(); // Refresh status
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to request consultation");
     }
@@ -320,30 +381,88 @@ const DoctorChatPage = () => {
                       </div>
                     </div>
 
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="w-full">Consult Now</Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Describe your symptoms for {doc.name}.
-                        </p>
-                        <Textarea
-                          placeholder="I have a fever and headache since yesterday..."
-                          value={symptoms}
-                          onChange={(e) => setSymptoms(e.target.value)}
-                          className="mb-4"
-                        />
-                        <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
-                          Send Request
-                        </Button>
-                      </DialogContent>
-                    </Dialog>
+                    {(() => {
+                      const existing = consultations.find(c => c.doctor_id?._id === doc._id || c.doctor_id === doc._id);
+                      if (existing) {
+                        if (existing.status === 'ACCEPTED') {
+                          return (
+                            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(existing)}>
+                              <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
+                            </Button>
+                          );
+                        } else if (existing.status === 'PENDING') {
+                          return <Button className="w-full" variant="outline" disabled>Request Pending</Button>;
+                        } else if (existing.status === 'COMPLETED') {
+                          return <Button className="w-full" variant="secondary" onClick={() => setSelectedChat(existing)}>View History</Button>;
+                        }
+                      }
+
+                      return (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="w-full">Consult Now</Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              Describe your symptoms for {doc.name}.
+                            </p>
+                            <Textarea
+                              placeholder="I have a fever and headache since yesterday..."
+                              value={symptoms}
+                              onChange={(e) => setSymptoms(e.target.value)}
+                              className="mb-4"
+                            />
+                            <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
+                              Send Request
+                            </Button>
+                          </DialogContent>
+                        </Dialog>
+                      );
+                    })()}
+
                   </CardContent>
                 </Card>
               ))}
             </div>
+
+            {/* CHAT DIALOG */}
+            <Dialog open={!!selectedChat} onOpenChange={(o) => !o && setSelectedChat(null)}>
+              <DialogContent className="sm:max-w-md h-[500px] flex flex-col">
+                <DialogHeader>
+                  <DialogTitle>Chat with {selectedChat?.doctor_id?.name || "Doctor"}</DialogTitle>
+                </DialogHeader>
+
+                <ScrollArea className="flex-1 p-4 border rounded-md">
+                  <div className="space-y-4">
+                    {chatMessages.map((msg, idx) => (
+                      <div key={idx} className={`flex ${msg.sender === 'patient' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${msg.sender === 'patient' ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                          }`}>
+                          <p>{msg.content}</p>
+                          <span className="text-[10px] opacity-70 block text-right mt-1">
+                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={chatScrollRef} />
+                  </div>
+                </ScrollArea>
+
+                <div className="flex gap-2 mt-4">
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type a message..."
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  />
+                  <Button onClick={handleSendMessage} size="icon">
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
         </Tabs>
       </main >

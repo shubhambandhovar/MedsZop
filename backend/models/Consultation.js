@@ -26,6 +26,11 @@ const consultationSchema = new mongoose.Schema({
     notes: {
         type: String
     },
+    messages: [{
+        sender: { type: String, enum: ['doctor', 'patient'], required: true },
+        content: { type: String, required: true },
+        timestamp: { type: Date, default: Date.now }
+    }],
     createdAt: {
         type: Date,
         default: Date.now

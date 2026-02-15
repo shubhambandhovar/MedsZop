@@ -95,3 +95,74 @@ exports.updateConsultationStatus = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+/**
+ * GET PATIENT'S CONSULTATIONS
+ */
+exports.getPatientConsultations = async (req, res) => {
+    try {
+        const consultations = await Consultation.find({ patient_id: req.user.id })
+            .populate("doctor_id", "name email phone")
+            .sort({ createdAt: -1 });
+
+        res.json(consultations);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+/**
+ * SEND MESSAGE
+ */
+exports.sendMessage = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { message } = req.body;
+
+        const consultation = await Consultation.findById(id);
+        if (!consultation) return res.status(404).json({ message: "Consultation not found" });
+
+        // Determine sender
+        let sender = "";
+        if (consultation.doctor_id.toString() === req.user.id) {
+            sender = "doctor";
+        } else if (consultation.patient_id.toString() === req.user.id) {
+            sender = "patient";
+        } else {
+            return res.status(403).json({ message: "Unauthorized access to this consultation" });
+        }
+
+        consultation.messages.push({
+            sender,
+            content: message
+        });
+
+        await consultation.save();
+        res.json(consultation);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+/**
+ * GET CONSULTATION DETAILS (For Chat)
+ */
+exports.getConsultation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const consultation = await Consultation.findById(id)
+            .populate("doctor_id", "name")
+            .populate("patient_id", "name");
+
+        if (!consultation) return res.status(404).json({ message: "Consultation not found" });
+
+        // Verify access
+        if (consultation.doctor_id._id.toString() !== req.user.id && consultation.patient_id._id.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        res.json(consultation);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
