@@ -166,13 +166,13 @@ const LandingPage = () => {
                 <div className="absolute -inset-4 pointer-events-none bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
 
                 <img
-                  src="https://drive.google.com/file/d/1PxgYSEHPgdmBxMzbOsBbqLragrSd02U-/view?usp=drive_link"
+                  src="https://i.ibb.co/Wvhdjg0L/medszop.png"
                   alt="Healthcare consultation"
                   className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]"
                 />
 
                 {/* Floating Cards */}
-                <Card className="absolute -left-8 top-20 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
+                <Card className="absolute -left-8 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
                       <CheckCircle className="h-5 w-5 text-emerald-600" />
