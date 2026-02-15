@@ -166,7 +166,7 @@ const LandingPage = () => {
                 <div className="absolute -inset-4 pointer-events-none bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
 
                 <img
-                  src="https://images.pexels.com/photos/8313184/pexels-photo-8313184.jpeg"
+                  src="https://drive.google.com/file/d/1PxgYSEHPgdmBxMzbOsBbqLragrSd02U-/view?usp=drive_link"
                   alt="Healthcare consultation"
                   className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]"
                 />
