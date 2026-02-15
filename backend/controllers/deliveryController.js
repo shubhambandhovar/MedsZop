@@ -1,4 +1,6 @@
 const Order = require("../models/Order");
+const User = require("../models/User");
+const { sendOrderDeliveredEmail } = require("../utils/emailService");
 
 exports.getOrders = async (req, res) => {
   try {
@@ -89,6 +91,32 @@ exports.completeDelivery = async (req, res) => {
       status: "delivered",
       timestamp: new Date()
     });
+
+    // EMAIL NOTIFICATION - DELIVERED
+    try {
+      if (!order.emailSent?.delivered) {
+        const user = await User.findById(order.user_id);
+        if (user) {
+          await sendOrderDeliveredEmail(user.email, user.name, order.orderNumber);
+
+          // Initialize if missing ensuring we don't overwrite if it exists but is partial
+          // Mongoose handles partial updates fine usually but let's be safe
+          if (!order.emailSent) {
+            order.emailSent = {
+              placed: true, // Legacy assumption
+              confirmed: true,
+              cancelled: false,
+              outForDelivery: true,
+              delivered: false
+            };
+          }
+
+          order.emailSent.delivered = true;
+        }
+      }
+    } catch (emailErr) {
+      console.error("Failed to send Order Delivered email:", emailErr.message);
+    }
 
     await order.save();
     res.json({ message: "Order delivered successfully" });
