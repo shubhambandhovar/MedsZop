@@ -42,6 +42,10 @@ const DoctorDashboardPage = () => {
 
     useEffect(() => {
         fetchAppointments();
+        const interval = setInterval(() => {
+            fetchAppointments();
+        }, 3000);
+        return () => clearInterval(interval);
     }, [token]);
 
     const handleStatusUpdate = async (id, status) => {
