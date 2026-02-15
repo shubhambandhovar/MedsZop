@@ -134,4 +134,61 @@ const sendOTPEmail = async (email, otp) => {
   return sendEmail(email, "Your MedsZop Verification Code", buildOTPEmailHTML(otp));
 };
 
-module.exports = { sendOTPEmail, sendEmail };
+/* =========================
+ * WELCOME EMAIL
+ * ========================= */
+const buildWelcomeEmailHTML = (name) => `
+  <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333; line-height: 1.6;">
+    <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800;">Welcome to MedsZop 🎉</h1>
+      <p style="color: #d1fae5; margin: 8px 0 0; font-size: 16px;">We're thrilled to have you onboard, ${name}!</p>
+    </div>
+    
+    <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="font-size: 16px; margin-bottom: 24px;">Hi ${name},</p>
+      
+      <p style="margin-bottom: 24px;">Thank you for joining MedsZop! You've just taken a big step towards smarter, faster healthcare.</p>
+      
+      <h3 style="color: #10b981; font-size: 18px; margin-bottom: 16px;">Here's what you can do now:</h3>
+      
+      <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+        <li style="margin-bottom: 12px; padding-left: 24px; position: relative;">
+          <span style="position: absolute; left: 0; color: #10b981;">✔</span>
+          <strong>Same-Hour Delivery:</strong> Get medicines delivered to your doorstep in minutes.
+        </li>
+        <li style="margin-bottom: 12px; padding-left: 24px; position: relative;">
+          <span style="position: absolute; left: 0; color: #10b981;">✔</span>
+          <strong>AI Prescription Scanner:</strong> Instantly digitize and order from your prescription.
+        </li>
+        <li style="margin-bottom: 12px; padding-left: 24px; position: relative;">
+          <span style="position: absolute; left: 0; color: #10b981;">✔</span>
+          <strong>Doctor Consultations:</strong> Connect with top specialists instantly via chat or video.
+        </li>
+      </ul>
+      
+      <div style="text-align: center; margin-bottom: 32px;">
+        <a href="https://medszop.site" style="background-color: #10b981; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 16px;">Explore MedsZop Now</a>
+      </div>
+      
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Need help? Our support team is here for you 24/7.</p>
+      
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;" />
+      
+      <p style="margin: 0; font-weight: 600;">Best regards,</p>
+      <p style="margin: 0; color: #10b981;">Team MedsZop</p>
+    </div>
+    
+    <div style="background: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">
+      <p style="font-size: 12px; color: #9ca3af; margin: 0;">&copy; ${new Date().getFullYear()} MedsZop. All rights reserved.</p>
+    </div>
+  </div>
+`;
+
+/**
+ * Send Welcome Email
+ */
+const sendWelcomeEmail = async (email, name) => {
+  return sendEmail(email, "Welcome to MedsZop 🎉", buildWelcomeEmailHTML(name));
+};
+
+module.exports = { sendOTPEmail, sendEmail, sendWelcomeEmail };

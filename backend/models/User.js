@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
   resetPasswordOtp: String,
   resetPasswordExpire: Date,
 
+  welcomeEmailSent: {
+    type: Boolean,
+    default: false
+  },
+
   addresses: [
     {
       name: String,

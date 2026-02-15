@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Pharmacy = require("../models/Pharmacy");
-const { sendOTPEmail } = require("../utils/emailService");
+const { sendOTPEmail, sendWelcomeEmail } = require("../utils/emailService");
 const { OAuth2Client } = require("google-auth-library");
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -50,6 +50,20 @@ exports.register = async (req, res) => {
         verified: false,
         medicines: [],
       });
+    }
+
+    // WELCOME EMAIL (Customers)
+    // WELCOME EMAIL (Customers)
+    if (role === 'customer') {
+      try {
+        if (!user.welcomeEmailSent) {
+          await sendWelcomeEmail(user.email, user.name);
+          user.welcomeEmailSent = true;
+          await user.save();
+        }
+      } catch (emailErr) {
+        console.error("Welcome email failed:", emailErr.message);
+      }
     }
 
     const token = jwt.sign(
@@ -302,6 +316,17 @@ exports.googleSignup = async (req, res) => {
       authProvider: "google",
       role: "customer",
     });
+
+    // WELCOME EMAIL (Customers)
+    try {
+      if (!user.welcomeEmailSent) {
+        await sendWelcomeEmail(user.email, user.name);
+        user.welcomeEmailSent = true;
+        await user.save();
+      }
+    } catch (emailErr) {
+      console.error("Welcome email failed:", emailErr.message);
+    }
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
