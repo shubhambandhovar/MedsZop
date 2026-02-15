@@ -169,7 +169,7 @@ function App() {
             <Route
               path="/settings"
               element={
-                <ProtectedRoute allowedRoles={["customer", "pharmacy", "delivery", "admin"]}>
+                <ProtectedRoute allowedRoles={["customer", "pharmacy", "delivery", "admin", "doctor"]}>
                   <SettingsPage />
                 </ProtectedRoute>
               }
