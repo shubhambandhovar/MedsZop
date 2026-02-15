@@ -383,41 +383,46 @@ const DoctorChatPage = () => {
 
                     {(() => {
                       const existing = consultations.find(c => c.doctor_id?._id === doc._id || c.doctor_id === doc._id);
-                      if (existing) {
-                        if (existing.status === 'ACCEPTED') {
-                          return (
-                            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(existing)}>
-                              <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
-                            </Button>
-                          );
-                        } else if (existing.status === 'PENDING') {
-                          return <Button className="w-full" variant="outline" disabled>Request Pending</Button>;
-                        } else if (existing.status === 'COMPLETED') {
-                          return <Button className="w-full" variant="secondary" onClick={() => setSelectedChat(existing)}>View History</Button>;
-                        }
+
+                      if (existing && existing.status === 'ACCEPTED') {
+                        return (
+                          <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => setSelectedChat(existing)}>
+                            <MessageSquare className="w-4 h-4 mr-2" /> Chat Now
+                          </Button>
+                        );
+                      } else if (existing && existing.status === 'PENDING') {
+                        return <Button className="w-full" variant="outline" disabled>Request Pending</Button>;
                       }
 
                       return (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button className="w-full">Consult Now</Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
-                            <p className="text-sm text-muted-foreground mb-4">
-                              Describe your symptoms for {doc.name}.
-                            </p>
-                            <Textarea
-                              placeholder="I have a fever and headache since yesterday..."
-                              value={symptoms}
-                              onChange={(e) => setSymptoms(e.target.value)}
-                              className="mb-4"
-                            />
-                            <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
-                              Send Request
+                        <div className="space-y-2">
+                          {existing && existing.status === 'COMPLETED' && (
+                            <Button className="w-full" variant="outline" onClick={() => setSelectedChat(existing)}>
+                              View Past Chat
                             </Button>
-                          </DialogContent>
-                        </Dialog>
+                          )}
+
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button className="w-full">{existing?.status === 'COMPLETED' ? "Consult Again" : "Consult Now"}</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <h3 className="text-lg font-bold mb-2">Request Consultation</h3>
+                              <p className="text-sm text-muted-foreground mb-4">
+                                Describe your symptoms for {doc.name}.
+                              </p>
+                              <Textarea
+                                placeholder="I have a fever and headache since yesterday..."
+                                value={symptoms}
+                                onChange={(e) => setSymptoms(e.target.value)}
+                                className="mb-4"
+                              />
+                              <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
+                                Send Request
+                              </Button>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
                       );
                     })()}
 
