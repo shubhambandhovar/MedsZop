@@ -273,6 +273,65 @@ const buildOrderDeliveredEmail = (name, orderIdNumber) => `
     <p style="margin: 0;">Team MedsZop</p>
   </div>
 </div>
+</div>
+`;
+
+/* =========================
+ * PHARMACY - NEW ORDER EMAIL
+ * ========================= */
+const buildPharmacyOrderReceivedEmail = (pharmacyName, orderId) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Order Received! 💊</h1>
+    <p style="color: #e0f2fe; margin: 5px 0 0;">Action Required</p>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hello ${pharmacyName},</p>
+    <p>You have received a new order with ID <strong>#${orderId}</strong>.</p>
+    <p>Please review the order details and approve or cancel it as soon as possible.</p>
+    
+    <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://medszop.site/pharmacy/orders/${orderId}" style="color: #0284c7; text-decoration: none; font-weight: 600; font-size: 16px;">
+        Review Order in Dashboard
+      </a>
+    </div>
+
+    <p style="color: #64748b; font-size: 14px;">Timely confirmation helps ensure faster delivery for customers.</p>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">MedsZop Admin Team</p>
+  </div>
+</div>
+`;
+
+/* =========================
+ * DELIVERY - NEW REQUEST EMAIL
+ * ========================= */
+const buildDeliveryRequestEmail = (partnerName, orderId, pickupLoc, dropoffLoc) => `
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
+  <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Delivery Request 🚴</h1>
+    <p style="color: #fef3c7; margin: 5px 0 0;">Ready for pickup</p>
+  </div>
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px;">Hello ${partnerName},</p>
+    <p>You have a new delivery request for Order <strong>#${orderId}</strong>.</p>
+    
+    <div style="margin: 20px 0; padding: 15px; background: #fffbeb; border: 1px border #fcd34d; border-radius: 8px;">
+      <p style="margin: 5px 0;"><strong>📍 Pickup:</strong> ${pickupLoc}</p>
+      <p style="margin: 5px 0;"><strong>🏠 Delivery:</strong> ${dropoffLoc}</p>
+    </div>
+
+    <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <a href="https://medszop.site/delivery/orders/${orderId}" style="color: #d97706; text-decoration: none; font-weight: 600; font-size: 16px;">
+        View Request in Dashboard
+      </a>
+    </div>
+
+    <p style="color: #64748b; font-size: 14px;">Please update your status if you accept this delivery.</p>
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+    <p style="margin: 0;">MedsZop Logistics</p>
+  </div>
+</div>
 `;
 
 const sendOrderPlacedEmail = async (email, name, orderId) => {
@@ -291,6 +350,15 @@ const sendOrderDeliveredEmail = async (email, name, orderId) => {
   return sendEmail(email, "Your MedsZop order has been delivered 🎉", buildOrderDeliveredEmail(name, orderId));
 };
 
+const sendPharmacyOrderNotification = async (email, pharmacyName, orderId) => {
+  return sendEmail(email, "New order received on MedsZop 💊", buildPharmacyOrderReceivedEmail(pharmacyName, orderId));
+};
+
+const sendDeliveryRequestNotification = async (email, partnerName, orderId, pickup, dropoff) => {
+  // If broadcasting, partnerName might be generic "Partner"
+  return sendEmail(email, "New delivery request from MedsZop 🚴", buildDeliveryRequestEmail(partnerName, orderId, pickup, dropoff));
+};
+
 module.exports = {
   sendOTPEmail,
   sendEmail,
@@ -298,5 +366,9 @@ module.exports = {
   sendOrderPlacedEmail,
   sendOrderConfirmedEmail,
   sendOrderCancelledEmail,
-  sendOrderDeliveredEmail
+  sendOrderConfirmedEmail,
+  sendOrderCancelledEmail,
+  sendOrderDeliveredEmail,
+  sendPharmacyOrderNotification,
+  sendDeliveryRequestNotification
 };

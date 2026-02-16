@@ -41,7 +41,9 @@ const orderSchema = new mongoose.Schema({
     confirmed: { type: Boolean, default: false },
     cancelled: { type: Boolean, default: false },
     outForDelivery: { type: Boolean, default: false },
-    delivered: { type: Boolean, default: false }
+    delivered: { type: Boolean, default: false },
+    pharmacyNotified: { type: Boolean, default: false },
+    deliveryNotified: { type: Boolean, default: false }
   },
 
   delivery_agent_id: String,

@@ -7,7 +7,9 @@ const {
   sendOrderPlacedEmail,
   sendOrderConfirmedEmail,
   sendOrderCancelledEmail,
-  sendOrderDeliveredEmail
+  sendOrderDeliveredEmail,
+  sendPharmacyOrderNotification,
+  sendDeliveryRequestNotification
 } = require("../utils/emailService");
 
 // CREATE ORDER
@@ -118,16 +120,31 @@ exports.createOrder = async (req, res) => {
     // EMAIL NOTIFICATION - PLACED
     try {
       if (!order.emailSent?.placed) {
-        // user object is already available in this scope
+        // 1. Customer Email
         await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
 
-        // Update flag - requires re-saving or updating the instance if I want to persist it immediately
         order.emailSent = order.emailSent || {};
         order.emailSent.placed = true;
+
+        // 2. Pharmacy Email (New Feature)
+        if (order.pharmacy_id && !order.emailSent.pharmacyNotified) {
+          const pharmacy = await Pharmacy.findById(order.pharmacy_id);
+          if (pharmacy) {
+            const pharmacyUser = await User.findById(pharmacy.user_id);
+            if (pharmacyUser && pharmacyUser.email) {
+              await sendPharmacyOrderNotification(pharmacyUser.email, pharmacy.name || pharmacyUser.name, order.orderNumber);
+              order.emailSent.pharmacyNotified = true;
+              console.log(`[Email] Pharmacy notification sent to ${pharmacyUser.email}`);
+            } else {
+              console.warn(`[Email] Pharmacy user/email not found for pharmacy ${pharmacy._id}`);
+            }
+          }
+        }
+
         await order.save();
       }
     } catch (emailErr) {
-      console.error("Failed to send Order Placed email:", emailErr.message);
+      console.error("Failed to send Order emails:", emailErr.message);
     }
 
     // Clear cart
@@ -249,6 +266,40 @@ exports.updateOrderStatus = async (req, res) => {
           order.emailSent.delivered = true;
         }
       }
+
+      // DELIVERY PARTNER NOTIFICATION (New Feature)
+      // Trigger: Status = confirmed AND not yet notified
+      if (req.body.status === "confirmed" && !order.emailSent.deliveryNotified) {
+        // Find ALL delivery partners (Broadcast model as per request constraint to not refactor logic)
+        const deliveryPartners = await User.find({ role: "delivery" });
+
+        if (deliveryPartners.length > 0) {
+          console.log(`[Email] Broadcasting delivery request to ${deliveryPartners.length} partners...`);
+
+          // Prepare location info
+          let pickupLoc = "Pharmacy";
+          if (order.pharmacy_id) {
+            const ph = await Pharmacy.findById(order.pharmacy_id);
+            if (ph) pickupLoc = `${ph.name} (${ph.address || 'No Address'})`;
+          }
+
+          const dropoffLoc = order.address ?
+            `${order.address.addressLine1}, ${order.address.city}` : "Customer Location";
+
+          // Send to all efficiently
+          const emailPromises = deliveryPartners.map(dp =>
+            sendDeliveryRequestNotification(dp.email, dp.name, order.orderNumber, pickupLoc, dropoffLoc)
+              .catch(e => console.error(`Failed to send to partner ${dp.email}:`, e.message))
+          );
+
+          await Promise.allSettled(emailPromises);
+
+          order.emailSent.deliveryNotified = true;
+        } else {
+          console.warn("[Email] No delivery partners found to notify.");
+        }
+      }
+
     } catch (emailErr) {
       console.error(`Failed to send email for order status ${req.body.status}:`, emailErr.message);
     }
