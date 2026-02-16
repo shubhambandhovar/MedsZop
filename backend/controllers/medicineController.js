@@ -52,13 +52,14 @@ exports.getMedicines = async (req, res) => {
             name: m.name,
             generic_name: m.genericName,
             brand: m.company,
-            price: m.price,
+            price: (m.mrp && m.mrp > m.price) ? m.mrp : m.price,
             discount_price: (m.mrp && m.mrp > m.price) ? m.price : null,
             image_url: m.image,
-            requires_prescription: false,
+            requires_prescription: m.requiresPrescription || false,
             pharmacy_id: p._id.toString(),
             pharmacy_name: p.name,
-            in_stock: m.inStock
+            in_stock: m.inStock,
+            category: m.category // Also expose category
           });
         });
       }
@@ -97,15 +98,17 @@ exports.getMedicineById = async (req, res) => {
         name: m.name,
         generic_name: m.genericName,
         brand: m.company,
-        price: m.price,
-        discount_price: m.mrp > m.price ? m.price : null,
+        brand: m.company,
+        price: (m.mrp && m.mrp > m.price) ? m.mrp : m.price,
+        discount_price: (m.mrp && m.mrp > m.price) ? m.price : null,
         image_url: m.image,
-        requires_prescription: false,
+        requires_prescription: m.requiresPrescription || false,
         description: m.description,
-        stock: m.inStock ? 100 : 0, // Mock stock if simplified
+        stock: m.stock !== undefined ? m.stock : (m.inStock ? 100 : 0),
         pharmacy_id: pharmacy._id,
         pharmacy_name: pharmacy.name,
-        manufacturer: m.company
+        manufacturer: m.company,
+        category: m.category // Also expose category
       };
       return res.json(medicine);
     }
