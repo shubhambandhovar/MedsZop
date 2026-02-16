@@ -727,6 +727,75 @@ const PharmacyDashboardPage = () => {
                 </div>
               </div>
 
+              {/* Prescription Verification Section */}
+              {selectedOrder.prescription_url && (
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                  <h3 className="font-semibold text-amber-900 flex items-center mb-3">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Prescription Verification Required
+                  </h3>
+                  <div className="flex flex-col md:flex-row gap-6 items-start">
+                    <div className="relative group cursor-pointer" onClick={() => { setPreviewImage(`${API_URL}/${selectedOrder.prescription_url}`); setShowImageModal(true); }}>
+                      {selectedOrder.prescription_url.endsWith('.pdf') ? (
+                        <div className="h-32 w-32 bg-white rounded-lg border flex flex-col items-center justify-center text-red-500 shadow-sm hover:shadow-md transition-shadow">
+                          <FileText className="h-12 w-12 mb-2" />
+                          <span className="text-xs font-bold uppercase">View PDF</span>
+                        </div>
+                      ) : (
+                        <div className="relative overflow-hidden rounded-lg border shadow-sm">
+                          <img
+                            src={`${API_URL}/${selectedOrder.prescription_url}`}
+                            alt="Prescription"
+                            className="h-32 w-32 object-cover transition-transform group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                            <Eye className="text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-xs text-amber-700 mt-2 text-center font-medium">Click to View</p>
+                    </div>
+
+                    <div className="flex-1 space-y-3">
+                      <p className="text-sm text-amber-800">
+                        Please verify that the prescription matches the ordered medicines and is valid.
+                      </p>
+
+                      {selectedOrder.order_status === "pending_verification" && (
+                        <div className="flex gap-3 pt-2">
+                          <Button
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                            onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                            Approve & Confirm
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            className="gap-2"
+                            onClick={() => handleUpdateOrderStatus(selectedOrder._id, "cancelled")} // Using cancelled to trigger email
+                          >
+                            <XCircle className="h-4 w-4" />
+                            Reject Order
+                          </Button>
+                        </div>
+                      )}
+                      {selectedOrder.order_status === "confirmed" && (
+                        <p className="text-sm font-bold text-emerald-600 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" /> Prescription Verified & Accepted
+                        </p>
+                      )}
+                      {selectedOrder.order_status === "cancelled" && (
+                        <p className="text-sm font-bold text-red-600 flex items-center gap-2">
+                          <XCircle className="h-4 w-4" /> Order Rejected
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
               {/* Customer Info */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -773,121 +842,136 @@ const PharmacyDashboardPage = () => {
 
       {/* ================= MEDICINE MODALS (Add/Edit) ================= */}
       {/* ADD/EDIT MODAL REUSED */}
-      {(showAddMedicineModal || showEditMedicineModal) && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold font-heading">{showEditMedicineModal ? "Edit Medicine" : "Add Medicine"}</h2>
-              <Button variant="ghost" size="icon" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>X</Button>
+      {
+        (showAddMedicineModal || showEditMedicineModal) && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold font-heading">{showEditMedicineModal ? "Edit Medicine" : "Add Medicine"}</h2>
+                <Button variant="ghost" size="icon" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>X</Button>
+              </div>
+
+              <form onSubmit={showEditMedicineModal ? handleEditSubmit : handleAddSubmit} className="space-y-4">
+                {/* NAME & GENERIC */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Medicine Name *</label>
+                    <input name="name" value={medicineForm.name} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Generic Name</label>
+                    <input name="genericName" value={medicineForm.genericName} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                  </div>
+                </div>
+
+                {/* DETAILS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Company</label>
+                    <input name="company" value={medicineForm.company} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">MRP</label>
+                      <input name="mrp" type="number" value={medicineForm.mrp} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Price *</label>
+                      <input name="price" type="number" value={medicineForm.price} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
+                    </div>
+                  </div>
+                </div>
+
+                {/* EXTRA DETAILS 1 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Category</label>
+                    <input name="category" value={medicineForm.category} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" placeholder="e.g. tablet, syrup" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Manufacturer</label>
+                    <input name="manufacturer" value={medicineForm.manufacturer} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                  </div>
+                </div>
+
+                {/* EXTRA DETAILS 2 */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Stock Qty *</label>
+                    <input name="stock" type="number" value={medicineForm.stock} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Batch No.</label>
+                    <input name="batchNumber" value={medicineForm.batchNumber} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Expiry Date</label>
+                    <input name="expiryDate" type="date" value={medicineForm.expiryDate} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                  </div>
+                </div>
+
+                {/* TOGGLES */}
+                <div className="flex flex-wrap items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="inStock" checked={medicineForm.inStock} onChange={handleMedicineChange} className="w-4 h-4" />
+                    <span className="text-sm font-medium">In Stock</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="requiresPrescription" checked={medicineForm.requiresPrescription} onChange={handleMedicineChange} className="w-4 h-4" />
+                    <span className="text-sm font-medium">Requires Prescription</span>
+                  </label>
+
+                  <div className="flex-1 text-right text-sm font-bold text-emerald-600">
+                    {medicineForm.discount}% Discount Apply
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <textarea name="description" value={medicineForm.description} onChange={handleMedicineChange} className="w-full min-h-[80px] px-3 py-2 rounded-md border" />
+                </div>
+
+                {/* IMAGE */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Image</label>
+                  <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer relative hover:bg-muted/50">
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                    {medicineForm.image ? (
+                      <img src={medicineForm.image} alt="Preview" className="h-20 mx-auto object-contain" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Click to upload</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button type="button" variant="outline" className="flex-1" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>Cancel</Button>
+                  <Button type="submit" className="flex-1">{showEditMedicineModal ? "Update" : "Save"}</Button>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={showEditMedicineModal ? handleEditSubmit : handleAddSubmit} className="space-y-4">
-              {/* NAME & GENERIC */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Medicine Name *</label>
-                  <input name="name" value={medicineForm.name} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Generic Name</label>
-                  <input name="genericName" value={medicineForm.genericName} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                </div>
-              </div>
-
-              {/* DETAILS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Company</label>
-                  <input name="company" value={medicineForm.company} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">MRP</label>
-                    <input name="mrp" type="number" value={medicineForm.mrp} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Price *</label>
-                    <input name="price" type="number" value={medicineForm.price} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
-                  </div>
-                </div>
-              </div>
-
-              {/* EXTRA DETAILS 1 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Category</label>
-                  <input name="category" value={medicineForm.category} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" placeholder="e.g. tablet, syrup" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Manufacturer</label>
-                  <input name="manufacturer" value={medicineForm.manufacturer} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                </div>
-              </div>
-
-              {/* EXTRA DETAILS 2 */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Stock Qty *</label>
-                  <input name="stock" type="number" value={medicineForm.stock} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Batch No.</label>
-                  <input name="batchNumber" value={medicineForm.batchNumber} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Expiry Date</label>
-                  <input name="expiryDate" type="date" value={medicineForm.expiryDate} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
-                </div>
-              </div>
-
-              {/* TOGGLES */}
-              <div className="flex flex-wrap items-center gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" name="inStock" checked={medicineForm.inStock} onChange={handleMedicineChange} className="w-4 h-4" />
-                  <span className="text-sm font-medium">In Stock</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" name="requiresPrescription" checked={medicineForm.requiresPrescription} onChange={handleMedicineChange} className="w-4 h-4" />
-                  <span className="text-sm font-medium">Requires Prescription</span>
-                </label>
-
-                <div className="flex-1 text-right text-sm font-bold text-emerald-600">
-                  {medicineForm.discount}% Discount Apply
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
-                <textarea name="description" value={medicineForm.description} onChange={handleMedicineChange} className="w-full min-h-[80px] px-3 py-2 rounded-md border" />
-              </div>
-
-              {/* IMAGE */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Image</label>
-                <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer relative hover:bg-muted/50">
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
-                  {medicineForm.image ? (
-                    <img src={medicineForm.image} alt="Preview" className="h-20 mx-auto object-contain" />
-                  ) : (
-                    <span className="text-sm text-muted-foreground">Click to upload</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => { setShowAddMedicineModal(false); setShowEditMedicineModal(false); }}>Cancel</Button>
-                <Button type="submit" className="flex-1">{showEditMedicineModal ? "Update" : "Save"}</Button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* ================= IMAGE MODAL ================= */}
       <Dialog open={showImageModal} onOpenChange={setShowImageModal}>
-        <DialogContent>
-          {previewImage && <img src={previewImage} alt="Prescription" className="w-full h-auto rounded-lg" />}
+        <DialogContent className="max-w-4xl h-[90vh] flex items-center justify-center bg-zinc-950/90 border-zinc-800 p-0 overflow-hidden relative">
+          <Button
+            className="absolute top-4 right-4 z-50 rounded-full bg-black/50 hover:bg-black/80 text-white border-none"
+            size="icon"
+            onClick={() => setShowImageModal(false)}
+          >
+            <XCircle className="h-6 w-6" />
+          </Button>
+          {previewImage && (
+            previewImage.toLowerCase().endsWith('.pdf') ? (
+              <iframe src={previewImage} className="w-full h-full" title="Prescription PDF" />
+            ) : (
+              <img src={previewImage} alt="Prescription" className="max-w-full max-h-full object-contain" />
+            )
+          )}
         </DialogContent>
       </Dialog>
 
