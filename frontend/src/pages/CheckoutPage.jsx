@@ -705,31 +705,29 @@ const CheckoutPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex gap-4 items-start">
-                    <div className="flex-1">
-                      <p className="text-sm text-amber-900 mb-2 font-medium">
-                        One or more items in your cart require a valid doctor prescription.
-                      </p>
-                      <p className="text-xs text-amber-700 mb-4">
-                        Please upload a clear image (JPG/PNG) or PDF of your prescription.
-                        Your order will be verified by our pharmacists before confirmation.
-                      </p>
+                  <div>
+                    <p className="text-sm text-amber-900 mb-2 font-medium">
+                      One or more items in your cart require a valid doctor prescription.
+                    </p>
+                    <p className="text-xs text-amber-700 mb-4">
+                      Please upload a clear image (JPG/PNG) or PDF of your prescription.
+                      Your order will be verified by our pharmacists before confirmation.
+                    </p>
 
-                      <div className="flex items-center gap-4">
-                        <Input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          onChange={handlePrescriptionUpload}
-                          className="bg-white"
-                        />
-                        {uploadingPrescription && <Loader2 className="h-5 w-5 animate-spin text-amber-600" />}
-                      </div>
-                      {prescriptionUrl && (
-                        <p className="text-sm text-emerald-600 font-bold mt-2 flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4" /> File uploaded successfully
-                        </p>
-                      )}
+                    <div className="flex items-center gap-4">
+                      <Input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        onChange={handlePrescriptionUpload}
+                        className="bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
+                      />
+                      {uploadingPrescription && <Loader2 className="h-5 w-5 animate-spin text-amber-600" />}
                     </div>
+                    {prescriptionUrl && (
+                      <p className="text-sm text-emerald-600 font-bold mt-2 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" /> File uploaded successfully
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
