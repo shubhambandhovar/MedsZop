@@ -1,5 +1,7 @@
 const Pharmacy = require("../models/Pharmacy");
 const Order = require("../models/Order");
+const fs = require("fs");
+const csv = require("csv-parser");
 exports.registerPharmacy = async (req, res) => {
   const pharmacy = await Pharmacy.create({
     ...req.body,
@@ -220,6 +222,139 @@ exports.updateProfile = async (req, res) => {
 
     res.json({ message: "Profile updated", pharmacy });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.bulkUploadMedicines = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "Please upload a CSV file" });
+  }
+
+  const results = [];
+  const errors = [];
+  let addedCount = 0;
+  let updatedCount = 0;
+  let skippedCount = 0;
+
+  try {
+    const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+
+    if (!pharmacy) {
+      if (req.file.path) fs.unlinkSync(req.file.path);
+      return res.status(404).json({ message: "Pharmacy profile not found" });
+    }
+
+    fs.createReadStream(req.file.path)
+      .pipe(csv())
+      .on("data", (data) => results.push(data))
+      .on("end", async () => {
+        try {
+          // Process results
+          for (const row of results) {
+            // Trim keys
+            const cleanRow = {};
+            Object.keys(row).forEach(key => {
+              cleanRow[key.trim()] = row[key].trim();
+            });
+
+            // Validate required
+            if (!cleanRow.medicine_name || !cleanRow.mrp || !cleanRow.selling_price || !cleanRow.stock_quantity) {
+              skippedCount++;
+              errors.push(`Skipped: Missing required fields for ${cleanRow.medicine_name || "Unknown row"}`);
+              continue;
+            }
+
+            // Numeric check
+            const mrp = parseFloat(cleanRow.mrp);
+            const price = parseFloat(cleanRow.selling_price);
+            const stock = parseInt(cleanRow.stock_quantity);
+
+            if (isNaN(mrp) || isNaN(price) || isNaN(stock)) {
+              skippedCount++;
+              errors.push(`Skipped: Invalid numbers for ${cleanRow.medicine_name}`);
+              continue;
+            }
+
+            // Expiry check
+            let expiryDate = null;
+            if (cleanRow.expiry_date) {
+              expiryDate = new Date(cleanRow.expiry_date);
+              if (isNaN(expiryDate.getTime()) || expiryDate <= new Date()) {
+                // Warn but maybe allow? Prompt says "Validate expiry date (must be future date)"
+                skippedCount++;
+                errors.push(`Skipped: Expiry date must be future for ${cleanRow.medicine_name}`);
+                continue;
+              }
+            }
+
+            // Create object
+            const medData = {
+              name: cleanRow.medicine_name,
+              genericName: cleanRow.composition,
+              category: cleanRow.category,
+              company: cleanRow.brand_name,
+              manufacturer: cleanRow.manufacturer,
+              mrp: mrp,
+              price: price, // selling_price
+              stock: stock,
+              expiryDate: expiryDate,
+              batchNumber: cleanRow.batch_number,
+              requiresPrescription: cleanRow.prescription_required?.toLowerCase() === "yes",
+              inStock: stock > 0,
+              discount: 0
+            };
+
+            if (mrp > price) {
+              medData.discount = Math.round(((mrp - price) / mrp) * 100);
+            }
+
+            // Check existence
+            const existingIndex = pharmacy.medicines.findIndex(
+              m => m.name.toLowerCase() === medData.name.toLowerCase()
+            );
+
+            if (existingIndex > -1) {
+              // Update
+              const existing = pharmacy.medicines[existingIndex];
+              existing.stock = medData.stock;
+              existing.price = medData.price;
+              existing.mrp = medData.mrp;
+              existing.expiryDate = medData.expiryDate;
+              existing.batchNumber = medData.batchNumber;
+              existing.inStock = medData.inStock;
+              existing.discount = medData.discount;
+              updatedCount++;
+            } else {
+              // Add
+              pharmacy.medicines.push(medData);
+              addedCount++;
+            }
+          }
+
+          await pharmacy.save();
+          if (req.file.path) fs.unlinkSync(req.file.path);
+
+          res.json({
+            message: "Bulk upload processed",
+            summary: {
+              total: results.length,
+              added: addedCount,
+              updated: updatedCount,
+              skipped: skippedCount,
+              errors: errors
+            }
+          });
+
+        } catch (innerErr) {
+          console.error("CSV Processing Error:", innerErr);
+          if (req.file.path) fs.unlinkSync(req.file.path);
+          res.status(500).json({ error: "Failed to process CSV data" });
+        }
+      });
+
+  } catch (err) {
+    if (req.file && req.file.path) fs.unlinkSync(req.file.path);
     res.status(500).json({ error: err.message });
   }
 };

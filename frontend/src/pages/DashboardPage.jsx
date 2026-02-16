@@ -78,7 +78,6 @@ const DashboardPage = () => {
       icon: ScanLine,
       label: "Scan Prescription",
       href: "/prescription-scan",
-      href: "/prescription-scan",
       color: "bg-cyan-500",
     },
     {

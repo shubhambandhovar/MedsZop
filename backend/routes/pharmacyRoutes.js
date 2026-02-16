@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
@@ -14,7 +16,8 @@ const {
   addMedicine,
   updateMedicine,
   deleteMedicine,
-  updateProfile
+  updateProfile,
+  bulkUploadMedicines
 } = require("../controllers/pharmacyController");
 
 // Register pharmacy
@@ -27,6 +30,7 @@ router.get("/dashboard", auth, role(["pharmacy", "admin"]), getDashboard);
 router.get("/orders", auth, role(["pharmacy"]), getPharmacyOrders);
 
 router.post("/add-medicine", auth, role(["pharmacy"]), addMedicine);
+router.post("/medicines/bulk-upload", auth, role(["pharmacy"]), upload.single("file"), bulkUploadMedicines);
 router.put("/medicine/:id", auth, role(["pharmacy"]), updateMedicine);
 router.delete("/medicine/:id", auth, role(["pharmacy"]), deleteMedicine);
 

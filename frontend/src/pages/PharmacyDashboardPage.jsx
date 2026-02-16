@@ -42,7 +42,13 @@ import {
   FileText,
   Settings,
   ShieldCheck,
-  LogOut
+  LogOut,
+  Upload,
+  Download,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  FileSpreadsheet
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
@@ -71,7 +77,11 @@ const PharmacyDashboardPage = () => {
   const [showAddMedicineModal, setShowAddMedicineModal] = useState(false);
   const [showEditMedicineModal, setShowEditMedicineModal] = useState(false);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false); // For prescriptions
+
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState(null); // null, 'uploading', 'success', 'error'
+  const [uploadResult, setUploadResult] = useState(null); // { added, updated, skipped, errors }
 
   // Selection States
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -258,6 +268,56 @@ const PharmacyDashboardPage = () => {
     } catch (err) {
       toast.error("Failed to delete medicine");
     }
+  };
+
+  // ================= BULK UPLOAD LOGIC =================
+  const handleDownloadTemplate = () => {
+    const headers = "medicine_name,brand_name,composition,category,mrp,selling_price,stock_quantity,expiry_date,batch_number,manufacturer,prescription_required";
+    const sample = "Paracetamol 650,Dolo,Paracetamol,Fever,30,25,100,2025-12-31,BATCH123,Micro Labs,No";
+    const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + sample;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "medszop_medicine_template.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleBulkUpload = async (e) => {
+    e.preventDefault();
+    const file = e.target.file.files[0];
+    if (!file) return toast.error("Please select a CSV file");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploadStatus("uploading");
+    setUploadResult(null);
+
+    try {
+      const res = await axios.post(`${API_URL}/pharmacy/medicines/bulk-upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      setUploadResult(res.data.summary);
+      setUploadStatus("success");
+      toast.success("Bulk upload processed!");
+      fetchData(); // Refresh inventory
+    } catch (err) {
+      console.error(err);
+      setUploadStatus("error");
+      toast.error(err.response?.data?.message || "Upload failed");
+    }
+  };
+
+  const closeUploadModal = () => {
+    setShowUploadModal(false);
+    setUploadStatus(null);
+    setUploadResult(null);
   };
 
 
@@ -537,10 +597,16 @@ const PharmacyDashboardPage = () => {
                   <CardTitle>Inventory</CardTitle>
                   <CardDescription>Track stock, update prices, and manage medicines</CardDescription>
                 </div>
-                <Button onClick={() => { resetForm(); setShowAddMedicineModal(true); }}>
-                  <Package className="h-4 w-4 mr-2" />
-                  Add Medicine
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowUploadModal(true)}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload CSV
+                  </Button>
+                  <Button onClick={() => { resetForm(); setShowAddMedicineModal(true); }}>
+                    <Package className="h-4 w-4 mr-2" />
+                    Add Medicine
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {!dashboardData?.medicines || dashboardData.medicines.length === 0 ? (
@@ -773,8 +839,94 @@ const PharmacyDashboardPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* ================= BULK UPLOAD MODAL ================= */}
+      <Dialog open={showUploadModal} onOpenChange={(open) => !open && closeUploadModal()}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Bulk Upload Medicines</DialogTitle>
+            <DialogDescription>Add multiple medicines at once using a CSV file.</DialogDescription>
+          </DialogHeader>
+
+          {!uploadStatus || uploadStatus === 'uploading' || uploadStatus === 'error' ? (
+            <div className="space-y-6">
+              <div className="bg-muted p-4 rounded-lg flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-sm">Download Template</h3>
+                  <p className="text-xs text-muted-foreground">Use this template to format your CSV correctly.</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
+                  <Download className="h-4 w-4 mr-2" /> Download CSV
+                </Button>
+              </div>
+
+              <form onSubmit={handleBulkUpload} className="space-y-4">
+                <div className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors">
+                  <FileSpreadsheet className="h-10 w-10 mx-auto text-green-500 mb-3" />
+                  <label className="block text-sm font-medium mb-1">Upload CSV File</label>
+                  <input type="file" name="file" accept=".csv" required className="block w-full text-sm text-slate-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-violet-50 file:text-violet-700
+                      hover:file:bg-violet-100
+                    "/>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <Button type="button" variant="ghost" onClick={closeUploadModal}>Cancel</Button>
+                  <Button type="submit" disabled={uploadStatus === 'uploading'}>
+                    {uploadStatus === 'uploading' ? 'Processing...' : 'Upload & Process'}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="text-center">
+                <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-2" />
+                <h2 className="text-xl font-bold">Upload Complete</h2>
+                <p className="text-muted-foreground">Here is the summary of your upload.</p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600">{uploadResult.added}</p>
+                  <p className="text-xs font-semibold uppercase text-green-700">Added</p>
+                </div>
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600">{uploadResult.updated}</p>
+                  <p className="text-xs font-semibold uppercase text-blue-700">Updated</p>
+                </div>
+                <div className="p-3 bg-yellow-50 rounded-lg">
+                  <p className="text-2xl font-bold text-yellow-600">{uploadResult.skipped}</p>
+                  <p className="text-xs font-semibold uppercase text-yellow-700">Skipped</p>
+                </div>
+              </div>
+
+              {uploadResult.errors && uploadResult.errors.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-semibold text-sm mb-2 text-red-600 flex items-center">
+                    <AlertTriangle className="h-4 w-4 mr-1" />
+                    Errors / Skipped Rows
+                  </h4>
+                  <div className="bg-red-50 p-3 rounded-lg max-h-40 overflow-y-auto text-sm space-y-1">
+                    {uploadResult.errors.map((err, i) => (
+                      <p key={i} className="text-red-700 flex items-start gap-2">
+                        <span className="mt-1">•</span> {err}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Button className="w-full" onClick={closeUploadModal}>Close</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog >
+
       <Footer />
-    </div>
+    </div >
   );
 };
 
