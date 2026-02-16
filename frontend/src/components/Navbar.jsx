@@ -138,7 +138,7 @@ const Navbar = () => {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between">
+          <div className="flex h-16 md:h-20 items-center justify-between">
             {/* Logo */}
             <Link
               to={user?.role === "delivery" ? "/delivery" : user?.role === "pharmacy" ? "/pharmacy" : "/"}
@@ -148,8 +148,8 @@ const Navbar = () => {
               <img
                 src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
                 alt="MedsZop Logo"
-                className="h-20 w-auto object-contain min-w-[120px]"
-                style={{ maxWidth: '190px' }}
+                className="h-10 md:h-14 w-auto object-contain"
+                style={{ maxWidth: '180px' }}
               />
             </Link>
 
@@ -172,27 +172,29 @@ const Navbar = () => {
 
             {/* Right Side */}
             <div className="flex items-center gap-3">
-              {/* Language Toggle - Custom Select */}
-              <Select onValueChange={(value) => i18n.changeLanguage(value)} defaultValue={i18n.language || "en"}>
-                <SelectTrigger className="w-[140px] h-9">
-                  <Globe className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Language" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  {languages.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      {lang.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Language Toggle - Desktop Only */}
+              <div className="hidden md:block">
+                <Select onValueChange={(value) => i18n.changeLanguage(value)} defaultValue={i18n.language || "en"}>
+                  <SelectTrigger className="w-[140px] h-10 rounded-full border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                    <Globe className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {languages.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code}>
+                        {lang.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="h-9 w-9"
+                className="h-10 w-10 text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 rounded-full"
                 data-testid="theme-toggle"
               >
                 {isDark ? (
@@ -208,7 +210,7 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 relative"
+                    className="h-10 w-10 relative text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 rounded-full"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     {cartCount > 0 && (
@@ -227,7 +229,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9"
+                      className="h-10 w-10 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
                       data-testid="user-menu"
                     >
                       <User className="h-4 w-4" />
@@ -350,6 +352,23 @@ const Navbar = () => {
                       </>
                     )}
                   </nav>
+
+                  <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Settings</p>
+                    <Select onValueChange={(value) => i18n.changeLanguage(value)} defaultValue={i18n.language || "en"}>
+                      <SelectTrigger className="w-full h-10 mb-4">
+                        <Globe className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder="Select Language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang.code} value={lang.code}>
+                            {lang.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>

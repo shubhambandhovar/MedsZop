@@ -272,7 +272,7 @@ const LandingPage = () => {
       {/* AI Features Section */}
       <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -298,14 +298,14 @@ const LandingPage = () => {
                   "guidance",
                   "warnings"
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                  <div key={index} className="flex items-center gap-3 justify-center lg:justify-start">
                     <CheckCircle className="h-5 w-5 text-emerald-500" />
                     <span>{t(`landing.ai.list.${item}`)}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center lg:justify-start">
                 <Link to="/prescription-scan">
                   <Button className="rounded-full">
                     {t("landing.ai.scanner_btn")}
