@@ -28,7 +28,9 @@ import {
   LayoutDashboard,
   Package,
   FileText,
+
   MessageSquare,
+  Stethoscope,
   Moon,
   Sun,
   Globe,
@@ -92,6 +94,7 @@ const Navbar = () => {
     { href: "/medicines", label: "nav.medicines" },
     { href: "/prescription-scan", label: "nav.scan_prescription", auth: true },
     { href: "/doctor-chat", label: "nav.ai_doctor", auth: true },
+    { href: "/consult-doctor", label: "Consult Doctor", auth: true },
   ];
 
   // Helper to handle language change via Google Translate Cookie
@@ -277,6 +280,12 @@ const Navbar = () => {
                           <Link to="/doctor-chat" className="flex items-center gap-2">
                             <MessageSquare className="h-4 w-4" />
                             {t('nav.ai_doctor')}
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/consult-doctor" className="flex items-center gap-2">
+                            <Stethoscope className="h-4 w-4" />
+                            Consult Doctor
                           </Link>
                         </DropdownMenuItem>
                       </>

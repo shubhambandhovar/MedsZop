@@ -21,6 +21,7 @@ import {
   Pill,
   ScanLine,
   Heart,
+  Stethoscope,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -77,6 +78,7 @@ const DashboardPage = () => {
       icon: ScanLine,
       label: "Scan Prescription",
       href: "/prescription-scan",
+      href: "/prescription-scan",
       color: "bg-cyan-500",
     },
     {
@@ -84,6 +86,12 @@ const DashboardPage = () => {
       label: "AI Doctor Chat",
       href: "/doctor-chat",
       color: "bg-emerald-500",
+    },
+    {
+      icon: Stethoscope,
+      label: "Consult Specialist",
+      href: "/consult-doctor",
+      color: "bg-blue-500",
     },
     {
       icon: Package,
@@ -291,7 +299,21 @@ const DashboardPage = () => {
                     <div>
                       <p className="font-semibold">AI Doctor Chat</p>
                       <p className="text-sm text-muted-foreground">
-                        Get instant health guidance
+                        Instant health guidance (Free)
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link to="/consult-doctor">
+                  <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all cursor-pointer border border-blue-100 dark:border-blue-900/50">
+                    <div className="h-12 w-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                      <Stethoscope className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Consult Specialist</p>
+                      <p className="text-sm text-muted-foreground">
+                        Video call with top doctors
                       </p>
                     </div>
                   </div>

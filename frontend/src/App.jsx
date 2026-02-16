@@ -27,7 +27,8 @@ import CheckoutPage from "./pages/CheckoutPage.jsx";
 import OrdersPage from "./pages/OrdersPage.jsx";
 import OrderTrackingPage from "./pages/OrderTrackingPage.jsx";
 import PrescriptionScanPage from "./pages/PrescriptionScanPage.jsx";
-import DoctorChatPage from "./pages/DoctorChatPage.jsx";
+import AIDoctorPage from "./pages/AIDoctorPage.jsx";
+import ConsultDoctorPage from "./pages/ConsultDoctorPage.jsx";
 import VideoCallPage from "./pages/VideoCallPage.jsx";
 import PharmacyDashboardPage from "./pages/PharmacyDashboardPage.jsx";
 import DeliveryDashboardPage from "./pages/DeliveryDashboardPage.jsx";
@@ -128,7 +129,16 @@ function App() {
               path="/doctor-chat"
               element={
                 <ProtectedRoute allowedRoles={["customer"]}>
-                  <DoctorChatPage />
+                  <AIDoctorPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/consult-doctor"
+              element={
+                <ProtectedRoute allowedRoles={["customer"]}>
+                  <ConsultDoctorPage />
                 </ProtectedRoute>
               }
             />
