@@ -155,13 +155,19 @@ const PharmacyDashboardPage = () => {
     id: "", // For edit
     name: "",
     genericName: "",
+    category: "",
     company: "",
+    manufacturer: "",
     mrp: "",
     price: "",
+    stock: "",
+    expiryDate: "",
+    batchNumber: "",
     discount: 0,
     description: "",
     image: "",
-    inStock: true
+    inStock: true,
+    requiresPrescription: false
   });
 
   const resetForm = () => {
@@ -169,13 +175,19 @@ const PharmacyDashboardPage = () => {
       id: "",
       name: "",
       genericName: "",
+      category: "",
       company: "",
+      manufacturer: "",
       mrp: "",
       price: "",
+      stock: "",
+      expiryDate: "",
+      batchNumber: "",
       discount: 0,
       description: "",
       image: "",
-      inStock: true
+      inStock: true,
+      requiresPrescription: false
     });
   };
 
@@ -231,13 +243,19 @@ const PharmacyDashboardPage = () => {
       id: med._id,
       name: med.name,
       genericName: med.genericName || "",
+      category: med.category || "",
       company: med.company || "",
+      manufacturer: med.manufacturer || "",
       mrp: med.mrp || "",
       price: med.price,
+      stock: med.stock || "",
+      expiryDate: med.expiryDate ? new Date(med.expiryDate).toISOString().split('T')[0] : "",
+      batchNumber: med.batchNumber || "",
       discount: med.discount || 0,
       description: med.description || "",
       image: med.image || "",
-      inStock: med.inStock
+      inStock: med.inStock,
+      requiresPrescription: med.requiresPrescription || false
     });
     setShowEditMedicineModal(true);
   };
@@ -794,12 +812,46 @@ const PharmacyDashboardPage = () => {
                 </div>
               </div>
 
+              {/* EXTRA DETAILS 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Category</label>
+                  <input name="category" value={medicineForm.category} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" placeholder="e.g. tablet, syrup" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Manufacturer</label>
+                  <input name="manufacturer" value={medicineForm.manufacturer} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                </div>
+              </div>
+
+              {/* EXTRA DETAILS 2 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Stock Qty *</label>
+                  <input name="stock" type="number" value={medicineForm.stock} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Batch No.</label>
+                  <input name="batchNumber" value={medicineForm.batchNumber} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Expiry Date</label>
+                  <input name="expiryDate" type="date" value={medicineForm.expiryDate} onChange={handleMedicineChange} className="w-full h-10 px-3 rounded-md border" />
+                </div>
+              </div>
+
               {/* TOGGLES */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-6">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="inStock" checked={medicineForm.inStock} onChange={handleMedicineChange} className="w-4 h-4" />
                   <span className="text-sm font-medium">In Stock</span>
                 </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" name="requiresPrescription" checked={medicineForm.requiresPrescription} onChange={handleMedicineChange} className="w-4 h-4" />
+                  <span className="text-sm font-medium">Requires Prescription</span>
+                </label>
+
                 <div className="flex-1 text-right text-sm font-bold text-emerald-600">
                   {medicineForm.discount}% Discount Apply
                 </div>

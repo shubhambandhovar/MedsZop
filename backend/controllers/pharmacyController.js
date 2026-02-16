@@ -109,7 +109,13 @@ exports.addMedicine = async (req, res) => {
       company,
       mrp,
       description,
-      image
+      image,
+      category,
+      stock,
+      expiryDate,
+      batchNumber,
+      manufacturer,
+      requiresPrescription
     } = req.body;
 
     if (!name || !price) {
@@ -130,7 +136,14 @@ exports.addMedicine = async (req, res) => {
       mrp,
       discount,
       description,
-      image
+      image,
+      category,
+      stock: stock || 0,
+      expiryDate,
+      batchNumber,
+      manufacturer,
+      requiresPrescription: requiresPrescription || false,
+      inStock: stock > 0
     });
     await pharmacy.save();
 
@@ -162,6 +175,14 @@ exports.updateMedicine = async (req, res) => {
     if (updates.image) medicine.image = updates.image;
     if (updates.mrp) medicine.mrp = updates.mrp;
 
+    // New fields
+    if (updates.category) medicine.category = updates.category;
+    if (updates.stock !== undefined) medicine.stock = updates.stock;
+    if (updates.expiryDate) medicine.expiryDate = updates.expiryDate;
+    if (updates.batchNumber) medicine.batchNumber = updates.batchNumber;
+    if (updates.manufacturer) medicine.manufacturer = updates.manufacturer;
+    if (updates.requiresPrescription !== undefined) medicine.requiresPrescription = updates.requiresPrescription;
+
     // Recalculate discount
     if (updates.mrp || updates.price) {
       const m = updates.mrp || medicine.mrp;
@@ -174,7 +195,11 @@ exports.updateMedicine = async (req, res) => {
     }
 
     // Stock management
-    if (updates.inStock !== undefined) medicine.inStock = updates.inStock;
+    if (updates.inStock !== undefined) {
+      medicine.inStock = updates.inStock;
+    } else if (updates.stock !== undefined) {
+      medicine.inStock = updates.stock > 0;
+    }
 
     await pharmacy.save();
     res.json({ message: "Medicine updated", medicine });
