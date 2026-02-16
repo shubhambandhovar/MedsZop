@@ -13,12 +13,12 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                <Pill className="h-6 w-6 text-white" />
-              </div>
-              <span className="font-heading text-2xl font-bold text-white">
-                MedsZop
-              </span>
+              <img
+                src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
+                alt="MedsZop Logo"
+                className="h-20 w-auto object-contain block"
+                style={{ maxWidth: '320px', marginTop: 0, marginBottom: 0 }}
+              />
             </Link>
             <p className="text-sm leading-relaxed mb-6">
               Your trusted digital healthcare partner. Fast medicine delivery, AI-powered health tools, and 24/7 support.
