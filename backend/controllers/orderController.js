@@ -26,7 +26,7 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    const { address_id, payment_method } = req.body;
+    const { address_id, payment_method, prescription_url } = req.body;
 
     // Find the actual address object from user's addresses
     const address = user.addresses.find(
@@ -43,6 +43,7 @@ exports.createOrder = async (req, res) => {
     let items = [];
     let total = 0;
     let pharmacyId = null;
+    let orderRequiresPrescription = false;
 
     for (let cartItem of user.cart) {
       if (!cartItem.medicine_id || cartItem.medicine_id === "undefined") {
@@ -69,7 +70,8 @@ exports.createOrder = async (req, res) => {
               name: m.name,
               price: m.price || 0,
               discount_price: (m.mrp && m.mrp > m.price) ? m.price : null,
-              pharmacy_id: pharmacy._id
+              pharmacy_id: pharmacy._id,
+              requires_prescription: m.requiresPrescription
             };
           }
         } catch (e) {
@@ -101,7 +103,25 @@ exports.createOrder = async (req, res) => {
         quantity: cartItem.quantity
       });
 
+      // Check if this specific item requires prescription
+      // Normalize check for both Global (snake_case) and Pharmacy (camelCase or custom obj)
+      if (medicine.requires_prescription || medicine.requiresPrescription) {
+        orderRequiresPrescription = true;
+      }
+
       total += price * cartItem.quantity;
+    }
+
+    // CHECK PRESCRIPTION REQUIREMENT
+    let finalStatus = "pending";
+    if (orderRequiresPrescription) {
+      if (!prescription_url) {
+        return res.status(400).json({
+          message: "Prescription is required for this order. Please upload a valid prescription."
+        });
+      }
+      // If prescription exists, set status to verification
+      finalStatus = "pending_verification";
     }
 
     const order = await Order.create({
@@ -111,7 +131,9 @@ exports.createOrder = async (req, res) => {
       total,
       address,
       payment_method: payment_method || "cod",
-      order_status: "pending",
+      prescription_url: prescription_url || null,
+      requires_prescription: orderRequiresPrescription,
+      order_status: finalStatus,
       payment_status: payment_method === "cod" ? "pending" : "processing",
       status_history: [{ status: "pending", timestamp: new Date() }],
       orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`

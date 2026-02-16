@@ -19,7 +19,10 @@ const orderSchema = new mongoose.Schema({
 
   total: Number,
 
+
   prescription_id: String,
+  prescription_url: String, // URL/Path to uploaded prescription
+  requires_prescription: { type: Boolean, default: false },
 
   payment_method: {
     type: String,

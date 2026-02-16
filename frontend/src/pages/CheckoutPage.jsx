@@ -67,6 +67,47 @@ const CheckoutPage = () => {
   const [searchingAddress, setSearchingAddress] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
 
+  // Prescription Logic
+  const [prescriptionUrl, setPrescriptionUrl] = useState("");
+  const [uploadingPrescription, setUploadingPrescription] = useState(false);
+  const requiresPrescription = cart.items.some(
+    (item) => item.medicine.requires_prescription || item.medicine.requiresPrescription
+  );
+
+  const handlePrescriptionUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!["image/jpeg", "image/png", "application/pdf"].includes(file.type)) {
+      toast.error("Only JPG, PNG, and PDF files are allowed.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploadingPrescription(true);
+    try {
+      const res = await axios.post(`${API_URL}/prescriptions/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.data.success) {
+        setPrescriptionUrl(res.data.filePath);
+        toast.success("Prescription uploaded successfully!");
+      }
+    } catch (err) {
+      console.error("Prescription upload error:", err);
+      toast.error("Failed to upload prescription. Please try again.");
+    } finally {
+      setUploadingPrescription(false);
+    }
+  };
+
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by your browser");
@@ -289,10 +330,21 @@ const CheckoutPage = () => {
     setLoading(true);
     try {
       // Create order
-      const orderResponse = await axios.post(`${API_URL}/orders`, {
+      const orderData = {
         address_id: selectedAddress,
         payment_method: paymentMethod
-      }, {
+      };
+
+      if (requiresPrescription) {
+        if (!prescriptionUrl) {
+          toast.error("Please upload a prescription to proceed");
+          setLoading(false);
+          return;
+        }
+        orderData.prescription_url = prescriptionUrl;
+      }
+
+      const orderResponse = await axios.post(`${API_URL}/orders`, orderData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -641,6 +693,47 @@ const CheckoutPage = () => {
                 </RadioGroup>
               </CardContent>
             </Card>
+            {/* Prescription Upload Section (Required Logic) */}
+            {requiresPrescription && (
+              <Card className="border-amber-200 bg-amber-50/50">
+                <CardHeader>
+                  <CardTitle className="font-heading flex items-center gap-2 text-amber-800">
+                    <div className="p-1.5 bg-amber-100 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-amber-600" />
+                    </div>
+                    Prescription Required
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4 items-start">
+                    <div className="flex-1">
+                      <p className="text-sm text-amber-900 mb-2 font-medium">
+                        One or more items in your cart require a valid doctor prescription.
+                      </p>
+                      <p className="text-xs text-amber-700 mb-4">
+                        Please upload a clear image (JPG/PNG) or PDF of your prescription.
+                        Your order will be verified by our pharmacists before confirmation.
+                      </p>
+
+                      <div className="flex items-center gap-4">
+                        <Input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.pdf"
+                          onChange={handlePrescriptionUpload}
+                          className="bg-white"
+                        />
+                        {uploadingPrescription && <Loader2 className="h-5 w-5 animate-spin text-amber-600" />}
+                      </div>
+                      {prescriptionUrl && (
+                        <p className="text-sm text-emerald-600 font-bold mt-2 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" /> File uploaded successfully
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Order Summary */}
@@ -676,7 +769,7 @@ const CheckoutPage = () => {
                 <Button
                   className="w-full h-12 rounded-xl text-base"
                   onClick={handlePlaceOrder}
-                  disabled={loading || addresses.length === 0}
+                  disabled={loading || addresses.length === 0 || (requiresPrescription && !prescriptionUrl)}
                   data-testid="place-order-btn"
                 >
                   {loading ? (
@@ -692,10 +785,10 @@ const CheckoutPage = () => {
             </Card>
           </div>
         </div>
-      </main>
+      </main >
 
       <Footer />
-    </div>
+    </div >
   );
 };
 
