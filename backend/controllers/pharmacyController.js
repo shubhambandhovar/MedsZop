@@ -304,11 +304,28 @@ exports.bulkUploadMedicines = async (req, res) => {
             // Expiry check
             let expiryDate = null;
             if (cleanRow.expiry_date) {
-              expiryDate = new Date(cleanRow.expiry_date);
-              if (isNaN(expiryDate.getTime()) || expiryDate <= new Date()) {
-                // Warn but maybe allow? Prompt says "Validate expiry date (must be future date)"
+              // Try parsing DD-MM-YYYY first (common in India/Excel)
+              const dmyParams = cleanRow.expiry_date.split(/[-/]/);
+              if (dmyParams.length === 3 && dmyParams[0].length === 2 && dmyParams[2].length === 4) {
+                // Assume DD-MM-YYYY or DD/MM/YYYY
+                const day = parseInt(dmyParams[0]);
+                const month = parseInt(dmyParams[1]) - 1; // 0-indexed
+                const year = parseInt(dmyParams[2]);
+                expiryDate = new Date(year, month, day);
+              } else {
+                // Fallback to standard parsing (YYYY-MM-DD or MM/DD/YYYY)
+                expiryDate = new Date(cleanRow.expiry_date);
+              }
+
+              // Set to end of day to avoid timezone issues making "today" look like "past"
+              if (expiryDate) {
+                expiryDate.setHours(23, 59, 59, 999);
+              }
+
+              if (!expiryDate || isNaN(expiryDate.getTime()) || expiryDate <= new Date()) {
+                console.log(`Expiry Invalid: Raw: ${cleanRow.expiry_date}, Parsed: ${expiryDate}`);
                 skippedCount++;
-                errors.push(`Skipped: Expiry date must be future for ${cleanRow.medicine_name}`);
+                errors.push(`Skipped: Expiry date must be future for ${cleanRow.medicine_name} (Date: ${cleanRow.expiry_date})`);
                 continue;
               }
             }
