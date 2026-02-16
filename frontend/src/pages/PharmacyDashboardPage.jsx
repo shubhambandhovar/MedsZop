@@ -735,7 +735,7 @@ const PharmacyDashboardPage = () => {
                     Prescription Verification Required
                   </h3>
                   <div className="flex flex-col md:flex-row gap-6 items-start">
-                    <div className="relative group cursor-pointer" onClick={() => { setPreviewImage(`${API_URL}/${selectedOrder.prescription_url}`); setShowImageModal(true); }}>
+                    <div className="relative group cursor-pointer" onClick={() => { setPreviewImage(`${API_URL}/${selectedOrder.prescription_url.replace(/\\/g, "/")}`); setShowImageModal(true); }}>
                       {selectedOrder.prescription_url.endsWith('.pdf') ? (
                         <div className="h-32 w-32 bg-white rounded-lg border flex flex-col items-center justify-center text-red-500 shadow-sm hover:shadow-md transition-shadow">
                           <FileText className="h-12 w-12 mb-2" />
@@ -744,9 +744,10 @@ const PharmacyDashboardPage = () => {
                       ) : (
                         <div className="relative overflow-hidden rounded-lg border shadow-sm">
                           <img
-                            src={`${API_URL}/${selectedOrder.prescription_url}`}
+                            src={`${API_URL}/${selectedOrder.prescription_url.replace(/\\/g, "/")}`}
                             alt="Prescription"
                             className="h-32 w-32 object-cover transition-transform group-hover:scale-105"
+                            onError={(e) => { e.target.src = "https://placehold.co/400?text=Error+Loading"; }}
                           />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                             <Eye className="text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
