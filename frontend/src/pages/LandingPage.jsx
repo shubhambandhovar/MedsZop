@@ -87,7 +87,7 @@ const LandingPage = () => {
       rating: 5
     },
     {
-      name: "Amit Patel",
+      name: "Drx. Amit Patel",
       role: t("landing.testimonials.role_3"),
       content: t("landing.testimonials.content_3"),
       rating: 5
