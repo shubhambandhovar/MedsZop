@@ -36,7 +36,9 @@ exports.getCart = async (req, res) => {
               discount_price: (m.mrp > m.price) ? m.price : null,
               image_url: m.image,
               pharmacy_id: pharmacy._id,
-              pharmacy_name: pharmacy.name
+              pharmacy_id: pharmacy._id,
+              pharmacy_name: pharmacy.name,
+              requires_prescription: m.requiresPrescription || m.requires_prescription || false,
             };
           }
         } catch (e) {
