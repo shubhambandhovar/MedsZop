@@ -21,7 +21,7 @@ import {
   Heart,
   Store
 } from "lucide-react";
-import heroImage from "../assets/hero-image.png";
+import heroImage from "../assets/hero-image.webp";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
