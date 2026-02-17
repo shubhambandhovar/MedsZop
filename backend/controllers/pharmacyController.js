@@ -2,6 +2,7 @@ const Pharmacy = require("../models/Pharmacy");
 const Order = require("../models/Order");
 const fs = require("fs");
 const csv = require("csv-parser");
+const { fetchAndUploadMedicineImage } = require("../services/imageService");
 exports.registerPharmacy = async (req, res) => {
   const pharmacy = await Pharmacy.create({
     ...req.body,
@@ -128,7 +129,21 @@ exports.addMedicine = async (req, res) => {
       discount = Math.round(((mrp - price) / mrp) * 100);
     }
 
-    pharmacy.medicines.push({
+    // AI IMAGE FETCH LOGIC
+    // If no image provided, we trigger a background job to fetch it
+    let isAutoImage = false;
+    let finalImage = image;
+
+    if (!finalImage) {
+      // We'll start the process but NOT await it to keep response fast?
+      // Actually, for single add, waiting 1-2s is better UX than refresh lag.
+      // However, user requirement says 'async task', 'never block'.
+      // We'll follow the rule strict: Background Process.
+
+      // We push the medicine with empty image first to get an ID.
+    }
+
+    const newMedicine = {
       name,
       price,
       genericName,
@@ -136,16 +151,45 @@ exports.addMedicine = async (req, res) => {
       mrp,
       discount,
       description,
-      image,
+      image: finalImage || "", // Placeholder
       category,
       stock: stock || 0,
       expiryDate,
       batchNumber,
       manufacturer,
       requiresPrescription: requiresPrescription || false,
-      inStock: stock > 0
-    });
+      inStock: stock > 0,
+      isAutoImage: false
+    };
+
+    pharmacy.medicines.push(newMedicine);
     await pharmacy.save();
+
+    // BACKGROUND TASK: Fetch Image if missing
+    if (!finalImage) {
+      // We need to find the newly added medicine to update it
+      // The last one in the array is usually the new one, but let's be safe
+      // Actually, we can just use the ID if we re-fetch? 
+      // Mongoose subdocs have _id. We can get it from pharmacy.medicines[length-1]
+      const addedMed = pharmacy.medicines[pharmacy.medicines.length - 1];
+
+      // Fire and forget (Async)
+      fetchAndUploadMedicineImage(name, company, category)
+        .then(async (url) => {
+          if (url) {
+            // Re-fetch to minimize race conditions
+            const freshPharmacy = await Pharmacy.findById(pharmacy._id);
+            const medToUpdate = freshPharmacy.medicines.id(addedMed._id);
+            if (medToUpdate) {
+              medToUpdate.image = url;
+              medToUpdate.isAutoImage = true;
+              await freshPharmacy.save();
+              console.log(`📸 Auto-assigned image for ${name}`);
+            }
+          }
+        })
+        .catch(err => console.error("Background Image Fetch Error:", err));
+    }
 
     res.json({ message: "Medicine added successfully" });
 
@@ -376,6 +420,60 @@ exports.bulkUploadMedicines = async (req, res) => {
 
           await pharmacy.save();
           if (req.file.path) fs.unlinkSync(req.file.path);
+
+          // ================= BACKGROUND JOB: IMAGE FETCHING =================
+          // Identify medicines without images that were just added/updated
+          // Ideally we track which ones need images.
+          // For simplicity in this flow, we'll scan the pharmacy's medicines 
+          // that have NO image and were updated recently? 
+          // Or just use the 'results' list we processed.
+
+          process.nextTick(async () => {
+            console.log("🚀 Starting Background Image Fetch for Bulk Upload...");
+            try {
+              const freshPharmacy = await Pharmacy.findOne({ user_id: req.user.id });
+              if (!freshPharmacy) return;
+
+              let updatesMade = false;
+
+              // We loop through the CSV results again to find matches in DB
+              for (const row of results) {
+                const cleanName = row.medicine_name?.trim();
+                if (!cleanName) continue;
+
+                // Find in DB
+                const med = freshPharmacy.medicines.find(m => m.name.toLowerCase() === cleanName.toLowerCase());
+
+                // If found, has no image, and is NOT manually set (or just check empty)
+                // We only fetch if image is missing.
+                if (med && !med.image) {
+                  const brand = row.brand_name || row.manufacturer || "";
+                  const category = row.category || "";
+
+                  // Rate limiting? Google API might block us if 100 requests at once.
+                  // We should process sequentially with a small delay.
+                  await new Promise(r => setTimeout(r, 1000)); // 1s delay
+
+                  const url = await fetchAndUploadMedicineImage(cleanName, brand, category);
+                  if (url) {
+                    med.image = url;
+                    med.isAutoImage = true;
+                    updatesMade = true;
+                  }
+                }
+              }
+
+              if (updatesMade) {
+                await freshPharmacy.save();
+                console.log("✅ Bulk Image Auto-Fetch Completed & Saved.");
+              } else {
+                console.log("ℹ️ No images needed fetching or all failed.");
+              }
+            } catch (bgErr) {
+              console.error("Background Bulk Image Error:", bgErr);
+            }
+          });
+          // ==============================================================
 
           res.json({
             message: "Bulk upload processed",

@@ -217,7 +217,7 @@ const PharmacyDashboardPage = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setMedicineForm((prev) => ({ ...prev, image: reader.result }));
+        setMedicineForm((prev) => ({ ...prev, image: reader.result, isAutoImage: false }));
       };
       reader.readAsDataURL(file);
     }
@@ -255,7 +255,8 @@ const PharmacyDashboardPage = () => {
       description: med.description || "",
       image: med.image || "",
       inStock: med.inStock,
-      requiresPrescription: med.requiresPrescription || false
+      requiresPrescription: med.requiresPrescription || false,
+      isAutoImage: med.isAutoImage || false
     });
     setShowEditMedicineModal(true);
   };
@@ -935,13 +936,26 @@ const PharmacyDashboardPage = () => {
 
                 {/* IMAGE */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Image</label>
+                  <label className="text-sm font-medium flex justify-between">
+                    Image
+                    {medicineForm.isAutoImage && (
+                      <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs ml-2">
+                        ✨ Auto-added image (can be changed)
+                      </Badge>
+                    )}
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    If left empty, we'll try to auto-fetch an image for you!
+                  </p>
                   <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer relative hover:bg-muted/50">
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                     {medicineForm.image ? (
-                      <img src={medicineForm.image} alt="Preview" className="h-20 mx-auto object-contain" />
+                      <div className="relative inline-block">
+                        <img src={medicineForm.image} alt="Preview" className="h-20 mx-auto object-contain" />
+                        {medicineForm.isAutoImage && <div className="absolute top-0 right-0 bg-purple-500 text-white text-[10px] px-1 rounded-bl">AI</div>}
+                      </div>
                     ) : (
-                      <span className="text-sm text-muted-foreground">Click to upload</span>
+                      <span className="text-sm text-muted-foreground">Click to upload (or leave empty for AI)</span>
                     )}
                   </div>
                 </div>
@@ -981,7 +995,10 @@ const PharmacyDashboardPage = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Bulk Upload Medicines</DialogTitle>
-            <DialogDescription>Add multiple medicines at once using a CSV file.</DialogDescription>
+            <DialogDescription>
+              Add multiple medicines at once using a CSV file. <br />
+              <span className="text-purple-600 font-medium text-xs">✨ Images will be auto-fetched for medicines without images!</span>
+            </DialogDescription>
           </DialogHeader>
 
           {!uploadStatus || uploadStatus === 'uploading' || uploadStatus === 'error' ? (

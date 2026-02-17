@@ -21,6 +21,7 @@ import {
   Heart,
   Store
 } from "lucide-react";
+import heroImage from "../assets/hero-image.png";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -142,7 +143,12 @@ const LandingPage = () => {
               <div className="flex items-center gap-6 mt-10">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-slate-200 dark:bg-slate-700" />
+                    <img
+                      key={i}
+                      src={`https://i.pravatar.cc/100?img=${i + 10}`}
+                      alt="User"
+                      className="h-10 w-10 rounded-full border-2 border-white object-cover"
+                    />
                   ))}
                 </div>
                 <div>
@@ -166,9 +172,11 @@ const LandingPage = () => {
                 <div className="absolute -inset-4 pointer-events-none bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
 
                 <img
-                  src="https://i.ibb.co/Wvhdjg0L/medszop.png"
+                  src={heroImage}
                   alt="Healthcare consultation"
                   className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]"
+                  loading="eager"
+                  fetchPriority="high"
                 />
 
                 {/* Floating Cards */}

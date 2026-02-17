@@ -15,7 +15,8 @@ const MedicineSchema = new mongoose.Schema({
   stock: { type: Number, default: 0 }, // New from CSV
   expiryDate: Date, // New from CSV
   batchNumber: String, // New from CSV
-  requiresPrescription: { type: Boolean, default: false } // New from CSV
+  requiresPrescription: { type: Boolean, default: false }, // New from CSV
+  isAutoImage: { type: Boolean, default: false } // AI Auto-fetch flag
 });
 
 module.exports = mongoose.model(
