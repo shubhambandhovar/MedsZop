@@ -5,7 +5,9 @@ const {
   createOrder,
   getOrders,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+  cancelOrder,
+  requestReturn
 } = require("../controllers/orderController");
 
 const auth = require("../middleware/authMiddleware");
@@ -15,5 +17,7 @@ router.post("/", auth, createOrder);
 router.get("/", auth, getOrders);
 router.get("/:id", auth, getOrderById);
 router.put("/:id/status", auth, role(["admin", "pharmacy", "delivery"]), updateOrderStatus);
+router.post("/:id/cancel", auth, cancelOrder);
+router.post("/:id/return", auth, requestReturn);
 
 module.exports = router;

@@ -334,3 +334,108 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// CANCEL ORDER (Customer)
+exports.cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.id;
+
+    // Find and lock the order logic (findOneAndUpdate for atomicity)
+    // Front-end statuses mapped: pending, pending_verification, confirmed
+    const validStatuses = ["pending", "pending_verification", "confirmed"];
+
+    // Attempt Atomic update
+    const order = await Order.findOneAndUpdate(
+      {
+        _id: orderId,
+        user_id: userId,
+        order_status: { $in: validStatuses }
+      },
+      {
+        $set: {
+          order_status: "cancelled",
+          cancelledBy: userId,
+          cancelledAt: new Date(),
+          cancelReason: req.body.reason || "No reason provided",
+        },
+        $push: {
+          status_history: {
+            status: "cancelled",
+            timestamp: new Date()
+          }
+        }
+      },
+      { new: true } // return updated document
+    );
+
+    if (!order) {
+      // Catching invalid status / ownership race conditions
+      const existingOrder = await Order.findById(orderId);
+      if (!existingOrder) return res.status(404).json({ message: "Order not found" });
+      if (existingOrder.user_id !== userId) return res.status(403).json({ message: "Access denied" });
+      if (existingOrder.order_status === "cancelled") return res.status(200).json({ message: "Order is already cancelled", order: existingOrder });
+
+      return res.status(409).json({ message: "Order cannot be cancelled at this stage." });
+    }
+
+    res.json({ message: "Order cancelled successfully.", order });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// REQUEST RETURN (Customer)
+exports.requestReturn = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.id;
+
+    const { reason, comments, images } = req.body;
+
+    // Check order
+    const order = await Order.findOne({ _id: orderId, user_id: userId });
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.order_status !== "delivered") return res.status(400).json({ message: "Only delivered orders can be returned." });
+
+    // Calculate time difference (48 hours return window)
+    let deliveredEvent = order.status_history.find(h => h.status === "delivered");
+    let deliveredAt = deliveredEvent ? new Date(deliveredEvent.timestamp) : new Date(); // fallback
+
+    const windowMs = 48 * 60 * 60 * 1000;
+    if (Date.now() - deliveredAt.getTime() > windowMs) {
+      return res.status(400).json({ message: "Return window has expired." });
+    }
+
+    // Atomic update
+    const updatedOrder = await Order.findOneAndUpdate(
+      { _id: orderId, user_id: userId, order_status: "delivered" },
+      {
+        $set: {
+          order_status: "return_requested",
+          returnReason: reason,
+          returnComments: comments,
+          returnImages: images || [],
+          returnRequestedAt: new Date(),
+        },
+        $push: {
+          status_history: {
+            status: "return_requested",
+            timestamp: new Date()
+          }
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(409).json({ message: "Could not process return request. Order status may have changed." });
+    }
+
+    res.json({ message: "Return requested successfully", order: updatedOrder });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

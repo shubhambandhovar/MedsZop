@@ -55,6 +55,17 @@ const orderSchema = new mongoose.Schema({
 
   status_history: Array,
 
+  // Cancellation Fields
+  cancelledBy: String,
+  cancelledAt: Date,
+  cancelReason: String,
+
+  // Return Fields
+  returnReason: String,
+  returnComments: String,
+  returnImages: [String],
+  returnRequestedAt: Date,
+
   createdAt: {
     type: Date,
     default: Date.now
