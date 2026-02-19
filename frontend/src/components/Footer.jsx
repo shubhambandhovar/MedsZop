@@ -70,57 +70,63 @@ const Footer = () => {
           </div>
 
           {/* Support */}
-         
-<div>
-  <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
-  <ul className="space-y-3">
-    <li>
-      <Link to="/help" className="text-sm hover:text-primary transition-colors">
-        Help Center
-      </Link>
-    </li>
 
-    <li>
-      <Link to="/faqs" className="text-sm hover:text-primary transition-colors">
-        FAQs
-      </Link>
-    </li>
+          <div>
+            <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link to="/help" className="text-sm hover:text-primary transition-colors">
+                  Help Center
+                </Link>
+              </li>
 
-    <li>
-      <Link to="/refund-policy" className="text-sm hover:text-primary transition-colors">
-        Refund Policy
-      </Link>
-    </li>
+              <li>
+                <Link to="/faqs" className="text-sm hover:text-primary transition-colors">
+                  FAQs
+                </Link>
+              </li>
 
-    <li>
-      <Link to="/privacy-policy" className="text-sm hover:text-primary transition-colors">
-        Privacy Policy
-      </Link>
-    </li>
+              <li>
+                <Link to="/refund-policy" className="text-sm hover:text-primary transition-colors">
+                  Refund Policy
+                </Link>
+              </li>
 
-    <li>
-      <Link to="/terms" className="text-sm hover:text-primary transition-colors">
-        Terms of Service
-      </Link>
-    </li>
-  </ul>
-</div>
+              <li>
+                <Link to="/privacy-policy" className="text-sm hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/terms" className="text-sm hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           {/* Contact */}
           <div>
             <h4 className="font-heading font-semibold text-white mb-6">Contact Us</h4>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-sm">Working Remotely</span>
+              <li>
+                <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 hover:text-primary transition-colors">
+                  <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm">Working Remotely</span>
+                </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary shrink-0" />
-                <span className="text-sm">+91 7354255105</span>
+              <li>
+                <a href="tel:+917354255105" className="flex items-center gap-3 hover:text-primary transition-colors">
+                  <Phone className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-sm">+91 7354255105</span>
+                </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-primary shrink-0" />
-                <span className="text-sm">support@medszop.site</span>
+              <li>
+                <a href="mailto:support@medszop.site" className="flex items-center gap-3 hover:text-primary transition-colors">
+                  <Mail className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-sm">support@medszop.site</span>
+                </a>
               </li>
             </ul>
           </div>
