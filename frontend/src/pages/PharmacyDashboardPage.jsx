@@ -727,18 +727,7 @@ const PharmacyDashboardPage = () => {
                       <Button size="sm" variant="destructive" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "cancelled")}>Cancel Order</Button>
                     </>
                   )}
-                  {selectedOrder.order_status === "confirmed" && (
-                    <>
-                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "processing")}>Mark Processing</Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "cancelled")}>Cancel Order</Button>
-                    </>
-                  )}
-                  {selectedOrder.order_status === "processing" && (
-                    <Button size="sm" className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "out_for_delivery")}>Send Out for Delivery</Button>
-                  )}
-                  {selectedOrder.order_status === "out_for_delivery" && (
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "delivered")}>Mark Delivered</Button>
-                  )}
+
 
 
                 </div>
