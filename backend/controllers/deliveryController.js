@@ -87,6 +87,9 @@ exports.completeDelivery = async (req, res) => {
     }
 
     order.order_status = "delivered";
+    if (order.payment_method === "cod" && order.payment_status === "pending") {
+      order.payment_status = "paid";
+    }
     order.status_history.push({
       status: "delivered",
       timestamp: new Date()

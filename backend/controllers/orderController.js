@@ -248,6 +248,11 @@ exports.updateOrderStatus = async (req, res) => {
       order.delivery_otp = Math.floor(1000 + Math.random() * 9000).toString();
     }
 
+    // Set payment to paid if order delivered via COD
+    if (req.body.status === "delivered" && order.payment_method === "cod" && order.payment_status === "pending") {
+      order.payment_status = "paid";
+    }
+
     order.status_history.push({
       status: req.body.status,
       timestamp: new Date()
