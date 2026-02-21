@@ -113,7 +113,7 @@ exports.createOrder = async (req, res) => {
     }
 
     // CHECK PRESCRIPTION REQUIREMENT
-    let finalStatus = "pending";
+    let finalStatus = payment_method === "online" ? "payment_pending" : "cod_confirmed";
     if (orderRequiresPrescription) {
       if (!prescription_url) {
         return res.status(400).json({
@@ -134,8 +134,8 @@ exports.createOrder = async (req, res) => {
       prescription_url: prescription_url || null,
       requires_prescription: orderRequiresPrescription,
       order_status: finalStatus,
-      payment_status: payment_method === "cod" ? "pending" : "processing",
-      status_history: [{ status: "pending", timestamp: new Date() }],
+      payment_status: payment_method === "online" ? "pending" : "pending", // COD is pending until delivered
+      status_history: [{ status: finalStatus, timestamp: new Date() }],
       orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     });
 

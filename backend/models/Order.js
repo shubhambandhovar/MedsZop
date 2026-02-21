@@ -26,12 +26,20 @@ const orderSchema = new mongoose.Schema({
 
   payment_method: {
     type: String,
-    default: "cod"
+    default: "cod" // 'cod', 'online'
   },
 
   payment_status: {
     type: String,
-    default: "pending"
+    default: "pending" // 'pending', 'paid', 'failed', 'refunded'
+  },
+
+  pg_order_id: String,
+  pg_payment_id: String,
+  
+  refund_status: {
+    type: String,
+    default: "none" // 'none', 'initiated', 'completed', 'failed'
   },
 
   order_status: {

@@ -39,9 +39,19 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { cart, refreshCart } = useCart();
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
@@ -332,7 +342,7 @@ const CheckoutPage = () => {
       // Create order
       const orderData = {
         address_id: selectedAddress,
-        payment_method: paymentMethod
+        payment_method: paymentMethod === "razorpay" ? "online" : "cod"
       };
 
       if (requiresPrescription) {
@@ -349,6 +359,13 @@ const CheckoutPage = () => {
       });
 
       if (paymentMethod === "razorpay") {
+        const res = await loadRazorpayScript();
+        if (!res) {
+          toast.error("Razorpay SDK failed to load. Are you online?");
+          setLoading(false);
+          return;
+        }
+
         // Initialize Razorpay payment
         const paymentResponse = await axios.post(`${API_URL}/payments/create-order`, {
           order_id: orderResponse.data.order_id
@@ -356,16 +373,57 @@ const CheckoutPage = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        // For demo, skip actual Razorpay integration
-        toast.success("Order placed successfully!");
-        navigate(`/orders/${orderResponse.data.order_id}`);
+        const { amount, pg_order_id, key_id } = paymentResponse.data;
+
+        const options = {
+          key: key_id,
+          amount: amount.toString(),
+          currency: "INR",
+          name: "MedsZop",
+          description: "Order Payment",
+          order_id: pg_order_id,
+          handler: async function (response) {
+            try {
+              const verifyRes = await axios.post(`${API_URL}/payments/verify`, {
+                order_id: orderResponse.data.order_id,
+                pg_order_id: response.razorpay_order_id,
+                pg_payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature
+              }, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+
+              if (verifyRes.data.verified) {
+                toast.success("Payment Successful!");
+                refreshCart();
+                navigate(`/orders/${orderResponse.data.order_id}`);
+              }
+            } catch (err) {
+              toast.error("Payment verification failed");
+            }
+          },
+          prefill: {
+            name: user?.name || "",
+            email: user?.email || "",
+            contact: user?.mobile || ""
+          },
+          theme: {
+            color: "#16a34a"
+          }
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.on('payment.failed', function (response) {
+          toast.error(response.error.description || "Payment Failed");
+        });
+        paymentObject.open();
+
       } else {
         // COD order
         toast.success("Order placed successfully!");
+        refreshCart();
         navigate(`/orders/${orderResponse.data.order_id}`);
       }
-
-      refreshCart();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
