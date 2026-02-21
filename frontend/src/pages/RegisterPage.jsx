@@ -450,11 +450,10 @@ const RegisterPage = () => {
                       <button
                         onClick={handleResendOtp}
                         disabled={resendTimer > 0}
-                        className={`font-medium ${
-                          resendTimer > 0
+                        className={`font-medium ${resendTimer > 0
                             ? "text-muted-foreground cursor-not-allowed"
                             : "text-primary hover:underline cursor-pointer"
-                        }`}
+                          }`}
                       >
                         {resendTimer > 0
                           ? `Resend in ${resendTimer}s`
