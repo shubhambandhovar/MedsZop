@@ -132,12 +132,13 @@ const CheckoutPage = () => {
 
           // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend to bypass Render Backend IP blocks
           // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend. Browsers send their own UA.
-          const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`);
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`);
+          const data = await res.json();
 
-          const addr = res.data.address;
+          const addr = data.address;
           setNewAddress(prev => ({
             ...prev,
-            addressLine1: res.data.display_name.split(',')[0] || addr.road || addr.suburb || "",
+            addressLine1: data.display_name.split(',')[0] || addr.road || addr.suburb || "",
             city: addr.city || addr.town || addr.village || addr.district || "",
             state: addr.state || "",
             pincode: addr.postcode || "",
@@ -178,8 +179,9 @@ const CheckoutPage = () => {
       setSearchingAddress(true);
       // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
       // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
-      const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=in&addressdetails=1&limit=10`);
-      setSuggestions(res.data);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=in&addressdetails=1&limit=10`);
+      const data = await res.json();
+      setSuggestions(data);
       setShowAddressSuggestions(true);
     } catch (error) {
       console.error("Address search error:", error);
@@ -220,11 +222,12 @@ const CheckoutPage = () => {
       setMapPosition([lat, lon]);
       // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
       // 🔥 DEPLOYMENT FIX: Call OSM directly from Frontend
-      const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`);
-      const addr = res.data.address;
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`);
+      const data = await res.json();
+      const addr = data.address;
       setNewAddress(prev => ({
         ...prev,
-        addressLine1: res.data.display_name.split(',')[0] || addr.road || addr.suburb || "",
+        addressLine1: data.display_name.split(',')[0] || addr.road || addr.suburb || "",
         city: addr.city || addr.town || addr.village || addr.district || "",
         state: addr.state || "",
         pincode: addr.postcode || "",

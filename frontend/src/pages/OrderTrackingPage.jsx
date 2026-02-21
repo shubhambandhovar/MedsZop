@@ -56,14 +56,16 @@ const OrderTrackingPage = () => {
       const fetchCoords = async () => {
         try {
           const query = `${order.address.addressLine1}, ${order.address.city}, ${order.address.pincode}, India`;
-          const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-          if (res.data && res.data.length > 0) {
-            setMapCenter([parseFloat(res.data[0].lat), parseFloat(res.data[0].lon)]);
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setMapCenter([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
           } else {
             // Fallback to City level if full address fails
-            const cityRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(order.address.city + ", India")}&limit=1`);
-            if (cityRes.data && cityRes.data.length > 0) {
-              setMapCenter([parseFloat(cityRes.data[0].lat), parseFloat(cityRes.data[0].lon)]);
+            const cityRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(order.address.city + ", India")}&limit=1`);
+            const cityData = await cityRes.json();
+            if (cityData && cityData.length > 0) {
+              setMapCenter([parseFloat(cityData[0].lat), parseFloat(cityData[0].lon)]);
             }
           }
         } catch (error) {
