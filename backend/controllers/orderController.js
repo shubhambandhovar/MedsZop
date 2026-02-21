@@ -113,7 +113,7 @@ exports.createOrder = async (req, res) => {
     }
 
     // CHECK PRESCRIPTION REQUIREMENT
-    let finalStatus = payment_method === "online" ? "payment_pending" : "cod_confirmed";
+    let finalStatus = payment_method === "online" ? "payment_pending" : "pending";
     if (orderRequiresPrescription) {
       if (!prescription_url) {
         return res.status(400).json({
@@ -343,7 +343,7 @@ exports.cancelOrder = async (req, res) => {
 
     // Find and lock the order logic (findOneAndUpdate for atomicity)
     // Front-end statuses mapped: pending, pending_verification, confirmed
-    const validStatuses = ["pending", "pending_verification", "confirmed"];
+    const validStatuses = ["pending", "pending_verification", "confirmed", "cod_confirmed", "payment_pending"];
 
     // Attempt Atomic update
     const order = await Order.findOneAndUpdate(

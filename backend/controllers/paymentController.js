@@ -77,10 +77,11 @@ exports.verifyPayment = async (req, res) => {
     }
 
     // Update order status
+    const verifiedStatus = order.prescription_url ? "pending_verification" : "pending";
     order.payment_status = "paid";
-    order.order_status = "confirmed";
+    order.order_status = verifiedStatus;
     order.pg_payment_id = pg_payment_id;
-    order.status_history.push({ status: "confirmed", timestamp: new Date() });
+    order.status_history.push({ status: verifiedStatus, timestamp: new Date() });
 
     // Store payment
     await Payment.create({
@@ -92,29 +93,22 @@ exports.verifyPayment = async (req, res) => {
       method: "ONLINE"
     });
 
-    // Notify Customer & Pharmacy
+    // Notify Pharmacy about successful payment (skip confirmed email as it comes after pharma confirmation)
     try {
-      const user = await User.findById(order.user_id);
-      if (user && !order.emailSent?.confirmed) {
-        await sendOrderConfirmedEmail(user.email, user.name, order.orderNumber);
-        order.emailSent = order.emailSent || {};
-        order.emailSent.confirmed = true;
-      }
-
       if (order.pharmacy_id && !order.emailSent?.pharmacyNotified) {
-         const pharmacy = await Pharmacy.findById(order.pharmacy_id);
-         if (pharmacy) {
-           const pharmacyUser = await User.findById(pharmacy.user_id);
-           if (pharmacyUser && pharmacyUser.email) {
-             await sendPharmacyOrderNotification(pharmacyUser.email, pharmacy.name || pharmacyUser.name, order.orderNumber);
-             order.emailSent.pharmacyNotified = true;
-           }
-         }
+        const pharmacy = await Pharmacy.findById(order.pharmacy_id);
+        if (pharmacy) {
+          const pharmacyUser = await User.findById(pharmacy.user_id);
+          if (pharmacyUser && pharmacyUser.email) {
+            await sendPharmacyOrderNotification(pharmacyUser.email, pharmacy.name || pharmacyUser.name, order.orderNumber);
+            order.emailSent.pharmacyNotified = true;
+          }
+        }
       }
-    } catch(err) {
+    } catch (err) {
       console.error("Email error after payment verification", err);
     }
-    
+
     await order.save();
 
     res.json({ verified: true, message: "Payment successful" });
@@ -142,7 +136,7 @@ exports.refundPayment = async (req, res) => {
     // DB Updates
     order.refund_status = "initiated";
     // Usually partial or fully refunded
-    order.payment_status = "refunded"; 
+    order.payment_status = "refunded";
     await order.save();
 
     await Refund.create({
@@ -186,19 +180,19 @@ exports.paymentWebhook = async (req, res) => {
       const pg_order_id = paymentEntity.order_id;
       const order = await Order.findOne({ pg_order_id });
       if (order) {
-         // Create failed payment log
-         await Payment.create({
-            order_id: order._id,
-            pg_order_id,
-            pg_payment_id: paymentEntity.id,
-            amount: paymentEntity.amount / 100,
-            status: "FAILED",
-            error_description: paymentEntity.error_description
-         });
+        // Create failed payment log
+        await Payment.create({
+          order_id: order._id,
+          pg_order_id,
+          pg_payment_id: paymentEntity.id,
+          amount: paymentEntity.amount / 100,
+          status: "FAILED",
+          error_description: paymentEntity.error_description
+        });
       }
-    } 
+    }
     // Handle other events like refund.processed or payment.captured if needed
-    
+
     res.status(200).send("ok");
   } catch (err) {
     console.error("Webhook Error:", err);

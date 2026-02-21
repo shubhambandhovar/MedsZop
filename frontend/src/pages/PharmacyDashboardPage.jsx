@@ -142,6 +142,7 @@ const PharmacyDashboardPage = () => {
 
   const filteredOrders = orders.filter(order => {
     if (statusFilter === "all") return true;
+    if (statusFilter === "pending") return order.order_status === "pending" || order.order_status === "cod_confirmed";
     return order.order_status === statusFilter;
   });
 
@@ -720,8 +721,23 @@ const PharmacyDashboardPage = () => {
                   <Badge className={getStatusBadge(selectedOrder.order_status)}>{selectedOrder.order_status.replace('_', ' ')}</Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  {selectedOrder.order_status === "pending" && (
-                    <Button size="sm" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}>Confirm Order</Button>
+                  {["pending", "cod_confirmed"].includes(selectedOrder.order_status) && (
+                    <>
+                      <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "confirmed")}>Confirm Order</Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "cancelled")}>Cancel Order</Button>
+                    </>
+                  )}
+                  {selectedOrder.order_status === "confirmed" && (
+                    <>
+                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "processing")}>Mark Processing</Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "cancelled")}>Cancel Order</Button>
+                    </>
+                  )}
+                  {selectedOrder.order_status === "processing" && (
+                    <Button size="sm" className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "out_for_delivery")}>Send Out for Delivery</Button>
+                  )}
+                  {selectedOrder.order_status === "out_for_delivery" && (
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleUpdateOrderStatus(selectedOrder._id, "delivered")}>Mark Delivered</Button>
                   )}
 
 

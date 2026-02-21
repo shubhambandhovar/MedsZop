@@ -134,7 +134,7 @@ const OrderTrackingPage = () => {
     }
   };
 
-  const isCancellable = ["pending", "pending_verification", "confirmed"].includes(order?.order_status);
+  const isCancellable = ["pending", "pending_verification", "confirmed", "cod_confirmed", "payment_pending"].includes(order?.order_status);
 
   const isReturnable = () => {
     if (order?.order_status !== "delivered") return false;
@@ -179,6 +179,7 @@ const OrderTrackingPage = () => {
 
     const statusWeight = {
       "pending": 0,
+      "cod_confirmed": 0,
       "confirmed": 1,
       "accepted": 2,
       "processing": 2,
@@ -285,15 +286,15 @@ const OrderTrackingPage = () => {
                         {/* Line */}
                         {!isLast && (
                           <div className={`absolute left-[19px] top-10 h-full w-0.5 ${nextIsCancelled ? "bg-destructive" :
-                              (status === "completed" || status === "completed_cancelled") ? "bg-primary" : "bg-muted"
+                            (status === "completed" || status === "completed_cancelled") ? "bg-primary" : "bg-muted"
                             }`} />
                         )}
 
                         {/* Icon */}
                         <div className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${(status === "completed" || status === "completed_cancelled") ? "bg-primary text-white" :
-                            status === "current" ? "bg-primary text-white animate-pulse" :
-                              status === "cancelled" ? "bg-destructive text-white" :
-                                "bg-muted text-muted-foreground"
+                          status === "current" ? "bg-primary text-white animate-pulse" :
+                            status === "cancelled" ? "bg-destructive text-white" :
+                              "bg-muted text-muted-foreground"
                           }`}>
                           <step.icon className="h-5 w-5" />
                         </div>
