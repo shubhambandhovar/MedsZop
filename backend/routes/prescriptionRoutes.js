@@ -4,6 +4,16 @@ const { scanPrescription } = require("../controllers/prescriptionController");
 
 router.post("/scan", scanPrescription);
 
+// Add missing GET route to prevent 404 errors from frontend
+router.get("/", (req, res) => {
+    try {
+        // Return empty array to keep frontend happy
+        res.status(200).json([]);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch prescriptions", error: error.message });
+    }
+});
+
 // Configure Multer for prescription uploads
 const multer = require("multer");
 const path = require("path");

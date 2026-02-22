@@ -18,8 +18,36 @@ const razorpay = new Razorpay({
 // CREATE PAYMENT ORDER
 exports.createPaymentOrder = async (req, res) => {
   try {
-    const order = await Order.findById(req.body.order_id);
+    const { order_id } = req.body;
+
+    // Validate request payload
+    if (!order_id) {
+      return res.status(400).json({ error: "order_id is required in request payload" });
+    }
+
+    // Safety check for malformed IDs that crash mongoose
+    if (!mongoose.Types.ObjectId.isValid(order_id)) {
+      return res.status(400).json({ error: "Invalid order_id format" });
+    }
+
+    // Validate environment variables so it doesn't try linking phantom keys
+    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === "rzp_test_fallback") {
+      console.error("Missing valid RAZORPAY_KEY_ID in environment");
+      return res.status(500).json({ error: "Payment gateway is not currently configured" });
+    }
+
+    if (!process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET === "rzp_test_secret_fallback") {
+      console.error("Missing valid RAZORPAY_KEY_SECRET in environment");
+      return res.status(500).json({ error: "Payment gateway is not currently configured" });
+    }
+
+    const order = await Order.findById(order_id);
     if (!order) return res.status(404).json({ message: "Order not found" });
+
+    // Ensure total is a valid number to prevent Razorpay crashes
+    if (typeof order.total !== 'number' || isNaN(order.total) || order.total <= 0) {
+      return res.status(400).json({ error: "Invalid order total amount for payment" });
+    }
 
     // Important: Amount is calculated on backend (Order total in INR)
     const amountInPaise = Math.round(order.total * 100);
@@ -33,14 +61,14 @@ exports.createPaymentOrder = async (req, res) => {
     order.pg_order_id = rzpOrder.id;
     await order.save(); // Save pg order id
 
-    res.json({
+    res.status(200).json({
       amount: rzpOrder.amount,
       pg_order_id: rzpOrder.id,
       key_id: process.env.RAZORPAY_KEY_ID
     });
   } catch (err) {
-    console.error("Create Payment Order Error:", err);
-    res.status(500).json({ error: "Failed to create payment order" });
+    console.error("Create Payment Order Error:", err?.message || err);
+    res.status(500).json({ error: "Failed to create payment order. Please try again later." });
   }
 };
 
