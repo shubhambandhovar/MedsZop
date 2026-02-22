@@ -23,6 +23,8 @@ import {
   Loader2,
   ArrowLeft,
   ShieldCheck,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -38,6 +40,8 @@ const RegisterPage = () => {
     confirmPassword: "",
     role: "customer",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -291,14 +295,22 @@ const RegisterPage = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Create a strong password"
                     value={formData.password}
                     onChange={(e) => handleChange("password", e.target.value)}
-                    className="pl-10 h-12"
+                    className="pl-10 pr-10 h-12"
                     required
                     data-testid="register-password"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -308,24 +320,37 @@ const RegisterPage = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       handleChange("confirmPassword", e.target.value)
                     }
-                    className="pl-10 h-12"
+                    className="pl-10 pr-10 h-12"
                     required
                     data-testid="register-confirm-password"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
+                {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    Passwords do not match
+                  </p>
+                )}
               </div>
 
 
               <Button
                 type="submit"
                 className="w-full h-12 rounded-xl"
-                disabled={loading}
+                disabled={loading || (formData.confirmPassword && formData.password !== formData.confirmPassword)}
                 data-testid="register-submit"
               >
                 {loading ? (
@@ -451,8 +476,8 @@ const RegisterPage = () => {
                         onClick={handleResendOtp}
                         disabled={resendTimer > 0}
                         className={`font-medium ${resendTimer > 0
-                            ? "text-muted-foreground cursor-not-allowed"
-                            : "text-primary hover:underline cursor-pointer"
+                          ? "text-muted-foreground cursor-not-allowed"
+                          : "text-primary hover:underline cursor-pointer"
                           }`}
                       >
                         {resendTimer > 0
