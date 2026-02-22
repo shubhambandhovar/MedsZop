@@ -4,7 +4,7 @@ const Order = require("../models/Order");
 const Payment = require("../models/Payment");
 const Refund = require("../models/Refund");
 const mongoose = require("mongoose");
-const { sendOrderConfirmedEmail, sendPharmacyOrderNotification } = require("../utils/emailService");
+const { sendOrderConfirmedEmail, sendPharmacyOrderNotification, sendOrderPlacedEmail } = require("../utils/emailService");
 const User = require("../models/User");
 const Pharmacy = require("../models/Pharmacy");
 
@@ -121,8 +121,20 @@ exports.verifyPayment = async (req, res) => {
       method: "ONLINE"
     });
 
-    // Notify Pharmacy about successful payment (skip confirmed email as it comes after pharma confirmation)
+    // Notify Pharmacy and Customer about successful payment placement
     try {
+      // 1. Send Placed Email to Customer (Deferred until payment success)
+      if (!order.emailSent?.placed) {
+        const user = await User.findById(order.user_id);
+        if (user && user.email) {
+          await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
+          
+          order.emailSent = order.emailSent || {};
+          order.emailSent.placed = true;
+        }
+      }
+
+      // 2. Notify Pharmacy
       if (order.pharmacy_id && !order.emailSent?.pharmacyNotified) {
         const pharmacy = await Pharmacy.findById(order.pharmacy_id);
         if (pharmacy) {

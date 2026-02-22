@@ -142,11 +142,14 @@ exports.createOrder = async (req, res) => {
     // EMAIL NOTIFICATION - PLACED
     try {
       if (!order.emailSent?.placed) {
-        // 1. Customer Email
-        await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
-
         order.emailSent = order.emailSent || {};
-        order.emailSent.placed = true;
+        
+        // 1. Customer Email
+        // ONLY send if it's COD. Online payments send this after successful verification.
+        if (order.payment_method === "cod") {
+          await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
+          order.emailSent.placed = true;
+        }
 
         // 2. Pharmacy Email (New Feature)
         if (order.pharmacy_id && !order.emailSent.pharmacyNotified) {
