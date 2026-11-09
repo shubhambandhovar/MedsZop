@@ -122,3 +122,4 @@ module.exports = {
   S3StorageProvider,
   getStorageProvider
 };
+
