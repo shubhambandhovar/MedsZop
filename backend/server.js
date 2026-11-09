@@ -17,7 +17,15 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.use(express.json({ limit: "20mb" }));
+// Body parsing with raw buffer preservation for cryptographic webhook verification (SEC-08)
+app.use(
+  express.json({
+    limit: "20mb",
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    }
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 // SEC-04: Secure Prescription File Access

@@ -17,8 +17,8 @@ router.post("/create-order", auth, createPaymentOrder);
 // Verify Payment
 router.post("/verify", auth, verifyPayment);
 
-// Webhook for edge cases and refunds
-router.post("/webhook", express.json(), paymentWebhook);
+// Webhook for edge cases, automated capture, and refunds (SEC-08)
+router.post("/webhook", paymentWebhook);
 
 // Refund logic (SEC-02 Remediation: Strictly Admin Only)
 router.post("/refund", auth, role(["admin"]), refundPayment);

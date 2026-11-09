@@ -72,34 +72,72 @@ exports.createPaymentOrder = async (req, res) => {
   }
 };
 
-// VERIFY PAYMENT (Frontend callback)
+// Replay protection: in-memory cache of verified webhook event identifiers (SEC-08)
+const processedWebhookEvents = new Map();
+
+// Periodic cleanup of webhook event cache (every 60 minutes)
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, data] of processedWebhookEvents.entries()) {
+    if (now - data.timestamp > 24 * 60 * 60 * 1000) {
+      processedWebhookEvents.delete(id);
+    }
+  }
+}, 60 * 60 * 1000).unref();
+
+// VERIFY PAYMENT (Frontend callback - SEC-08 Hardened)
 exports.verifyPayment = async (req, res) => {
   try {
     const { order_id, pg_order_id, pg_payment_id, signature } = req.body;
 
+    if (!order_id || !pg_order_id || !pg_payment_id || !signature) {
+      return res.status(400).json({ message: "Missing required payment verification fields" });
+    }
+
+    const order = await Order.findById(order_id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    // Object-level ownership check (SEC-05 / SEC-08):
+    // Authenticated caller must own the order or have admin privileges
+    if (req.user && req.user.role !== "admin" && order.user_id?.toString() !== req.user.id?.toString()) {
+      return res.status(403).json({ message: "Forbidden: You cannot verify payment for an order belonging to another user." });
+    }
+
+    // Gateway reference validation: ensure pg_order_id matches order
+    if (order.pg_order_id && order.pg_order_id !== pg_order_id) {
+      return res.status(400).json({ message: "Mismatched gateway order reference." });
+    }
+
+    // Timing-safe HMAC signature verification
     const body = pg_order_id + "|" + pg_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "rzp_test_secret_fallback")
       .update(body.toString())
       .digest("hex");
 
-    let isAuthentic = expectedSignature === signature;
+    let isAuthentic = false;
+    if (typeof signature === "string") {
+      const sigBuf = Buffer.from(signature, "utf-8");
+      const expBuf = Buffer.from(expectedSignature, "utf-8");
+      if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
+        isAuthentic = true;
+      }
+    }
+
     if (!isAuthentic) {
-      // Create a failed payment record
+      // Create a failed payment audit log
       await Payment.create({
         order_id,
         pg_order_id,
         pg_payment_id,
-        amount: 0, // Not verified
+        amount: 0,
         status: "FAILED",
         error_description: "Invalid Signature"
       });
       return res.status(400).json({ message: "Invalid Signature. Payment verification failed." });
     }
 
-    const order = await Order.findById(order_id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-
+    // Idempotency: If already paid, return early without re-executing business logic
     if (order.payment_status === "paid") {
       return res.status(200).json({ message: "Already Paid", verified: true });
     }
@@ -109,7 +147,8 @@ exports.verifyPayment = async (req, res) => {
     order.payment_status = "paid";
     order.order_status = verifiedStatus;
     order.pg_payment_id = pg_payment_id;
-    order.status_history.push({ status: verifiedStatus, timestamp: new Date() });
+    order.status_history = order.status_history || [];
+    order.status_history.push({ status: verifiedStatus, timestamp: new Date(), source: "client_verification" });
 
     // Store payment
     await Payment.create({
@@ -123,18 +162,15 @@ exports.verifyPayment = async (req, res) => {
 
     // Notify Pharmacy and Customer about successful payment placement
     try {
-      // 1. Send Placed Email to Customer (Deferred until payment success)
       if (!order.emailSent?.placed) {
         const user = await User.findById(order.user_id);
         if (user && user.email) {
           await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
-          
           order.emailSent = order.emailSent || {};
           order.emailSent.placed = true;
         }
       }
 
-      // 2. Notify Pharmacy
       if (order.pharmacy_id && !order.emailSent?.pharmacyNotified) {
         const pharmacy = await Pharmacy.findById(order.pharmacy_id);
         if (pharmacy) {
@@ -151,10 +187,10 @@ exports.verifyPayment = async (req, res) => {
 
     await order.save();
 
-    res.json({ verified: true, message: "Payment successful" });
+    return res.json({ verified: true, message: "Payment successful" });
   } catch (err) {
     console.error("Verify Payment Error:", err);
-    res.status(500).json({ error: "Failed to verify payment" });
+    return res.status(500).json({ error: "Failed to verify payment" });
   }
 };
 
@@ -216,48 +252,192 @@ exports.refundPayment = async (req, res) => {
   }
 };
 
-// WEBHOOK HANDLER
+// WEBHOOK HANDLER (SEC-08 Hardened: Raw Buffer HMAC-SHA256, Replay Protection & Integrity)
 exports.paymentWebhook = async (req, res) => {
   try {
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || "12345678";
-    const signature = req.headers["x-razorpay-signature"];
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-    if (!signature) {
-      return res.status(400).send("No signature found");
+    // Fail closed if webhook secret is completely unconfigured
+    if (!webhookSecret) {
+      console.error("Missing RAZORPAY_WEBHOOK_SECRET in environment");
+      return res.status(500).json({ error: "Webhook endpoint not configured" });
     }
+
+    const signature = req.headers["x-razorpay-signature"];
+    if (!signature || typeof signature !== "string") {
+      return res.status(400).json({ error: "No signature found" });
+    }
+
+    // Exact raw body bytes verification (never stringified JSON)
+    const rawPayload = req.rawBody
+      ? req.rawBody
+      : (Buffer.isBuffer(req.body)
+        ? req.body
+        : Buffer.from(typeof req.body === "string" ? req.body : JSON.stringify(req.body)));
 
     const expectedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(JSON.stringify(req.body))
+      .createHmac("sha256", webhookSecret)
+      .update(rawPayload)
       .digest("hex");
 
-    if (expectedSignature !== signature) {
-      console.error("Invalid Webhook Signature");
-      return res.status(400).send("Invalid signature");
+    // Timing-safe HMAC verification
+    const sigBuf = Buffer.from(signature, "utf-8");
+    const expBuf = Buffer.from(expectedSignature, "utf-8");
+
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      console.error("Invalid Webhook Signature detected");
+      return res.status(400).json({ error: "Invalid signature" });
     }
 
-    const { event, payload } = req.body;
-    if (event === "payment.failed") {
-      const paymentEntity = payload.payment.entity;
+    // 1. Replay Attack Protection: Track verified event IDs
+    const eventId =
+      req.headers["x-razorpay-event-id"] ||
+      req.body?.event_id ||
+      (req.body?.payload?.payment?.entity?.id ? `${req.body.payload.payment.entity.id}_${req.body.event}` : null);
+
+    if (eventId && processedWebhookEvents.has(eventId)) {
+      return res.status(200).json({ status: "already_processed", message: "Event already processed (replay ignored)" });
+    }
+
+    const { event, payload } = req.body || {};
+
+    // 2. Event Handling: payment.captured / order.paid
+    if (event === "payment.captured" || event === "order.paid") {
+      const paymentEntity = payload?.payment?.entity;
+      if (!paymentEntity) {
+        return res.status(400).json({ error: "Missing payment entity in payload" });
+      }
+
       const pg_order_id = paymentEntity.order_id;
+      const pg_payment_id = paymentEntity.id;
+      const paymentAmountPaise = paymentEntity.amount;
+
       const order = await Order.findOne({ pg_order_id });
-      if (order) {
-        // Create failed payment log
+      if (!order) {
+        console.warn(`Webhook: Order not found for pg_order_id: ${pg_order_id}`);
+        return res.status(200).json({ message: "Order not found; recorded for reconciliation" });
+      }
+
+      // 3. Payment Amount Integrity Check: Verify exact paise amount
+      const expectedAmountPaise = Math.round(order.total * 100);
+      if (paymentAmountPaise !== expectedAmountPaise) {
+        console.error(`🚨 Webhook Tampering: Expected ${expectedAmountPaise} paise, received ${paymentAmountPaise} paise`);
+        return res.status(400).json({ error: "Payment amount mismatch with order total" });
+      }
+
+      // 4. Idempotency Guard: Prevent duplicate transitions if order already marked paid
+      if (order.payment_status === "paid") {
+        if (eventId) processedWebhookEvents.set(eventId, { timestamp: Date.now() });
+        return res.status(200).json({ status: "ok", message: "Order already marked as paid" });
+      }
+
+      // Update Order Status
+      const verifiedStatus = order.prescription_url ? "pending_verification" : "pending";
+      order.payment_status = "paid";
+      order.order_status = verifiedStatus;
+      order.pg_payment_id = pg_payment_id;
+      order.status_history = order.status_history || [];
+      order.status_history.push({ status: verifiedStatus, timestamp: new Date(), source: "webhook_capture" });
+
+      // Create Payment Record (idempotently)
+      const existingPayment = await Payment.findOne({ pg_payment_id });
+      if (!existingPayment) {
         await Payment.create({
           order_id: order._id,
           pg_order_id,
-          pg_payment_id: paymentEntity.id,
-          amount: paymentEntity.amount / 100,
-          status: "FAILED",
-          error_description: paymentEntity.error_description
+          pg_payment_id,
+          amount: order.total,
+          status: "SUCCESS",
+          method: paymentEntity.method ? paymentEntity.method.toUpperCase() : "ONLINE"
         });
       }
-    }
-    // Handle other events like refund.processed or payment.captured if needed
 
-    res.status(200).send("ok");
+      // Trigger notification emails if not already sent
+      try {
+        if (!order.emailSent?.placed) {
+          const user = await User.findById(order.user_id);
+          if (user && user.email) {
+            await sendOrderPlacedEmail(user.email, user.name, order.orderNumber);
+            order.emailSent = order.emailSent || {};
+            order.emailSent.placed = true;
+          }
+        }
+
+        if (order.pharmacy_id && !order.emailSent?.pharmacyNotified) {
+          const pharmacy = await Pharmacy.findById(order.pharmacy_id);
+          if (pharmacy) {
+            const pharmacyUser = await User.findById(pharmacy.user_id);
+            if (pharmacyUser && pharmacyUser.email) {
+              await sendPharmacyOrderNotification(pharmacyUser.email, pharmacy.name || pharmacyUser.name, order.orderNumber);
+              order.emailSent = order.emailSent || {};
+              order.emailSent.pharmacyNotified = true;
+            }
+          }
+        }
+      } catch (emailErr) {
+        console.error("Email notification error during webhook:", emailErr.message);
+      }
+
+      await order.save();
+    }
+
+    // 5. Event Handling: payment.failed
+    else if (event === "payment.failed") {
+      const paymentEntity = payload?.payment?.entity;
+      if (paymentEntity) {
+        const pg_order_id = paymentEntity.order_id;
+        const order = await Order.findOne({ pg_order_id });
+        if (order && order.payment_status !== "paid") {
+          order.payment_status = "failed";
+          order.status_history = order.status_history || [];
+          order.status_history.push({ status: "payment_failed", timestamp: new Date(), source: "webhook_failed" });
+          await order.save();
+
+          // Log failed payment idempotently
+          const existingPayment = await Payment.findOne({ pg_payment_id: paymentEntity.id });
+          if (!existingPayment) {
+            await Payment.create({
+              order_id: order._id,
+              pg_order_id,
+              pg_payment_id: paymentEntity.id,
+              amount: (paymentEntity.amount || 0) / 100,
+              status: "FAILED",
+              error_code: paymentEntity.error_code,
+              error_description: paymentEntity.error_description
+            });
+          }
+        }
+      }
+    }
+
+    // 6. Event Handling: refund.processed / refund.created
+    else if (event === "refund.processed" || event === "refund.created") {
+      const refundEntity = payload?.refund?.entity;
+      if (refundEntity) {
+        const pg_payment_id = refundEntity.payment_id;
+        const order = await Order.findOne({ pg_payment_id });
+        if (order) {
+          order.refund_status = "completed";
+          order.payment_status = "refunded";
+          await order.save();
+
+          await Refund.findOneAndUpdate(
+            { pg_refund_id: refundEntity.id },
+            { status: "COMPLETED", amount: (refundEntity.amount || 0) / 100 },
+            { upsert: true, new: true }
+          );
+        }
+      }
+    }
+
+    // Mark event as processed in replay cache
+    if (eventId) {
+      processedWebhookEvents.set(eventId, { timestamp: Date.now() });
+    }
+
+    return res.status(200).json({ status: "ok" });
   } catch (err) {
-    console.error("Webhook Error:", err);
-    res.status(500).send("error");
+    console.error("Webhook Processing Error:", err);
+    return res.status(500).json({ error: "Webhook processing failure" });
   }
 };
