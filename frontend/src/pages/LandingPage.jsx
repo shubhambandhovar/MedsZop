@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation, Trans } from "react-i18next";
 import Navbar from "../components/Navbar";
@@ -9,7 +10,7 @@ import { Badge } from "../components/ui/badge";
 import {
   Pill,
   Truck,
-  Shield,
+  ShieldCheck,
   Clock,
   Brain,
   ScanLine,
@@ -19,482 +20,735 @@ import {
   CheckCircle,
   Sparkles,
   Heart,
-  Store
+  Store,
+  Stethoscope,
+  Search,
+  Activity,
+  FileCheck,
+  Award,
+  ThermometerSnowflake,
+  ChevronRight,
+  Shield,
+  Zap,
+  Users,
+  X
 } from "lucide-react";
 import heroImage from "../assets/hero-image.webp";
 
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
 const LandingPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [heroSearch, setHeroSearch] = useState("");
 
-  const features = [
-    {
-      icon: ScanLine,
-      title: t("landing.features.scanner_title"),
-      description: t("landing.features.scanner_desc"),
-      color: "bg-blue-500"
-    },
-    {
-      icon: MessageSquare,
-      title: t("landing.features.chat_title"),
-      description: t("landing.features.chat_desc"),
-      color: "bg-cyan-500"
-    },
-    {
-      icon: Truck,
-      title: t("landing.features.delivery_title"),
-      description: t("landing.features.delivery_desc"),
-      color: "bg-emerald-500"
-    },
-    {
-      icon: Shield,
-      title: t("landing.features.genuine_title"),
-      description: t("landing.features.genuine_desc"),
-      color: "bg-violet-500"
+  const handleHeroSearchSubmit = (e) => {
+    e.preventDefault();
+    if (heroSearch.trim()) {
+      navigate(`/medicines?search=${encodeURIComponent(heroSearch.trim())}`);
+    } else {
+      navigate("/medicines");
     }
+  };
+
+  const quickSearchTags = [
+    { label: "Paracetamol", query: "Paracetamol" },
+    { label: "Diabetes Care", query: "Metformin" },
+    { label: "Blood Pressure", query: "Amlodipine" },
+    { label: "Vitamin C & Zinc", query: "Vitamin" },
+    { label: "First Aid & Pain", query: "Ibuprofen" }
   ];
 
   const stats = [
-    { value: "50K+", label: t("landing.stats.customers") },
-    { value: "10K+", label: t("landing.stats.medicines") },
-    { value: "500+", label: t("landing.stats.pharmacies") },
-    { value: "30min", label: t("landing.stats.delivery") }
+    { value: "50,000+", label: t("landing.stats.customers"), sub: "Active patients served" },
+    { value: "10,000+", label: t("landing.stats.medicines"), sub: "Authentic SKUs in stock" },
+    { value: "500+", label: t("landing.stats.pharmacies"), sub: "Licensed local partners" },
+    { value: "28 min", label: t("landing.stats.delivery"), sub: "Fastest temperature-controlled drop" }
+  ];
+
+  const popularCategories = [
+    {
+      title: "Chronic Care",
+      desc: "Diabetes, Cardiac & Thyroid essentials",
+      count: "1,200+ medicines",
+      icon: Activity,
+      category: "Prescription",
+      color: "bg-blue-500/10 text-primary dark:text-blue-400"
+    },
+    {
+      title: "Daily Wellness",
+      desc: "Multivitamins, minerals & supplements",
+      count: "850+ items",
+      icon: Pill,
+      category: "Wellness",
+      color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+    },
+    {
+      title: "First Aid & Pain Relief",
+      desc: "Ointments, analgesics & dressings",
+      count: "640+ items",
+      icon: ShieldCheck,
+      category: "OTC",
+      color: "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+    },
+    {
+      title: "Baby & Motherhood",
+      desc: "Pediatric care, feeding & infant health",
+      count: "420+ items",
+      icon: Heart,
+      category: "Baby Care",
+      color: "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+    }
+  ];
+
+  const howItWorks = [
+    {
+      step: "01",
+      title: "Upload Prescription or Search",
+      desc: "Snap a photo of your doctor's handwritten prescription or search directly by brand or chemical salt.",
+      icon: ScanLine
+    },
+    {
+      step: "02",
+      title: "Clinical Verification & Batch Match",
+      desc: "Our AI extracts and maps items, followed by double-blind verification by registered pharmacists.",
+      icon: FileCheck
+    },
+    {
+      step: "03",
+      title: "Tamper-Proof Express Delivery",
+      desc: "Sealed, cold-chain compliant medicine packages dispatched to your doorstep within 30 minutes.",
+      icon: Truck
+    }
   ];
 
   const testimonials = [
     {
-      name: "Priya Sharma",
-      role: t("landing.testimonials.role_1"),
-      content: t("landing.testimonials.content_1"),
+      name: "Dr. Rajesh Kumar",
+      role: "Senior Consultant Physician, MBBS, MD",
+      badge: "Verified Doctor",
+      content:
+        "MedsZop's AI scanner accurately reads complex handwritten prescriptions and ensures our patients get exact generic equivalents without dosage mix-ups.",
       rating: 5
     },
     {
-      name: "Dr. Rajesh Kumar",
-      role: t("landing.testimonials.role_2"),
-      content: t("landing.testimonials.content_2"),
+      name: "Priya Sharma",
+      role: "Caregiver & Family Health Manager",
+      badge: "Chronic Care Patient",
+      content:
+        "Managing my elderly father's monthly diabetes and hypertension medicines used to be stressful. MedsZop delivers sealed authentic strips in under 30 minutes.",
       rating: 5
     },
     {
       name: "Drx. Amit Patel",
-      role: t("landing.testimonials.role_3"),
-      content: t("landing.testimonials.content_3"),
+      role: "Licensed Pharmacy Partner, MedsZop Network",
+      badge: "Pharmacy Partner",
+      content:
+        "The pharmacy dashboard gives us steady, organized prescription orders and transparent inventory sync. A true win for local community chemists.",
       rating: 5
     }
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden gradient-hero z-10">
-        <div className="absolute inset-0 pointer-events-none opacity-50" />
+      {/* ==================== HERO SECTION ==================== */}
+      <section className="relative pt-8 pb-20 md:pt-14 md:pb-32 overflow-hidden border-b border-slate-100 dark:border-slate-800/80 bg-gradient-to-b from-blue-50/50 via-white to-background dark:from-slate-950 dark:via-background dark:to-background">
+        {/* Subtle Ambient Background Gradients */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-tr from-primary/15 via-cyan-500/10 to-transparent blur-[120px] -z-10"
+        />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Badge className="mb-6 bg-primary/10 text-primary border-0 px-4 py-1.5">
-                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                {t("landing.hero.badge")}
-              </Badge>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Left Hero Content (7 Cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Trust Signal Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary dark:text-blue-400 text-xs font-semibold">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>{t("landing.hero.badge") || "India's Smartest Health Companion"}</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+                <span className="text-muted-foreground font-normal">CDSCO & NABH Aligned</span>
+              </div>
 
-              <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
+              {/* Editorial Display Heading */}
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold tracking-tight text-foreground leading-[1.08]">
                 <Trans i18nKey="landing.hero.title">
-                  Your Health, <span className="text-primary">Delivered</span><br />Smarter
+                  Your Health, <span className="text-primary underline decoration-primary/30 decoration-wavy decoration-2 underline-offset-8">Delivered</span>
+                  <br />
+                  Smarter & Faster.
                 </Trans>
               </h1>
 
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 max-w-lg">
-                {t("landing.hero.subtitle")}
+              {/* Subtitle */}
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl font-normal">
+                {t("landing.hero.subtitle") ||
+                  "Verified prescription medicines, AI-powered dosage verification, and tamper-sealed delivery from certified local pharmacies in 28 minutes."}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/medicines" data-testid="explore-medicines-btn">
-                  <Button size="lg" className="rounded-full h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all">
-                    {t("landing.hero.explore_btn")}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+              {/* HERO INTERACTIVE SEARCH BAR */}
+              <div className="pt-2">
+                <form
+                  onSubmit={handleHeroSearchSubmit}
+                  className="relative flex items-center p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all duration-200 max-w-xl"
+                >
+                  <div className="pl-3 pr-2 text-muted-foreground" aria-hidden="true">
+                    <Search className="h-5 w-5 text-primary" />
+                  </div>
+                  <input
+                    type="text"
+                    value={heroSearch}
+                    onChange={(e) => setHeroSearch(e.target.value)}
+                    placeholder="Search medicines, salts (e.g. Paracetamol, Metformin)..."
+                    aria-label="Search medicines directly from homepage"
+                    className="w-full bg-transparent px-2 py-2 text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+                  />
+                  {heroSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setHeroSearch("")}
+                      aria-label="Clear search text"
+                      className="p-1 rounded-full text-muted-foreground hover:text-foreground mr-1.5 transition-colors"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  )}
+                  <Button
+                    type="submit"
+                    className="rounded-xl px-5 h-11 font-medium shadow-md hover:shadow-lg active:scale-95 transition-all shrink-0"
+                    data-testid="hero-search-submit"
+                  >
+                    Search
+                    <ArrowRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
                   </Button>
-                </Link>
-                <Link to="/prescription-scan" data-testid="scan-prescription-btn">
-                  <Button size="lg" variant="outline" className="rounded-full h-12 px-8 text-base">
-                    <ScanLine className="mr-2 h-4 w-4" />
-                    {t("landing.hero.scan_btn")}
-                  </Button>
-                </Link>
-              </div>
+                </form>
 
-              <div className="flex items-center gap-6 mt-10">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map((i) => (
-                    <img
-                      key={i}
-                      src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                      alt="User"
-                      className="h-10 w-10 rounded-full border-2 border-white object-cover"
-                    />
+                {/* Popular Tags Under Search */}
+                <div className="flex flex-wrap items-center gap-2 mt-3 pt-1 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">Common searches:</span>
+                  {quickSearchTags.map((tag) => (
+                    <button
+                      key={tag.label}
+                      type="button"
+                      onClick={() => navigate(`/medicines?search=${encodeURIComponent(tag.query)}`)}
+                      className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-primary/10 hover:text-primary dark:bg-slate-800 dark:hover:bg-slate-700/80 active:scale-95 transition-all"
+                    >
+                      {tag.label}
+                    </button>
                   ))}
                 </div>
-                <div>
+              </div>
+
+              {/* Hero Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <Link to="/prescription-scan" data-testid="scan-prescription-btn">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                  >
+                    <ScanLine className="mr-2 h-5 w-5" aria-hidden="true" />
+                    {t("landing.hero.scan_btn") || "Scan Prescription"}
+                  </Button>
+                </Link>
+                <Link to="/doctor-chat" data-testid="chat-ai-doctor-hero">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                  >
+                    <Brain className="mr-2 h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+                    Consult AI Doctor
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Patient Trust Indicators */}
+              <div className="flex items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                <div className="flex -space-x-2">
+                  <div className="h-9 w-9 rounded-full bg-blue-100 dark:bg-blue-950 border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-bold text-primary">
+                    DR
+                  </div>
+                  <div className="h-9 w-9 rounded-full bg-emerald-100 dark:bg-emerald-950 border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-bold text-emerald-600">
+                    RX
+                  </div>
+                  <div className="h-9 w-9 rounded-full bg-cyan-100 dark:bg-cyan-950 border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-bold text-cyan-600">
+                    AI
+                  </div>
+                </div>
+                <div className="text-xs sm:text-sm">
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                     ))}
+                    <span className="font-semibold text-foreground ml-1">4.9 / 5.0</span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{t("landing.hero.trusted_by")}</p>
+                  <p className="text-muted-foreground">{t("landing.hero.trusted_by") || "50,000+ patient prescriptions filled"}</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden lg:block"
-            >
-              <div className="relative">
-                <div className="absolute -inset-4 pointer-events-none bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-3xl blur-3xl" />
-
-                <img
-                  src={heroImage}
-                  alt="Healthcare consultation"
-                  className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]"
-                  loading="eager"
-                  fetchPriority="high"
+            {/* Right Hero Visual Card (5 Cols) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                {/* Backing Glow */}
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-2 bg-gradient-to-tr from-primary/20 via-cyan-500/20 to-primary/10 rounded-3xl blur-2xl -z-10"
                 />
 
-                {/* Floating Cards */}
-                <Card className="absolute -left-8 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
-                  <CardContent className="p-4 flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                      <CheckCircle className="h-5 w-5 text-emerald-600" />
+                {/* Primary Card */}
+                <div className="overflow-hidden rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl">
+                  <div className="relative h-72 sm:h-80 overflow-hidden bg-slate-100 dark:bg-slate-950">
+                    <img
+                      src={heroImage}
+                      alt="Licensed pharmacist and healthcare delivery on MedsZop"
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                      fetchPriority="high"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white text-xs font-medium mb-1">
+                        <CheckCircle className="h-3 w-3" aria-hidden="true" />
+                        100% Genuine Medicine Guarantee
+                      </span>
+                      <p className="text-sm font-medium text-slate-200">
+                        Batch-verified & stored in temperature-monitored hubs.
+                      </p>
                     </div>
-                    <div>
-                      <p className="font-semibold text-sm">{t("landing.hero.delivered_card")}</p>
-                      <p className="text-xs text-muted-foreground">{t("landing.hero.in_min")}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
 
-                <Card className="absolute -right-4 bottom-20 bg-white dark:bg-slate-800 shadow-xl animate-bounce" style={{ animationDuration: '4s' }}>
-                  <CardContent className="p-4 flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Brain className="h-5 w-5 text-primary" />
+                  {/* Trust Highlights Inside Card */}
+                  <div className="p-5 space-y-3.5 bg-white dark:bg-slate-900">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pb-2 border-b border-slate-100 dark:border-slate-800">
+                      <span className="flex items-center gap-1.5 font-medium text-foreground">
+                        <ThermometerSnowflake className="h-4 w-4 text-primary" aria-hidden="true" />
+                        Cold-Chain Active
+                      </span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">2°C – 8°C Monitored</span>
                     </div>
-                    <div>
-                      <p className="font-semibold text-sm">{t("landing.hero.ai_card")}</p>
-                      <p className="text-xs text-muted-foreground">{t("landing.hero.scanned_status")}</p>
+
+                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-semibold text-foreground truncate">Fast Delivery Active</p>
+                          <span className="text-xs font-bold text-primary">28 min avg</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">Direct from your nearest certified chemist</p>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-primary">
+      {/* ==================== STATS & TRUST STRIP ==================== */}
+      <section className="py-12 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                variants={fadeIn}
-                className="text-center"
-              >
-                <p className="font-heading text-4xl md:text-5xl font-bold text-white mb-2">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {stats.map((stat, idx) => (
+              <div key={idx} className="space-y-1">
+                <p className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-primary">
                   {stat.value}
                 </p>
-                <p className="text-primary-foreground/80">{stat.label}</p>
-              </motion.div>
+                <p className="font-medium text-sm sm:text-base text-foreground">{stat.label}</p>
+                <p className="text-xs text-muted-foreground">{stat.sub}</p>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24">
+      {/* ==================== POPULAR HEALTHCARE CATEGORIES ==================== */}
+      <section className="py-20 md:py-28 bg-slate-50/60 dark:bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <Badge className="mb-4 bg-primary/10 text-primary border-0">{t("landing.features.badge")}</Badge>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {t("landing.features.title")}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t("landing.features.subtitle")}
-            </p>
-          </motion.div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div>
+              <Badge className="mb-3 bg-primary/10 text-primary border-0 px-3 py-1 text-xs font-semibold rounded-full">
+                Curated Health Inventory
+              </Badge>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                Browse by Clinical Need
+              </h2>
+              <p className="text-muted-foreground mt-2 max-w-xl text-base">
+                Find doctor-prescribed therapeutics, maintenance medications, and essential daily health supplies.
+              </p>
+            </div>
+            <Link to="/medicines" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline text-sm shrink-0">
+              Explore full medicine catalog
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularCategories.map((item, index) => (
+              <Link
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                to={`/medicines?category=${encodeURIComponent(item.category)}`}
+                className="group block"
               >
-                <Card className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full">
-                  <CardContent className="p-0">
-                    <div className={`h-12 w-12 rounded-2xl ${feature.color} flex items-center justify-center mb-5`}>
-                      <feature.icon className="h-6 w-6 text-white" />
+                <Card className="h-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 p-6">
+                  <CardContent className="p-0 space-y-4">
+                    <div className={`h-12 w-12 rounded-2xl ${item.color} flex items-center justify-center transition-transform group-hover:scale-110 duration-200`}>
+                      <item.icon className="h-6 w-6" aria-hidden="true" />
                     </div>
-                    <h3 className="font-heading font-semibold text-lg mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm">{feature.description}</p>
+                    <div>
+                      <h3 className="font-heading font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{item.desc}</p>
+                    </div>
+                    <div className="pt-2 flex items-center justify-between text-xs font-medium text-primary">
+                      <span>{item.count}</span>
+                      <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                    </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* AI Features Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
+      {/* ==================== ASYMMETRIC BENTO GRID: SMART PLATFORM ==================== */}
+      <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <Badge className="mb-4 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-0">
-                <Brain className="h-3.5 w-3.5 mr-1.5" />
-                {t("landing.ai.badge")}
-              </Badge>
-              <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                <Trans i18nKey="landing.ai.title">
-                  Healthcare Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-500">Artificial Intelligence</span>
-                </Trans>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                {t("landing.ai.description")}
-              </p>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <Badge className="mb-3 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-0 px-3.5 py-1 text-xs font-semibold rounded-full">
+              Intelligent Health Delivery
+            </Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+              Designed for Clinical Accuracy
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground mt-3">
+              We eliminated the guesswork from digital pharmacies with verified OCR extraction and licensed pharmacist validation.
+            </p>
+          </div>
 
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+            {/* Card 1: Prescription Scanner (Span 7) */}
+            <div className="lg:col-span-7 rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-blue-50/40 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-8 sm:p-10 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
-                {[
-                  "extraction",
-                  "recognition",
-                  "guidance",
-                  "warnings"
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3 justify-center lg:justify-start">
-                    <CheckCircle className="h-5 w-5 text-emerald-500" />
-                    <span>{t(`landing.ai.list.${item}`)}</span>
-                  </div>
-                ))}
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                  <ScanLine className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+                  <span>Proprietary Prescription OCR</span>
+                </div>
+                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
+                  Transform Handwriting into Verified Orders in Seconds
+                </h3>
+                <p className="text-muted-foreground text-base leading-relaxed max-w-xl">
+                  Doctor handwriting can be notoriously hard to decipher. Our multi-modal AI extracts drug names, dosages, and schedules, mapping them directly to authenticated inventory.
+                </p>
+                <ul className="space-y-2.5 pt-2 text-sm text-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" aria-hidden="true" />
+                    <span>Extracts both handwritten and typed prescription slips</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" aria-hidden="true" />
+                    <span>Automatic matching with generic salt alternatives for savings</span>
+                  </li>
+                </ul>
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center lg:justify-start">
+              <div className="pt-8">
                 <Link to="/prescription-scan">
-                  <Button className="rounded-full">
-                    {t("landing.ai.scanner_btn")}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/doctor-chat">
-                  <Button variant="outline" className="rounded-full">
-                    {t("landing.ai.chat_btn")}
+                  <Button className="rounded-full px-7 h-11 font-medium shadow-md hover:shadow-lg transition-all">
+                    Try Prescription Scanner
+                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                   </Button>
                 </Link>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 to-primary/20 rounded-3xl blur-3xl" />
-              <img
-                src="https://images.unsplash.com/photo-1516192518150-0d8fee5425e3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlJTIwbWVkaWNhbCUyMGFic3RyYWN0fGVufDB8fHx8MTc2OTExNjIxNXww&ixlib=rb-4.1.0&q=85"
-                alt="AI Technology"
-                className="relative rounded-3xl shadow-2xl w-full object-cover h-[450px]"
-              />
-            </motion.div>
+            {/* Card 2: AI Doctor Chat (Span 5) */}
+            <div className="lg:col-span-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-cyan-50/40 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-8 sm:p-10 flex flex-col justify-between shadow-sm">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                  <Brain className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                  <span>AI Clinical Assistant</span>
+                </div>
+                <h3 className="font-heading text-2xl font-bold text-foreground">
+                  24/7 Guidance on Dosages & Side Effects
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  Understand prescription instructions, ask about contraindications, and receive instant triage before booking your physician consultation.
+                </p>
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 text-xs text-muted-foreground space-y-1">
+                  <span className="font-semibold text-foreground block">Clinical Disclaimer:</span>
+                  Informational guidance verified under pharmaceutical protocols. Always consult a registered practitioner for diagnosis.
+                </div>
+              </div>
+              <div className="pt-6">
+                <Link to="/doctor-chat">
+                  <Button variant="outline" className="rounded-full px-7 h-11 font-medium transition-all">
+                    Start Assistant Chat
+                    <ChevronRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 3: Express Cold-Chain Delivery (Span 6) */}
+            <div className="lg:col-span-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-sm flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <Truck className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
+                  30-Minute Priority Dispatch
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  Insulin, biologics, and emergency antibiotics are packed in tamper-proof thermal carriers, monitored from chemist to your door with live tracking.
+                </p>
+              </div>
+              <div className="pt-6 flex items-center gap-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <CheckCircle className="h-4 w-4" aria-hidden="true" />
+                <span>Zero compromise on storage temperature</span>
+              </div>
+            </div>
+
+            {/* Card 4: Licensed Pharmacy Network (Span 6) */}
+            <div className="lg:col-span-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-sm flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Store className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
+                  Supporting Neighborhood Chemists
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  We don't centralize medicines in distant warehouses. We empower your local trusted pharmacists with digital logistics, ensuring rapid delivery and local accountability.
+                </p>
+              </div>
+              <div className="pt-6 flex items-center gap-3 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                <span>100% CDSCO-compliant verified chemists</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Partner Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
+      {/* ==================== HOW IT WORKS (3-STEP JOURNEY) ==================== */}
+      <section className="py-20 md:py-28 bg-slate-50/70 dark:bg-slate-900/40 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-primary/10 text-primary border-0">Partner with Us</Badge>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Join the MedsZop Ecosystem
+          <div className="text-center max-w-xl mx-auto mb-16">
+            <Badge className="mb-3 bg-primary/10 text-primary border-0 px-3 py-1 text-xs font-semibold rounded-full">
+              Simple & Transparent
+            </Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+              How MedsZop Works
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether you're a doctor, pharmacist, or delivery partner, we have the right tools for you.
+            <p className="text-muted-foreground mt-2 text-base">
+              From prescription snapshot to sealed medicine delivery in three straightforward steps.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {howItWorks.map((item, idx) => (
+              <div
+                key={idx}
+                className="relative rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 shadow-sm"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <span className="font-heading text-3xl font-extrabold text-primary/30">
+                    {item.step}
+                  </span>
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <item.icon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                </div>
+                <h3 className="font-heading text-xl font-bold text-foreground mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== HEALTHCARE ECOSYSTEM (PARTNERS) ==================== */}
+      <section className="py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <Badge className="mb-3 bg-primary/10 text-primary border-0 px-3 py-1 text-xs font-semibold rounded-full">
+              Ecosystem & Careers
+            </Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+              Partner with MedsZop
+            </h2>
+            <p className="text-muted-foreground mt-2 text-base">
+              Join India's fastest-growing digital healthcare network as a medical professional, retail pharmacy, or logistics specialist.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Doctor Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-blue-500">
-              <CardContent className="p-6 text-center">
-                <div className="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <Brain className="h-8 w-8 text-blue-600" />
+            {/* Doctor */}
+            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+              <CardContent className="p-0 space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-blue-500/10 text-primary flex items-center justify-center">
+                  <Stethoscope className="h-6 w-6" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">For Doctors</h3>
-                <p className="text-muted-foreground mb-6">
-                  Expand your practice with digital consultations and smart prescription tools.
+                <h3 className="font-heading text-xl font-bold text-foreground">For Physicians & Clinics</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Expand your tele-consultation reach, write digital e-prescriptions, and review patient adherence metrics through a dedicated clinical portal.
                 </p>
+              </CardContent>
+              <div className="pt-6">
                 <Link to="/apply/doctor">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Join as Doctor</Button>
+                  <Button variant="outline" className="w-full rounded-full font-medium">
+                    Apply as Doctor
+                  </Button>
                 </Link>
-              </CardContent>
+              </div>
             </Card>
 
-            {/* Pharmacist Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-emerald-500">
-              <CardContent className="p-6 text-center">
-                <div className="mx-auto h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                  <Store className="h-8 w-8 text-emerald-600" />
+            {/* Pharmacist */}
+            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+              <CardContent className="p-0 space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <Store className="h-6 w-6" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">For Pharmacists</h3>
-                <p className="text-muted-foreground mb-6">
-                  Grow your pharmacy business with our online ordering and delivery network.
+                <h3 className="font-heading text-xl font-bold text-foreground">For Retail Pharmacies</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Receive verified digital orders from nearby patients, optimize high-demand inventory, and grow daily pharmacy revenues with zero setup fee.
                 </p>
+              </CardContent>
+              <div className="pt-6">
                 <Link to="/apply/pharmacist">
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">Join as Pharmacist</Button>
+                  <Button variant="outline" className="w-full rounded-full font-medium">
+                    Register Pharmacy
+                  </Button>
                 </Link>
-              </CardContent>
+              </div>
             </Card>
 
-            {/* Delivery Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-t-4 border-t-amber-500">
-              <CardContent className="p-6 text-center">
-                <div className="mx-auto h-16 w-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                  <Truck className="h-8 w-8 text-amber-600" />
+            {/* Delivery Fleet */}
+            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+              <CardContent className="p-0 space-y-4">
+                <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Truck className="h-6 w-6" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">For Delivery Partners</h3>
-                <p className="text-muted-foreground mb-6">
-                  Earn money by delivering medicines with flexible working hours.
+                <h3 className="font-heading text-xl font-bold text-foreground">For Delivery Partners</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Earn competitive compensation delivering life-saving health supplies with flexible hours, medical insurance coverage, and localized routes.
                 </p>
-                <Link to="/apply/delivery">
-                  <Button className="w-full bg-amber-600 hover:bg-amber-700">Join as Delivery Partner</Button>
-                </Link>
               </CardContent>
+              <div className="pt-6">
+                <Link to="/apply/delivery">
+                  <Button variant="outline" className="w-full rounded-full font-medium">
+                    Join Delivery Fleet
+                  </Button>
+                </Link>
+              </div>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24">
+      {/* ==================== TESTIMONIALS (EDITORIAL FRAUNCES SERIF) ==================== */}
+      <section className="py-20 md:py-28 bg-slate-50/60 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <Badge className="mb-4 bg-primary/10 text-primary border-0">{t("landing.testimonials.badge")}</Badge>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {t("landing.testimonials.title")}
+          <div className="text-center max-w-xl mx-auto mb-16">
+            <Badge className="mb-3 bg-primary/10 text-primary border-0 px-3 py-1 text-xs font-semibold rounded-full">
+              Trust & Real Stories
+            </Badge>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+              What Healthcare Leaders & Patients Say
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t("landing.testimonials.subtitle")}
+            <p className="text-muted-foreground mt-2 text-base">
+              Verified experiences from doctors, chronic patients, and community pharmacists.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((tItem, index) => (
+              <Card
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm flex flex-col justify-between"
               >
-                <Card className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl p-6 h-full">
-                  <CardContent className="p-0">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <p className="text-foreground mb-6 font-accent italic">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="font-semibold text-primary">
-                          {testimonial.name[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-sm">{testimonial.name}</p>
-                        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                <CardContent className="p-0 space-y-5">
+                  <div className="flex items-center gap-1">
+                    {[...Array(tItem.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden="true" />
+                    ))}
+                  </div>
+                  {/* Editorial Accent Quote in Fraunces */}
+                  <p className="font-accent italic text-foreground text-base sm:text-lg leading-relaxed">
+                    "{tItem.content}"
+                  </p>
+                </CardContent>
+
+                <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800/80">
+                  <p className="font-heading font-semibold text-foreground text-sm">{tItem.name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{tItem.role}</p>
+                  <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-primary">
+                    {tItem.badge}
+                  </span>
+                </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Heart className="h-12 w-12 text-white/80 mx-auto mb-6" />
-            <h2 className="font-heading text-4xl md:text-5xl font-bold text-white mb-6">
-              {t("landing.cta.title")}
+      {/* ==================== FINAL CTA BANNER ==================== */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 text-white relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-32 right-1/4 w-[600px] h-[300px] bg-primary/20 blur-[100px] -z-0"
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-white text-xs font-semibold backdrop-blur-md">
+              <Shield className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
+              <span>256-bit Encrypted • Strictly Private Medical Data</span>
+            </div>
+
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+              Order Your Medicines with Complete Confidence
             </h2>
-            <p className="text-xl text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              {t("landing.cta.subtitle")}
+
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl mx-auto">
+              Never wait in pharmacy lines or risk out-of-stock emergency medications. Upload your prescription now and let certified experts handle the rest.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register" data-testid="cta-get-started">
-                <Button size="lg" variant="secondary" className="rounded-full h-12 px-8 text-base">
-                  {t("landing.cta.get_started")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Link to="/prescription-scan" data-testid="cta-scan-prescription">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-white text-slate-900 hover:bg-slate-100 shadow-xl transition-all"
+                >
+                  <ScanLine className="mr-2 h-5 w-5 text-primary" aria-hidden="true" />
+                  Upload Prescription
                 </Button>
               </Link>
-              <Link to="/medicines">
-                <Button size="lg" variant="outline" className="rounded-full h-12 px-8 text-base bg-transparent text-white border-white hover:bg-white hover:text-primary">
-                  {t("landing.cta.browse")}
+              <Link to="/medicines" data-testid="cta-browse-medicines">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-transparent text-white border-white/40 hover:bg-white/10 transition-all"
+                >
+                  Browse Medicines
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

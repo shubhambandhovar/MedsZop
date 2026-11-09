@@ -24,17 +24,41 @@ const Footer = () => {
               Your trusted digital healthcare partner. Fast medicine delivery, AI-powered health tools, and 24/7 support.
             </p>
             <div className="flex gap-4">
-              <a href="https://www.facebook.com/profile.php?id=61588069821433" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
-                <Facebook className="h-4 w-4" />
+              <a
+                href="https://www.facebook.com/profile.php?id=61588069821433"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow MedsZop on Facebook"
+                className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary text-slate-300 hover:text-white transition-all shadow-sm hover:scale-105"
+              >
+                <Facebook className="h-4 w-4" aria-hidden="true" />
               </a>
-              <a href="https://x.com/MedsZopIndia" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
-                <Twitter className="h-4 w-4" />
+              <a
+                href="https://x.com/MedsZopIndia"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow MedsZop on Twitter/X"
+                className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary text-slate-300 hover:text-white transition-all shadow-sm hover:scale-105"
+              >
+                <Twitter className="h-4 w-4" aria-hidden="true" />
               </a>
-              <a href="https://www.instagram.com/medszop/" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
-                <Instagram className="h-4 w-4" />
+              <a
+                href="https://www.instagram.com/medszop/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow MedsZop on Instagram"
+                className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary text-slate-300 hover:text-white transition-all shadow-sm hover:scale-105"
+              >
+                <Instagram className="h-4 w-4" aria-hidden="true" />
               </a>
-              <a href="https://www.linkedin.com/company/medszop" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary transition-colors">
-                <Linkedin className="h-4 w-4" />
+              <a
+                href="https://www.linkedin.com/company/medszop"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow MedsZop on LinkedIn"
+                className="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary text-slate-300 hover:text-white transition-all shadow-sm hover:scale-105"
+              >
+                <Linkedin className="h-4 w-4" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -132,14 +156,15 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} MedsZop. All rights reserved.
+        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+          <p>
+            © {new Date().getFullYear()} MedsZop. All rights reserved. • Licensed Healthcare & Pharmacy Aggregator.
           </p>
-          <div className="flex items-center gap-6">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg" alt="Visa" className="h-6 opacity-50" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" alt="Mastercard" className="h-6 opacity-50" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" alt="UPI" className="h-6 opacity-50" />
+          <div className="flex items-center gap-5">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Secure Payments</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg" alt="Visa" className="h-5 opacity-60 hover:opacity-100 transition-opacity" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" alt="Mastercard" className="h-5 opacity-60 hover:opacity-100 transition-opacity" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/200px-UPI-Logo-vector.svg.png" alt="UPI" className="h-5 opacity-60 hover:opacity-100 transition-opacity" />
           </div>
         </div>
       </div>
