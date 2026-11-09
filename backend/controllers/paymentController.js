@@ -282,6 +282,7 @@ exports.refundPayment = async (req, res) => {
 
 // WEBHOOK HANDLER (SEC-08 Hardened: Raw Buffer HMAC-SHA256, Replay Protection & Integrity)
 exports.paymentWebhook = async (req, res) => {
+  let eventId = null;
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -318,7 +319,7 @@ exports.paymentWebhook = async (req, res) => {
     }
 
     // 1. Replay Attack Protection: Durable & In-Memory Idempotency (Phase 9D)
-    const eventId =
+    eventId =
       req.headers["x-razorpay-event-id"] ||
       req.body?.event_id ||
       (req.body?.payload?.payment?.entity?.id ? `${req.body.payload.payment.entity.id}_${req.body.event}` : null);

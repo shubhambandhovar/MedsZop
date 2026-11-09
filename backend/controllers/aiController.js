@@ -45,14 +45,14 @@ const EMERGENCY_PATTERNS = [
  * Heuristic Prompt Injection & Extraction Patterns
  */
 const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|above|prior|system)\s+(instructions|prompts|directives|rules)/i,
-  /disregard\s+(all\s+)?(previous|safety|system)\s+(instructions|guidelines|rules)/i,
+  /ignore\s+(all\s+)?(previous|above|prior|system|clinical|safety)\s+(instructions|prompts|directives|rules)/i,
+  /disregard\s+(all\s+)?(previous|safety|system|clinical)\s+(instructions|guidelines|rules)/i,
   /reveal\s+(your\s+)?(system\s+prompt|instructions|initial\s+prompt|secret)/i,
   /what\s+are\s+your\s+(system\s+instructions|system\s+prompts|developer\s+prompts|rules)/i,
   /output\s+(your\s+)?(initial\s+prompt|system\s+instruction|prompt\s+template)/i,
   /repeat\s+(everything|the\s+words)\s+above/i,
   /you\s+are\s+now\s+(in\s+)?(developer\s+mode|unrestricted|DAN|jailbreak)/i,
-  /act\s+as\s+(an\s+)?(unrestricted|jailbroken|DAN|evil\s+ai)/i
+  /act\s+as\s+(an?\s+)?(unrestricted|jailbroken|DAN|evil|dr\.\s*evil)/i
 ];
 
 const checkEmergency = (text) => {
@@ -127,7 +127,7 @@ exports.doctorChat = async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     let reply = "";
 
-    if (apiKey && apiKey !== "mock_gemini_key_for_tests") {
+    if (apiKey && !apiKey.startsWith("mock_") && apiKey !== "mock_gemini_key_for_tests" && apiKey.length > 25) {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
