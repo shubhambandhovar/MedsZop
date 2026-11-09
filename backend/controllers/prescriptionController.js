@@ -5,6 +5,7 @@ const Prescription = require("../models/Prescription");
 const Order = require("../models/Order");
 const Pharmacy = require("../models/Pharmacy");
 const Consultation = require("../models/Consultation");
+const { escapeRegex } = require("../middleware/sanitizeMiddleware");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -238,6 +239,7 @@ exports.getPrescriptionFile = async (req, res) => {
     // 3. Ownership & Role-Based Authorization
     const userRole = req.user.role;
     const userId = req.user.id?.toString();
+    const escapedFilename = escapeRegex(sanitizedFilename);
 
     let isAuthorized = false;
 
@@ -251,7 +253,7 @@ exports.getPrescriptionFile = async (req, res) => {
       const rxDoc = await Prescription.findOne({
         $or: [
           { filename: sanitizedFilename },
-          { file_url: { $regex: sanitizedFilename } }
+          { file_url: { $regex: escapedFilename } }
         ],
         user_id: userId
       });
@@ -261,7 +263,7 @@ exports.getPrescriptionFile = async (req, res) => {
       } else {
         const orderDoc = await Order.findOne({
           user_id: userId,
-          prescription_url: { $regex: sanitizedFilename }
+          prescription_url: { $regex: escapedFilename }
         });
         if (orderDoc) {
           isAuthorized = true;
@@ -277,7 +279,7 @@ exports.getPrescriptionFile = async (req, res) => {
 
       const orderDoc = await Order.findOne({
         pharmacy_id: pharmacyIdStr,
-        prescription_url: { $regex: sanitizedFilename }
+        prescription_url: { $regex: escapedFilename }
       });
       if (orderDoc) {
         isAuthorized = true;
@@ -290,7 +292,7 @@ exports.getPrescriptionFile = async (req, res) => {
       // 1. Check direct consultation prescription attachment
       const consultWithRx = await Consultation.findOne({
         doctor_id: userId,
-        prescription_url: { $regex: sanitizedFilename },
+        prescription_url: { $regex: escapedFilename },
         status: { $in: ["ACCEPTED", "COMPLETED"] }
       });
 
@@ -301,10 +303,10 @@ exports.getPrescriptionFile = async (req, res) => {
         const rxDoc = await Prescription.findOne({
           $or: [
             { filename: sanitizedFilename },
-            { file_url: { $regex: sanitizedFilename } }
+            { file_url: { $regex: escapedFilename } }
           ]
         });
-        const orderDoc = !rxDoc ? await Order.findOne({ prescription_url: { $regex: sanitizedFilename } }) : null;
+        const orderDoc = !rxDoc ? await Order.findOne({ prescription_url: { $regex: escapedFilename } }) : null;
         const patientId = rxDoc?.user_id || orderDoc?.user_id;
 
         if (patientId) {

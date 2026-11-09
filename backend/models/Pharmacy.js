@@ -19,16 +19,18 @@ const MedicineSchema = new mongoose.Schema({
   isAutoImage: { type: Boolean, default: false } // AI Auto-fetch flag
 });
 
-module.exports = mongoose.model(
-  "Pharmacy",
-  new mongoose.Schema({
-    user_id: String,
-    name: String,
-    pharmacist_name: String,
-    license_number: String,
-    address: String,
-    verified: Boolean,
-    medicines: [MedicineSchema], // <-- This line is required!
-    createdAt: { type: Date, default: Date.now }
-  })
-);
+const pharmacySchema = new mongoose.Schema({
+  user_id: { type: String, unique: true },
+  name: String,
+  pharmacist_name: String,
+  license_number: String,
+  address: String,
+  verified: Boolean,
+  medicines: [MedicineSchema],
+  createdAt: { type: Date, default: Date.now }
+});
+
+// Recommended Indexes (Phase 9D)
+pharmacySchema.index({ "medicines._id": 1 });
+
+module.exports = mongoose.model("Pharmacy", pharmacySchema);

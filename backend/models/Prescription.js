@@ -18,5 +18,11 @@ const prescriptionSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// Recommended Indexes (Phase 9D)
+prescriptionSchema.index({ user_id: 1, createdAt: -1 });
+prescriptionSchema.index({ filename: 1 });
+prescriptionSchema.index({ file_url: 1 });
+prescriptionSchema.index({ order_id: 1 });
+
 module.exports = mongoose.model("Prescription", prescriptionSchema);
 

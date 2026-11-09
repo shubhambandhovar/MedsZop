@@ -1,50 +1,48 @@
 const Medicine = require("../models/Medicine");
-
-
-// GET ALL MEDICINES
 const Pharmacy = require("../models/Pharmacy");
+const { escapeRegex, parsePagination } = require("../middleware/sanitizeMiddleware");
 
-// GET ALL MEDICINES
+// GET ALL MEDICINES (Phase 9D Hardened: Safe Regex Escaping & Bounded Pagination)
 exports.getMedicines = async (req, res) => {
   try {
     const { search, category } = req.query;
+    const { page, limit, skip } = parsePagination(req.query, 50, 100);
 
     let query = {};
-    if (search) {
+    const safeSearch = typeof search === "string" ? escapeRegex(search.trim()) : "";
+
+    if (safeSearch) {
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { generic_name: { $regex: search, $options: "i" } },
-        { brand: { $regex: search, $options: "i" } }
+        { name: { $regex: safeSearch, $options: "i" } },
+        { generic_name: { $regex: safeSearch, $options: "i" } },
+        { brand: { $regex: safeSearch, $options: "i" } }
       ];
     }
-    if (category) {
-      query.category = category;
+    if (category && typeof category === "string") {
+      query.category = category.trim();
     }
 
     // 1. Fetch Global Medicines
-    let globalMedicines = await Medicine.find(query).limit(50).lean();
+    let globalMedicines = await Medicine.find(query).limit(100).lean();
     globalMedicines = globalMedicines.map(m => ({ ...m, id: m._id.toString() }));
 
     // 2. Fetch Pharmacy Medicines
     let pharmacyMedicines = [];
 
     // We fetch pharmacies regardless of category if there's no category or we want to search them
-    const pharmacies = await Pharmacy.find({}).select("medicines name _id");
+    const pharmacies = await Pharmacy.find({}).select("medicines name _id").lean();
 
     pharmacies.forEach(p => {
       if (p.medicines) {
         p.medicines.forEach(m => {
-          // 1. Search Filter
-          if (search && !m.name.toLowerCase().includes(search.toLowerCase()) &&
-            !(m.genericName && m.genericName.toLowerCase().includes(search.toLowerCase()))) {
-            return;
+          // 1. Search Filter (Safe case-insensitive substring match)
+          if (safeSearch) {
+            const nameMatch = m.name && m.name.toLowerCase().includes(search.toLowerCase());
+            const genericMatch = m.genericName && m.genericName.toLowerCase().includes(search.toLowerCase());
+            if (!nameMatch && !genericMatch) return;
           }
 
-          // 2. Category Filter (Optional logic: if searching by category, only include if mapped or allow any for now)
-          // For now, if a category is selected, we only show global medicines of that category.
-          // IF we wanted to support pharmacy categories, we'd need to add that field to Pharmacy schema.
-          // BUT, if no category is selected, we MUST show pharmacy medicines.
-          if (category) return; // Skip pharmacy meds if categorical filter is active (until we add categories to them)
+          if (category) return; // Skip pharmacy meds if categorical filter is active
 
           pharmacyMedicines.push({
             _id: m._id.toString(),
@@ -59,7 +57,7 @@ exports.getMedicines = async (req, res) => {
             pharmacy_id: p._id.toString(),
             pharmacy_name: p.name,
             in_stock: m.inStock,
-            category: m.category // Also expose category
+            category: m.category
           });
         });
       }
@@ -67,7 +65,19 @@ exports.getMedicines = async (req, res) => {
 
     // Merge results
     const allMedicines = [...globalMedicines, ...pharmacyMedicines];
-    res.json(allMedicines);
+    const totalCount = allMedicines.length;
+
+    // Apply pagination slice if paginated
+    const paginatedMedicines = allMedicines.slice(skip, skip + limit);
+
+    // Standard pagination response headers
+    res.setHeader("X-Total-Count", totalCount);
+    res.setHeader("X-Page", page);
+    res.setHeader("X-Limit", limit);
+    res.setHeader("X-Total-Pages", Math.ceil(totalCount / limit) || 1);
+
+    // Return array to preserve full backward compatibility with frontend
+    res.json(paginatedMedicines);
 
   } catch (err) {
     res.status(500).json({ error: err.message });

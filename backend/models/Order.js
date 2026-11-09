@@ -81,4 +81,13 @@ const orderSchema = new mongoose.Schema({
 
 });
 
+// Recommended Compound and Single-Field Indexes (Phase 9D)
+orderSchema.index({ user_id: 1, createdAt: -1 });
+orderSchema.index({ pharmacy_id: 1, order_status: 1 });
+orderSchema.index({ delivery_agent_id: 1, order_status: 1 });
+orderSchema.index({ pg_order_id: 1 });
+orderSchema.index({ order_status: 1 });
+orderSchema.index({ payment_status: 1 });
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Order", orderSchema);

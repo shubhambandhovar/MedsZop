@@ -29,4 +29,12 @@ const medicineSchema = new mongoose.Schema({
 
 });
 
+// Recommended Compound, Text, and Field Indexes (Phase 9D)
+medicineSchema.index({ name: 1, category: 1 });
+medicineSchema.index({ generic_name: 1 });
+medicineSchema.index({ brand: 1 });
+medicineSchema.index({ category: 1 });
+medicineSchema.index({ pharmacy_id: 1 });
+medicineSchema.index({ name: "text", generic_name: "text", brand: "text" });
+
 module.exports = mongoose.model("Medicine", medicineSchema);

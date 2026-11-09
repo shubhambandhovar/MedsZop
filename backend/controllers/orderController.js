@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Medicine = require("../models/Medicine");
 const Pharmacy = require("../models/Pharmacy");
 const Prescription = require("../models/Prescription");
+const { parsePagination } = require("../middleware/sanitizeMiddleware");
 const mongoose = require("mongoose");
 const path = require("path");
 const {
@@ -210,16 +211,23 @@ exports.createOrder = async (req, res) => {
 };
 
 
-// GET USER ORDERS
+// GET USER ORDERS (Phase 9D Hardened: Pagination Support & Index Optimization)
 exports.getOrders = async (req, res) => {
-
   try {
+    const { page, limit, skip } = parsePagination(req.query, 50, 100);
 
+    const totalOrders = await Order.countDocuments({ user_id: req.user.id });
     const orders = await Order.find({ user_id: req.user.id })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.setHeader("X-Total-Count", totalOrders);
+    res.setHeader("X-Page", page);
+    res.setHeader("X-Limit", limit);
+    res.setHeader("X-Total-Pages", Math.ceil(totalOrders / limit) || 1);
 
     res.json(orders);
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

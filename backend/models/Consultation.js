@@ -37,4 +37,9 @@ const consultationSchema = new mongoose.Schema({
     }
 });
 
+// Recommended Compound and Single Indexes (Phase 9D)
+consultationSchema.index({ patient_id: 1, status: 1 });
+consultationSchema.index({ doctor_id: 1, status: 1 });
+consultationSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Consultation", consultationSchema);

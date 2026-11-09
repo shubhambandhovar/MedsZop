@@ -14,4 +14,10 @@ const paymentSchema = new mongoose.Schema({
   updated_at: { type: Date, default: Date.now }
 });
 
+// Recommended Indexes (Phase 9D)
+paymentSchema.index({ order_id: 1 });
+paymentSchema.index({ pg_payment_id: 1 });
+paymentSchema.index({ pg_order_id: 1 });
+paymentSchema.index({ status: 1 });
+
 module.exports = mongoose.model("Payment", paymentSchema);

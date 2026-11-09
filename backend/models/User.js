@@ -92,4 +92,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Recommended Indexes (Phase 9D)
+userSchema.index({ role: 1 });
+userSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("User", userSchema);
