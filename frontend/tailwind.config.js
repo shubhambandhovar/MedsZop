@@ -14,6 +14,23 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)"
       },
+      height: {
+        dvh: "100dvh",
+        "dvh-screen": "100dvh"
+      },
+      minHeight: {
+        dvh: "100dvh",
+        "dvh-screen": "100dvh"
+      },
+      maxHeight: {
+        dvh: "100dvh",
+        "dvh-screen": "100dvh"
+      },
+      screens: {
+        xs: "360px",
+        "3xl": "1920px",
+        "4xl": "2560px"
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

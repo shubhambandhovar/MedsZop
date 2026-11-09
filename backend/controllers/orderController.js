@@ -2,7 +2,9 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const Medicine = require("../models/Medicine");
 const Pharmacy = require("../models/Pharmacy");
+const Prescription = require("../models/Prescription");
 const mongoose = require("mongoose");
+const path = require("path");
 const {
   sendOrderPlacedEmail,
   sendOrderConfirmedEmail,
@@ -124,6 +126,21 @@ exports.createOrder = async (req, res) => {
       finalStatus = "pending_verification";
     }
 
+    // Verify prescription ownership if prescription_url is attached
+    if (prescription_url) {
+      const rxDoc = await Prescription.findOne({
+        $or: [
+          { file_url: prescription_url },
+          { filename: path.basename(prescription_url) }
+        ]
+      });
+      if (rxDoc && rxDoc.user_id && rxDoc.user_id.toString() !== user._id.toString()) {
+        return res.status(403).json({
+          message: "Unauthorized: You can only attach prescriptions that you have uploaded."
+        });
+      }
+    }
+
     const order = await Order.create({
       user_id: user._id,
       pharmacy_id: pharmacyId,
@@ -209,42 +226,94 @@ exports.getOrders = async (req, res) => {
 };
 
 
-// GET SINGLE ORDER
+// GET SINGLE ORDER (SEC-05 & SEC-03 Remediation: Strict Object-Level Authorization)
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    // Ensure user can only see their own order
-    if (order.user_id !== req.user.id && req.user.role === "customer") {
-      return res.status(403).json({ message: "Access denied" });
+    const userRole = req.user?.role;
+    const userId = req.user?.id;
+
+    let isAuthorized = false;
+
+    // 1. Admin has global operational access
+    if (userRole === "admin") {
+      isAuthorized = true;
+    }
+    // 2. Customer can only access their own orders
+    else if (userRole === "customer") {
+      if (order.user_id === userId) {
+        isAuthorized = true;
+      }
+    }
+    // 3. Delivery agent can access assigned orders OR unassigned pool orders available for pickup
+    else if (userRole === "delivery") {
+      if (order.delivery_agent_id === userId || !order.delivery_agent_id) {
+        isAuthorized = true;
+      }
+    }
+    // 4. Pharmacy can access orders assigned to their pharmacy OR unassigned pool orders
+    else if (userRole === "pharmacy") {
+      const pharmacy = await Pharmacy.findOne({ user_id: userId });
+      if (pharmacy && (order.pharmacy_id === pharmacy._id.toString() || !order.pharmacy_id)) {
+        isAuthorized = true;
+      }
     }
 
-    res.json(order);
+    if (!isAuthorized) {
+      return res.status(403).json({ message: "Access denied: Not authorized to view this order." });
+    }
+
+    // SEC-03: Redact secret delivery OTP from non-customer / non-admin callers
+    const orderResponse = order.toObject();
+    if (userRole !== "customer" && userRole !== "admin") {
+      delete orderResponse.delivery_otp;
+    }
+
+    res.json(orderResponse);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// UPDATE ORDER STATUS (Admin / Pharmacy / Delivery)
+// UPDATE ORDER STATUS (Admin / Pharmacy / Delivery - SEC-05 Scope Validation)
 exports.updateOrderStatus = async (req, res) => {
-
   try {
-
     const order = await Order.findById(req.params.id);
-
     if (!order)
       return res.status(404).json({ message: "Order not found" });
 
-    order.order_status = req.body.status;
+    const userRole = req.user?.role;
+    const userId = req.user?.id;
 
-    // 🔥 AUTO-ASSIGN PHARMACY: If a pharmacy confirms an unassigned order, claim it
-    if (req.user.role === "pharmacy" && req.body.status === "confirmed") {
-      const pharmacy = await Pharmacy.findOne({ user_id: req.user.id });
-      if (pharmacy && (!order.pharmacy_id || order.pharmacy_id === "")) {
+    // Validate role permissions on this specific order
+    if (userRole === "pharmacy") {
+      const pharmacy = await Pharmacy.findOne({ user_id: userId });
+      if (!pharmacy) {
+        return res.status(404).json({ message: "Pharmacy profile not found." });
+      }
+
+      const isAssigned = order.pharmacy_id === pharmacy._id.toString();
+      const isUnassignedPool = (!order.pharmacy_id || order.pharmacy_id === "") && req.body.status === "confirmed";
+
+      if (!isAssigned && !isUnassignedPool) {
+        return res.status(403).json({ message: "Access denied: Order is assigned to another pharmacy." });
+      }
+
+      // Auto-assign pharmacy if confirming an unassigned pool order
+      if (isUnassignedPool) {
         order.pharmacy_id = pharmacy._id.toString();
       }
+    } else if (userRole === "delivery") {
+      if (order.delivery_agent_id !== userId && userRole !== "admin") {
+        return res.status(403).json({ message: "Access denied: You are not assigned to this delivery." });
+      }
+    } else if (userRole !== "admin") {
+      return res.status(403).json({ message: "Access denied: Unauthorized role." });
     }
+
+    order.order_status = req.body.status;
 
     // Ensure OTP is generated when order is confirmed/processing
     if (["confirmed", "processing", "out_for_delivery"].includes(req.body.status) && !order.delivery_otp) {

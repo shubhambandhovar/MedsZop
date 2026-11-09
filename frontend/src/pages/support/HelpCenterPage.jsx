@@ -148,29 +148,29 @@ const quickLinks = [
 
 const HelpCenterPage = () => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       {/* Header Section */}
-      <div className="bg-primary pt-20 pb-24 text-center px-4">
+      <div className="bg-primary pt-16 pb-20 text-center px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight font-heading">
             Help Center
           </h1>
-          <p className="text-lg text-primary-foreground/90">
+          <p className="text-sm sm:text-base text-primary-foreground/90 max-w-xl mx-auto">
             Find answers to common questions and get support for your orders, payments, and account.
           </p>
 
           {/* Quick Links Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-10 max-w-4xl mx-auto">
             {quickLinks.map((link, idx) => (
               <Link
                 key={idx}
                 to={link.to}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 transition-all rounded-xl p-4 flex flex-col items-center justify-center gap-2 text-white group"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 transition-all rounded-xl p-3 sm:p-4 flex flex-col items-center justify-center gap-2 text-white group active-press"
               >
-                <link.icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">{link.label}</span>
+                <link.icon className="h-5 w-5 sm:h-6 sm:w-6 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-medium">{link.label}</span>
               </Link>
             ))}
           </div>
@@ -178,16 +178,16 @@ const HelpCenterPage = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 -mt-8 pb-16 flex-grow w-full relative z-10">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 p-6 md:p-8">
+        <div className="bg-card text-foreground rounded-2xl shadow-sm border border-border p-5 sm:p-8">
 
-          <div className="space-y-12">
+          <div className="space-y-10 sm:space-y-12">
             {helpCategories.map((category, idx) => (
               <div key={idx} id={`category-${idx}`}>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`p-3 rounded-xl ${category.bg} ${category.color}`}>
-                    <category.icon className="h-6 w-6" />
+                <div className="flex items-center gap-3 mb-5">
+                  <div className={`p-2.5 sm:p-3 rounded-xl ${category.bg} ${category.color}`}>
+                    <category.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
                     {category.title}
                   </h2>
                 </div>
@@ -197,12 +197,12 @@ const HelpCenterPage = () => {
                     <AccordionItem
                       key={qIdx}
                       value={`${idx}-${qIdx}`}
-                      className="border border-slate-200 dark:border-slate-700 rounded-lg px-4 bg-slate-50 dark:bg-slate-800/50"
+                      className="border border-border/70 rounded-xl px-4 bg-muted/30"
                     >
-                      <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary transition-colors py-4">
+                      <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline hover:text-primary transition-colors py-3.5">
                         {item.q}
                       </AccordionTrigger>
-                      <AccordionContent className="text-slate-600 dark:text-slate-300 pb-4 leading-relaxed">
+                      <AccordionContent className="text-xs sm:text-sm text-muted-foreground pb-4 leading-relaxed">
                         {item.a}
                       </AccordionContent>
                     </AccordionItem>
@@ -215,24 +215,24 @@ const HelpCenterPage = () => {
         </div>
 
         {/* Support Contact Section */}
-        <div className="mt-12 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">Still Need Help?</h2>
-          <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-lg mx-auto">
+        <div className="mt-8 sm:mt-10 bg-card rounded-2xl shadow-xs border border-border p-6 sm:p-8 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold font-heading mb-2 text-foreground">Still Need Help?</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
             Our dedicated support team is here for you. If you couldn't find the answer you were looking for, don't hesitate to reach out!
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a href="mailto:support@medszop.site" className="flex items-center gap-3 px-6 py-3 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors dark:bg-blue-900/30 dark:text-blue-400">
-              <Mail className="h-5 w-5" />
-              <span className="font-medium">support@medszop.site</span>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="mailto:support@medszop.site" className="flex items-center gap-2.5 px-5 py-3 rounded-full bg-blue-500/10 text-primary hover:bg-primary/20 transition-colors text-xs sm:text-sm font-semibold active-press">
+              <Mail className="h-4 w-4" />
+              <span>support@medszop.site</span>
             </a>
 
-            <a href="tel:+917354255105" className="flex items-center gap-3 px-6 py-3 rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Phone className="h-5 w-5" />
-              <span className="font-medium">+91 7354255105</span>
+            <a href="tel:+917354255105" className="flex items-center gap-2.5 px-5 py-3 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors text-xs sm:text-sm font-semibold active-press">
+              <Phone className="h-4 w-4" />
+              <span>+91 7354255105</span>
             </a>
           </div>
-          <p className="text-sm text-slate-500 mt-6">🕒 Working Hours: 24/7 Online Support</p>
+          <p className="text-xs text-muted-foreground mt-5">🕒 24/7 Digital Health Support</p>
         </div>
       </main>
 

@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
 
   resetPasswordOtp: String,
   resetPasswordExpire: Date,
+  resetPasswordAttempts: {
+    type: Number,
+    default: 0
+  },
 
   welcomeEmailSent: {
     type: Boolean,

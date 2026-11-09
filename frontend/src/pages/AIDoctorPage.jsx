@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -13,7 +14,10 @@ import {
     Bot,
     User,
     Sparkles,
-    AlertCircle
+    AlertCircle,
+    Stethoscope,
+    ShieldAlert,
+    ArrowRight
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -27,7 +31,7 @@ const AIDoctorPage = () => {
     const [messages, setMessages] = useState([
         {
             role: "assistant",
-            content: "Hello! I'm Dr. MedsZop, your AI health assistant. I can help you with:\n\n• General health information\n• Medicine dosage guidance\n• Symptom awareness\n• Health tips\n\n**Important:** I provide informational guidance only. Always consult a real healthcare professional for medical conditions.\n\nHow can I help you today?"
+            content: "Hello! I'm Dr. MedsZop, your AI health assistant. I can help you with:\n\n• General health information\n• Medicine dosage guidance\n• Symptom awareness\n• Everyday wellness tips\n\n**Important:** I provide informational guidance only. Always consult a real healthcare professional for medical conditions.\n\nHow can I help you today?"
         }
     ]);
     const [input, setInput] = useState("");
@@ -94,86 +98,102 @@ const AIDoctorPage = () => {
         "What are the side effects of Paracetamol?",
         "How much water should I drink daily?",
         "I have a headache, what should I do?",
-        "What foods are good for immunity?"
+        "What foods are good for immunity?",
+        "Can I take ibuprofen on an empty stomach?"
     ];
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
 
-            <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col">
-                <div className="mb-6 text-center">
-                    <Badge className="mb-4 bg-emerald-500/10 text-emerald-600 border-0">
+            <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
+                {/* Header Section */}
+                <div className="mb-4 sm:mb-6 text-center">
+                    <Badge className="mb-2 sm:mb-3 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-3 py-1 text-xs font-semibold rounded-full">
                         <Sparkles className="h-3.5 w-3.5 mr-1.5" />
                         AI-Powered Self Help
                     </Badge>
-                    <h1 className="font-heading text-3xl font-bold mb-2">
+                    <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                         AI Health Assistant
                     </h1>
-                    <p className="text-muted-foreground max-w-xl mx-auto">
-                        Ask questions about symptoms, medicines, or general well-being.
-                        <br />
-                        <span className="text-amber-600 font-medium">Not a replacement for a real doctor.</span>
+                    <p className="text-muted-foreground text-xs sm:text-sm max-w-md mx-auto mt-1">
+                        Informational guidance about symptoms, wellness, and medicines.
                     </p>
                 </div>
 
-                <Card className="flex-1 flex flex-col overflow-hidden shadow-lg border-emerald-100 dark:border-emerald-900">
-                    <CardHeader className="border-b py-4 bg-gradient-to-r from-emerald-50 to-white dark:from-emerald-950/30 dark:to-slate-900">
-                        <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                                <Bot className="h-5 w-5 text-emerald-600" />
+                {/* Main Chat Interface Container */}
+                <Card className="flex-1 flex flex-col rounded-3xl overflow-hidden shadow-sm border-slate-200 dark:border-slate-800 bg-card h-[calc(100dvh-220px)] min-h-[500px] max-h-[780px]">
+                    <CardHeader className="border-b border-slate-100 dark:border-slate-800 py-3.5 px-4 sm:px-6 bg-slate-50/70 dark:bg-slate-900/70 shrink-0">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400">
+                                    <Bot className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <CardTitle className="font-heading text-base sm:text-lg font-bold text-foreground">Dr. MedsZop (AI)</CardTitle>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        Always Available • Informational Guidance
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <CardTitle className="font-heading text-lg">Dr. MedsZop (AI)</CardTitle>
-                                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                                    Always Online
-                                </p>
-                            </div>
+                            <Link to="/consult-doctor" className="hidden sm:inline-flex">
+                                <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold h-8 gap-1.5">
+                                    <Stethoscope className="h-3.5 w-3.5 text-primary" />
+                                    Consult Real Doctor
+                                </Button>
+                            </Link>
                         </div>
                     </CardHeader>
 
-                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden bg-slate-50/50 dark:bg-slate-950/50">
-                        {/* Messages */}
-                        <ScrollArea className="flex-1 p-4">
-                            <div className="space-y-6 max-w-3xl mx-auto">
-                                {messages.map((message, index) => (
-                                    <div
-                                        key={index}
-                                        className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
-                                    >
-                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${message.role === "user"
-                                            ? "bg-primary text-white"
-                                            : "bg-white border border-emerald-100 text-emerald-600"
-                                            }`}>
-                                            {message.role === "user" ? (
-                                                <User className="h-4 w-4" />
-                                            ) : (
-                                                <Bot className="h-4 w-4" />
-                                            )}
-                                        </div>
-                                        <div className={`max-w-[85%] rounded-2xl px-5 py-3 shadow-sm ${message.role === "user"
-                                            ? "bg-primary text-white rounded-tr-none"
-                                            : message.error
-                                                ? "bg-destructive/10 border border-destructive/20 text-destructive rounded-tl-none"
-                                                : "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-tl-none"
-                                            }`}>
-                                            <div className="text-sm markdown-content max-w-none leading-relaxed">
-                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden bg-slate-50/30 dark:bg-slate-950/30">
+                        {/* Messages Scroll Area */}
+                        <ScrollArea className="flex-1 p-3.5 sm:p-5">
+                            <div className="space-y-4 sm:space-y-5 max-w-3xl mx-auto">
+                                {messages.map((message, index) => {
+                                    const isUser = message.role === "user";
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={`flex gap-2.5 sm:gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
+                                        >
+                                            <div
+                                                className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 shadow-xs ${
+                                                    isUser
+                                                        ? "bg-primary text-primary-foreground"
+                                                        : "bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400"
+                                                }`}
+                                            >
+                                                {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                                            </div>
+                                            <div
+                                                className={`max-w-[85%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-xs break-words ${
+                                                    isUser
+                                                        ? "bg-primary text-primary-foreground rounded-tr-xs"
+                                                        : message.error
+                                                        ? "bg-destructive/10 border border-destructive/20 text-destructive rounded-tl-xs"
+                                                        : "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-foreground rounded-tl-xs"
+                                                }`}
+                                            >
+                                                <div className="text-xs sm:text-sm markdown-content leading-relaxed">
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                        {message.content}
+                                                    </ReactMarkdown>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
 
                                 {loading && (
-                                    <div className="flex gap-3">
-                                        <div className="h-8 w-8 rounded-full bg-white border border-emerald-100 flex items-center justify-center">
-                                            <Bot className="h-4 w-4 text-emerald-600" />
+                                    <div className="flex gap-2.5 sm:gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                            <Bot className="h-4 w-4" />
                                         </div>
-                                        <div className="bg-white dark:bg-slate-800 rounded-2xl rounded-tl-none px-5 py-3 border border-slate-100 dark:border-slate-700 shadow-sm">
-                                            <div className="flex items-center gap-2">
+                                        <div className="bg-white dark:bg-slate-900 rounded-2xl rounded-tl-xs px-4 py-3 border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                                            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                                                 <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
-                                                <span className="text-sm text-muted-foreground">Thinking...</span>
+                                                <span>Dr. MedsZop is thinking...</span>
                                             </div>
                                         </div>
                                     </div>
@@ -183,47 +203,51 @@ const AIDoctorPage = () => {
                             </div>
                         </ScrollArea>
 
-                        {/* Quick Questions */}
+                        {/* Suggested Topics Horizontal Pills */}
                         {messages.length <= 2 && (
-                            <div className="px-4 pb-4 max-w-3xl mx-auto w-full">
-                                <p className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">Suggested Topics</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {quickQuestions.map((q, index) => (
-                                        <Button
-                                            key={index}
-                                            variant="outline"
-                                            size="sm"
-                                            className="text-xs h-auto py-2 px-3 rounded-full bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all font-normal"
-                                            onClick={() => {
-                                                setInput(q);
-                                                inputRef.current?.focus();
-                                            }}
-                                        >
-                                            {q}
-                                        </Button>
-                                    ))}
+                            <div className="px-3 sm:px-4 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                                <div className="max-w-3xl mx-auto">
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
+                                        Suggested Questions
+                                    </p>
+                                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                                        {quickQuestions.map((q, index) => (
+                                            <button
+                                                key={index}
+                                                type="button"
+                                                className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-foreground hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all active-press shrink-0 shadow-xs"
+                                                onClick={() => {
+                                                    setInput(q);
+                                                    inputRef.current?.focus();
+                                                }}
+                                            >
+                                                {q}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Input */}
-                        <div className="p-4 bg-white dark:bg-slate-900 border-t">
-                            <div className="max-w-3xl mx-auto flex gap-3">
+                        {/* Chat Input Bar */}
+                        <div className="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                            <div className="max-w-3xl mx-auto flex items-center gap-2 sm:gap-3">
                                 <Input
                                     ref={inputRef}
-                                    placeholder="Type your health question here..."
+                                    placeholder="Type your health or medicine question here..."
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={handleKeyPress}
                                     disabled={loading}
-                                    className="h-12 rounded-full px-6 shadow-sm border-slate-200 hover:border-emerald-300 focus:border-emerald-500 transition-all"
+                                    className="h-12 rounded-2xl px-4 sm:px-5 shadow-xs border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus-visible:ring-emerald-500 text-foreground"
                                     data-testid="chat-input"
                                 />
                                 <Button
                                     onClick={handleSend}
                                     disabled={!input.trim() || loading}
-                                    className="h-12 w-12 rounded-full shrink-0 bg-emerald-600 hover:bg-emerald-700"
+                                    className="h-12 w-12 rounded-2xl shrink-0 bg-emerald-600 hover:bg-emerald-700 active-press shadow-xs"
                                     data-testid="send-btn"
+                                    aria-label="Send message"
                                 >
                                     {loading ? (
                                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -236,19 +260,20 @@ const AIDoctorPage = () => {
                     </CardContent>
                 </Card>
 
-                {/* Disclaimer */}
-                <div className="mt-6 flex items-start gap-4 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 rounded-xl text-sm max-w-3xl mx-auto w-full">
-                    <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                        <p className="font-semibold text-amber-800 dark:text-amber-200">
-                            Medical Disclaimer
-                        </p>
-                        <p className="text-amber-700 dark:text-amber-300/80 leading-relaxed">
-                            Dr. MedsZop is an AI assistant, not a human doctor. It cannot diagnose diseases, prescribe medication, or provide official medical advice.
-                            <br />
-                            <strong>If you feel unwell, please use the "Consult a Doctor" feature to speak with a verified specialist.</strong>
+                {/* Medical Safety Disclaimer Callout */}
+                <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/70 rounded-2xl text-xs max-w-4xl mx-auto w-full">
+                    <div className="flex items-start gap-2.5">
+                        <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                        <p className="text-amber-900 dark:text-amber-200/90 leading-relaxed">
+                            <strong className="font-semibold">Medical Disclaimer:</strong> Dr. MedsZop provides general educational guidance only. It is not a licensed physician and cannot prescribe or diagnose.
                         </p>
                     </div>
+                    <Link to="/consult-doctor" className="shrink-0 self-end sm:self-center">
+                        <Button variant="ghost" size="sm" className="h-7 text-xs font-semibold text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40 p-0 sm:px-2 gap-1">
+                            Speak with Doctor
+                            <ArrowRight className="h-3 w-3" />
+                        </Button>
+                    </Link>
                 </div>
             </main>
 

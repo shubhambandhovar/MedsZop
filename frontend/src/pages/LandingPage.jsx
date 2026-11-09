@@ -34,6 +34,11 @@ import {
   X
 } from "lucide-react";
 import heroImage from "../assets/hero-image.webp";
+import heroImage1280Avif from "../assets/hero-image-1280.avif";
+import heroImage800Avif from "../assets/hero-image-800.avif";
+import heroImage480Avif from "../assets/hero-image-480.avif";
+import heroImage800Webp from "../assets/hero-image-800.webp";
+import heroImage480Webp from "../assets/hero-image-480.webp";
 
 const LandingPage = () => {
   const { t } = useTranslation();
@@ -168,11 +173,11 @@ const LandingPage = () => {
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{t("landing.hero.badge") || "India's Smartest Health Companion"}</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
-                <span className="text-muted-foreground font-normal">CDSCO & NABH Aligned</span>
+                <span className="text-muted-foreground font-normal">Licensed Pharmacy Network</span>
               </div>
 
-              {/* Editorial Display Heading */}
-              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold tracking-tight text-foreground leading-[1.08]">
+              {/* Editorial Display Heading with Fluid Clamping */}
+              <h1 className="font-heading text-fluid-hero font-bold tracking-tight text-foreground leading-[1.08]">
                 <Trans i18nKey="landing.hero.title">
                   Your Health, <span className="text-primary underline decoration-primary/30 decoration-wavy decoration-2 underline-offset-8">Delivered</span>
                   <br />
@@ -181,7 +186,7 @@ const LandingPage = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl font-normal">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl font-normal">
                 {t("landing.hero.subtitle") ||
                   "Verified prescription medicines, AI-powered dosage verification, and tamper-sealed delivery from certified local pharmacies in 28 minutes."}
               </p>
@@ -190,7 +195,7 @@ const LandingPage = () => {
               <div className="pt-2">
                 <form
                   onSubmit={handleHeroSearchSubmit}
-                  className="relative flex items-center p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all duration-200 max-w-xl"
+                  className="relative flex items-center p-2 rounded-2xl bg-card border border-border shadow-lg shadow-primary/5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all duration-200 max-w-xl"
                 >
                   <div className="pl-3 pr-2 text-muted-foreground" aria-hidden="true">
                     <Search className="h-5 w-5 text-primary" />
@@ -208,17 +213,17 @@ const LandingPage = () => {
                       type="button"
                       onClick={() => setHeroSearch("")}
                       aria-label="Clear search text"
-                      className="p-1 rounded-full text-muted-foreground hover:text-foreground mr-1.5 transition-colors"
+                      className="p-1.5 rounded-full text-muted-foreground hover:text-foreground mr-1 transition-colors"
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                     </button>
                   )}
                   <Button
                     type="submit"
-                    className="rounded-xl px-5 h-11 font-medium shadow-md hover:shadow-lg active:scale-95 transition-all shrink-0"
+                    className="rounded-xl px-4 sm:px-5 h-11 font-medium shadow-md hover:shadow-lg active-press transition-all shrink-0"
                     data-testid="hero-search-submit"
                   >
-                    Search
+                    <span>Search</span>
                     <ArrowRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
                   </Button>
                 </form>
@@ -231,7 +236,7 @@ const LandingPage = () => {
                       key={tag.label}
                       type="button"
                       onClick={() => navigate(`/medicines?search=${encodeURIComponent(tag.query)}`)}
-                      className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-primary/10 hover:text-primary dark:bg-slate-800 dark:hover:bg-slate-700/80 active:scale-95 transition-all"
+                      className="px-2.5 py-1.5 rounded-full bg-muted/80 hover:bg-primary/10 hover:text-primary active-press transition-all text-xs border border-border/40 font-medium"
                     >
                       {tag.label}
                     </button>
@@ -240,21 +245,21 @@ const LandingPage = () => {
               </div>
 
               {/* Hero Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <Link to="/prescription-scan" data-testid="scan-prescription-btn">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
+                <Link to="/prescription-scan" data-testid="scan-prescription-btn" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 active-press transition-all"
                   >
                     <ScanLine className="mr-2 h-5 w-5" aria-hidden="true" />
                     {t("landing.hero.scan_btn") || "Scan Prescription"}
                   </Button>
                 </Link>
-                <Link to="/doctor-chat" data-testid="chat-ai-doctor-hero">
+                <Link to="/doctor-chat" data-testid="chat-ai-doctor-hero" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                    className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold border-border hover:bg-muted active-press transition-all"
                   >
                     <Brain className="mr-2 h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
                     Consult AI Doctor
@@ -297,20 +302,34 @@ const LandingPage = () => {
                 />
 
                 {/* Primary Card */}
-                <div className="overflow-hidden rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl">
-                  <div className="relative h-72 sm:h-80 overflow-hidden bg-slate-100 dark:bg-slate-950">
-                    <img
-                      src={heroImage}
-                      alt="Licensed pharmacist and healthcare delivery on MedsZop"
-                      className="w-full h-full object-cover"
-                      loading="eager"
-                      fetchPriority="high"
-                    />
+                <div className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-2xl">
+                  <div className="relative h-72 sm:h-80 overflow-hidden bg-muted">
+                    <picture>
+                      <source
+                        type="image/avif"
+                        srcSet={`${heroImage480Avif} 480w, ${heroImage800Avif} 800w, ${heroImage1280Avif} 1280w`}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 640px"
+                      />
+                      <source
+                        type="image/webp"
+                        srcSet={`${heroImage480Webp} 480w, ${heroImage800Webp} 800w, ${heroImage} 1280w`}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 640px"
+                      />
+                      <img
+                        src={heroImage}
+                        alt="Licensed pharmacist and healthcare delivery on MedsZop"
+                        className="w-full h-full object-cover"
+                        loading="eager"
+                        fetchPriority="high"
+                        width="640"
+                        height="360"
+                      />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/90 text-white text-xs font-medium mb-1">
                         <CheckCircle className="h-3 w-3" aria-hidden="true" />
-                        100% Genuine Medicine Guarantee
+                        100% Genuine Medicines
                       </span>
                       <p className="text-sm font-medium text-slate-200">
                         Batch-verified & stored in temperature-monitored hubs.
@@ -319,8 +338,8 @@ const LandingPage = () => {
                   </div>
 
                   {/* Trust Highlights Inside Card */}
-                  <div className="p-5 space-y-3.5 bg-white dark:bg-slate-900">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <div className="p-5 space-y-3.5 bg-card">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pb-2 border-b border-border/60">
                       <span className="flex items-center gap-1.5 font-medium text-foreground">
                         <ThermometerSnowflake className="h-4 w-4 text-primary" aria-hidden="true" />
                         Cold-Chain Active
@@ -328,7 +347,7 @@ const LandingPage = () => {
                       <span className="font-semibold text-emerald-600 dark:text-emerald-400">2°C – 8°C Monitored</span>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 border border-border/50">
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                         <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
                       </div>
@@ -391,9 +410,9 @@ const LandingPage = () => {
               <Link
                 key={index}
                 to={`/medicines?category=${encodeURIComponent(item.category)}`}
-                className="group block"
+                className="group block active-press"
               >
-                <Card className="h-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 p-6">
+                <Card className="h-full rounded-2xl border-border bg-card hover:shadow-xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 p-6">
                   <CardContent className="p-0 space-y-4">
                     <div className={`h-12 w-12 rounded-2xl ${item.color} flex items-center justify-center transition-transform group-hover:scale-110 duration-200`}>
                       <item.icon className="h-6 w-6" aria-hidden="true" />
@@ -434,7 +453,7 @@ const LandingPage = () => {
           {/* Bento Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
             {/* Card 1: Prescription Scanner (Span 7) */}
-            <div className="lg:col-span-7 rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-blue-50/40 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-8 sm:p-10 flex flex-col justify-between shadow-sm">
+            <div className="lg:col-span-7 rounded-3xl border border-border bg-gradient-to-br from-blue-50/40 via-card to-card dark:from-slate-900/40 dark:via-card dark:to-card p-6 sm:p-10 flex flex-col justify-between shadow-xs">
               <div className="space-y-4">
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
                   <ScanLine className="h-6 w-6" aria-hidden="true" />
@@ -445,7 +464,7 @@ const LandingPage = () => {
                 <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
                   Transform Handwriting into Verified Orders in Seconds
                 </h3>
-                <p className="text-muted-foreground text-base leading-relaxed max-w-xl">
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-xl">
                   Doctor handwriting can be notoriously hard to decipher. Our multi-modal AI extracts drug names, dosages, and schedules, mapping them directly to authenticated inventory.
                 </p>
                 <ul className="space-y-2.5 pt-2 text-sm text-foreground">
@@ -461,7 +480,7 @@ const LandingPage = () => {
               </div>
               <div className="pt-8">
                 <Link to="/prescription-scan">
-                  <Button className="rounded-full px-7 h-11 font-medium shadow-md hover:shadow-lg transition-all">
+                  <Button className="rounded-full px-7 h-11 font-medium shadow-md hover:shadow-lg active-press transition-all">
                     Try Prescription Scanner
                     <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                   </Button>
@@ -470,7 +489,7 @@ const LandingPage = () => {
             </div>
 
             {/* Card 2: AI Doctor Chat (Span 5) */}
-            <div className="lg:col-span-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-cyan-50/40 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-8 sm:p-10 flex flex-col justify-between shadow-sm">
+            <div className="lg:col-span-5 rounded-3xl border border-border bg-gradient-to-br from-cyan-50/40 via-card to-card dark:from-slate-900/40 dark:via-card dark:to-card p-6 sm:p-10 flex flex-col justify-between shadow-xs">
               <div className="space-y-4">
                 <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
                   <Brain className="h-6 w-6" aria-hidden="true" />
@@ -484,14 +503,14 @@ const LandingPage = () => {
                 <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
                   Understand prescription instructions, ask about contraindications, and receive instant triage before booking your physician consultation.
                 </p>
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 text-xs text-muted-foreground space-y-1">
+                <div className="p-3.5 rounded-2xl bg-muted/60 border border-border/60 text-xs text-muted-foreground space-y-1">
                   <span className="font-semibold text-foreground block">Clinical Disclaimer:</span>
                   Informational guidance verified under pharmaceutical protocols. Always consult a registered practitioner for diagnosis.
                 </div>
               </div>
               <div className="pt-6">
                 <Link to="/doctor-chat">
-                  <Button variant="outline" className="rounded-full px-7 h-11 font-medium transition-all">
+                  <Button variant="outline" className="rounded-full px-7 h-11 font-medium active-press transition-all">
                     Start Assistant Chat
                     <ChevronRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
                   </Button>
@@ -500,7 +519,7 @@ const LandingPage = () => {
             </div>
 
             {/* Card 3: Express Cold-Chain Delivery (Span 6) */}
-            <div className="lg:col-span-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-6 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-xs flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Truck className="h-6 w-6" aria-hidden="true" />
@@ -519,7 +538,7 @@ const LandingPage = () => {
             </div>
 
             {/* Card 4: Licensed Pharmacy Network (Span 6) */}
-            <div className="lg:col-span-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-6 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-xs flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                   <Store className="h-6 w-6" aria-hidden="true" />
@@ -533,7 +552,7 @@ const LandingPage = () => {
               </div>
               <div className="pt-6 flex items-center gap-3 text-xs font-semibold text-amber-600 dark:text-amber-400">
                 <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                <span>100% CDSCO-compliant verified chemists</span>
+                <span>Verified licensed retail pharmacies</span>
               </div>
             </div>
           </div>
@@ -555,11 +574,11 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative">
             {howItWorks.map((item, idx) => (
               <div
                 key={idx}
-                className="relative rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 shadow-sm"
+                className="relative rounded-3xl bg-card p-6 sm:p-8 border border-border shadow-xs"
               >
                 <div className="flex items-center justify-between mb-6">
                   <span className="font-heading text-3xl font-extrabold text-primary/30">
@@ -598,7 +617,7 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Doctor */}
-            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+            <Card className="rounded-3xl border border-border bg-card p-8 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between">
               <CardContent className="p-0 space-y-4">
                 <div className="h-12 w-12 rounded-2xl bg-blue-500/10 text-primary flex items-center justify-center">
                   <Stethoscope className="h-6 w-6" aria-hidden="true" />
@@ -610,7 +629,7 @@ const LandingPage = () => {
               </CardContent>
               <div className="pt-6">
                 <Link to="/apply/doctor">
-                  <Button variant="outline" className="w-full rounded-full font-medium">
+                  <Button variant="outline" className="w-full rounded-full font-medium active-press">
                     Apply as Doctor
                   </Button>
                 </Link>
@@ -618,7 +637,7 @@ const LandingPage = () => {
             </Card>
 
             {/* Pharmacist */}
-            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+            <Card className="rounded-3xl border border-border bg-card p-8 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between">
               <CardContent className="p-0 space-y-4">
                 <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Store className="h-6 w-6" aria-hidden="true" />
@@ -630,7 +649,7 @@ const LandingPage = () => {
               </CardContent>
               <div className="pt-6">
                 <Link to="/apply/pharmacist">
-                  <Button variant="outline" className="w-full rounded-full font-medium">
+                  <Button variant="outline" className="w-full rounded-full font-medium active-press">
                     Register Pharmacy
                   </Button>
                 </Link>
@@ -638,7 +657,7 @@ const LandingPage = () => {
             </Card>
 
             {/* Delivery Fleet */}
-            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+            <Card className="rounded-3xl border border-border bg-card p-8 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between">
               <CardContent className="p-0 space-y-4">
                 <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                   <Truck className="h-6 w-6" aria-hidden="true" />
@@ -650,7 +669,7 @@ const LandingPage = () => {
               </CardContent>
               <div className="pt-6">
                 <Link to="/apply/delivery">
-                  <Button variant="outline" className="w-full rounded-full font-medium">
+                  <Button variant="outline" className="w-full rounded-full font-medium active-press">
                     Join Delivery Fleet
                   </Button>
                 </Link>
@@ -661,7 +680,7 @@ const LandingPage = () => {
       </section>
 
       {/* ==================== TESTIMONIALS (EDITORIAL FRAUNCES SERIF) ==================== */}
-      <section className="py-20 md:py-28 bg-slate-50/60 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800">
+      <section className="py-20 md:py-28 bg-muted/30 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-16">
             <Badge className="mb-3 bg-primary/10 text-primary border-0 px-3 py-1 text-xs font-semibold rounded-full">
@@ -679,7 +698,7 @@ const LandingPage = () => {
             {testimonials.map((tItem, index) => (
               <Card
                 key={index}
-                className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-sm flex flex-col justify-between"
+                className="rounded-3xl border border-border bg-card p-8 shadow-xs flex flex-col justify-between"
               >
                 <CardContent className="p-0 space-y-5">
                   <div className="flex items-center gap-1">
@@ -693,10 +712,10 @@ const LandingPage = () => {
                   </p>
                 </CardContent>
 
-                <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800/80">
+                <div className="pt-6 mt-6 border-t border-border/60">
                   <p className="font-heading font-semibold text-foreground text-sm">{tItem.name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{tItem.role}</p>
-                  <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-primary">
+                  <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-muted text-[11px] font-medium text-primary">
                     {tItem.badge}
                   </span>
                 </div>
@@ -710,14 +729,14 @@ const LandingPage = () => {
       <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 text-white relative overflow-hidden">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-32 right-1/4 w-[600px] h-[300px] bg-primary/20 blur-[100px] -z-0"
+          className="pointer-events-none absolute -bottom-32 right-1/4 w-full max-w-[600px] h-[300px] bg-primary/20 blur-[100px] -z-0"
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-white text-xs font-semibold backdrop-blur-md">
               <Shield className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
-              <span>256-bit Encrypted • Strictly Private Medical Data</span>
+              <span>Encrypted In Transit • Strict Medical Privacy</span>
             </div>
 
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
@@ -732,7 +751,7 @@ const LandingPage = () => {
               <Link to="/prescription-scan" data-testid="cta-scan-prescription">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-white text-slate-900 hover:bg-slate-100 shadow-xl transition-all"
+                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-white text-slate-900 hover:bg-slate-100 shadow-xl active-press transition-all"
                 >
                   <ScanLine className="mr-2 h-5 w-5 text-primary" aria-hidden="true" />
                   Upload Prescription
@@ -742,7 +761,7 @@ const LandingPage = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-transparent text-white border-white/40 hover:bg-white/10 transition-all"
+                  className="w-full sm:w-auto rounded-full h-12 px-8 text-base font-semibold bg-transparent text-white border-white/40 hover:bg-white/10 active-press transition-all"
                 >
                   Browse Medicines
                 </Button>

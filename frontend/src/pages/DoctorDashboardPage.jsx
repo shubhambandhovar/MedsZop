@@ -222,7 +222,7 @@ const DoctorDashboardPage = () => {
                             placeholder="Type a message..."
                             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         />
-                        <Button onClick={handleSendMessage} size="icon">
+                        <Button onClick={handleSendMessage} size="icon" aria-label="Send message">
                             <Send className="h-4 w-4" />
                         </Button>
                     </div>

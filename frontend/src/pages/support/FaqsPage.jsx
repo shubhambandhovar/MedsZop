@@ -118,36 +118,36 @@ const faqs = [
 
 const FaqsPage = () => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       {/* Hero Section */}
-      <div className="bg-primary/10 py-16 text-center">
+      <div className="bg-primary/10 py-12 sm:py-16 text-center">
         <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-foreground mb-3 tracking-tight">
             Frequently Asked Questions
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
             Find simple, clear answers to common questions about our online medicine delivery, AI consultations, and more.
           </p>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 py-12 flex-grow w-full">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 md:p-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 sm:py-12 flex-grow w-full">
+        <div className="bg-card text-foreground rounded-2xl shadow-xs border border-border p-5 sm:p-8">
 
           {faqs.map((section, idx) => (
-            <div key={idx} className="mb-10 last:mb-0">
-              <h2 className="text-2xl font-semibold mb-6 text-primary border-b pb-2">
+            <div key={idx} className="mb-8 sm:mb-10 last:mb-0">
+              <h2 className="text-lg sm:text-xl font-bold font-heading mb-4 text-primary border-b border-border/60 pb-2">
                 {section.category}
               </h2>
-              <Accordion type="single" collapsible className="w-full">
+              <Accordion type="single" collapsible className="w-full space-y-1">
                 {section.questions.map((item, qIdx) => (
-                  <AccordionItem key={qIdx} value={`${idx}-${qIdx}`}>
-                    <AccordionTrigger className="text-left text-base font-medium">
+                  <AccordionItem key={qIdx} value={`${idx}-${qIdx}`} className="border-border/60">
+                    <AccordionTrigger className="text-left text-sm sm:text-base font-semibold hover:no-underline hover:text-primary transition-colors py-3 sm:py-4">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-slate-600 dark:text-slate-300 text-base leading-relaxed">
+                    <AccordionContent className="text-xs sm:text-sm text-muted-foreground leading-relaxed pb-3">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>

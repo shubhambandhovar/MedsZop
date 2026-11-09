@@ -199,91 +199,117 @@ const DeliveryDashboardPage = () => {
 
   const getStatusBadge = (status) => {
     const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      confirmed: "bg-blue-100 text-blue-800",
-      processing: "bg-purple-100 text-purple-800",
-      out_for_delivery: "bg-cyan-100 text-cyan-800",
-      delivered: "bg-emerald-100 text-emerald-800",
-      cancelled: "bg-red-100 text-red-800"
+      pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 dark:border dark:border-amber-800/50",
+      confirmed: "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 dark:border dark:border-blue-800/50",
+      processing: "bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 dark:border dark:border-purple-800/50",
+      out_for_delivery: "bg-cyan-100 text-cyan-800 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border dark:border-cyan-800/50",
+      delivered: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border dark:border-emerald-800/50",
+      cancelled: "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 dark:border dark:border-red-800/50"
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-muted text-foreground";
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="font-heading text-3xl font-bold flex items-center gap-3" data-testid="delivery-dashboard-title">
-            <Truck className="h-8 w-8 text-primary" />
-            Delivery Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1">Manage your deliveries and track earnings</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
+              <Truck className="h-3.5 w-3.5" />
+              Agent Operations Hub
+            </div>
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-3" data-testid="delivery-dashboard-title">
+              Delivery Dashboard
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage assigned pickups, live routes, and track your daily payouts</p>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/60 px-3 py-2 rounded-xl border border-border/50 self-start sm:self-auto">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            Live GPS Tracking Active
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white">
-            <CardContent className="p-6">
+        {/* Operational KPI Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-8">
+          <Card className="border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 via-card to-card shadow-sm hover:shadow transition-shadow">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-cyan-100 text-sm">Active Deliveries</p>
-                  <p className="text-3xl font-bold">{activeOrders.length}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Active Jobs</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground mt-1">{activeOrders.length}</p>
                 </div>
-                <Truck className="h-10 w-10 text-cyan-200" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                  <Truck className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
               </div>
+              <p className="text-[11px] text-muted-foreground mt-2">Currently in transit</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white">
-            <CardContent className="p-6">
+          <Card className="border border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-card to-card shadow-sm hover:shadow transition-shadow">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-100 text-sm">Available</p>
-                  <p className="text-3xl font-bold">{availableOrders.length}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Available</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground mt-1">{availableOrders.length}</p>
                 </div>
-                <Package className="h-10 w-10 text-amber-200" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Package className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
               </div>
+              <p className="text-[11px] text-muted-foreground mt-2">Ready for pickup</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-            <CardContent className="p-6">
+          <Card className="border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 via-card to-card shadow-sm hover:shadow transition-shadow">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm">Completed Today</p>
-                  <p className="text-3xl font-bold">{completedOrders.length}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Delivered</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground mt-1">{completedOrders.length}</p>
                 </div>
-                <CheckCircle className="h-10 w-10 text-emerald-200" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
               </div>
+              <p className="text-[11px] text-muted-foreground mt-2">Completed today</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-violet-500 to-violet-600 text-white">
-            <CardContent className="p-6">
+          <Card className="border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-sm hover:shadow transition-shadow">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-violet-100 text-sm">Earnings</p>
-                  <p className="text-3xl font-bold">₹{(completedOrders.length * 50).toFixed(0)}</p>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Earned Today</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-primary mt-1">₹{(completedOrders.length * 50).toFixed(0)}</p>
                 </div>
-                <DollarSign className="h-10 w-10 text-violet-200" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
               </div>
+              <p className="text-[11px] text-muted-foreground mt-2">₹50 base fee per drop</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Map */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-heading flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                Delivery Map
-              </CardTitle>
+          <Card className="border border-border/70 shadow-sm overflow-hidden flex flex-col">
+            <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/40">
+              <div className="flex items-center justify-between">
+                <CardTitle className="font-heading text-lg sm:text-xl flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Live Route Map
+                </CardTitle>
+                <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
+                  {orders.filter(o => o.order_status !== "delivered").length} Drops Marked
+                </span>
+              </div>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="h-[400px] rounded-b-xl overflow-hidden">
+            <CardContent className="p-0 flex-1">
+              <div className="h-[280px] sm:h-[360px] lg:h-[480px] w-full overflow-hidden">
                 <MapContainer
                   key={mapCenter.join(',')}
                   center={mapCenter}
@@ -310,9 +336,9 @@ const DeliveryDashboardPage = () => {
                           icon={orderIcon}
                         >
                           <Popup>
-                            <div className="p-2">
-                              <p className="font-bold">Order #{order._id.slice(0, 8)}</p>
-                              <p className="text-xs">{order.address.addressLine1}</p>
+                            <div className="p-2 text-foreground">
+                              <p className="font-bold text-sm">Order #{order._id.slice(0, 8)}</p>
+                              <p className="text-xs text-muted-foreground">{order.address.addressLine1}</p>
                               <Badge className="mt-2 scale-75 origin-left">
                                 {order.order_status}
                               </Badge>
@@ -331,68 +357,80 @@ const DeliveryDashboardPage = () => {
           {/* Orders List / Tabs */}
           <div className="space-y-6">
             <Tabs defaultValue="available" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-4">
-                <TabsTrigger value="available" className="flex gap-2">
-                  <Package className="h-4 w-4" />
-                  Available ({availableOrders.length})
+              <TabsList className="grid w-full grid-cols-3 mb-4 h-12 p-1 bg-muted/60 rounded-xl">
+                <TabsTrigger value="available" className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium rounded-lg">
+                  <Package className="h-4 w-4 shrink-0" />
+                  <span>Available</span>
+                  <span className="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-amber-500/10 text-amber-600 font-semibold">
+                    {availableOrders.length}
+                  </span>
                 </TabsTrigger>
-                <TabsTrigger value="active" className="flex gap-2">
-                  <Navigation className="h-4 w-4" />
-                  Active ({activeOrders.length})
+                <TabsTrigger value="active" className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium rounded-lg">
+                  <Navigation className="h-4 w-4 shrink-0" />
+                  <span>Active</span>
+                  <span className="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-cyan-500/10 text-cyan-600 font-semibold">
+                    {activeOrders.length}
+                  </span>
                 </TabsTrigger>
-                <TabsTrigger value="completed" className="flex gap-2">
-                  <History className="h-4 w-4" />
-                  History ({completedOrders.length})
+                <TabsTrigger value="completed" className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium rounded-lg">
+                  <History className="h-4 w-4 shrink-0" />
+                  <span>History</span>
+                  <span className="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-600 font-semibold">
+                    {completedOrders.length}
+                  </span>
                 </TabsTrigger>
               </TabsList>
 
               {/* Available Orders Tab */}
               <TabsContent value="available">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-heading flex items-center gap-2">
+                <Card className="border border-border/70 shadow-sm">
+                  <CardHeader className="p-4 sm:p-6 pb-2">
+                    <CardTitle className="font-heading text-lg flex items-center gap-2">
                       <Clock className="h-5 w-5 text-amber-500" />
                       Available for Pickup
                     </CardTitle>
+                    <p className="text-xs text-muted-foreground">Orders ready to be claimed by delivery partners</p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6 pt-3">
                     {availableOrders.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">No orders available</p>
+                      <div className="text-center py-12 border-2 border-dashed border-border/60 rounded-xl">
+                        <Package className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
+                        <p className="font-medium text-sm text-foreground">No orders available right now</p>
+                        <p className="text-xs text-muted-foreground mt-1">New orders from nearby pharmacies will appear here automatically</p>
+                      </div>
                     ) : (
                       <div className="space-y-3">
                         {availableOrders.map((order) => (
-                          <div key={order._id} className="p-4 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted transition-colors">
+                          <div key={order._id} className="p-4 bg-card border border-border/80 rounded-xl hover:border-primary/40 transition-all shadow-xs">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="font-bold text-base text-foreground">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                   {order.items.length} items • ₹{order.total.toFixed(2)}
                                 </p>
                               </div>
-                              <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-                                +₹50 earning
+                              <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/40">
+                                +₹50 payout
                               </span>
                             </div>
-                            <div className="text-sm mb-3 text-muted-foreground flex items-center gap-1.5">
-                              <MapPin className="h-3.5 w-3.5" />
-                              {order.address?.city}, {order.address?.pincode}
+                            <div className="text-xs sm:text-sm mb-3.5 text-muted-foreground flex items-center gap-1.5">
+                              <MapPin className="h-4 w-4 text-primary shrink-0" />
+                              <span className="truncate">{order.address?.city || 'Local area'}, {order.address?.pincode}</span>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="grid grid-cols-2 gap-2.5">
                               <Button
-                                className="flex-1"
+                                className="h-10 text-xs sm:text-sm font-medium"
                                 variant="outline"
-                                size="sm"
                                 onClick={() => {
                                   setSelectedOrder(order);
                                   setShowDetails(true);
                                 }}
                               >
-                                <Info className="h-4 w-4 mr-1" />
+                                <Info className="h-4 w-4 mr-1.5" />
                                 Details
                               </Button>
                               <Button
-                                className="flex-1"
-                                size="sm"
+                                className="h-10 text-xs sm:text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
                                 onClick={() => handleAcceptDelivery(order._id)}
                               >
                                 Accept Pickup
@@ -408,24 +446,29 @@ const DeliveryDashboardPage = () => {
 
               {/* Active Deliveries Tab */}
               <TabsContent value="active">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-heading flex items-center gap-2">
+                <Card className="border border-border/70 shadow-sm">
+                  <CardHeader className="p-4 sm:p-6 pb-2">
+                    <CardTitle className="font-heading text-lg flex items-center gap-2">
                       <Truck className="h-5 w-5 text-cyan-500" />
                       En-route Deliveries
                     </CardTitle>
+                    <p className="text-xs text-muted-foreground">Deliveries currently in progress under your supervision</p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6 pt-3">
                     {activeOrders.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">No active deliveries</p>
+                      <div className="text-center py-12 border-2 border-dashed border-border/60 rounded-xl">
+                        <Truck className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
+                        <p className="font-medium text-sm text-foreground">No active deliveries</p>
+                        <p className="text-xs text-muted-foreground mt-1">Accept an available order to begin route navigation</p>
+                      </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {activeOrders.map((order) => (
-                          <div key={order._id} className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+                          <div key={order._id} className="p-4 sm:p-5 bg-card border-2 border-primary/20 dark:border-primary/30 rounded-xl shadow-xs">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <p className="font-medium text-lg">Order #{order._id.slice(-6).toUpperCase()}</p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="font-bold text-base text-foreground">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                   {order.address?.addressLine1}
                                 </p>
                               </div>
@@ -433,24 +476,22 @@ const DeliveryDashboardPage = () => {
                                 {order.order_status.replace('_', ' ')}
                               </Badge>
                             </div>
-                            <div className="flex flex-col gap-2 mt-4">
-                              <div className="flex gap-2">
+                            <div className="flex flex-col gap-2.5 mt-4">
+                              <div className="grid grid-cols-2 gap-2">
                                 <Button
-                                  size="sm"
                                   variant="outline"
-                                  className="flex-1 bg-white hover:bg-muted"
+                                  className="h-10 text-xs sm:text-sm font-medium"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedOrder(order);
                                     setShowDetails(true);
                                   }}
                                 >
-                                  <Info className="h-4 w-4 mr-2" />
+                                  <Info className="h-4 w-4 mr-1.5" />
                                   Details
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white border-none"
+                                  className="h-10 text-xs sm:text-sm font-medium bg-cyan-600 hover:bg-cyan-700 text-white border-none"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     console.log("Map button clicked for order:", order._id);
@@ -462,36 +503,35 @@ const DeliveryDashboardPage = () => {
                                     }
                                   }}
                                 >
-                                  <Navigation className="h-4 w-4 mr-2" />
-                                  Map
+                                  <Navigation className="h-4 w-4 mr-1.5" />
+                                  Focus Map
                                 </Button>
                               </div>
 
-                              {/* Dynamic Status Buttons */}
+                              {/* Dynamic Status Progression Buttons */}
                               {order.order_status === "accepted" && (
-                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "picked_up"); }}>
+                                <Button className="w-full h-11 text-xs sm:text-sm font-semibold" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "picked_up"); }}>
                                   <Package className="h-4 w-4 mr-2" /> Mark Picked Up
                                 </Button>
                               )}
                               {order.order_status === "picked_up" && (
-                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "shipped"); }}>
+                                <Button className="w-full h-11 text-xs sm:text-sm font-semibold" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "shipped"); }}>
                                   <Truck className="h-4 w-4 mr-2" /> Mark Shipped
                                 </Button>
                               )}
                               {order.order_status === "shipped" && (
-                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "on_the_way"); }}>
+                                <Button className="w-full h-11 text-xs sm:text-sm font-semibold" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "on_the_way"); }}>
                                   <Navigation className="h-4 w-4 mr-2" /> Mark On The Way
                                 </Button>
                               )}
                               {order.order_status === "on_the_way" && (
-                                <Button size="sm" className="w-full" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "out_for_delivery"); }}>
+                                <Button className="w-full h-11 text-xs sm:text-sm font-semibold" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order._id, "out_for_delivery"); }}>
                                   <Truck className="h-4 w-4 mr-2" /> Mark Out For Delivery
                                 </Button>
                               )}
                               {order.order_status === "out_for_delivery" && (
                                 <Button
-                                  size="sm"
-                                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                                  className="w-full h-11 text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     initiateCompletion(order._id);
@@ -511,45 +551,48 @@ const DeliveryDashboardPage = () => {
 
               {/* Completed Deliveries Tab */}
               <TabsContent value="completed">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-heading flex items-center gap-2">
+                <Card className="border border-border/70 shadow-sm">
+                  <CardHeader className="p-4 sm:p-6 pb-2">
+                    <CardTitle className="font-heading text-lg flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-emerald-500" />
                       Completed Deliveries
                     </CardTitle>
+                    <p className="text-xs text-muted-foreground">Successful drops and verified deliveries history</p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6 pt-3">
                     {completedOrders.length === 0 ? (
-                      <div className="text-center py-12">
-                        <History className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                        <p className="text-muted-foreground">No completed deliveries yet</p>
+                      <div className="text-center py-12 border-2 border-dashed border-border/60 rounded-xl">
+                        <History className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
+                        <p className="font-medium text-sm text-foreground">No completed deliveries yet</p>
+                        <p className="text-xs text-muted-foreground mt-1">Completed drops will show here with verified earnings</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
                         {completedOrders.map((order) => (
-                          <div key={order._id} className="p-4 border border-border/50 rounded-xl opacity-80">
+                          <div key={order._id} className="p-3.5 sm:p-4 border border-border/60 bg-muted/20 rounded-xl hover:bg-muted/40 transition-colors">
                             <div className="flex justify-between items-center">
                               <div>
-                                <p className="font-medium">Order #{order._id.slice(-6).toUpperCase()}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Delivered on {new Date(order.status_history?.find(h => h.status === 'delivered')?.timestamp || order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                <p className="font-bold text-sm text-foreground">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                  Delivered at {new Date(order.status_history?.find(h => h.status === 'delivered')?.timestamp || order.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-3 text-right">
+                              <div className="flex items-center gap-2.5 text-right">
                                 <Button
                                   size="sm"
-                                  variant="ghost"
-                                  className="h-8 w-8 p-0"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 rounded-lg"
                                   onClick={() => {
                                     setSelectedOrder(order);
                                     setShowDetails(true);
                                   }}
+                                  aria-label="View order details"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
                                 <div>
-                                  <p className="font-bold text-emerald-600">₹50.00</p>
-                                  <Badge variant="secondary" className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-100">Paid out</Badge>
+                                  <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400">₹50.00</p>
+                                  <Badge variant="secondary" className="text-[10px] bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-none">Paid out</Badge>
                                 </div>
                               </div>
                             </div>
@@ -569,76 +612,76 @@ const DeliveryDashboardPage = () => {
 
       {/* Order Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md max-h-[90dvh] overflow-y-auto rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-heading">
               <Package className="h-5 w-5 text-primary" />
               Order Details
             </DialogTitle>
             <DialogDescription>
-              Order ID: {selectedOrder?._id.toUpperCase()}
+              Order ID: #{selectedOrder?._id?.slice(-8)?.toUpperCase()}
             </DialogDescription>
           </DialogHeader>
 
           {selectedOrder && (
-            <div className="space-y-6 pt-4">
+            <div className="space-y-5 pt-3">
               {/* Pharmacy Info (Pickup) */}
               {selectedOrder.pharmacy && (
-                <div className="bg-amber-500/10 p-4 rounded-xl space-y-3 border border-amber-500/20">
+                <div className="bg-amber-500/10 dark:bg-amber-950/30 p-4 rounded-xl space-y-2.5 border border-amber-500/20 dark:border-amber-800/40">
                   <div className="flex items-center gap-3">
-                    <div className="bg-amber-500/20 p-2 rounded-lg text-amber-700">
+                    <div className="bg-amber-500/20 dark:bg-amber-900/40 p-2 rounded-lg text-amber-700 dark:text-amber-300">
                       <Store className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-amber-800 uppercase font-bold tracking-wider">Pickup Location</p>
-                      <p className="font-medium text-amber-900">{selectedOrder.pharmacy.name}</p>
+                      <p className="text-[11px] text-amber-800 dark:text-amber-300 uppercase font-bold tracking-wider">Pickup Pharmacy</p>
+                      <p className="font-semibold text-foreground text-sm sm:text-base">{selectedOrder.pharmacy.name}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 pl-1">
-                    <MapPin className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-800">{selectedOrder.pharmacy.address}</p>
+                  <div className="flex items-start gap-2.5 pl-1 text-xs sm:text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <p>{selectedOrder.pharmacy.address}</p>
                   </div>
                 </div>
               )}
 
               {/* Customer Info */}
-              <div className="bg-muted/50 p-4 rounded-xl space-y-3">
+              <div className="bg-muted/50 p-4 rounded-xl space-y-3 border border-border/50">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/10 p-2 rounded-lg text-primary">
                     <User className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Customer Name</p>
-                    <p className="font-medium">{selectedOrder.address?.name}</p>
+                    <p className="text-[11px] text-muted-foreground uppercase font-bold tracking-wider">Customer Name</p>
+                    <p className="font-semibold text-foreground text-sm sm:text-base">{selectedOrder.address?.name || 'Customer'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-600">
+                  <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-600 dark:text-emerald-400">
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Mobile Number</p>
-                    <p className="font-medium">{selectedOrder.address?.mobile}</p>
+                    <p className="text-[11px] text-muted-foreground uppercase font-bold tracking-wider">Mobile Number</p>
+                    <p className="font-semibold text-foreground text-sm sm:text-base">{selectedOrder.address?.mobile}</p>
                   </div>
                 </div>
               </div>
 
               {/* Delivery Address */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                  <MapPin className="h-4 w-4" />
-                  Delivery Address
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                  <MapPin className="h-3.5 w-3.5" />
+                  Delivery Destination
                 </div>
-                <div className="p-4 border rounded-xl bg-card">
-                  <p className="font-medium">{selectedOrder.address?.addressLine1}</p>
+                <div className="p-3.5 border border-border/70 rounded-xl bg-card text-sm">
+                  <p className="font-medium text-foreground">{selectedOrder.address?.addressLine1}</p>
                   {selectedOrder.address?.addressLine2 && (
-                    <p className="text-sm text-muted-foreground">{selectedOrder.address.addressLine2}</p>
+                    <p className="text-muted-foreground mt-0.5">{selectedOrder.address.addressLine2}</p>
                   )}
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground mt-0.5">
                     {selectedOrder.address?.city}, {selectedOrder.address?.state} - {selectedOrder.address?.pincode}
                   </p>
                   {selectedOrder.address?.landmark && (
-                    <div className="mt-2 pt-2 border-t text-sm">
+                    <div className="mt-2 pt-2 border-t border-border/50 text-xs">
                       <span className="font-bold text-primary">Landmark:</span> {selectedOrder.address.landmark}
                     </div>
                   )}
@@ -647,31 +690,31 @@ const DeliveryDashboardPage = () => {
 
               {/* Items Summary */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                  <Package className="h-4 w-4" />
-                  Order Summary
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                  <Package className="h-3.5 w-3.5" />
+                  Package Contents ({selectedOrder.items?.length || 0} items)
                 </div>
-                <div className="max-h-[150px] overflow-y-auto space-y-2 pr-2">
-                  {selectedOrder.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm p-2 hover:bg-muted/50 rounded-lg transition-colors">
-                      <span className="font-medium">{item.name} × {item.quantity}</span>
-                      <span className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
+                <div className="max-h-[140px] overflow-y-auto space-y-1.5 pr-1 border border-border/50 rounded-xl p-2.5 bg-muted/20">
+                  {selectedOrder.items?.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-xs sm:text-sm p-1.5 hover:bg-muted/50 rounded-lg transition-colors">
+                      <span className="font-medium text-foreground">{item.name} × {item.quantity}</span>
+                      <span className="font-semibold text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
-                <div className="pt-3 border-t flex justify-between items-center">
-                  <span className="font-bold">Total Amount</span>
-                  <span className="text-xl font-bold text-primary italic">₹{selectedOrder.total.toFixed(2)}</span>
+                <div className="pt-2.5 border-t flex justify-between items-center">
+                  <span className="font-semibold text-sm text-foreground">Collect COD / Order Total</span>
+                  <span className="text-lg font-bold text-primary">₹{selectedOrder.total?.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="pt-2 flex gap-3">
-                <Button className="flex-1 h-12 rounded-xl" onClick={() => setShowDetails(false)}>
+              <div className="pt-2 flex gap-2.5">
+                <Button className="flex-1 h-11 text-sm font-medium rounded-xl" variant="outline" onClick={() => setShowDetails(false)}>
                   Close
                 </Button>
                 {selectedOrder.order_status !== 'delivered' && (
                   <Button
-                    className="h-12 w-12 rounded-xl flex items-center justify-center p-0 border-primary text-primary"
+                    className="h-11 w-11 rounded-xl flex items-center justify-center p-0 border-primary text-primary"
                     variant="outline"
                     asChild
                   >
@@ -679,14 +722,15 @@ const DeliveryDashboardPage = () => {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${selectedOrder.address?.coordinates?.lat},${selectedOrder.address?.coordinates?.lon}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      title="Open in Google Maps"
                     >
                       <Navigation className="h-5 w-5" />
                     </a>
                   </Button>
                 )}
                 {selectedOrder.order_status === 'out_for_delivery' && (
-                  <Button className="h-12 w-12 rounded-xl flex items-center justify-center p-0" variant="secondary" asChild>
-                    <a href={`tel:${selectedOrder.address?.mobile}`}>
+                  <Button className="h-11 w-11 rounded-xl flex items-center justify-center p-0 bg-emerald-600 hover:bg-emerald-700 text-white" variant="default" asChild>
+                    <a href={`tel:${selectedOrder.address?.mobile}`} title="Call customer">
                       <Phone className="h-5 w-5" />
                     </a>
                   </Button>
@@ -699,29 +743,40 @@ const DeliveryDashboardPage = () => {
 
       {/* OTP Dialog */}
       <Dialog open={showOTPDialog} onOpenChange={setShowOTPDialog}>
-        <DialogContent className="max-w-sm rounded-2xl">
+        <DialogContent className="max-w-sm rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-heading">
               <Key className="h-5 w-5 text-emerald-600" />
-              Verify Delivery
+              Verify Delivery OTP
             </DialogTitle>
             <DialogDescription>
-              Ask the customer for the 4-digit OTP sent to their app.
+              Ask the customer for the 4-digit code displayed in their active order tracker.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <input
               type="text"
-              maxLength="4"
-              className="w-full h-14 text-center text-3xl tracking-[1em] font-bold border-2 rounded-xl focus:border-primary focus:outline-none"
-              placeholder="0000"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={4}
+              className="w-full h-14 text-center text-3xl tracking-[0.5em] sm:tracking-[0.8em] font-mono font-bold bg-background border-2 border-border text-foreground rounded-xl focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              placeholder="••••"
               value={deliveryOTP}
               onChange={(e) => setDeliveryOTP(e.target.value.replace(/[^0-9]/g, ''))}
+              autoFocus
             />
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowOTPDialog(false)}>Cancel</Button>
-            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleCompleteDelivery}>Verify & Complete</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" className="h-11 text-sm font-medium w-full sm:w-auto" onClick={() => setShowOTPDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="h-11 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto"
+              disabled={deliveryOTP.length !== 4}
+              onClick={handleCompleteDelivery}
+            >
+              Verify & Complete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

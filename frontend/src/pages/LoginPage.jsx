@@ -121,7 +121,7 @@ const LoginPage = () => {
       const msg = typeof error === "string" ? error : error?.message;
       if (msg && msg.includes("No account found")) {
         toast.custom(() => (
-          <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 px-7 py-6 w-[340px]">
+          <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 px-7 py-6 w-[min(340px,calc(100vw-32px))]">
             <div className="h-11 w-11 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center">
               <AlertCircle className="h-6 w-6" aria-hidden="true" />
             </div>

@@ -158,24 +158,46 @@ exports.verifyPayment = async (req, res) => {
   }
 };
 
-// REFUND PAYMENT (Admin / System Triggered)
+// REFUND PAYMENT (SEC-02 Remediation: Admin Only & Eligibility Checks)
 exports.refundPayment = async (req, res) => {
   try {
-    const { order_id, reason } = req.body;
-    const order = await Order.findById(order_id);
+    // 1. Strict Server-Side Role Enforcement (Defense-in-depth)
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Access denied: Administrator privileges required to issue refunds." });
+    }
 
+    const { order_id, reason } = req.body;
+
+    if (!order_id || !mongoose.Types.ObjectId.isValid(order_id)) {
+      return res.status(400).json({ message: "Valid order_id is required" });
+    }
+
+    const order = await Order.findById(order_id);
     if (!order) return res.status(404).json({ message: "Order not found" });
-    if (!order.pg_payment_id) return res.status(400).json({ message: "No successful payment found for this order" });
+
+    // 2. Validate Payment Eligibility
+    if (order.payment_status !== "paid" || !order.pg_payment_id) {
+      return res.status(400).json({ message: "Order has not been successfully paid or lacks a transaction reference." });
+    }
+
+    // 3. Prevent Duplicate Refunds
+    if (order.refund_status === "initiated" || order.refund_status === "completed" || order.payment_status === "refunded") {
+      return res.status(400).json({ message: "A refund has already been processed or initiated for this order." });
+    }
+
+    // 4. Validate Environment Gateway Keys
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_ID === "rzp_test_fallback") {
+      console.warn("⚠️ RAZORPAY keys unconfigured or mock mode active during refund attempt.");
+    }
 
     // Call Gateway
     const refund = await razorpay.payments.refund(order.pg_payment_id, {
-      amount: Math.round(order.total * 100), // full refund
-      notes: { reason }
+      amount: Math.round(order.total * 100), // full refund in paise
+      notes: { reason: reason || "Admin initiated refund" }
     });
 
     // DB Updates
     order.refund_status = "initiated";
-    // Usually partial or fully refunded
     order.payment_status = "refunded";
     await order.save();
 
@@ -184,7 +206,7 @@ exports.refundPayment = async (req, res) => {
       pg_refund_id: refund.id,
       amount: order.total,
       status: "INITIATED",
-      reason
+      reason: reason || "Admin initiated refund"
     });
 
     res.json({ message: "Refund initiated successfully", refund });

@@ -305,20 +305,20 @@ const OrderTrackingPage = () => {
   const isActive = !isDelivered && !isCancelled;
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50/50 dark:bg-slate-950 flex flex-col selection:bg-primary/20">
+    <div className="min-h-[100dvh] bg-background flex flex-col selection:bg-primary/20">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* ================= BREADCRUMB & HEADER ================= */}
         <div className="space-y-3">
           <Link to="/orders">
-            <Button variant="ghost" size="sm" className="pl-0 text-muted-foreground hover:text-foreground active:scale-95">
+            <Button variant="ghost" size="sm" className="pl-0 text-muted-foreground hover:text-foreground active-press">
               <ArrowLeft className="h-4 w-4 mr-1.5" />
               Back to Orders
             </Button>
           </Link>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wider">
@@ -354,7 +354,7 @@ const OrderTrackingPage = () => {
               {isActive && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/60 text-xs font-bold">
                   <span className="h-2 w-2 rounded-full bg-cyan-500 animate-ping" />
-                  28-Min Neighborhood Guarantee
+                  28-Min Express Target
                 </div>
               )}
               {isDelivered && (
@@ -368,7 +368,7 @@ const OrderTrackingPage = () => {
         </div>
 
         {/* ================= 2-COLUMN MAIN TRACKING GRID ================= */}
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           {/* ================= LEFT COLUMN: TIMELINE & ITEMS ================= */}
           <div className="lg:col-span-7 space-y-6">
             {/* SECURE DELIVERY OTP PASSCARD */}
@@ -376,7 +376,7 @@ const OrderTrackingPage = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-cyan-500/10 p-6 shadow-lg relative overflow-hidden"
+                className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-cyan-500/10 p-6 shadow-sm relative overflow-hidden"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -392,13 +392,13 @@ const OrderTrackingPage = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2 bg-card border-2 border-emerald-500/30 rounded-2xl px-5 py-3 shadow-sm shrink-0">
+                  <div className="flex items-center gap-2 bg-card border-2 border-emerald-500/30 rounded-2xl px-5 py-3 shadow-xs shrink-0">
                     <span className="font-mono text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-[0.25em] tabular-nums">
                       {order.delivery_otp}
                     </span>
                     <button
                       onClick={() => copyToClipboard(order.delivery_otp, "otp")}
-                      className="p-2 text-muted-foreground hover:text-foreground transition-all rounded-lg active:scale-90"
+                      className="p-2 text-muted-foreground hover:text-foreground transition-all rounded-lg active-press"
                       aria-label="Copy OTP"
                     >
                       {copiedOtp ? (
@@ -413,8 +413,8 @@ const OrderTrackingPage = () => {
             )}
 
             {/* CLINICAL ORDER TIMELINE */}
-            <Card className="rounded-3xl border-slate-200/80 dark:border-slate-800/80 shadow-md">
-              <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <Card className="rounded-3xl border-border bg-card shadow-xs">
+              <CardHeader className="p-4 sm:p-6 pb-3 border-b border-border/60">
                 <div className="flex items-center justify-between">
                   <CardTitle className="font-heading text-xl font-bold flex items-center gap-2.5">
                     <Clock className="h-5 w-5 text-primary" />
@@ -426,7 +426,7 @@ const OrderTrackingPage = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="relative pl-2">
                   {displaySteps.map((step, index) => {
                     const status = getStepStatus(step.status);
@@ -494,15 +494,15 @@ const OrderTrackingPage = () => {
             </Card>
 
             {/* ORDER ITEMS & MEDICINE DOSAGE TABLE */}
-            <Card className="rounded-3xl border-slate-200/80 dark:border-slate-800/80 shadow-md">
-              <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <Card className="rounded-3xl border-border bg-card shadow-xs">
+              <CardHeader className="p-4 sm:p-6 pb-3 border-b border-border/60">
                 <CardTitle className="font-heading text-xl font-bold flex items-center gap-2.5">
                   <Package className="h-5 w-5 text-primary" />
                   Prescribed Medication ({order.items?.length || 0})
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              <CardContent className="p-4 sm:p-6 space-y-4">
+                <div className="divide-y divide-border/60">
                   {order.items?.map((item, index) => (
                     <div key={index} className="py-3.5 first:pt-0 last:pb-0 flex items-center justify-between gap-4">
                       <div className="space-y-0.5">
@@ -551,8 +551,8 @@ const OrderTrackingPage = () => {
           {/* ================= RIGHT COLUMN: MAP & DELIVERY INFO ================= */}
           <div className="lg:col-span-5 space-y-6">
             {/* LIVE LEAFLET ROUTING MAP */}
-            <Card className="rounded-3xl border-slate-200/80 dark:border-slate-800/80 shadow-md overflow-hidden">
-              <CardHeader className="p-5 pb-3">
+            <Card className="rounded-3xl border-border bg-card shadow-xs overflow-hidden">
+              <CardHeader className="p-4 sm:p-5 pb-3 border-b border-border/40">
                 <CardTitle className="font-heading text-base font-bold flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-primary" />
                   Delivery Destination Map
@@ -579,7 +579,7 @@ const OrderTrackingPage = () => {
                       </Popup>
                     </Marker>
                   </MapContainer>
-                  <div className="absolute bottom-3 left-3 z-[400] bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm text-[11px] font-semibold text-foreground">
+                  <div className="absolute bottom-3 left-3 z-[400] bg-background/90 backdrop-blur px-3 py-1.5 rounded-xl border border-border shadow-xs text-[11px] font-semibold text-foreground">
                     📍 Destination: {order.address?.city || "Customer Address"}
                   </div>
                 </div>
@@ -587,7 +587,7 @@ const OrderTrackingPage = () => {
             </Card>
 
             {/* DELIVERY ADDRESS DETAILS */}
-            <Card className="rounded-3xl border-slate-200/80 dark:border-slate-800/80 shadow-md">
+            <Card className="rounded-3xl border-border bg-card shadow-xs">
               <CardHeader className="p-5 pb-2">
                 <CardTitle className="font-heading text-base font-bold flex items-center gap-2">
                   <Building2 className="h-4 w-4 text-primary" />
@@ -651,8 +651,8 @@ const OrderTrackingPage = () => {
               order.order_status === "return_requested" ||
               order.order_status === "return_approved" ||
               order.order_status === "return_rejected") && (
-              <Card className="rounded-3xl border-slate-200/80 dark:border-slate-800/80 shadow-md">
-                <CardContent className="p-5 space-y-3">
+              <Card className="rounded-3xl border-border bg-card shadow-xs">
+                <CardContent className="p-4 sm:p-5 space-y-3">
                   {order.order_status === "return_requested" && (
                     <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 p-4 rounded-2xl flex items-start gap-3">
                       <Clock className="h-5 w-5 shrink-0 mt-0.5" />
@@ -692,7 +692,7 @@ const OrderTrackingPage = () => {
                   {isCancellable && (
                     <Button
                       variant="destructive"
-                      className="w-full rounded-xl font-semibold active:scale-95"
+                      className="w-full h-11 rounded-xl text-xs sm:text-sm font-semibold active-press"
                       onClick={() => setIsCancelModalOpen(true)}
                     >
                       <XCircle className="h-4 w-4 mr-2" />
@@ -703,7 +703,7 @@ const OrderTrackingPage = () => {
                   {isReturnable() && (
                     <Button
                       variant="outline"
-                      className="w-full rounded-xl font-semibold text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 active:scale-95"
+                      className="w-full h-11 rounded-xl text-xs sm:text-sm font-semibold text-primary border-primary/30 hover:bg-primary/5 active-press"
                       onClick={() => setIsReturnModalOpen(true)}
                     >
                       <RefreshCcw className="h-4 w-4 mr-2" />
@@ -748,12 +748,12 @@ const OrderTrackingPage = () => {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-4 gap-2">
-              <Button variant="outline" className="rounded-xl" onClick={() => setIsCancelModalOpen(false)}>
+              <Button variant="outline" className="h-11 rounded-xl text-xs sm:text-sm" onClick={() => setIsCancelModalOpen(false)}>
                 Keep My Order
               </Button>
               <Button
                 variant="destructive"
-                className="rounded-xl font-semibold active:scale-95"
+                className="h-11 rounded-xl text-xs sm:text-sm font-semibold active-press"
                 onClick={handleCancelOrder}
                 disabled={actionLoading}
               >
@@ -779,7 +779,7 @@ const OrderTrackingPage = () => {
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-foreground">Reason for Return</label>
                 <select
-                  className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   value={returnReason}
                   onChange={(e) => setReturnReason(e.target.value)}
                 >
@@ -801,13 +801,13 @@ const OrderTrackingPage = () => {
               </div>
             </div>
             <DialogFooter className="gap-2">
-              <Button variant="outline" className="rounded-xl" onClick={() => setIsReturnModalOpen(false)}>
+              <Button variant="outline" className="h-11 rounded-xl text-xs sm:text-sm" onClick={() => setIsReturnModalOpen(false)}>
                 Cancel
               </Button>
               <Button
                 onClick={handleReturnOrder}
                 disabled={actionLoading || !returnComments.trim()}
-                className="rounded-xl font-semibold active:scale-95"
+                className="h-11 rounded-xl text-xs sm:text-sm font-semibold active-press"
               >
                 {actionLoading ? "Submitting..." : "Submit Return Request"}
               </Button>

@@ -95,34 +95,34 @@ const policies = [
 
 const RefundPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       {/* Hero Header Section */}
-      <div className="bg-primary pt-20 pb-20 text-center px-4">
+      <div className="bg-primary pt-16 pb-20 text-center px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-white mb-3 tracking-tight">
             Refund & Return Policy
           </h1>
-          <p className="text-lg text-primary-foreground/90">
+          <p className="text-sm sm:text-base text-primary-foreground/90 max-w-xl mx-auto">
             Clear, transparent processes for cancellations, returns, and refunds ensuring a worry-free experience on MedsZop.
           </p>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 -mt-10 pb-16 flex-grow w-full relative z-10">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 p-6 md:p-10 space-y-12">
+      <main className="max-w-4xl mx-auto px-4 -mt-8 pb-16 flex-grow w-full relative z-10">
+        <div className="bg-card text-foreground rounded-2xl shadow-xs border border-border p-5 sm:p-8 space-y-10 sm:space-y-12">
 
           {policies.map((policy, idx) => (
-            <div key={idx} className="flex flex-col md:flex-row gap-6 items-start border-b border-slate-100 dark:border-slate-700 pb-10 last:border-0 last:pb-0">
-              <div className={`p-4 rounded-xl shrink-0 ${policy.bg} ${policy.color}`}>
-                <policy.icon className="h-8 w-8" />
+            <div key={idx} className="flex flex-col md:flex-row gap-5 items-start border-b border-border/60 pb-8 last:border-0 last:pb-0">
+              <div className={`p-3.5 rounded-xl shrink-0 ${policy.bg} ${policy.color}`}>
+                <policy.icon className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                <h2 className="text-lg sm:text-xl font-bold font-heading text-foreground mb-3">
                   {policy.title}
                 </h2>
-                <div className="leading-relaxed">
+                <div className="leading-relaxed text-xs sm:text-sm text-muted-foreground">
                   {policy.content}
                 </div>
               </div>
@@ -132,19 +132,19 @@ const RefundPolicyPage = () => {
         </div>
 
         {/* Support Section */}
-        <div className="mt-10 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="mt-8 sm:mt-10 bg-card rounded-2xl shadow-xs border border-border p-6 sm:p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Need help with a refund?</h2>
-            <p className="text-slate-600 dark:text-slate-300">
-              Our support team is perfectly equipped to assist you with any return or refund queries.
+            <h2 className="text-lg sm:text-xl font-bold font-heading mb-1 text-foreground">Need help with a refund?</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Our support team is equipped to assist you with any return or refund queries.
             </p>
           </div>
-          <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
-            <a href="mailto:support@medszop.site" className="flex items-center justify-center sm:justify-start gap-2 px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors text-sm font-medium">
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+            <a href="mailto:support@medszop.site" className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-muted hover:bg-muted/80 transition-colors text-xs sm:text-sm font-semibold active-press">
               <Mail className="h-4 w-4 text-primary" />
               <span>Email Support</span>
             </a>
-            <a href="tel:+917354255105" className="flex items-center justify-center sm:justify-start gap-2 px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors text-sm font-medium">
+            <a href="tel:+917354255105" className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-muted hover:bg-muted/80 transition-colors text-xs sm:text-sm font-semibold active-press">
               <Phone className="h-4 w-4 text-primary" />
               <span>Call Us</span>
             </a>

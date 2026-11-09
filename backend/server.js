@@ -19,6 +19,24 @@ app.use(cors({
 
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// SEC-04: Secure Prescription File Access
+// Medical prescriptions contain sensitive patient data and must never be served via unauthenticated static routes.
+const authMiddleware = require("./middleware/authMiddleware");
+const { getPrescriptionFile } = require("./controllers/prescriptionController");
+
+app.get("/uploads/prescriptions/:filename", authMiddleware, getPrescriptionFile);
+app.get("/api/uploads/prescriptions/:filename", authMiddleware, getPrescriptionFile);
+
+// Deny any unauthenticated access to prescription directory
+app.use("/uploads/prescriptions", (req, res) => {
+  return res.status(401).json({ message: "Authentication required to access prescriptions" });
+});
+app.use("/api/uploads/prescriptions", (req, res) => {
+  return res.status(401).json({ message: "Authentication required to access prescriptions" });
+});
+
+// Non-sensitive public uploads (e.g., medicine catalogs) can still be served statically
 app.use("/uploads", express.static("uploads"));
 
 // Routes

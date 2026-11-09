@@ -63,7 +63,7 @@ const ApplicationStatusPage = () => {
                     </CardHeader>
                     <CardContent className="space-y-6">
 
-                        <div className="bg-muted p-4 rounded-lg inline-block min-w-[300px]">
+                        <div className="bg-muted p-4 rounded-xl inline-block w-full max-w-sm border border-border/50">
                             <p className="text-sm text-muted-foreground mb-1">Applicant Name</p>
                             <p className="font-semibold text-lg">{application.applicant_name}</p>
 

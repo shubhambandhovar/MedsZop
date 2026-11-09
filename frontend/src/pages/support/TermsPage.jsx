@@ -99,38 +99,38 @@ const terms = [
 
 const TermsPage = () => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       {/* Hero Header Section */}
-      <div className="bg-primary/95 pt-20 pb-20 text-center px-4">
+      <div className="bg-primary pt-16 pb-20 text-center px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-white mb-3 tracking-tight">
             Terms of Service
           </h1>
-          <p className="text-lg text-primary-foreground/90">
+          <p className="text-sm sm:text-base text-primary-foreground/90 max-w-xl mx-auto">
             Please read these terms carefully before utilizing MedsZop's healthcare ecosystem.
           </p>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 -mt-10 pb-16 flex-grow w-full relative z-10">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 p-6 md:p-10 space-y-12">
+      <main className="max-w-4xl mx-auto px-4 -mt-8 pb-16 flex-grow w-full relative z-10">
+        <div className="bg-card text-foreground rounded-2xl shadow-xs border border-border p-5 sm:p-8 space-y-10 sm:space-y-12">
 
-          <div className="text-sm text-slate-500 dark:text-slate-400 mb-8 pb-8 border-b border-slate-100 dark:border-slate-700">
+          <div className="text-xs sm:text-sm text-muted-foreground pb-4 border-b border-border/60">
             Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
 
           {terms.map((term, idx) => (
-            <div key={idx} className="flex flex-col md:flex-row gap-6 items-start border-b border-slate-100 dark:border-slate-700 pb-10 last:border-0 last:pb-0">
-              <div className={`p-4 rounded-xl shrink-0 ${term.bg} ${term.color}`}>
-                <term.icon className="h-8 w-8" />
+            <div key={idx} className="flex flex-col md:flex-row gap-5 items-start border-b border-border/60 pb-8 last:border-0 last:pb-0">
+              <div className={`p-3.5 rounded-xl shrink-0 ${term.bg} ${term.color}`}>
+                <term.icon className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                <h2 className="text-lg sm:text-xl font-bold font-heading text-foreground mb-3">
                   {term.title}
                 </h2>
-                <div className="leading-relaxed">
+                <div className="leading-relaxed text-xs sm:text-sm text-muted-foreground">
                   {term.content}
                 </div>
               </div>

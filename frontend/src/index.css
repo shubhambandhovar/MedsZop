@@ -31,6 +31,87 @@ h1, h2, h3, h4, h5, h6 {
     font-variant-numeric: tabular-nums;
 }
 
+/* Safe area insets for mobile gesture bars & notches */
+:root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+.pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+
+.pt-safe {
+    padding-top: max(env(safe-area-inset-top, 0px), 16px);
+}
+
+.mb-safe {
+    margin-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+
+/* Dynamic viewport height utilities (safe for mobile virtual keyboards) */
+.min-h-dvh {
+    min-height: 100dvh;
+}
+
+.h-dvh {
+    height: 100dvh;
+}
+
+.max-h-dvh {
+    max-height: 100dvh;
+}
+
+/* Touch ergonomics utility (WCAG 2.1 AA min 44x44px target) */
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tactile touch press feedback */
+.active-press {
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.active-press:active {
+    transform: scale(0.97);
+}
+
+/* Fluid typography clamps according to design_guidelines.json */
+@layer utilities {
+    .text-fluid-hero {
+        font-size: clamp(2rem, 5vw + 1rem, 3.75rem);
+        line-height: 1.15;
+    }
+    .text-fluid-h1 {
+        font-size: clamp(1.75rem, 4vw + 0.5rem, 2.75rem);
+        line-height: 1.2;
+    }
+    .text-fluid-h2 {
+        font-size: clamp(1.35rem, 3vw + 0.3rem, 2rem);
+        line-height: 1.25;
+    }
+}
+
+/* Scrollbar hiding utilities */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 /* Autofill typography & background reset */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 

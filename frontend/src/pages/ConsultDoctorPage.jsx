@@ -128,201 +128,281 @@ const ConsultDoctorPage = () => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <Badge className="mb-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-semibold px-3 py-1 rounded-full">
+              <UserCheck className="h-3.5 w-3.5 mr-1.5" />
+              Verified Healthcare Specialists
+            </Badge>
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              Consult a Doctor
+            </h1>
+            <p className="text-muted-foreground text-xs sm:text-sm max-w-xl mt-1 leading-relaxed">
+              Connect with verified medical specialists for diagnosis, guidance, and prescriptions via encrypted chat or high-definition video call.
+            </p>
+          </div>
 
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-                    <div className="text-center md:text-left">
-                        <Badge className="mb-4 bg-blue-500/10 text-blue-600 border-0">
-                            <UserCheck className="h-3.5 w-3.5 mr-1.5" />
-                            Verified Specialists
-                        </Badge>
-                        <h1 className="font-heading text-3xl font-bold mb-2 text-slate-800 dark:text-slate-100">
-                            Consult a Doctor
-                        </h1>
-                        <p className="text-muted-foreground max-w-xl">
-                            Connect with top specialists for diagnosis, prescriptions, and medical advice via chat or video call.
-                        </p>
-                    </div>
-                    <div className="flex gap-3">
-                        <Button variant="outline" className="gap-2">
-                            <CalendarCheck className="h-4 w-4" />
-                            My Consultations
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Doctor Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {loadingDocs ? (
-                        <div className="col-span-full py-20 flex justify-center text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                                <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full"></div>
-                                Loading Doctors...
-                            </div>
-                        </div>
-                    ) : doctors.length === 0 ? (
-                        <div className="col-span-full text-center py-12 text-muted-foreground border-2 border-dashed rounded-xl border-slate-200">
-                            No verified doctors available at the moment.
-                        </div>
-                    ) : doctors.map(doc => {
-                        const docConsultations = consultations.filter(c => (c.doctor_id?._id || c.doctor_id) === doc._id);
-                        // Sort descending just to be safe, though backend does it
-                        docConsultations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-                        const activeConsultation = docConsultations.find(c => ['PENDING', 'ACCEPTED'].includes(c.status));
-                        const lastCompleted = docConsultations.find(c => c.status === 'COMPLETED');
-
-                        return (
-                            <Card key={doc._id} className="hover:shadow-lg transition-all group border-slate-200 dark:border-slate-800">
-                                <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                                    <div className="h-16 w-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-2xl border border-blue-100 shadow-sm group-hover:scale-105 transition-transform">
-                                        {doc.name[0]}
-                                    </div>
-                                    <div>
-                                        <CardTitle className="text-lg font-bold group-hover:text-blue-600 transition-colors">{doc.name}</CardTitle>
-                                        <p className="text-sm font-medium text-emerald-600 flex items-center gap-1 mt-0.5">
-                                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                                            Available Now
-                                        </p>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-3 mb-6 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
-                                        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                            <Stethoscope className="h-4 w-4 text-primary shrink-0" />
-                                            <span className="font-medium">{doc.specialization || "General Physician"}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                            <Clock className="h-4 w-4 text-primary shrink-0" />
-                                            <span>{doc.experience_years || 1}+ Years Experience</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                                            <Video className="h-4 w-4 text-primary shrink-0" />
-                                            <span>Video & Chat Consultation</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        {/* ACTIVE / PENDING STATUS & NEW REQUEST */}
-                                        {activeConsultation ? (
-                                            activeConsultation.status === 'ACCEPTED' ? (
-                                                <div className="flex gap-2">
-                                                    <Button className="flex-1 bg-green-600 hover:bg-green-700 shadow-sm" onClick={() => setSelectedChat(activeConsultation)}>
-                                                        <MessageSquare className="w-4 h-4 mr-2" /> Resume Chat
-                                                    </Button>
-                                                    <Button className="flex-1 border-slate-300" variant="outline" onClick={() => window.open(`/video-call/${activeConsultation._id}`, '_blank')}>
-                                                        <Video className="w-4 h-4 mr-2" /> Join Video
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <Button className="w-full bg-amber-100 text-amber-800 hover:bg-amber-100 border border-amber-200" variant="ghost" disabled>
-                                                    <Clock className="w-4 h-4 mr-2 animate-pulse" /> Consulting Request Pending
-                                                </Button>
-                                            )
-                                        ) : (
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button className="w-full bg-blue-600 hover:bg-blue-700 shadow-sm font-medium h-11">
-                                                        Book Consultation
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Consult with {doc.name}</DialogTitle>
-                                                    </DialogHeader>
-                                                    <p className="text-sm text-muted-foreground mb-4">
-                                                        Please describe your symptoms briefly. The doctor will review and accept your request shortly.
-                                                    </p>
-                                                    <Textarea
-                                                        placeholder="I have a fever and headache since yesterday..."
-                                                        value={symptoms}
-                                                        onChange={(e) => setSymptoms(e.target.value)}
-                                                        className="mb-4 min-h-[120px]"
-                                                    />
-                                                    <div className="bg-blue-50 p-3 rounded-md mb-4 text-xs text-blue-700 leading-relaxed">
-                                                        Note: Consultation fees may apply. By proceeding, you agree to share your limited health data with the doctor.
-                                                    </div>
-                                                    <Button onClick={() => handleConsultRequest(doc._id)} className="w-full">
-                                                        Send Request
-                                                    </Button>
-                                                </DialogContent>
-                                            </Dialog>
-                                        )}
-
-                                        {/* PAST HISTORY BUTTON */}
-                                        {lastCompleted && (
-                                            <Button className="w-full" variant="ghost" onClick={() => setSelectedChat(lastCompleted)}>
-                                                View Past Consultation
-                                            </Button>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
-                </div>
-
-                {/* CHAT DIALOG */}
-                <Dialog open={!!selectedChat} onOpenChange={(o) => !o && setSelectedChat(null)}>
-                    <DialogContent className="sm:max-w-md h-[600px] flex flex-col p-0 gap-0 overflow-hidden rounded-2xl">
-                        <DialogHeader className="p-4 border-b bg-slate-50 dark:bg-slate-900">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 text-xs rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200">
-                                    {selectedChat?.doctor_id?.name?.[0] || "D"}
-                                </div>
-                                <div>
-                                    <DialogTitle className="text-base">{selectedChat?.doctor_id?.name || "Doctor"}</DialogTitle>
-                                    <p className="text-xs text-green-600 flex items-center gap-1">
-                                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Active Session
-                                    </p>
-                                </div>
-                            </div>
-                        </DialogHeader>
-
-                        <ScrollArea className="flex-1 p-4 bg-slate-50/30">
-                            <div className="space-y-4">
-                                {chatMessages.map((msg, idx) => (
-                                    <div key={idx} className={`flex ${msg.sender === 'patient' ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm ${msg.sender === 'patient' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white border text-slate-700 rounded-bl-none'
-                                            }`}>
-                                            <p>{msg.content}</p>
-                                            <span className={`text-[10px] block text-right mt-1 ${msg.sender === 'patient' ? 'text-blue-200' : 'text-slate-400'}`}>
-                                                {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                                <div ref={chatScrollRef} />
-                            </div>
-                        </ScrollArea>
-
-                        <div className="p-3 bg-white border-t">
-                            <div className="flex gap-2">
-                                <Input
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Type a message..."
-                                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                                    className="h-11 rounded-full border-slate-200 focus:border-blue-500"
-                                />
-                                <Button onClick={handleSendMessage} size="icon" className="h-11 w-11 rounded-full bg-blue-600 hover:bg-blue-700 shrink-0">
-                                    <Send className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-
-            </main>
-
-            <Footer />
+          {consultations.length > 0 && (
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <Badge variant="outline" className="text-xs font-medium px-3 py-1.5 rounded-xl border-slate-200 dark:border-slate-800 bg-card gap-1.5">
+                <CalendarCheck className="h-3.5 w-3.5 text-primary" />
+                {consultations.length} {consultations.length === 1 ? "Consultation" : "Consultations"}
+              </Badge>
+            </div>
+          )}
         </div>
-    );
+
+        {/* Doctor Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loadingDocs ? (
+            <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground gap-3">
+              <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+              <p className="text-sm font-medium">Connecting to verified doctor directory...</p>
+            </div>
+          ) : doctors.length === 0 ? (
+            <Card className="col-span-full text-center py-16 px-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg mx-auto">
+              <CardContent className="space-y-3">
+                <Stethoscope className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
+                <h3 className="font-heading font-bold text-lg text-foreground">No Doctors Currently Available</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Our specialists are currently offline or in consultations. Please check back shortly or consult with our AI Health Assistant in the meantime.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            doctors.map((doc) => {
+              const docConsultations = consultations.filter(
+                (c) => (c.doctor_id?._id || c.doctor_id) === doc._id
+              );
+              docConsultations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+              const activeConsultation = docConsultations.find((c) =>
+                ["PENDING", "ACCEPTED"].includes(c.status)
+              );
+              const lastCompleted = docConsultations.find((c) => c.status === "COMPLETED");
+
+              return (
+                <Card
+                  key={doc._id}
+                  className="rounded-3xl border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all duration-200 group overflow-hidden bg-card flex flex-col justify-between"
+                >
+                  <div>
+                    <CardHeader className="flex flex-row items-center gap-3.5 sm:gap-4 p-5 pb-3">
+                      <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-heading font-extrabold text-xl border border-primary/20 shrink-0 group-hover:scale-105 transition-transform">
+                        {doc.name[0]}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                          {doc.name}
+                        </CardTitle>
+                        <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shrink-0" />
+                          Available Now
+                        </p>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="p-5 pt-2">
+                      <div className="space-y-2.5 mb-5 bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs sm:text-sm">
+                        <div className="flex items-center gap-2.5 text-muted-foreground">
+                          <Stethoscope className="h-4 w-4 text-primary shrink-0" />
+                          <span className="font-semibold text-foreground truncate">
+                            {doc.specialization || "General Physician"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2.5 text-muted-foreground">
+                          <Clock className="h-4 w-4 text-primary shrink-0" />
+                          <span>{doc.experience_years || 1}+ Years Clinical Practice</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 text-muted-foreground">
+                          <Video className="h-4 w-4 text-primary shrink-0" />
+                          <span>HD Video & Encrypted Chat</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </div>
+
+                  <CardContent className="p-5 pt-0 space-y-2.5">
+                    {/* Active / Pending Status & New Request Actions */}
+                    {activeConsultation ? (
+                      activeConsultation.status === "ACCEPTED" ? (
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button
+                            className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm h-11 active-press"
+                            onClick={() => setSelectedChat(activeConsultation)}
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1.5" /> Resume Chat
+                          </Button>
+                          <Button
+                            className="flex-1 rounded-xl border-slate-200 dark:border-slate-700 font-semibold text-xs sm:text-sm h-11 active-press"
+                            variant="outline"
+                            onClick={() => window.open(`/video-call/${activeConsultation._id}`, "_blank")}
+                          >
+                            <Video className="w-4 h-4 mr-1.5 text-primary" /> Join Video
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          className="w-full bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-xl font-semibold text-xs sm:text-sm h-11 cursor-not-allowed"
+                          variant="ghost"
+                          disabled
+                        >
+                          <Clock className="w-4 h-4 mr-1.5 animate-pulse text-amber-600" /> Request Pending Doctor Review
+                        </Button>
+                      )
+                    ) : (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className="w-full rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm h-11 active-press shadow-xs">
+                            Book Consultation
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md w-full max-h-[90dvh] rounded-3xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col">
+                          <DialogHeader className="pb-2">
+                            <DialogTitle className="font-heading text-lg sm:text-xl font-bold">
+                              Consult with {doc.name}
+                            </DialogTitle>
+                          </DialogHeader>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-3 leading-relaxed">
+                            Describe your primary symptoms and how long you have experienced them. The doctor will review your request and accept the session.
+                          </p>
+                          <Textarea
+                            placeholder="e.g. Mild fever, dry cough, and headache since yesterday evening..."
+                            value={symptoms}
+                            onChange={(e) => setSymptoms(e.target.value)}
+                            className="mb-4 min-h-[110px] rounded-xl text-sm p-3.5 focus-visible:ring-primary"
+                          />
+                          <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-3 rounded-xl mb-4 text-xs text-primary leading-relaxed flex items-start gap-2">
+                            <UserCheck className="h-4 w-4 shrink-0 mt-0.5" />
+                            <span>By submitting, you agree to share your brief health notes with this licensed specialist under medical confidentiality.</span>
+                          </div>
+                          <Button
+                            onClick={() => handleConsultRequest(doc._id)}
+                            className="w-full h-11 rounded-xl font-bold text-sm active-press"
+                          >
+                            Submit Consultation Request
+                          </Button>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+
+                    {/* Past Completed History */}
+                    {lastCompleted && (
+                      <Button
+                        className="w-full text-xs text-muted-foreground hover:text-foreground rounded-xl h-9"
+                        variant="ghost"
+                        onClick={() => setSelectedChat(lastCompleted)}
+                      >
+                        View Past Consultation Notes
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </div>
+
+        {/* Encrypted Consultation Chat Dialog */}
+        <Dialog open={!!selectedChat} onOpenChange={(o) => !o && setSelectedChat(null)}>
+          <DialogContent className="sm:max-w-md w-full h-[min(620px,85dvh)] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900">
+            <DialogHeader className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 shrink-0">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 text-xs rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20 shrink-0">
+                    {selectedChat?.doctor_id?.name?.[0] || "D"}
+                  </div>
+                  <div>
+                    <DialogTitle className="text-sm sm:text-base font-bold text-foreground">
+                      {selectedChat?.doctor_id?.name || "Doctor"}
+                    </DialogTitle>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Encrypted Session
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl text-xs font-semibold h-8 gap-1.5"
+                  onClick={() => window.open(`/video-call/${selectedChat._id}`, "_blank")}
+                >
+                  <Video className="h-3.5 w-3.5 text-primary" />
+                  Video Call
+                </Button>
+              </div>
+            </DialogHeader>
+
+            <ScrollArea className="flex-1 p-4 bg-slate-50/30 dark:bg-slate-950/30">
+              <div className="space-y-3.5">
+                {chatMessages.length === 0 ? (
+                  <div className="text-center py-8 text-xs text-muted-foreground">
+                    Connected. Type a message below to chat with your doctor.
+                  </div>
+                ) : (
+                  chatMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex ${msg.sender === "patient" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm shadow-xs break-words ${
+                          msg.sender === "patient"
+                            ? "bg-primary text-primary-foreground rounded-tr-xs"
+                            : "bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-foreground rounded-tl-xs"
+                        }`}
+                      >
+                        <p className="leading-relaxed">{msg.content}</p>
+                        <span
+                          className={`text-[10px] block text-right mt-1 ${
+                            msg.sender === "patient" ? "text-primary-foreground/70" : "text-muted-foreground"
+                          }`}
+                        >
+                          {new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <div ref={chatScrollRef} />
+              </div>
+            </ScrollArea>
+
+            <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
+              <div className="flex gap-2">
+                <Input
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type a message to your doctor..."
+                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                  className="h-11 rounded-2xl text-xs sm:text-sm px-4 border-slate-200 dark:border-slate-800 focus-visible:ring-primary text-foreground"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  size="icon"
+                  className="h-11 w-11 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 active-press"
+                  aria-label="Send message to doctor"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </main>
+
+      <Footer />
+    </div>
+  );
 };
 
 export default ConsultDoctorPage;

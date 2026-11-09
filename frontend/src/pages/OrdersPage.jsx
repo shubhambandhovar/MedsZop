@@ -169,15 +169,15 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50/50 dark:bg-slate-950 flex flex-col selection:bg-primary/20">
+    <div className="min-h-[100dvh] bg-background flex flex-col selection:bg-primary/20">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         {/* ================= HEADER SECTION ================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold tracking-wider uppercase mb-2">
-              <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
               Patient Care Journey
             </div>
             <h1
@@ -187,20 +187,20 @@ const OrdersPage = () => {
               <Package className="h-7 w-7 text-primary" aria-hidden="true" />
               My Orders & Refills
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
               Track live deliveries, review digital prescriptions, and re-order verified medications.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Link to="/prescription-scan">
-              <Button variant="outline" className="rounded-xl font-semibold active:scale-95 text-xs sm:text-sm">
+              <Button variant="outline" className="rounded-xl font-semibold active-press text-xs sm:text-sm h-10 px-4">
                 <ScanLine className="h-4 w-4 mr-1.5" aria-hidden="true" />
                 Scan Rx
               </Button>
             </Link>
             <Link to="/medicines">
-              <Button className="rounded-xl font-semibold shadow-sm hover:shadow transition-all active:scale-95 text-xs sm:text-sm">
+              <Button className="rounded-xl font-semibold shadow-xs hover:shadow transition-all active-press text-xs sm:text-sm h-10 px-4">
                 <Pill className="h-4 w-4 mr-1.5" aria-hidden="true" />
                 Browse Medicines
               </Button>
@@ -209,7 +209,7 @@ const OrdersPage = () => {
         </div>
 
         {/* ================= SEARCH & STATUS FILTER BAR ================= */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
           {/* Status Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto py-1">
             {[
@@ -221,10 +221,10 @@ const OrdersPage = () => {
               <button
                 key={tab.id}
                 onClick={() => setStatusFilter(tab.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap active:scale-95 ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap active-press ${
                   statusFilter === tab.id
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 {tab.label}
@@ -232,7 +232,7 @@ const OrdersPage = () => {
                   className={`ml-1.5 text-xs px-2 py-0.5 rounded-full ${
                     statusFilter === tab.id
                       ? "bg-white/20 text-white"
-                      : "bg-slate-100 dark:bg-slate-800 text-muted-foreground"
+                      : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {tab.count}
@@ -249,7 +249,7 @@ const OrdersPage = () => {
               placeholder="Search by medicine or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-10 rounded-xl text-xs sm:text-sm bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800"
+              className="pl-9 h-10 rounded-xl text-xs sm:text-sm bg-muted/40 border-border"
             />
             {searchQuery && (
               <button
@@ -362,19 +362,19 @@ const OrdersPage = () => {
             {filteredOrders.map((order) => (
               <Card
                 key={order._id}
-                className="overflow-hidden rounded-2xl border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition-all"
+                className="overflow-hidden rounded-2xl border-border bg-card hover:border-primary/40 hover:shadow-md transition-all"
                 data-testid={`order-${order._id}`}
               >
-                <CardContent className="p-5 sm:p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-5">
                     {/* Left Info Column */}
                     <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-2.5 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Badge className={`${getStatusColor(order.order_status)} px-2.5 py-1 text-xs font-semibold`}>
                           {getStatusIcon(order.order_status)}
                           <span className="ml-1.5 capitalize">{order.order_status?.replace(/_/g, " ")}</span>
                         </Badge>
-                        <Badge variant="outline" className="border-slate-200 dark:border-slate-800 text-xs font-mono">
+                        <Badge variant="outline" className="border-border text-xs font-mono">
                           {order.payment_method?.toUpperCase()}
                         </Badge>
                         {order.payment_status === "paid" && (
@@ -413,7 +413,7 @@ const OrdersPage = () => {
                         {order.items?.map((item, index) => (
                           <span
                             key={index}
-                            className="text-xs bg-slate-100 dark:bg-slate-800 text-foreground px-2.5 py-1 rounded-lg border border-slate-200/50 dark:border-slate-700/50"
+                            className="text-xs bg-muted text-foreground px-2.5 py-1 rounded-lg border border-border/50"
                           >
                             {item.name} <span className="text-muted-foreground ml-1">×{item.quantity}</span>
                           </span>
@@ -429,9 +429,9 @@ const OrdersPage = () => {
                     </div>
 
                     {/* Right Actions & Price Column */}
-                    <div className="flex items-center justify-between lg:justify-end gap-5 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800 shrink-0">
+                    <div className="flex items-center justify-between lg:justify-end gap-4 pt-3 lg:pt-0 border-t lg:border-t-0 border-border shrink-0">
                       <div className="text-left lg:text-right">
-                        <p className="font-heading text-2xl font-bold text-foreground tabular-nums">
+                        <p className="font-heading text-xl sm:text-2xl font-bold text-foreground tabular-nums">
                           ₹{order.total?.toFixed(2)}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -442,10 +442,10 @@ const OrdersPage = () => {
                       <div className="flex items-center gap-2">
                         <Link to={`/orders/${order._id}`}>
                           <Button
-                            className="rounded-xl px-5 font-semibold shadow-sm hover:shadow transition-all active:scale-95"
+                            className="rounded-xl px-4 sm:px-5 h-11 text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all active-press"
                             data-testid={`view-order-${order._id}`}
                           >
-                            <Eye className="h-4 w-4 mr-2" aria-hidden="true" />
+                            <Eye className="h-4 w-4 mr-1.5" aria-hidden="true" />
                             Track Order
                           </Button>
                         </Link>

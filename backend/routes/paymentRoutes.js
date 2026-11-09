@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
+const role = require("../middleware/roleMiddleware");
 
 const {
   createPaymentOrder,
@@ -19,7 +20,7 @@ router.post("/verify", auth, verifyPayment);
 // Webhook for edge cases and refunds
 router.post("/webhook", express.json(), paymentWebhook);
 
-// Refund logic (Internal/Admin)
-router.post("/refund", auth, refundPayment);
+// Refund logic (SEC-02 Remediation: Strictly Admin Only)
+router.post("/refund", auth, role(["admin"]), refundPayment);
 
 module.exports = router;

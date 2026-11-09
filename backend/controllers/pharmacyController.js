@@ -71,14 +71,15 @@ exports.getPharmacyOrders = async (req, res) => {
     if (!pharmacy) {
       return res.status(404).json({ error: "Pharmacy profile not found" });
     }
-    // Find orders for this pharmacy
-    // Find orders for this pharmacy OR unassigned pool orders
+    // Find orders for this pharmacy OR unassigned pool orders (SEC-03: exclude delivery_otp)
     const orders = await Order.find({
       $or: [
         { pharmacy_id: pharmacy._id.toString() },
         { pharmacy_id: null, order_status: "pending" }
       ]
-    }).sort({ createdAt: -1 });
+    })
+      .select("-delivery_otp")
+      .sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });

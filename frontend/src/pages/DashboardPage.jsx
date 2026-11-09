@@ -84,6 +84,38 @@ const DashboardPage = () => {
     landmark: "",
     addressType: "Home",
   });
+  const [viewingRxLoading, setViewingRxLoading] = useState(false);
+
+  // Authenticated Blob Fetching for Prescriptions (Phase 9B.1 / SEC-04)
+  // Prevents leaking ordinary JWT tokens in URLs, browser history, or server access logs
+  const handleViewPrescription = async (fileUrl) => {
+    if (!fileUrl || !token) return;
+    try {
+      setViewingRxLoading(true);
+      const normalized = fileUrl.replace(/\\/g, "/");
+      const url = normalized.startsWith("http") ? normalized : `${API_URL}/${normalized}`;
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "blob"
+      });
+      const blobUrl = URL.createObjectURL(res.data);
+      const newTab = window.open(blobUrl, "_blank");
+      if (!newTab) {
+        toast.error("Please allow popups to view prescription files");
+      }
+      // Revoke blob URL after 2 minutes to free memory
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
+    } catch (err) {
+      console.error("Prescription fetch error:", err);
+      toast.error(
+        err.response?.status === 403
+          ? "You are not authorized to view this prescription"
+          : "Failed to load prescription file"
+      );
+    } finally {
+      setViewingRxLoading(false);
+    }
+  };
 
   const fetchDashboardData = useCallback(async () => {
     if (!token) return;
@@ -650,15 +682,15 @@ const DashboardPage = () => {
                           </p>
                         </div>
                         {rx.file_url && (
-                          <a
-                            href={rx.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center text-xs font-semibold text-primary hover:underline pt-1"
+                          <button
+                            type="button"
+                            onClick={() => handleViewPrescription(rx.file_url)}
+                            disabled={viewingRxLoading}
+                            className="inline-flex items-center text-xs font-semibold text-primary hover:underline pt-1 disabled:opacity-50 cursor-pointer"
                           >
                             <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                            View Attached File
-                          </a>
+                            {viewingRxLoading ? "Loading Rx..." : "View Attached File"}
+                          </button>
                         )}
                       </CardContent>
                     </Card>

@@ -1,13 +1,14 @@
+const crypto = require("crypto");
 const { sendOTPEmail } = require("../utils/emailService");
 
 // In-memory OTP store (use Redis in production for better scalability)
 const otpStore = new Map();
 
 /**
- * Generate a 6-digit OTP
+ * Generate a cryptographically secure 6-digit OTP
  */
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 /**

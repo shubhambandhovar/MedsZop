@@ -1,66 +1,74 @@
 const express = require("express");
 const router = express.Router();
-const { scanPrescription } = require("../controllers/prescriptionController");
-
-router.post("/scan", scanPrescription);
-
-// Add missing GET route to prevent 404 errors from frontend
-router.get("/", (req, res) => {
-    try {
-        // Return empty array to keep frontend happy
-        res.status(200).json([]);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to fetch prescriptions", error: error.message });
-    }
-});
-
-// Configure Multer for prescription uploads
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
+const auth = require("../middleware/authMiddleware");
+const {
+  scanPrescription,
+  uploadPrescription,
+  getUserPrescriptions,
+  getPrescriptionFile
+} = require("../controllers/prescriptionController");
 
+// Configure secure Multer storage for prescription uploads (SEC-04)
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = "uploads/prescriptions";
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, "prescription-" + Date.now() + path.extname(file.originalname));
+  destination: (req, file, cb) => {
+    const dir = path.resolve(process.cwd(), "uploads", "prescriptions");
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const safeRandom = crypto.randomBytes(16).toString("hex");
+    cb(null, `rx-${safeRandom}-${Date.now()}${ext}`);
+  }
 });
 
 const upload = multer({
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|pdf/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb(new Error("Error: File upload only supports following filetypes - " + filetypes));
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5 MB maximum
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedExtensions = /jpeg|jpg|png|webp|pdf/;
+    const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    const mimetype = allowedMimeTypes.includes(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
     }
+    const err = new Error("Invalid file type. Only JPEG, PNG, WEBP, and PDF files under 5MB are allowed.");
+    err.code = "INVALID_FILE_TYPE";
+    cb(err);
+  }
 });
 
-router.post("/upload", upload.single("file"), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
-        // Return relative path for frontend/db usage
-        // Windows backslashes need to be replaced for URLs
-        const filePath = req.file.path.replace(/\\/g, "/");
-        res.json({
-            success: true,
-            message: "Prescription uploaded successfully",
-            filePath: filePath
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Upload failed", error: error.message });
+// Middleware to capture and format Multer errors cleanly
+const handleUpload = (req, res, next) => {
+  upload.single("file")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({ message: "File size exceeds 5MB limit" });
+      }
+      return res.status(400).json({ message: `Upload error: ${err.message}` });
+    } else if (err) {
+      return res.status(400).json({ message: err.message });
     }
-});
+    next();
+  });
+};
+
+// AI Prescription Scanning
+router.post("/scan", scanPrescription);
+
+// Authenticated Prescription Management (SEC-04)
+router.get("/", auth, getUserPrescriptions);
+router.post("/upload", auth, handleUpload, uploadPrescription);
+router.get("/file/:filename", auth, getPrescriptionFile);
 
 module.exports = router;
