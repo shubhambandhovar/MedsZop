@@ -7,7 +7,6 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { ScrollArea } from "../components/ui/scroll-area";
 import {
     Send,
     Loader2,
@@ -39,15 +38,26 @@ const AIDoctorPage = () => {
     const [sessionId, setSessionId] = useState(null);
 
     const messagesEndRef = useRef(null);
+    const scrollContainerRef = useRef(null);
     const inputRef = useRef(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const scrollToBottom = (behavior = "smooth") => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo({
+                top: scrollContainerRef.current.scrollHeight,
+                behavior
+            });
+        }
+        messagesEndRef.current?.scrollIntoView({ behavior, block: "nearest" });
     };
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        // Small timeout to allow DOM/markdown rendering before scrolling
+        const timer = setTimeout(() => {
+            scrollToBottom();
+        }, 50);
+        return () => clearTimeout(timer);
+    }, [messages, loading]);
 
     const handleSend = async () => {
         if (!input.trim() || loading) return;
@@ -122,7 +132,7 @@ const AIDoctorPage = () => {
                 </div>
 
                 {/* Main Chat Interface Container */}
-                <Card className="flex-1 flex flex-col rounded-3xl overflow-hidden shadow-sm border-slate-200 dark:border-slate-800 bg-card h-[calc(100dvh-220px)] min-h-[500px] max-h-[780px]">
+                <Card className="flex-1 min-h-0 flex flex-col rounded-3xl overflow-hidden shadow-sm border-slate-200 dark:border-slate-800 bg-card h-[620px] max-h-[calc(100dvh-220px)] min-h-[460px]">
                     <CardHeader className="border-b border-slate-100 dark:border-slate-800 py-3.5 px-4 sm:px-6 bg-slate-50/70 dark:bg-slate-900/70 shrink-0">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
@@ -146,9 +156,13 @@ const AIDoctorPage = () => {
                         </div>
                     </CardHeader>
 
-                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden bg-slate-50/30 dark:bg-slate-950/30">
-                        {/* Messages Scroll Area */}
-                        <ScrollArea className="flex-1 p-3.5 sm:p-5">
+                    <CardContent className="flex-1 min-h-0 flex flex-col p-0 overflow-hidden bg-slate-50/30 dark:bg-slate-950/30">
+                        {/* Messages Scroll Area with Native Smooth Momentum Scrolling */}
+                        <div
+                            ref={scrollContainerRef}
+                            className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-5 scroll-smooth overscroll-contain"
+                            data-testid="chat-messages-container"
+                        >
                             <div className="space-y-4 sm:space-y-5 max-w-3xl mx-auto">
                                 {messages.map((message, index) => {
                                     const isUser = message.role === "user";
@@ -201,7 +215,7 @@ const AIDoctorPage = () => {
 
                                 <div ref={messagesEndRef} />
                             </div>
-                        </ScrollArea>
+                        </div>
 
                         {/* Suggested Topics Horizontal Pills */}
                         {messages.length <= 2 && (

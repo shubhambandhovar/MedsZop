@@ -11,7 +11,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
-import { ScrollArea } from "../components/ui/scroll-area";
 import { CheckCircle, XCircle, Clock, Video, MessageSquare, Send } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -198,7 +197,7 @@ const DoctorDashboardPage = () => {
                         <DialogTitle>Chat with {selectedChat?.patient_id?.name}</DialogTitle>
                     </DialogHeader>
 
-                    <ScrollArea className="flex-1 p-4 border rounded-md">
+                    <div className="flex-1 min-h-0 overflow-y-auto p-4 border rounded-md">
                         <div className="space-y-4">
                             {messages.map((msg, idx) => (
                                 <div key={idx} className={`flex ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
@@ -213,7 +212,7 @@ const DoctorDashboardPage = () => {
                             ))}
                             <div ref={scrollRef} />
                         </div>
-                    </ScrollArea>
+                    </div>
 
                     <div className="flex gap-2 mt-4">
                         <Input

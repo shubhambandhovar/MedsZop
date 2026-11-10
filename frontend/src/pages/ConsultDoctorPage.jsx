@@ -6,7 +6,6 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { ScrollArea } from "../components/ui/scroll-area";
 import {
     MessageSquare,
     Send,
@@ -339,7 +338,7 @@ const ConsultDoctorPage = () => {
               </div>
             </DialogHeader>
 
-            <ScrollArea className="flex-1 p-4 bg-slate-50/30 dark:bg-slate-950/30">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 bg-slate-50/30 dark:bg-slate-950/30">
               <div className="space-y-3.5">
                 {chatMessages.length === 0 ? (
                   <div className="text-center py-8 text-xs text-muted-foreground">
@@ -375,7 +374,7 @@ const ConsultDoctorPage = () => {
                 )}
                 <div ref={chatScrollRef} />
               </div>
-            </ScrollArea>
+            </div>
 
             <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
               <div className="flex gap-2">
