@@ -130,6 +130,18 @@ exports.login = async (req, res) => {
       });
     }
 
+    // SEC-05: Block deleted or deactivated accounts from authenticating
+    if (user.isDeleted) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+    if (user.isActive === false) {
+      return res.status(403).json({
+        message: "Account has been deactivated. Please contact an administrator.",
+      });
+    }
+
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(401).json({
@@ -283,6 +295,13 @@ exports.googleLogin = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: "No account found with this email. Please sign up first." });
+    }
+
+    if (user.isDeleted) {
+      return res.status(401).json({ message: "Account no longer exists." });
+    }
+    if (user.isActive === false) {
+      return res.status(403).json({ message: "Account has been deactivated. Please contact an administrator." });
     }
 
     if (!user.googleId) {

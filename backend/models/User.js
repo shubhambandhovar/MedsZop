@@ -58,6 +58,40 @@ const userSchema = new mongoose.Schema({
     default: false
   },
 
+  // Account Lifecycle & Security Management
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  deactivatedAt: {
+    type: Date,
+    default: null
+  },
+  deactivatedBy: {
+    type: String,
+    default: null
+  },
+  deactivationReason: {
+    type: String,
+    default: ""
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  deletedAt: {
+    type: Date,
+    default: null
+  },
+  deletedBy: {
+    type: String,
+    default: null
+  },
+  deletionReason: {
+    type: String,
+    default: ""
+  },
+
   addresses: [
     {
       name: String,
@@ -92,8 +126,10 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Recommended Indexes (Phase 9D)
+// Recommended Indexes (Phase 9D & Account Lifecycle)
 userSchema.index({ role: 1 });
 userSchema.index({ createdAt: -1 });
+userSchema.index({ isActive: 1 });
+userSchema.index({ isDeleted: 1 });
 
 module.exports = mongoose.model("User", userSchema);

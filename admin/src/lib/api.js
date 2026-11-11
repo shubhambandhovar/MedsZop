@@ -33,8 +33,12 @@ export const adminApi = {
 
   // 4. Users
   getUsers: (params) => api.get("/admin/users", { params }).then((r) => r.data),
+  getUserById: (id) => api.get(`/admin/users/${id}`).then((r) => r.data),
   createUser: (data) => api.post("/admin/create-user", data).then((r) => r.data),
   updateUserRole: (id, payload) => api.patch(`/admin/users/${id}/role`, payload).then((r) => r.data),
+  updateUserStatus: (id, payload) => api.patch(`/admin/users/${id}/status`, payload).then((r) => r.data),
+  checkUserDeletionDependencies: (id) => api.get(`/admin/users/${id}/deletion-check`).then((r) => r.data),
+  deleteUser: (id, payload) => api.delete(`/admin/users/${id}`, { data: payload }).then((r) => r.data),
 
   // 5. Pharmacies
   getPharmacies: () => api.get("/admin/pharmacies").then((r) => r.data),

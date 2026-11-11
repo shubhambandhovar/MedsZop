@@ -15,8 +15,12 @@ const {
   updateMedicine,
   deleteMedicine,
   getUsers,
+  getUserById,
   createUser,
   updateUserRole,
+  updateUserStatus,
+  checkUserDeletionDependencies,
+  deleteUser,
   getPharmacies,
   verifyPharmacy,
   getPrescriptions,
@@ -49,10 +53,14 @@ router.post("/medicines", createMedicine);
 router.put("/medicines/:id", updateMedicine);
 router.delete("/medicines/:id", deleteMedicine);
 
-// 4. User Directory & Roles
+// 4. User Directory & Lifecycle Management
 router.get("/users", getUsers);
 router.post("/create-user", createUser);
+router.get("/users/:id", getUserById);
 router.patch("/users/:id/role", updateUserRole);
+router.patch("/users/:id/status", updateUserStatus);
+router.get("/users/:id/deletion-check", checkUserDeletionDependencies);
+router.delete("/users/:id", deleteUser);
 
 // 5. Pharmacies
 router.get("/pharmacies", getPharmacies);

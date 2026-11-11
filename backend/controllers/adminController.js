@@ -452,6 +452,322 @@ exports.getUsers = async (req, res) => {
   }
 };
 
+/**
+ * GET SINGLE USER DETAILS WITH LINKED COUNTS
+ */
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userIdStr = String(user._id);
+    const [ordersCount, prescriptionsCount, consultationsCount] = await Promise.all([
+      Order.countDocuments({ user_id: userIdStr }),
+      Prescription.countDocuments({ user_id: userIdStr }),
+      Consultation.countDocuments({ $or: [{ patient_id: user._id }, { doctor_id: user._id }] })
+    ]);
+
+    res.json({
+      user,
+      stats: {
+        ordersCount,
+        prescriptionsCount,
+        consultationsCount
+      }
+    });
+  } catch (err) {
+    console.error("Get user details error:", err);
+    res.status(500).json({ message: "Failed to fetch user details", error: err.message });
+  }
+};
+
+/**
+ * UPDATE USER STATUS (DEACTIVATE / REACTIVATE)
+ */
+exports.updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isActive, reason } = req.body;
+
+    if (isActive === undefined) {
+      return res.status(400).json({ message: "isActive boolean is required" });
+    }
+
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const requesterId = String(req.user?.id || req.user?._id || "");
+    const targetId = String(targetUser._id);
+
+    // SEC-06: Self-deactivation protection
+    if (requesterId === targetId && isActive === false) {
+      return res.status(403).json({ message: "You cannot deactivate your own administrator account." });
+    }
+
+    // SEC-07: Protection against deactivating the last active administrator
+    if (targetUser.role === "admin" && isActive === false) {
+      const activeAdmins = await User.countDocuments({
+        role: "admin",
+        isActive: { $ne: false },
+        isDeleted: { $ne: true }
+      });
+      if (activeAdmins <= 1) {
+        return res.status(403).json({
+          message: "Cannot deactivate the last active administrator account. MedsZop requires at least one active administrator."
+        });
+      }
+    }
+
+    targetUser.isActive = Boolean(isActive);
+    if (!isActive) {
+      targetUser.deactivatedAt = new Date();
+      targetUser.deactivatedBy = req.user?.email || "admin";
+      targetUser.deactivationReason = reason || "Administrative deactivation";
+    } else {
+      targetUser.deactivatedAt = null;
+      targetUser.deactivatedBy = null;
+      targetUser.deactivationReason = "";
+    }
+
+    await targetUser.save();
+
+    await logAudit(
+      req,
+      isActive ? "REACTIVATE_USER" : "DEACTIVATE_USER",
+      "User",
+      targetUser._id,
+      {
+        email: targetUser.email,
+        role: targetUser.role,
+        isActive: targetUser.isActive,
+        reason: targetUser.deactivationReason
+      }
+    );
+
+    res.json({
+      message: `User account successfully ${isActive ? "reactivated" : "deactivated"}`,
+      user: {
+        _id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role,
+        isActive: targetUser.isActive,
+        deactivatedAt: targetUser.deactivatedAt
+      }
+    });
+  } catch (err) {
+    console.error("Update user status error:", err);
+    res.status(500).json({ message: "Failed to update user status", error: err.message });
+  }
+};
+
+/**
+ * CHECK USER DELETION DEPENDENCIES
+ */
+exports.checkUserDeletionDependencies = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const targetUser = await User.findById(id).select("-password");
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userIdStr = String(targetUser._id);
+    const userEmail = targetUser.email ? targetUser.email.toLowerCase() : "";
+
+    const [
+      customerOrders,
+      courierOrders,
+      prescriptions,
+      patientConsultations,
+      doctorConsultations,
+      pharmacies,
+      doctorApps,
+      pharmacistApps,
+      deliveryApps,
+      auditLogs
+    ] = await Promise.all([
+      Order.countDocuments({ user_id: userIdStr }),
+      Order.countDocuments({ delivery_agent_id: userIdStr }),
+      Prescription.countDocuments({ user_id: userIdStr }),
+      Consultation.countDocuments({ patient_id: targetUser._id }),
+      Consultation.countDocuments({ doctor_id: targetUser._id }),
+      Pharmacy.countDocuments({ email: userEmail }),
+      DoctorApplication.countDocuments({ email: userEmail }),
+      PharmacistApplication.countDocuments({ email: userEmail }),
+      DeliveryApplication.countDocuments({ email: userEmail }),
+      AuditLog.countDocuments({ $or: [{ admin_id: targetUser._id }, { admin_email: userEmail }] })
+    ]);
+
+    const totalMedicalRecords = customerOrders + courierOrders + prescriptions + patientConsultations + doctorConsultations;
+    const totalPartnerRecords = pharmacies + doctorApps + pharmacistApps + deliveryApps;
+    const totalDependencies = totalMedicalRecords + totalPartnerRecords + auditLogs;
+
+    let canHardDelete = true;
+    let canAnonymize = true;
+    let blockingReason = null;
+
+    if (totalMedicalRecords > 0) {
+      canHardDelete = false;
+      blockingReason = `Account has ${customerOrders} orders, ${prescriptions} prescriptions, and ${patientConsultations + doctorConsultations} consultations that must legally be retained under healthcare compliance standards. Permanent anonymization (scrubbing personal identifiable data) is available.`;
+    } else if (totalPartnerRecords > 0) {
+      canHardDelete = false;
+      blockingReason = `Account has linked dispensary or partner credentials. Deactivation or anonymization is recommended.`;
+    }
+
+    res.json({
+      user: {
+        _id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role
+      },
+      dependencies: {
+        customerOrders,
+        courierOrders,
+        prescriptions,
+        patientConsultations,
+        doctorConsultations,
+        pharmacies,
+        partnerApplications: doctorApps + pharmacistApps + deliveryApps,
+        auditLogs,
+        totalDependencies
+      },
+      canHardDelete,
+      canAnonymize,
+      blockingReason
+    });
+  } catch (err) {
+    console.error("Check dependencies error:", err);
+    res.status(500).json({ message: "Failed to inspect user dependencies", error: err.message });
+  }
+};
+
+/**
+ * PERMANENT USER DELETION OR ANONYMIZATION
+ */
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { confirmation, reason, anonymize } = req.body;
+
+    if (confirmation !== "DELETE") {
+      return res.status(400).json({
+        message: "Explicit confirmation required. Please type DELETE to confirm."
+      });
+    }
+
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const requesterId = String(req.user?.id || req.user?._id || "");
+    const targetId = String(targetUser._id);
+
+    // SEC-08: Admin Self-Deletion Protection
+    if (requesterId === targetId) {
+      return res.status(403).json({ message: "You cannot delete your own administrator account." });
+    }
+
+    // SEC-09: Last Active Admin Deletion Protection
+    if (targetUser.role === "admin") {
+      const activeAdmins = await User.countDocuments({
+        role: "admin",
+        isActive: { $ne: false },
+        isDeleted: { $ne: true }
+      });
+      if (activeAdmins <= 1) {
+        return res.status(403).json({
+          message: "Cannot delete the last active administrator account. The platform requires at least one active administrator."
+        });
+      }
+    }
+
+    // Dependency check
+    const userIdStr = String(targetUser._id);
+    const userEmail = targetUser.email ? targetUser.email.toLowerCase() : "";
+
+    const [customerOrders, courierOrders, prescriptions, patientCons, doctorCons, pharmacies] = await Promise.all([
+      Order.countDocuments({ user_id: userIdStr }),
+      Order.countDocuments({ delivery_agent_id: userIdStr }),
+      Prescription.countDocuments({ user_id: userIdStr }),
+      Consultation.countDocuments({ patient_id: targetUser._id }),
+      Consultation.countDocuments({ doctor_id: targetUser._id }),
+      Pharmacy.countDocuments({ email: userEmail })
+    ]);
+
+    const totalMedicalRecords = customerOrders + courierOrders + prescriptions + patientCons + doctorCons;
+    const totalPartnerRecords = pharmacies;
+
+    // Block hard deletion if clinical/order records exist and anonymize is not selected
+    if (totalMedicalRecords > 0 && !anonymize) {
+      return res.status(400).json({
+        message: `Deletion blocked: Account has ${totalMedicalRecords} linked clinical/order records that cannot legally be deleted. Please use Anonymization to scrub PII or deactivate the account.`,
+        canAnonymize: true,
+        dependencies: { customerOrders, prescriptions, consultations: patientCons + doctorCons }
+      });
+    }
+
+    // Path A: Anonymization Deletion (Required when linked legal records exist, or requested)
+    if (anonymize || totalMedicalRecords > 0 || totalPartnerRecords > 0) {
+      const originalEmail = targetUser.email;
+      const originalRole = targetUser.role;
+
+      targetUser.name = "Deleted User";
+      targetUser.email = `anonymized_${targetUser._id}@deleted.medszop.com`;
+      targetUser.phone = "";
+      targetUser.addresses = [];
+      targetUser.cart = [];
+      targetUser.password = undefined;
+      targetUser.googleId = null;
+      targetUser.isActive = false;
+      targetUser.isDeleted = true;
+      targetUser.deletedAt = new Date();
+      targetUser.deletedBy = req.user?.email || "admin";
+      targetUser.deletionReason = reason || "GDPR/DPDPA Data Anonymization";
+
+      await targetUser.save();
+
+      await logAudit(req, "ANONYMIZE_USER", "User", targetUser._id, {
+        originalEmail,
+        originalRole,
+        reason: targetUser.deletionReason,
+        retainedOrders: customerOrders,
+        retainedPrescriptions: prescriptions
+      });
+
+      return res.json({
+        message: "Account personal data successfully scrubbed and anonymized. Legal clinical records preserved.",
+        mode: "anonymized",
+        user: { _id: targetUser._id, isDeleted: true, isActive: false }
+      });
+    }
+
+    // Path B: Hard Deletion (Permitted ONLY when zero linked records exist)
+    await User.findByIdAndDelete(id);
+
+    await logAudit(req, "HARD_DELETE_USER", "User", id, {
+      email: targetUser.email,
+      role: targetUser.role,
+      reason: reason || "Permanent clean deletion"
+    });
+
+    res.json({
+      message: "User account permanently removed from database.",
+      mode: "hard_deleted"
+    });
+  } catch (err) {
+    console.error("Delete user error:", err);
+    res.status(500).json({ message: "Failed to delete user", error: err.message });
+  }
+};
+
 exports.updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
