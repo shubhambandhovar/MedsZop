@@ -42,22 +42,56 @@ const AIDoctorPage = () => {
     const inputRef = useRef(null);
 
     const scrollToBottom = (behavior = "smooth") => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollTo({
-                top: scrollContainerRef.current.scrollHeight,
-                behavior
-            });
-        }
-        messagesEndRef.current?.scrollIntoView({ behavior, block: "nearest" });
+        const doScroll = () => {
+            if (scrollContainerRef.current) {
+                // Direct scrollTop scroll to ensure bottom is fully reached
+                scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+            }
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ behavior, block: "end" });
+            }
+        };
+
+        // Scroll immediately, then after frame reflow and markdown rendering
+        doScroll();
+        requestAnimationFrame(doScroll);
+        setTimeout(doScroll, 60);
+        setTimeout(doScroll, 180);
+        setTimeout(doScroll, 350);
     };
 
     useEffect(() => {
-        // Small timeout to allow DOM/markdown rendering before scrolling
-        const timer = setTimeout(() => {
-            scrollToBottom();
-        }, 50);
-        return () => clearTimeout(timer);
+        scrollToBottom("smooth");
     }, [messages, loading]);
+
+    // Use ResizeObserver on scroll container content to ensure chat auto-scrolls
+    // whenever markdown content expands or dynamically renders
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        let resizeObserver;
+        try {
+            resizeObserver = new ResizeObserver(() => {
+                if (container) {
+                    // If user is reasonably close to the bottom (within 250px), auto-scroll down
+                    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 250;
+                    if (isNearBottom) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }
+            });
+            if (container.firstElementChild) {
+                resizeObserver.observe(container.firstElementChild);
+            }
+        } catch {
+            // ResizeObserver fallback
+        }
+
+        return () => {
+            if (resizeObserver) resizeObserver.disconnect();
+        };
+    }, []);
 
     const handleSend = async () => {
         if (!input.trim() || loading) return;

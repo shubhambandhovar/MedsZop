@@ -1,13 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const dotenv = require("dotenv");
+
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: path.resolve(__dirname, ".env.test"), override: true });
+} else {
+  dotenv.config();
+}
+
 const connectDB = require("./config/db");
+const mongoose = require("mongoose");
+const { getRedisClient, closeRedis } = require("./config/redis");
 const pharmacyRoutes = require("./routes/pharmacyRoutes");
 const { mongoSanitize } = require("./middleware/sanitizeMiddleware");
 const safeLogger = require("./utils/logger");
-
-dotenv.config();
 
 // Connect DB
 connectDB();
@@ -142,9 +150,29 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to MedsZop API", status: "running" });
 });
 
-// Health check
+// Liveness probe (Immediate ping)
 app.get("/health", (req, res) => {
   res.json({ status: "healthy" });
+});
+
+// Readiness probe (Deep dependency health inspection for container orchestrators)
+app.get("/health/ready", async (req, res) => {
+  const isMongoReady = mongoose.connection.readyState === 1;
+  const redis = getRedisClient();
+  const isRedisReady = redis ? redis.status === "ready" || redis.status === "connect" : true; // fail-safe to in-memory
+
+  const isReady = isMongoReady;
+  const statusCode = isReady ? 200 : 503;
+
+  res.status(statusCode).json({
+    status: isReady ? "ready" : "unhealthy",
+    checks: {
+      mongodb: isMongoReady ? "connected" : "disconnected",
+      redis: redis ? (isRedisReady ? "connected" : "degraded") : "in_memory_fallback"
+    },
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
 });
 
 // 5. Centralized Error Handling Middleware (Safe responses & error sanitization)
@@ -173,6 +201,42 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   safeLogger.info(`Server running on port ${PORT}`);
 });
+
+// Graceful Shutdown Handler for Container Orchestration & Cloud Staging
+const gracefulShutdown = async (signal) => {
+  safeLogger.info(`[Process] Received ${signal}. Initiating graceful shutdown...`);
+
+  server.close(async () => {
+    safeLogger.info("[Process] HTTP listener closed. Terminating downstream connections...");
+    try {
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close(false);
+        safeLogger.info("[Process] MongoDB connection closed cleanly.");
+      }
+    } catch (dbErr) {
+      safeLogger.error("[Process] Error closing MongoDB connection:", dbErr);
+    }
+
+    try {
+      await closeRedis();
+      safeLogger.info("[Process] Redis connection closed cleanly.");
+    } catch (redisErr) {
+      safeLogger.error("[Process] Error closing Redis connection:", redisErr);
+    }
+
+    safeLogger.info("[Process] Graceful shutdown completed. Exiting.");
+    process.exit(0);
+  });
+
+  // Force close after 10s if connections fail to drain
+  setTimeout(() => {
+    safeLogger.error("[Process] Shutdown timeout exceeded (10s). Forcing termination.");
+    process.exit(1);
+  }, 10000).unref();
+};
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));

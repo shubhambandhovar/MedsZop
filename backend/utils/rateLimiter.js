@@ -42,8 +42,16 @@ function createRateLimiter(options = {}) {
       return ip;
     });
 
-  // Optional Redis client hook (when REDIS_URL or external client is available)
-  let redisClient = options.redisClient || null;
+  // Redis client hook (when REDIS_URL or external client is available)
+  let redisClient = options.redisClient;
+  if (redisClient === undefined) {
+    try {
+      const { getRedisClient } = require("../config/redis");
+      redisClient = getRedisClient();
+    } catch {
+      redisClient = null;
+    }
+  }
   let redisAvailable = !!redisClient;
 
   return async function rateLimiterMiddleware(req, res, next) {

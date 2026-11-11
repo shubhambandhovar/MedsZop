@@ -1,0 +1,31 @@
+# Dependencies & local builds
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Environment files & secrets (NEVER bake into image)
+.env
+.env.*
+!.env.staging.example
+
+# Local uploads & temporary runtime artifacts
+uploads/prescriptions/*
+!uploads/prescriptions/.gitkeep
+tmp/
+temp/
+logs/
+*.log
+
+# Git & IDE configs
+.git
+.gitignore
+.vscode
+.idea
+
+# Test & scratch suites
+scratch/
+test_reports/
+*.test.js
+*.spec.js
+coverage/
+

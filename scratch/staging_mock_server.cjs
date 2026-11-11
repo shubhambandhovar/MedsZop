@@ -139,7 +139,7 @@ app.get("/api/auth/me", auth, (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
   const userResponse = { ...user };
   delete userResponse.password;
-  res.json({ user: userResponse });
+  res.json(userResponse);
 });
 
 // 3. Medicine Routes
@@ -344,6 +344,25 @@ app.post("/api/delivery/complete/:id", auth, (req, res) => {
   order.order_status = "delivered";
   order.payment_status = "paid";
   res.json({ message: "Delivery completed successfully", order });
+});
+
+// 10. AI Doctor Chat
+app.post("/api/ai/doctor-chat", auth, (req, res) => {
+  const { message } = req.body;
+  const longResponse = `Here is informational guidance regarding your inquiry:
+
+• **Check ingredients**: Be aware that many combination medications (e.g., for colds, flu, allergies) contain paracetamol. Check labels to avoid accidental double-dosing.
+• **Alcohol**: Avoid or limit alcohol consumption when taking paracetamol, as it can increase the risk of liver damage.
+• **Pre-existing conditions**: If you have liver disease, kidney disease, or are a heavy alcohol user, consult your doctor before taking paracetamol.
+• **Children**: Use child-specific formulations and dosing instructions carefully based on age and weight.
+
+If you are concerned about any side effects, or if your symptoms worsen or do not improve, consult with a healthcare professional. If you suspect an overdose, seek immediate medical attention or go to the nearest emergency room.`;
+
+  res.json({
+    response: longResponse,
+    session_id: "ses_staging_123",
+    isEmergency: false
+  });
 });
 
 const PORT = 5000;

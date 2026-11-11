@@ -6,6 +6,7 @@ const Order = require("../models/Order");
 const Pharmacy = require("../models/Pharmacy");
 const Consultation = require("../models/Consultation");
 const { escapeRegex } = require("../middleware/sanitizeMiddleware");
+const { getStorageProvider } = require("../utils/storageService");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -103,6 +104,18 @@ exports.uploadPrescription = async (req, res) => {
 
     // Standardize URL path with forward slashes for cross-platform compatibility
     const filePath = req.file.path.replace(/\\/g, "/");
+
+    // If S3 storage provider is active, upload to private cloud S3 bucket
+    if (process.env.STORAGE_PROVIDER === "s3") {
+      try {
+        const fileBuffer = await fs.promises.readFile(req.file.path);
+        const storage = getStorageProvider("s3");
+        await storage.saveFile(fileBuffer, req.file.filename, req.file.mimetype);
+      } catch (s3Err) {
+        console.error("Failed to upload prescription to S3:", s3Err.message);
+        throw new Error(`Cloud storage upload failed: ${s3Err.message}`);
+      }
+    }
 
     // Save prescription record tied to authenticated user
     const prescription = await Prescription.create({
@@ -345,6 +358,18 @@ exports.getPrescriptionFile = async (req, res) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
     res.setHeader("Content-Disposition", `inline; filename="${sanitizedFilename}"`);
+
+    // If S3 storage provider is active, stream directly from private S3 bucket
+    if (process.env.STORAGE_PROVIDER === "s3") {
+      try {
+        const storage = getStorageProvider("s3");
+        const stream = await storage.getFileStream(sanitizedFilename);
+        return stream.pipe(res);
+      } catch (s3Err) {
+        console.error("Failed to stream prescription from S3:", s3Err.message);
+        return res.status(404).json({ message: "Prescription file not found in cloud storage" });
+      }
+    }
 
     return res.sendFile(filePath);
   } catch (error) {

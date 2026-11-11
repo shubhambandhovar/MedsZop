@@ -1,0 +1,100 @@
+# ==============================================================================
+# MEDSZOP — LOCAL / CONTAINERIZED STAGING DOCKER COMPOSE CONFIGURATION
+# ==============================================================================
+# Usage for isolated local testing of the complete multi-service stack:
+#   docker compose -f docker-compose.staging.yml up -d --build
+# ==============================================================================
+
+services:
+  staging-mongo:
+    image: mongo:8.0
+    container_name: medszop-staging-mongo
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: medszop_staging
+    volumes:
+      - mongo-staging-data:/data/db
+    networks:
+      - medszop-staging-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  staging-redis:
+    image: redis:7.2-alpine
+    container_name: medszop-staging-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-staging-data:/data
+    networks:
+      - medszop-staging-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  staging-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medszop-staging-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: staging
+      PORT: 5000
+      MONGO_URI: mongodb://staging-mongo:27017/medszop_staging
+      MONGODB_URI: mongodb://staging-mongo:27017/medszop_staging
+      REDIS_URL: redis://staging-redis:6379
+      CLIENT_URL: http://localhost:5173
+      FRONTEND_URL: http://localhost:5173
+      JWT_SECRET: medszop_staging_docker_jwt_secret_key_849204812398
+      JWT_EXPIRE: 7d
+      OTP_SECRET: medszop_staging_docker_otp_secret_key_20261110
+      RAZORPAY_KEY_ID: rzp_test_staging_placeholder
+      RAZORPAY_KEY_SECRET: rzp_test_sec_staging_placeholder
+      RAZORPAY_WEBHOOK_SECRET: rzp_whk_staging_placeholder
+      STORAGE_PROVIDER: local
+    volumes:
+      - prescription-uploads:/app/uploads/prescriptions
+    depends_on:
+      staging-mongo:
+        condition: service_healthy
+      staging-redis:
+        condition: service_healthy
+    networks:
+      - medszop-staging-net
+
+  staging-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5000/api
+    container_name: medszop-staging-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - staging-backend
+    networks:
+      - medszop-staging-net
+
+networks:
+  medszop-staging-net:
+    driver: bridge
+
+volumes:
+  mongo-staging-data:
+  redis-staging-data:
+  prescription-uploads:
+

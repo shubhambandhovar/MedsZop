@@ -42,6 +42,10 @@ const buildOTPEmailHTML = (otp) => `
  * Send OTP via Resend HTTP API (works on Render free tier)
  */
 const sendViaResend = async (email, otp) => {
+  if (process.env.NODE_ENV === "test") {
+    console.log(`[Email Mock (test mode)] OTP to: ${email}`);
+    return { id: "test-resend-id-" + Date.now() };
+  }
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { data, error } = await resend.emails.send({
     from: `${FROM_NAME} <${FROM_EMAIL}>`,
@@ -62,6 +66,10 @@ const sendViaResend = async (email, otp) => {
  * Send OTP via SMTP (local development fallback)
  */
 const sendViaSMTP = async (email, otp) => {
+  if (process.env.NODE_ENV === "test") {
+    console.log(`[Email Mock (test mode)] OTP via SMTP to: ${email}`);
+    return { messageId: "test-smtp-msg-" + Date.now() };
+  }
   const port = parseInt(process.env.SMTP_PORT) || 465;
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "mail.privateemail.com",
@@ -89,6 +97,11 @@ const sendViaSMTP = async (email, otp) => {
  * Generic Send Email function (Internal use)
  */
 const sendEmail = async (to, subject, html) => {
+  if (process.env.NODE_ENV === "test") {
+    console.log(`[Email Mock (test mode)] To: ${to}, Subject: ${subject}`);
+    return { id: "test-mock-email-" + Date.now(), messageId: "test-mock-msg" };
+  }
+
   if (process.env.RESEND_API_KEY) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
