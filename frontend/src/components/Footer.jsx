@@ -87,7 +87,6 @@ const Footer = () => {
                   <li><Link to="/prescription-scan" className="text-sm hover:text-primary transition-colors">Upload Prescription</Link></li>
                   <li><Link to="/doctor-chat" className="text-sm hover:text-primary transition-colors">AI Doctor Chat</Link></li>
                   <li><Link to="/orders" className="text-sm hover:text-primary transition-colors">Track Order</Link></li>
-                  <li><a href="#" className="text-sm hover:text-primary transition-colors">Partner with Us</a></li>
                 </>
               )}
             </ul>
