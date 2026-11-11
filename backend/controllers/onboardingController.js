@@ -6,14 +6,17 @@ const { sendEmail } = require("../utils/emailService");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-// Email Templates (Simulated for brevity)
+// Canonical application base URL
+const APP_BASE_URL = process.env.FRONTEND_URL || process.env.CLIENT_URL || "https://medszop.com";
+
+// Email Templates
 const emailTemplates = {
     submitted: (name, role, appId) => `
     <h1>Application Received</h1>
     <p>Hi ${name},</p>
     <p>Your application for <strong>${role}</strong> at MedsZop has been submitted successfully.</p>
     <p>Current Status: <strong>PENDING</strong></p>
-    <p>Track your status here: <a href="https://medszop.site/application-status/${appId}">Track Application</a></p>
+    <p>Track your status here: <a href="${APP_BASE_URL}/application-status/${appId}">Track Application</a></p>
   `,
     approved: (name, role, email, tempPassword) => `
     <h1>Application Approved!</h1>
@@ -22,7 +25,7 @@ const emailTemplates = {
     <p><strong>Login Details:</strong></p>
     <p>Email: ${email}</p>
     <p>Temporary Password: <strong>${tempPassword}</strong></p>
-    <p><a href="https://medszop.site/login">Login Here</a></p>
+    <p><a href="${APP_BASE_URL}/login">Login Here</a></p>
     <p><em>Please change your password immediately upon first login.</em></p>
   `,
     rejected: (name, role, reason) => `
