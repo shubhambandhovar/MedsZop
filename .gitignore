@@ -88,3 +88,13 @@ frontend/node_modules/.cache/default-development/0.pack
 !*.env.example
 !*.env.staging.example
 frontend/node_modules/.cache/default-development/1.pack
+
+# Agent & Skill harnesses
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+scratch/
+

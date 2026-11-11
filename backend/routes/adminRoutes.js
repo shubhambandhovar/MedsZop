@@ -5,17 +5,75 @@ const auth = require("../middleware/authMiddleware");
 const role = require("../middleware/roleMiddleware");
 
 const {
-  createUser,
+  stats,
+  getAnalytics,
+  getOrders,
+  getOrderById,
+  updateOrderStatus,
+  getMedicines,
+  createMedicine,
+  updateMedicine,
+  deleteMedicine,
   getUsers,
+  createUser,
+  updateUserRole,
   getPharmacies,
   verifyPharmacy,
-  stats
+  getPrescriptions,
+  updatePrescriptionStatus,
+  getConsultations,
+  getDeliveries,
+  getPartnerApplications,
+  reviewPartnerApplication,
+  getPayments,
+  getRefunds,
+  getAuditLogs,
+  getSystemHealth
 } = require("../controllers/adminController");
 
-router.get("/stats", auth, role(["admin"]), stats);
-router.post("/create-user", auth, role(["admin"]), createUser);
-router.get("/users", auth, role(["admin"]), getUsers);
-router.get("/pharmacies", auth, role(["admin"]), getPharmacies);
-router.put("/pharmacies/:id/verify", auth, role(["admin"]), verifyPharmacy);
+// All admin routes strictly enforce JWT auth + role(['admin'])
+router.use(auth, role(["admin"]));
+
+// 1. Overview & Analytics
+router.get("/stats", stats);
+router.get("/analytics", getAnalytics);
+
+// 2. Orders
+router.get("/orders", getOrders);
+router.get("/orders/:id", getOrderById);
+router.patch("/orders/:id/status", updateOrderStatus);
+
+// 3. Medicine Catalog
+router.get("/medicines", getMedicines);
+router.post("/medicines", createMedicine);
+router.put("/medicines/:id", updateMedicine);
+router.delete("/medicines/:id", deleteMedicine);
+
+// 4. User Directory & Roles
+router.get("/users", getUsers);
+router.post("/create-user", createUser);
+router.patch("/users/:id/role", updateUserRole);
+
+// 5. Pharmacies
+router.get("/pharmacies", getPharmacies);
+router.put("/pharmacies/:id/verify", verifyPharmacy);
+
+// 6. Healthcare: Prescriptions & Consultations
+router.get("/prescriptions", getPrescriptions);
+router.patch("/prescriptions/:id/status", updatePrescriptionStatus);
+router.get("/consultations", getConsultations);
+
+// 7. Operations: Deliveries & Partner Applications
+router.get("/deliveries", getDeliveries);
+router.get("/partner-applications", getPartnerApplications);
+router.post("/partner-applications/:type/:id/review", reviewPartnerApplication);
+
+// 8. Business: Payments & Refunds
+router.get("/payments", getPayments);
+router.get("/refunds", getRefunds);
+
+// 9. System: Audit Logs & Platform Health
+router.get("/audit-logs", getAuditLogs);
+router.get("/system-health", getSystemHealth);
 
 module.exports = router;
