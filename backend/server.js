@@ -49,16 +49,36 @@ app.use(
   })
 );
 
-// 2. Restricted CORS Origins (Phase 9D API Hardening)
+// 2. Restricted CORS Origins (Multi-Portal Architecture)
 const allowedOrigins = [
   process.env.CLIENT_URL,
   process.env.FRONTEND_URL,
-  "http://localhost:5173",
+  process.env.ADMIN_URL,
+  process.env.PHARMACY_URL,
+  process.env.DELIVERY_URL,
+  process.env.DOCTOR_URL,
+  process.env.PARTNERS_URL,
+  "http://localhost:5173", // Customer Portal
+  "http://localhost:5174", // Admin Portal
+  "http://localhost:5175", // Pharmacy Portal
+  "http://localhost:5176", // Delivery Portal
+  "http://localhost:5177", // Doctor Portal
+  "http://localhost:5178", // Partner Onboarding Portal
   "http://localhost:3000",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://127.0.0.1:5175",
+  "http://127.0.0.1:5176",
+  "http://127.0.0.1:5177",
+  "http://127.0.0.1:5178",
   "http://127.0.0.1:3000",
   "https://medszop.com",
-  "https://www.medszop.com"
+  "https://www.medszop.com",
+  "https://admin.medszop.com",
+  "https://pharmacy.medszop.com",
+  "https://delivery.medszop.com",
+  "https://doctor.medszop.com",
+  "https://partners.medszop.com"
 ].filter(Boolean);
 
 const corsOptions = {
@@ -78,7 +98,11 @@ const corsOptions = {
       }
     });
 
-    if (isAllowed) {
+    // Allow MedsZop Cloudflare Pages preview deployments (*.pages.dev)
+    const isCloudflarePages = /^https:\/\/([a-z0-9-]+\.)?medszop[a-z0-9-]*\.pages\.dev$/i.test(origin) ||
+      (process.env.ALLOW_PAGES_DEV === "true" && /^https:\/\/[a-z0-9-]+\.pages\.dev$/i.test(origin));
+
+    if (isAllowed || isCloudflarePages) {
       return callback(null, true);
     }
     return callback(new Error(`CORS policy violation: Access from origin '${origin}' is not allowed.`));
