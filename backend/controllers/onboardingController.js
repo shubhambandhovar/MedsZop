@@ -2,40 +2,23 @@ const DoctorApplication = require("../models/DoctorApplication");
 const PharmacistApplication = require("../models/PharmacistApplication");
 const DeliveryApplication = require("../models/DeliveryApplication");
 const User = require("../models/User");
-const { sendEmail } = require("../utils/emailService");
+const {
+  sendEmail,
+  sendApplicationSubmittedEmail,
+  sendApplicationApprovedEmail,
+  sendApplicationRejectedEmail,
+  buildApplicationSubmittedEmail,
+  buildApplicationApprovedEmail,
+  buildApplicationRejectedEmail
+} = require("../utils/emailService");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-// Canonical application base URL
-const APP_BASE_URL = process.env.FRONTEND_URL || process.env.CLIENT_URL || "https://medszop.com";
-
-// Email Templates
+// Backwards-compatible Email Templates object using the design system
 const emailTemplates = {
-    submitted: (name, role, appId) => `
-    <h1>Application Received</h1>
-    <p>Hi ${name},</p>
-    <p>Your application for <strong>${role}</strong> at MedsZop has been submitted successfully.</p>
-    <p>Current Status: <strong>PENDING</strong></p>
-    <p>Track your status here: <a href="${APP_BASE_URL}/application-status/${appId}">Track Application</a></p>
-  `,
-    approved: (name, role, email, tempPassword) => `
-    <h1>Application Approved!</h1>
-    <p>Hi ${name},</p>
-    <p>Congratulations! Your application for <strong>${role}</strong> has been approved.</p>
-    <p><strong>Login Details:</strong></p>
-    <p>Email: ${email}</p>
-    <p>Temporary Password: <strong>${tempPassword}</strong></p>
-    <p><a href="${APP_BASE_URL}/login">Login Here</a></p>
-    <p><em>Please change your password immediately upon first login.</em></p>
-  `,
-    rejected: (name, role, reason) => `
-    <h1>Application Status Update</h1>
-    <p>Hi ${name},</p>
-    <p>Regarding your application for <strong>${role}</strong>.</p>
-    <p>Status: <strong>REJECTED</strong></p>
-    <p><strong>Reason:</strong> ${reason}</p>
-    <p>You may re-apply if you address the issues mentioned.</p>
-  `
+    submitted: (name, role, appId) => buildApplicationSubmittedEmail(name, role, appId),
+    approved: (name, role, email, tempPassword) => buildApplicationApprovedEmail(name, role, email, tempPassword),
+    rejected: (name, role, reason) => buildApplicationRejectedEmail(name, role, reason)
 };
 
 /**
@@ -49,8 +32,7 @@ exports.submitDoctorCall = async (req, res) => {
         const app = await DoctorApplication.create(req.body);
 
         // Send Email
-        await sendEmail(app.email, "Application Submitted - MedsZop",
-            emailTemplates.submitted(app.name, "Doctor", app._id));
+        await sendApplicationSubmittedEmail(app.email, app.name, "Doctor", app._id);
 
         res.status(201).json({ message: "Application submitted", applicationId: app._id });
     } catch (err) {
@@ -68,8 +50,7 @@ exports.submitPharmacistCall = async (req, res) => {
 
         const app = await PharmacistApplication.create(req.body);
 
-        await sendEmail(app.email, "Application Submitted - MedsZop",
-            emailTemplates.submitted(app.owner_name, "Pharmacist", app._id));
+        await sendApplicationSubmittedEmail(app.email, app.owner_name, "Pharmacist", app._id);
 
         res.status(201).json({ message: "Application submitted", applicationId: app._id });
     } catch (err) {
@@ -87,8 +68,7 @@ exports.submitDeliveryCall = async (req, res) => {
 
         const app = await DeliveryApplication.create(req.body);
 
-        await sendEmail(app.email, "Application Submitted - MedsZop",
-            emailTemplates.submitted(app.name, "Delivery Partner", app._id));
+        await sendApplicationSubmittedEmail(app.email, app.name, "Delivery Partner", app._id);
 
         res.status(201).json({ message: "Application submitted", applicationId: app._id });
     } catch (err) {
@@ -169,8 +149,7 @@ exports.reviewApplication = async (req, res) => {
             await app.save();
 
             // Email
-            await sendEmail(app.email, "Update on your MedsZop Application",
-                emailTemplates.rejected(app.name || app.owner_name, role, remarks));
+            await sendApplicationRejectedEmail(app.email, app.name || app.owner_name, role, remarks);
 
             return res.json({ message: "Application Rejected" });
         }
@@ -195,8 +174,7 @@ exports.reviewApplication = async (req, res) => {
             await app.save();
 
             // Email
-            await sendEmail(app.email, "Welcome to MedsZop! Application Approved",
-                emailTemplates.approved(app.name || app.owner_name, role, app.email, tempPassword));
+            await sendApplicationApprovedEmail(app.email, app.name || app.owner_name, role, app.email, tempPassword);
 
             return res.json({ message: "Application Approved & User Created" });
         }
