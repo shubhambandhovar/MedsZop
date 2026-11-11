@@ -5,6 +5,8 @@ const crypto = require("crypto");
 const Pharmacy = require("../models/Pharmacy");
 const { sendOTPEmail, sendWelcomeEmail } = require("../utils/emailService");
 const { OAuth2Client } = require("google-auth-library");
+const sessionManager = require("../utils/sessionManager");
+const { isProtectedAdminUser } = require("../utils/protectedAdmin");
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -90,17 +92,20 @@ exports.register = async (req, res) => {
       console.error("Welcome email failed:", emailErr.message);
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || "7d" },
-    );
+    // Mint session with role-based idle/absolute expiration
+    const sessionData = await sessionManager.createSession({
+      userId: user._id,
+      role: user.role,
+      ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      userAgent: req.headers["user-agent"] || "",
+    });
 
     user.password = undefined;
 
     return res.status(201).json({
-      access_token: token,
+      access_token: sessionData.token,
       user,
+      session: sessionData.session,
     });
   } catch (err) {
     console.error("Register error:", err);
@@ -149,17 +154,25 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || "7d" },
-    );
+    // Mint session with role-based idle/absolute expiration
+    const sessionData = await sessionManager.createSession({
+      userId: user._id,
+      role: user.role,
+      ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      userAgent: req.headers["user-agent"] || "",
+    });
 
-    user.password = undefined;
+    const userObj = user.toObject();
+    delete userObj.password;
+    userObj.isProtectedAdmin = isProtectedAdminUser(user);
+    if (userObj.isProtectedAdmin && !userObj.protectedAdminType) {
+      userObj.protectedAdminType = "founder";
+    }
 
     return res.json({
-      access_token: token,
-      user,
+      access_token: sessionData.token,
+      user: userObj,
+      session: sessionData.session,
     });
   } catch (err) {
     console.error("Login error:", err);
@@ -175,7 +188,15 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    return res.json(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const userObj = user.toObject();
+    userObj.isProtectedAdmin = isProtectedAdminUser(user);
+    if (userObj.isProtectedAdmin && !userObj.protectedAdminType) {
+      userObj.protectedAdminType = "founder";
+    }
+    return res.json(userObj);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -193,6 +214,10 @@ exports.changePassword = async (req, res) => {
 
     if (!newPassword) {
       return res.status(400).json({ message: "New password is required" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const user = await User.findById(userId);
@@ -217,6 +242,9 @@ exports.changePassword = async (req, res) => {
     user.password = hashedPassword;
     user.is_first_login = false;
     await user.save();
+
+    // SEC-08: Invalidate other active sessions upon password change
+    await sessionManager.revokeUserSessions(userId, "PASSWORD_CHANGE", req.session?.sessionId);
 
     res.json({ message: "Password updated successfully" });
   } catch (err) {
@@ -310,15 +338,21 @@ exports.googleLogin = async (req, res) => {
       await user.save();
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || "7d" }
-    );
+    const sessionData = await sessionManager.createSession({
+      userId: user._id,
+      role: user.role,
+      ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      userAgent: req.headers["user-agent"] || "",
+    });
 
-    user.password = undefined;
+    const userObj = user.toObject();
+    delete userObj.password;
+    userObj.isProtectedAdmin = isProtectedAdminUser(user);
+    if (userObj.isProtectedAdmin && !userObj.protectedAdminType) {
+      userObj.protectedAdminType = "founder";
+    }
 
-    return res.json({ access_token: token, user });
+    return res.json({ access_token: sessionData.token, user: userObj, session: sessionData.session });
   } catch (err) {
     console.error("Google Login error:", err);
     return res.status(500).json({ message: "Google authentication failed", error: err.message });
@@ -371,15 +405,16 @@ exports.googleSignup = async (req, res) => {
       console.error("Welcome email failed:", emailErr.message);
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || "7d" }
-    );
+    const sessionData = await sessionManager.createSession({
+      userId: user._id,
+      role: user.role,
+      ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      userAgent: req.headers["user-agent"] || "",
+    });
 
     user.password = undefined;
 
-    return res.status(201).json({ access_token: token, user });
+    return res.status(201).json({ access_token: sessionData.token, user, session: sessionData.session });
   } catch (err) {
     console.error("Google Signup error:", err);
     return res.status(500).json({ message: "Google authentication failed", error: err.message });
@@ -597,11 +632,98 @@ exports.resetPassword = async (req, res) => {
 
     await user.save();
 
+    // SEC-08: Invalidate all active sessions for this user on password reset
+    await sessionManager.revokeUserSessions(user._id, "PASSWORD_RESET");
+
     return res.status(200).json({
       success: true,
       message: "Password reset successfully. You can now login."
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * ============================================================
+ * LOGOUT (SEC-09 / Phase 2)
+ * ============================================================
+ * Revokes current session server-side in DB and Redis
+ */
+exports.logout = async (req, res) => {
+  try {
+    if (req.session?.sessionId) {
+      await sessionManager.revokeSession(req.session.sessionId, "USER_LOGOUT");
+    }
+    return res.json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * ============================================================
+ * GET SESSION STATUS (SEC-10 / Phase 2)
+ * ============================================================
+ * Returns remaining idle and absolute lifetime without bumping idle timer (passive)
+ */
+exports.getSessionStatus = async (req, res) => {
+  try {
+    if (!req.session) {
+      return res.json({
+        active: true,
+        isLegacy: true,
+        idleRemainingMs: 30 * 60 * 1000,
+        absoluteRemainingMs: 2 * 60 * 60 * 1000,
+      });
+    }
+
+    const nowMs = Date.now();
+    const lastActMs = new Date(req.session.lastActivityAt).getTime();
+    const absExpMs = new Date(req.session.absoluteExpiresAt).getTime();
+    const idleLimitMs = req.session.idleTimeoutMs || 30 * 60 * 1000;
+
+    const idleRemainingMs = Math.max(0, idleLimitMs - (nowMs - lastActMs));
+    const absoluteRemainingMs = Math.max(0, absExpMs - nowMs);
+
+    return res.json({
+      active: true,
+      sessionId: req.session.sessionId,
+      idleRemainingMs,
+      absoluteRemainingMs,
+      idleTimeoutMinutes: Math.round(idleLimitMs / 60000),
+      absoluteLifetimeMinutes: Math.round((absExpMs - new Date(req.session.createdAt).getTime()) / 60000),
+      expiresAt: req.session.absoluteExpiresAt,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * ============================================================
+ * HEARTBEAT / STAY LOGGED IN (Phase 2)
+ * ============================================================
+ * User-confirmed interaction to reset the idle timeout
+ */
+exports.heartbeat = async (req, res) => {
+  try {
+    if (req.session?.sessionId) {
+      const result = await sessionManager.validateSession(req.session.sessionId, { isPassive: false });
+      if (!result.valid) {
+        return res.status(401).json({
+          message: "Session expired",
+          code: result.reason,
+        });
+      }
+      return res.json({
+        success: true,
+        idleRemainingMs: result.idleRemainingMs,
+        absoluteRemainingMs: result.absoluteRemainingMs,
+      });
+    }
+    return res.json({ success: true, message: "Active" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 };

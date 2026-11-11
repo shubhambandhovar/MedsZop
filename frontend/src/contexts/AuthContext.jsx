@@ -22,6 +22,18 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
+
+    // Cross-tab logout synchronization
+    const handleStorage = (e) => {
+      if (e.key === "medszop_customer_logout" && e.newValue) {
+        localStorage.removeItem("token");
+        delete axios.defaults.headers.common["Authorization"];
+        setToken(null);
+        setUser(null);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   // ✅ Fetch logged-in user
@@ -112,8 +124,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ✅ LOGOUT
-  const logout = () => {
+  const logout = async () => {
+    const currentToken = localStorage.getItem("token");
+    if (currentToken) {
+      try {
+        await axios.post(
+          `${API_URL}/auth/logout`,
+          {},
+          { headers: { Authorization: `Bearer ${currentToken}` } }
+        );
+      } catch {
+        // ignore network error during logout
+      }
+    }
     localStorage.removeItem("token");
+    localStorage.setItem("medszop_customer_logout", Date.now().toString());
     delete axios.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);

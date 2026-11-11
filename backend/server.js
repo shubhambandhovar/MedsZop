@@ -152,6 +152,7 @@ app.use("/uploads", express.static("uploads"));
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/profile", require("./routes/profileRoutes"));
 app.use("/api/medicines", require("./routes/medicineRoutes"));
 app.use("/api/prescriptions", require("./routes/prescriptionRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));

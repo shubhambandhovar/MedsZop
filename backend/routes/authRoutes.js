@@ -3,7 +3,21 @@ const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
 const { createRateLimiter } = require("../utils/rateLimiter");
-const { register, login, getMe, changePassword, updateProfile, googleLogin, googleSignup, forgotPassword, verifyResetOTP, resetPassword } = require("../controllers/authController");
+const {
+  register,
+  login,
+  getMe,
+  changePassword,
+  updateProfile,
+  googleLogin,
+  googleSignup,
+  forgotPassword,
+  verifyResetOTP,
+  resetPassword,
+  logout,
+  getSessionStatus,
+  heartbeat,
+} = require("../controllers/authController");
 const { sendOTP, verifyOTP } = require("../controllers/otpController");
 
 // Rate limiters for sensitive authentication endpoints (Phase 9D Hardening)
@@ -34,6 +48,13 @@ router.post("/register", registerLimiter, register);
 
 // Login (all roles)
 router.post("/login", loginLimiter, login);
+
+// Logout (Authenticated)
+router.post("/logout", auth, logout);
+
+// Session Telemetry & Heartbeat (Phase 2)
+router.get("/session-status", auth, getSessionStatus);
+router.post("/heartbeat", auth, heartbeat);
 
 // Google OAuth
 router.post("/google/login", loginLimiter, googleLogin);

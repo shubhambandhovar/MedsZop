@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 import AdminFooter from "./AdminFooter";
+import SessionTimeoutManager from "./SessionTimeoutManager";
 
 export default function AdminLayout({ onRefresh, isRefreshing }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -10,6 +11,9 @@ export default function AdminLayout({ onRefresh, isRefreshing }) {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background text-foreground">
+      {/* Automated Inactivity & Session Expiration Sentinel */}
+      <SessionTimeoutManager />
+
       {/* Desktop Sidebar */}
       <div className="hidden lg:block shrink-0 h-full">
         <AdminSidebar

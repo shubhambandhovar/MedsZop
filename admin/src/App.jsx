@@ -20,6 +20,7 @@ import PartnerApplicationsPage from "./pages/PartnerApplicationsPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
 import SettingsPage from "./pages/SettingsPage";
+import AdminProfilePage from "./pages/AdminProfilePage";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
               <Route path="/payments" element={<PaymentsPage />} />
               <Route path="/audit-logs" element={<AuditLogsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/profile" element={<AdminProfilePage />} />
 
               {/* Shortcuts */}
               <Route path="/admin" element={<Navigate to="/dashboard" replace />} />

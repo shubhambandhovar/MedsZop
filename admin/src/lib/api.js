@@ -63,5 +63,22 @@ export const adminApi = {
   getSystemHealth: () => api.get("/admin/system-health").then((r) => r.data),
 };
 
+export const profileApi = {
+  getProfile: () => api.get("/profile").then((r) => r.data),
+  updateProfile: (data) => api.put("/profile", data).then((r) => r.data),
+  requestEmailChange: (data) => api.post("/profile/request-email-change", data).then((r) => r.data),
+  verifyEmailChange: (data) => api.post("/profile/verify-email-change", data).then((r) => r.data),
+  getSessions: () => api.get("/profile/sessions").then((r) => r.data),
+  revokeSession: (sessionId) => api.post(`/profile/sessions/${sessionId}/revoke`).then((r) => r.data),
+  revokeOtherSessions: () => api.post("/profile/sessions/revoke-others").then((r) => r.data),
+};
+
+export const sessionApi = {
+  getStatus: () => api.get("/auth/session-status", { headers: { "X-Passive-Request": "true" } }).then((r) => r.data),
+  heartbeat: () => api.post("/auth/heartbeat").then((r) => r.data),
+  logout: () => api.post("/auth/logout").then((r) => r.data),
+  changePassword: (data) => api.post("/auth/change-password", data).then((r) => r.data),
+};
+
 export default api;
 

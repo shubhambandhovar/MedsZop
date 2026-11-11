@@ -12,6 +12,8 @@ const DeliveryApplication = require("../models/DeliveryApplication");
 const AuditLog = require("../models/AuditLog");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
+const { isProtectedAdminUser } = require("../utils/protectedAdmin");
+const sessionManager = require("../utils/sessionManager");
 
 /**
  * Internal Audit Logger Helper
@@ -30,10 +32,10 @@ async function logAudit(req, action, target_type, target_id, details) {
       target_type,
       target_id: String(target_id || ""),
       details: details || {},
-      ip_address: req.ip || req.headers["x-forwarded-for"] || "127.0.0.1"
+      ip_address: req.ip || (req.headers && req.headers["x-forwarded-for"]) || "127.0.0.1"
     });
   } catch (err) {
-    console.error("Failed to write audit log:", err.message);
+    // Non-blocking internal audit logger
   }
 }
 
@@ -440,8 +442,18 @@ exports.getUsers = async (req, res) => {
       User.countDocuments(filter)
     ]);
 
+    const enrichedUsers = users.map((u) => {
+      const obj = u.toObject ? u.toObject() : u;
+      const isProtected = isProtectedAdminUser(obj);
+      return {
+        ...obj,
+        isProtectedAdmin: isProtected,
+        protectedAdminType: obj.protectedAdminType || (isProtected ? "founder" : null)
+      };
+    });
+
     res.json({
-      users,
+      users: enrichedUsers,
       total,
       page,
       totalPages: Math.ceil(total / limit)
@@ -463,6 +475,11 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const obj = user.toObject ? user.toObject() : user;
+    const isProtected = isProtectedAdminUser(obj);
+    obj.isProtectedAdmin = isProtected;
+    obj.protectedAdminType = obj.protectedAdminType || (isProtected ? "founder" : null);
+
     const userIdStr = String(user._id);
     const [ordersCount, prescriptionsCount, consultationsCount] = await Promise.all([
       Order.countDocuments({ user_id: userIdStr }),
@@ -471,7 +488,7 @@ exports.getUserById = async (req, res) => {
     ]);
 
     res.json({
-      user,
+      user: obj,
       stats: {
         ordersCount,
         prescriptionsCount,
@@ -523,11 +540,33 @@ exports.updateUserStatus = async (req, res) => {
       }
     }
 
+    // PHASE 3: Permanent Super Admin Protection against deactivation
+    if (isProtectedAdminUser(targetUser) && isActive === false) {
+      await logAudit(
+        req,
+        "SECURITY_VIOLATION_PROTECTED_ADMIN_TAMPER",
+        "User",
+        targetUser._id,
+        {
+          attempt: "DEACTIVATE",
+          blocked: true,
+          email: targetUser.email,
+          reason: "Primary Founder / Super Admin account is permanently protected against deactivation"
+        }
+      );
+      return res.status(403).json({
+        message: "Action blocked: The primary Founder / Super Admin account is permanently protected against deactivation.",
+        code: "PROTECTED_ADMIN_IMMUTABLE"
+      });
+    }
+
     targetUser.isActive = Boolean(isActive);
     if (!isActive) {
       targetUser.deactivatedAt = new Date();
       targetUser.deactivatedBy = req.user?.email || "admin";
       targetUser.deactivationReason = reason || "Administrative deactivation";
+      // Revoke all active sessions immediately upon deactivation
+      await sessionManager.revokeUserSessions(targetUser._id, "ACCOUNT_DEACTIVATED");
     } else {
       targetUser.deactivatedAt = null;
       targetUser.deactivatedBy = null;
@@ -575,6 +614,35 @@ exports.checkUserDeletionDependencies = async (req, res) => {
     const targetUser = await User.findById(id).select("-password");
     if (!targetUser) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    // PHASE 3: Permanent Super Admin Protection
+    if (isProtectedAdminUser(targetUser)) {
+      return res.json({
+        user: {
+          _id: targetUser._id,
+          name: targetUser.name,
+          email: targetUser.email,
+          role: targetUser.role,
+          isProtectedAdmin: true,
+          protectedAdminType: targetUser.protectedAdminType || "founder"
+        },
+        dependencies: {
+          customerOrders: 0,
+          courierOrders: 0,
+          prescriptions: 0,
+          patientConsultations: 0,
+          doctorConsultations: 0,
+          pharmacies: 0,
+          partnerApplications: 0,
+          auditLogs: 0,
+          totalDependencies: 0
+        },
+        canHardDelete: false,
+        canAnonymize: false,
+        isProtectedAdmin: true,
+        blockingReason: "Action blocked: The primary Founder / Super Admin account is permanently protected against deletion and anonymization."
+      });
     }
 
     const userIdStr = String(targetUser._id);
@@ -689,6 +757,26 @@ exports.deleteUser = async (req, res) => {
       }
     }
 
+    // PHASE 3: Permanent Super Admin Protection against deletion
+    if (isProtectedAdminUser(targetUser)) {
+      await logAudit(
+        req,
+        "SECURITY_VIOLATION_PROTECTED_ADMIN_TAMPER",
+        "User",
+        targetUser._id,
+        {
+          attempt: "DELETE",
+          blocked: true,
+          email: targetUser.email,
+          reason: "Primary Founder / Super Admin account is permanently protected against deletion"
+        }
+      );
+      return res.status(403).json({
+        message: "Action blocked: The primary Founder / Super Admin account is permanently protected against deletion.",
+        code: "PROTECTED_ADMIN_IMMUTABLE"
+      });
+    }
+
     // Dependency check
     const userIdStr = String(targetUser._id);
     const userEmail = targetUser.email ? targetUser.email.toLowerCase() : "";
@@ -734,6 +822,9 @@ exports.deleteUser = async (req, res) => {
 
       await targetUser.save();
 
+      // Revoke all active sessions immediately upon account anonymization
+      await sessionManager.revokeUserSessions(targetUser._id, "ACCOUNT_ANONYMIZED");
+
       await logAudit(req, "ANONYMIZE_USER", "User", targetUser._id, {
         originalEmail,
         originalRole,
@@ -751,6 +842,9 @@ exports.deleteUser = async (req, res) => {
 
     // Path B: Hard Deletion (Permitted ONLY when zero linked records exist)
     await User.findByIdAndDelete(id);
+
+    // Revoke all active sessions
+    await sessionManager.revokeUserSessions(id, "ACCOUNT_HARD_DELETED");
 
     await logAudit(req, "HARD_DELETE_USER", "User", id, {
       email: targetUser.email,
@@ -788,6 +882,27 @@ exports.updateUserRole = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // PHASE 3: Permanent Super Admin Protection against demotion or role tampering
+    if (isProtectedAdminUser(user) && role !== "admin") {
+      await logAudit(
+        req,
+        "SECURITY_VIOLATION_PROTECTED_ADMIN_TAMPER",
+        "User",
+        user._id,
+        {
+          attempt: "DEMOTE",
+          blocked: true,
+          requestedRole: role,
+          email: user.email,
+          reason: "Primary Founder / Super Admin role cannot be demoted or changed"
+        }
+      );
+      return res.status(403).json({
+        message: "Action blocked: The primary Founder / Super Admin account role cannot be demoted or changed.",
+        code: "PROTECTED_ADMIN_IMMUTABLE"
+      });
+    }
+
     const oldRole = user.role;
     user.role = role;
     await user.save();
@@ -812,6 +927,10 @@ exports.createUser = async (req, res) => {
     if (!["pharmacy", "delivery", "doctor", "admin", "customer"].includes(role)) {
       return res.status(400).json({ message: "Invalid role" });
     }
+
+    // Strip protection flags from manual creation
+    delete req.body.isProtectedAdmin;
+    delete req.body.protectedAdminType;
 
     const exists = await User.findOne({ email });
     if (exists) {

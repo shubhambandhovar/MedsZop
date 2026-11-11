@@ -16,6 +16,7 @@ import {
   Package,
   Stethoscope,
   ShieldAlert,
+  ShieldCheck,
   CheckCircle2,
   XCircle,
   Copy,
@@ -119,6 +120,11 @@ export default function CustomersPage() {
 
   // Handle Role Change
   const handleRoleChange = async (targetUser, newRole) => {
+    if (targetUser.isProtectedAdmin) {
+      toast.error("Action Blocked: The primary Founder / Super Admin account role is permanently protected and cannot be changed.");
+      return;
+    }
+
     if (targetUser.isDeleted) {
       toast.error("Cannot modify the role of an anonymized or deleted account.");
       return;
@@ -181,6 +187,10 @@ export default function CustomersPage() {
 
   // Open Deactivate / Reactivate Modal
   const openStatusDialog = (user) => {
+    if (user.isProtectedAdmin) {
+      toast.error("Action Blocked: The primary Founder / Super Admin account is permanently protected against deactivation.");
+      return;
+    }
     if (user._id === currentAdmin?._id && user.isActive !== false) {
       toast.error("You cannot deactivate your own administrator account.");
       return;
@@ -219,6 +229,10 @@ export default function CustomersPage() {
 
   // Open Permanent Deletion Modal
   const openDeleteDialog = async (user) => {
+    if (user.isProtectedAdmin) {
+      toast.error("Action Blocked: The primary Founder / Super Admin account is permanently protected against deletion and anonymization.");
+      return;
+    }
     if (user._id === currentAdmin?._id) {
       toast.error("You cannot delete your own administrator account.");
       return;
@@ -296,12 +310,23 @@ export default function CustomersPage() {
                 {user.name && !isAnon ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
               <div className="min-w-0">
-                <div
-                  className={`font-semibold text-xs truncate ${
-                    isAnon ? "italic text-muted-foreground" : "text-foreground"
-                  }`}
-                >
-                  {user.name || "Anonymous User"}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    className={`font-semibold text-xs truncate ${
+                      isAnon ? "italic text-muted-foreground" : "text-foreground"
+                    }`}
+                  >
+                    {user.name || "Anonymous User"}
+                  </span>
+                  {user.isProtectedAdmin && (
+                    <span
+                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                      title="Designated Founder / Super Admin account — Permanently Protected"
+                    >
+                      <ShieldCheck className="h-3 w-3 text-amber-500 shrink-0" />
+                      Protected Super Admin
+                    </span>
+                  )}
                 </div>
                 <div className="text-[11px] text-muted-foreground font-mono">
                   {user._id.slice(-8)}
@@ -367,14 +392,15 @@ export default function CustomersPage() {
         header: "Role Assignment",
         cell: ({ row }) => {
           const isAnon = row.original.isDeleted;
+          const isProtected = row.original.isProtectedAdmin;
           return (
             <div className="w-28">
               <Select
                 value={row.original.role || "customer"}
                 onValueChange={(newRole) => handleRoleChange(row.original, newRole)}
-                disabled={isAnon}
+                disabled={isAnon || isProtected}
               >
-                <SelectTrigger className="h-7 text-[11px]">
+                <SelectTrigger className={`h-7 text-[11px] ${isProtected ? "opacity-60 cursor-not-allowed" : ""}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -397,6 +423,7 @@ export default function CustomersPage() {
           const isSelf = user._id === currentAdmin?._id;
           const isAnon = user.isDeleted;
           const isDeactivated = user.isActive === false;
+          const isProtected = user.isProtectedAdmin;
 
           return (
             <div className="flex items-center gap-1">
@@ -415,14 +442,16 @@ export default function CustomersPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                disabled={isSelf || isAnon}
+                disabled={isSelf || isAnon || isProtected}
                 className={`h-7 w-7 ${
                   isDeactivated
                     ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
                     : "text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-                }`}
+                } ${isProtected ? "opacity-25 cursor-not-allowed" : ""}`}
                 title={
-                  isSelf
+                  isProtected
+                    ? "Founder / Super Admin account is permanently protected against deactivation"
+                    : isSelf
                     ? "Cannot deactivate your own account"
                     : isAnon
                     ? "Account is anonymized"
@@ -443,10 +472,14 @@ export default function CustomersPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                disabled={isSelf || isAnon}
-                className="h-7 w-7 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10"
+                disabled={isSelf || isAnon || isProtected}
+                className={`h-7 w-7 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 ${
+                  isProtected ? "opacity-25 cursor-not-allowed" : ""
+                }`}
                 title={
-                  isSelf
+                  isProtected
+                    ? "Founder / Super Admin account is permanently protected against deletion"
+                    : isSelf
                     ? "Cannot delete your own account"
                     : isAnon
                     ? "Account already anonymized"

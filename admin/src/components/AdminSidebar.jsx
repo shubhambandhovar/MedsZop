@@ -14,6 +14,7 @@ import {
   CreditCard,
   ShieldAlert,
   Settings,
+  UserCog,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -65,6 +66,7 @@ const NAV_SECTIONS = [
     items: [
       { name: "Audit Logs", path: "/audit-logs", icon: ShieldAlert },
       { name: "Settings & Security", path: "/settings", icon: Settings },
+      { name: "Admin Profile", path: "/profile", icon: UserCog },
     ]
   }
 ];

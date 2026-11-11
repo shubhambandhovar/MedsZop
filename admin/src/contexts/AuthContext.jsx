@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 axios.defaults.timeout = 30000;
@@ -12,7 +12,52 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  // Validate session on mount
+  // Safe logout with cross-tab synchronization
+  const logout = useCallback(
+    async (broadcast = true, reason = null) => {
+      const currentToken = localStorage.getItem("token");
+
+      if (currentToken) {
+        try {
+          await axios.post(
+            `${API_URL}/auth/logout`,
+            {},
+            { headers: { Authorization: `Bearer ${currentToken}` } }
+          );
+        } catch {
+          // ignore network failure during logout
+        }
+      }
+
+      localStorage.removeItem("token");
+      delete axios.defaults.headers.common["Authorization"];
+      setToken(null);
+      setUser(null);
+
+      if (broadcast) {
+        localStorage.setItem("medszop_logout_event", JSON.stringify({ time: Date.now(), reason }));
+      }
+    },
+    []
+  );
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/auth/me`);
+      if (res.data?.role !== "admin") {
+        // Enforce strict admin role verification
+        await logout(true, "UNAUTHORIZED_ROLE");
+        return;
+      }
+      setUser(res.data);
+    } catch (err) {
+      await logout(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [logout]);
+
+  // Validate session on mount & setup cross-tab synchronization
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -22,23 +67,40 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
-  }, []);
 
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/auth/me`);
-      if (res.data?.role !== "admin") {
-        // Enforce strict admin role verification
-        logout();
-        return;
+    // Cross-tab logout listener
+    const handleStorageChange = (e) => {
+      if (e.key === "medszop_logout_event" && e.newValue) {
+        logout(false);
       }
-      setUser(res.data);
-    } catch (err) {
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [fetchUser, logout]);
+
+  // Global Axios interceptor for automatic 401 session expiration handling
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          const code = error.response.data?.code;
+          if (
+            code === "SESSION_IDLE_TIMEOUT" ||
+            code === "SESSION_ABSOLUTE_TIMEOUT" ||
+            code === "SESSION_REVOKED" ||
+            code === "ACCOUNT_DELETED"
+          ) {
+            logout(true, code);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => axios.interceptors.response.eject(interceptor);
+  }, [logout]);
 
   const login = async (email, password) => {
     try {
@@ -54,6 +116,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       localStorage.setItem("token", access_token);
+      localStorage.setItem("medszop_admin_last_activity", Date.now().toString());
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
 
       setToken(access_token);
@@ -67,13 +130,6 @@ export const AuthProvider = ({ children }) => {
         "Login failed. Please check your credentials.";
       throw new Error(message);
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    delete axios.defaults.headers.common["Authorization"];
-    setToken(null);
-    setUser(null);
   };
 
   return (
@@ -98,4 +154,3 @@ export const useAuth = () => {
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
   return ctx;
 };
-

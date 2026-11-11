@@ -26,6 +26,7 @@ const ROUTE_NAMES = {
   "/payments": "Payments & Refunds",
   "/audit-logs": "Administrative Audit Trail",
   "/settings": "Settings & Security",
+  "/profile": "Admin Profile & Security",
 };
 
 export default function AdminHeader({ onOpenMobile, onRefresh, isRefreshing = false }) {
