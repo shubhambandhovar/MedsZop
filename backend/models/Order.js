@@ -74,6 +74,16 @@ const orderSchema = new mongoose.Schema({
   returnImages: [String],
   returnRequestedAt: Date,
 
+  // Logistics & Financial Separation Fields
+  handover_verified: { type: Boolean, default: false },
+  delivered_at: Date,
+  cod_collected: { type: Boolean, default: false },
+  cod_collected_amount: { type: Number, default: 0 },
+  cod_collected_at: Date,
+  cod_reconciled: { type: Boolean, default: false },
+  cod_reconciled_at: Date,
+  cod_reconciled_by: String,
+
   createdAt: {
     type: Date,
     default: Date.now

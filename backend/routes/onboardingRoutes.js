@@ -8,6 +8,10 @@ const {
     submitPharmacistCall,
     submitDeliveryCall,
     getApplicationStatus,
+    resubmitApplicationCall,
+    activatePartnerAccount,
+    saveDraftCall,
+    getDraftCall,
     getApplications,
     reviewApplication
 } = require("../controllers/onboardingController");
@@ -17,6 +21,10 @@ router.post("/apply/doctor", submitDoctorCall);
 router.post("/apply/pharmacist", submitPharmacistCall);
 router.post("/apply/delivery", submitDeliveryCall);
 router.get("/status/:id", getApplicationStatus);
+router.post("/resubmit/:id", resubmitApplicationCall);
+router.post("/activate", activatePartnerAccount);
+router.post("/draft", saveDraftCall);
+router.get("/draft/:id", getDraftCall);
 
 // Admin Routes (Protected)
 router.get("/admin/applications", auth, role(["admin"]), getApplications);

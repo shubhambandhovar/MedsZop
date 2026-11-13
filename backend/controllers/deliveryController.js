@@ -120,10 +120,21 @@ exports.completeDelivery = async (req, res) => {
       return res.status(400).json({ message: "Invalid OTP. Delivery verification failed." });
     }
 
+    // 4. Separation of Handover Verification and COD Collection
     order.order_status = "delivered";
-    if (order.payment_method === "cod" && order.payment_status === "pending") {
-      order.payment_status = "paid";
+    order.handover_verified = true;
+    order.delivered_at = new Date();
+
+    if (order.payment_method === "cod") {
+      order.cod_collected = true;
+      order.cod_collected_amount = order.total || 0;
+      order.cod_collected_at = new Date();
+      order.cod_reconciled = false; // Pending formal admin/treasury reconciliation
+      if (order.payment_status === "pending") {
+        order.payment_status = "paid";
+      }
     }
+
     order.status_history.push({
       status: "delivered",
       timestamp: new Date()

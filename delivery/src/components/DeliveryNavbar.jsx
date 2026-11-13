@@ -1,60 +1,103 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Truck, LogOut, Radio, UserCheck } from "lucide-react";
+import { 
+  Truck, 
+  LogOut, 
+  ShieldCheck, 
+  UserCheck, 
+  Package,
+  Activity,
+  ThermometerSnowflake,
+  Bike
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
-const DeliveryNavbar = () => {
+const DeliveryNavbar = ({ 
+  agentName = "Delivery Partner",
+  agentId = "DEL-7782",
+  vehicleType = "Motorbike (MH-02-DN-4921)",
+  activeJobsCount = 0
+}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    toast.success("Successfully logged out of Delivery Portal");
+    toast.success("Delivery partner shift safely terminated");
     navigate("/login");
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur shadow-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-xs">
+      <div className="max-w-[1720px] mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+        {/* Brand & Fleet Logistics Hub */}
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-600 text-white shadow-md shadow-cyan-500/20">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-700 text-white shadow-sm shadow-cyan-700/20 group-hover:bg-cyan-800 transition-colors">
               <Truck className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-slate-900">
-                MedsZop <span className="text-cyan-600">Delivery</span>
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900 font-heading">
+                  MedsZop <span className="text-cyan-700">Fleet</span>
+                </span>
+                <span className="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-bold font-mono tracking-wider bg-slate-100 text-slate-700 border border-slate-200 rounded">
+                  LOGISTICS OS v2.4
+                </span>
+              </div>
               <span className="text-[11px] font-medium text-slate-500">
-                Agent Logistics & Handover
+                Last-Mile Pharmacy Dispatch & Verified OTP Handover
               </span>
             </div>
           </Link>
-          <Badge className="hidden sm:inline-flex bg-cyan-50 text-cyan-700 border-cyan-200 text-xs font-semibold ml-2 gap-1.5">
-            <Radio className="h-3 w-3 text-cyan-600 animate-pulse" />
-            Live Dispatch Active
-          </Badge>
+
+          {/* Operational Shift Status */}
+          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-slate-200">
+            <Badge className="bg-cyan-50 hover:bg-cyan-50 text-cyan-800 border-cyan-200 text-[11px] font-semibold gap-1.5 py-1 px-2.5 shadow-none">
+              <ShieldCheck className="h-3.5 w-3.5 text-cyan-700" />
+              <span>Verified Agent</span>
+            </Badge>
+
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 font-mono">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Shift Active</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-[11px] text-slate-600 font-mono">
+              <ThermometerSnowflake className="h-3.5 w-3.5 text-cyan-600" />
+              <span>Insulated Cold Bag Capable</span>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Partner Information & Session Controls */}
+        <div className="flex items-center gap-3">
+          {activeJobsCount > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-md text-[11px] font-bold text-amber-900 font-mono">
+              <Package className="h-3.5 w-3.5 text-amber-700" />
+              <span>{activeJobsCount} In Transit</span>
+            </div>
+          )}
+
           <div className="hidden md:flex flex-col text-right">
-            <span className="text-sm font-semibold text-slate-900 flex items-center justify-end gap-1.5">
-              <UserCheck className="h-3.5 w-3.5 text-cyan-600" />
-              {user?.name || "Delivery Partner"}
+            <span className="text-xs font-bold text-slate-900 truncate max-w-[200px]">
+              {user?.name || agentName}
             </span>
-            <span className="text-xs text-slate-500">{user?.email}</span>
+            <span className="text-[11px] font-mono text-slate-500">
+              {agentId} • {vehicleType}
+            </span>
           </div>
 
           <Button
             variant="outline"
             size="sm"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 text-slate-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50"
+            className="h-9 px-3 flex items-center gap-1.5 text-slate-700 hover:text-red-700 hover:border-red-200 hover:bg-red-50/70 border-slate-200 text-xs font-semibold"
           >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">End Shift / Logout</span>
           </Button>
         </div>
       </div>
@@ -63,4 +106,3 @@ const DeliveryNavbar = () => {
 };
 
 export default DeliveryNavbar;
-

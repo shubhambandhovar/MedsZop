@@ -95,12 +95,14 @@ const userSchema = new mongoose.Schema({
   // Permanent Super Admin & Founder Protection (Phase 3)
   isProtectedAdmin: {
     type: Boolean,
-    default: false
+    default: false,
+    immutable: true
   },
   protectedAdminType: {
     type: String,
     enum: ["founder", "system", null],
-    default: null
+    default: null,
+    immutable: true
   },
   protectedAt: {
     type: Date,

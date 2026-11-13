@@ -40,7 +40,9 @@ import {
   ScanLine,
   Pill,
   Zap,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck,
+  MapPin
 } from "lucide-react";
 
 const Navbar = () => {
@@ -168,9 +170,9 @@ const Navbar = () => {
             : "border-b border-slate-100 dark:border-slate-800/70 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="flex h-16 sm:h-[68px] items-center justify-between gap-3 sm:gap-6">
-            {/* 1. BRAND LOGO + EXPRESS BADGE */}
+            {/* 1. BRAND LOGO + HONEST CLINICAL ASSURANCE */}
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to={logoDestination}
@@ -186,13 +188,13 @@ const Navbar = () => {
                 />
               </Link>
 
-              {/* Express 28m badge for quick assurance */}
+              {/* Factual Licensed Chemist Verification Badge */}
               <div
-                className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/70 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold"
-                title="Guaranteed cold-chain delivery within 28-30 minutes"
+                className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 border border-primary/20 text-primary text-[11px] font-semibold"
+                title="Licensed Indian Chemist & Pharmacist Verified under D&C Act"
               >
-                <Zap className="h-3 w-3 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
-                <span>28m Express</span>
+                <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                <span>Licensed Pharmacy Network</span>
               </div>
             </div>
 
