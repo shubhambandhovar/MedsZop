@@ -92,14 +92,14 @@ const DeliveryLoginPage = () => {
                 MedsZop <span className="text-teal-400">Logistics</span>
               </span>
               <span className="text-[10px] font-mono text-teal-200/60 tracking-wider uppercase block">
-                Cold-Chain Fleet Operating System
+                Delivery Logistics Operating System
               </span>
             </div>
           </div>
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-950/80 border border-teal-800 text-teal-300 text-xs font-mono">
             <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-            FLEET OS v2.0
+            DISPATCH OS v2.0
           </div>
         </div>
 
@@ -107,28 +107,28 @@ const DeliveryLoginPage = () => {
         <div className="relative z-10 max-w-xl my-auto py-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A261F] border border-[#114035] text-teal-300 text-xs font-semibold mb-6 tracking-wide shadow-sm">
             <ShieldCheck className="h-3.5 w-3.5 text-teal-400" aria-hidden="true" />
-            Certified Medical Fleet Partner Network
+            Medical Delivery Partner Network
           </div>
 
           <h1 className="font-heading text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white leading-[1.18]">
-            Cold-chain express dispatch &amp; doorstep OTP handover network.
+            Express medicine dispatch &amp; doorstep OTP handover network.
           </h1>
 
           <p className="mt-4 text-sm xl:text-base text-slate-300 leading-relaxed">
-            Real-time route navigation, calibrated 2°C–8°C insulated transport telemetry, and tamper-evident
-            digital OTP doorstep verification on every medicine order.
+            Real-time route navigation, temperature-aware insulated packaging support, and tamper-evident
+            digital OTP doorstep verification on medicine deliveries.
           </p>
 
-          {/* Three Fleet Highlights */}
+          {/* Three Delivery Highlights */}
           <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/10">
             <div className="flex items-start gap-3.5">
               <div className="h-10 w-10 rounded-xl bg-[#092B23] border border-[#124D3E] text-teal-400 flex items-center justify-center shrink-0">
                 <ThermometerSnowflake className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="font-semibold text-sm text-white">Calibrated 2°C–8°C Cold Chain</h2>
+                <h2 className="font-semibold text-sm text-white">Temperature-Aware Packaging</h2>
                 <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                  Insulated thermal pack monitoring preserving vaccines, insulins, and critical injectables.
+                  Insulated thermal pack handling guidelines supporting temperature-sensitive medications.
                 </p>
               </div>
             </div>
@@ -159,13 +159,13 @@ const DeliveryLoginPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Logistics Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-teal-400" aria-hidden="true" />
-            Tamper-Evident Packaging &amp; Cold-Chain Telemetry Standard
+            Tamper-Evident Packaging &amp; Delivery Verification
           </span>
-          <span className="font-mono text-teal-500/70">MedsZop Fleet Network</span>
+          <span className="font-mono text-teal-500/70">MedsZop Delivery Network</span>
         </div>
       </div>
 
@@ -284,10 +284,10 @@ const DeliveryLoginPage = () => {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying Fleet Credentials...
+                  Verifying Delivery Credentials...
                 </>
               ) : (
-                "Sign In to Delivery Fleet"
+                "Sign In to Delivery Portal"
               )}
             </Button>
           </form>
@@ -296,7 +296,7 @@ const DeliveryLoginPage = () => {
           <div className="mt-5 p-3.5 rounded-xl bg-[#06120E] border border-slate-800 text-xs text-slate-400">
             <div className="flex items-center gap-1.5 font-medium text-slate-300 mb-1">
               <KeyRound className="h-3.5 w-3.5 text-teal-400" />
-              <span>Fleet Logistics Sandbox Account</span>
+              <span>Delivery Logistics Sandbox Account</span>
             </div>
             <p className="text-slate-500 leading-relaxed text-[11px]">
               Default role: <code className="text-teal-300 font-mono">delivery</code> &bull; Email:{" "}
@@ -304,12 +304,12 @@ const DeliveryLoginPage = () => {
             </p>
           </div>
 
-          {/* Cold chain & OTP protocol badges */}
+          {/* Temperature & OTP protocol badges */}
           <div className="mt-5 pt-4 border-t border-slate-800/80 space-y-2">
             <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400">
               <div className="flex items-center gap-1.5 bg-[#06120E] p-2 rounded-lg border border-slate-800">
                 <ThermometerSnowflake className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-                <span>Cold Chain 2°C–8°C</span>
+                <span>Temperature Aware</span>
               </div>
               <div className="flex items-center gap-1.5 bg-[#06120E] p-2 rounded-lg border border-slate-800">
                 <QrCode className="h-3.5 w-3.5 text-teal-400 shrink-0" />
@@ -317,7 +317,7 @@ const DeliveryLoginPage = () => {
               </div>
             </div>
             <p className="text-[10px] text-slate-500 text-center leading-relaxed">
-              MedsZop Fleet Protocol: Tamper-evident packaging seal verification &amp; dynamic OTP required.
+              MedsZop Delivery Protocol: Tamper-evident package seal check &amp; dynamic OTP verification.
             </p>
           </div>
         </div>
@@ -326,7 +326,7 @@ const DeliveryLoginPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-slate-500 flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-teal-400" aria-hidden="true" />
-            Encrypted fleet telemetry connection • Real-time GPS verification
+            Secure delivery session • Route tracking enabled
           </p>
         </div>
       </div>

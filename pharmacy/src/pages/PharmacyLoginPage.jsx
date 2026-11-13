@@ -97,7 +97,7 @@ const PharmacyLoginPage = () => {
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-mono">
             <span className="h-2 w-2 rounded-full bg-[#34D399] animate-pulse" />
-            FORM 20 / 21
+            DISPENSARY
           </div>
         </div>
 
@@ -105,16 +105,16 @@ const PharmacyLoginPage = () => {
         <div className="relative z-10 max-w-xl my-auto py-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-6 tracking-wide shadow-sm">
             <ShieldCheck className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
-            Licensed Retail Chemist Fulfillment Grid
+            Retail Chemist Fulfillment Grid
           </div>
 
           <h1 className="font-heading text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white leading-[1.18]">
-            Form 20/21 retail fulfillment &amp; prescription dispensing desk.
+            Prescription fulfillment &amp; medicine dispensing desk.
           </h1>
 
           <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
             Manage incoming digital prescriptions, verify drug interactions, orchestrate barcode batch
-            deductions, and hand off cold-chain dispatches promptly.
+            deductions, and hand off delivery dispatches promptly.
           </p>
 
           {/* Three Dispensary Highlights */}
@@ -124,9 +124,9 @@ const PharmacyLoginPage = () => {
                 <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="font-semibold text-sm text-white">Rule 65 Registered Pharmacist Queue</h2>
+                <h2 className="font-semibold text-sm text-white">Prescription Verification Queue</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Real-time prescription verification and clinical schedule review before packaging.
+                  Real-time prescription verification and clinical review before packaging.
                 </p>
               </div>
             </div>
@@ -138,7 +138,7 @@ const PharmacyLoginPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Automated Batch &amp; Expiry Control</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  FEFO-compliant inventory deduction with instant batch audit logging.
+                  First-expiry inventory deduction with instant batch audit logging.
                 </p>
               </div>
             </div>
@@ -148,7 +148,7 @@ const PharmacyLoginPage = () => {
                 <ThermometerSnowflake className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="font-semibold text-sm text-white">Cold-Chain Fleet Handover</h2>
+                <h2 className="font-semibold text-sm text-white">Protective Packaging Handover</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
                   Insulated dispatch packaging with tamper-evident seal and rider OTP handshake.
                 </p>
@@ -157,13 +157,13 @@ const PharmacyLoginPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Operational Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
-            Drugs and Cosmetics Act 1940 &amp; Rule 65 Compliant
+            Prescription Review &amp; Dispensing Standards
           </span>
-          <span className="font-mono text-[#5B7C72]">Licensed Pharmacy Node</span>
+          <span className="font-mono text-[#5B7C72]">Partner Pharmacy Node</span>
         </div>
       </div>
 
@@ -179,7 +179,7 @@ const PharmacyLoginPage = () => {
           </div>
 
           <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded">
-            FORM 20/21
+            PHARMACY
           </span>
         </div>
 
@@ -288,7 +288,7 @@ const PharmacyLoginPage = () => {
           <div className="mt-8 pt-6 border-t border-slate-200 dark:border-[#1E2E27] flex flex-col gap-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-[#046A47] dark:text-[#34D399] shrink-0" />
-              <span>Compliant with Drugs and Cosmetics Act 1940 &amp; Rule 65</span>
+              <span>Prescription Verification &amp; Dispensing Standards</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               Not registered as a retail partner? Apply via the MedsZop Partner Onboarding Portal.
@@ -300,7 +300,7 @@ const PharmacyLoginPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
-            Encrypted retail pharmaceutical session • Form 20/21 Verified
+            Secure retail pharmaceutical session • Verified Partner Dispenser
           </p>
         </div>
       </div>

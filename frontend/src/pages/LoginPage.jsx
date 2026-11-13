@@ -209,7 +209,7 @@ const LoginPage = () => {
           </h1>
 
           <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
-            Direct cold-chain delivery from licensed neighborhood pharmacies, batch-traceable
+            Direct delivery from licensed neighborhood pharmacies, batch-traceable
             pharmaceuticals, and qualified doctor consultations.
           </p>
 
@@ -220,9 +220,9 @@ const LoginPage = () => {
                 <Clock className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="font-semibold text-sm text-white">Insulated Cold-Chain Delivery</h2>
+                <h2 className="font-semibold text-sm text-white">Temperature-Aware Packaging</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Temperature-controlled insulated transit preserving vaccine, insulin, and antibiotic efficacy.
+                  Insulated transit packaging supporting medication integrity and quality.
                 </p>
               </div>
             </div>
@@ -234,7 +234,7 @@ const LoginPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Verifiable Batch Traceability</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Direct CDSCO-compliant pharmacy sourcing with barcode tamper-evident packaging.
+                  Direct pharmacy sourcing with barcode tamper-evident packaging.
                 </p>
               </div>
             </div>
@@ -246,20 +246,20 @@ const LoginPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Qualified Healthcare Consultations</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Registered Medical Practitioners and clinical pharmacists available for prescription reviews.
+                  Qualified doctors and clinical pharmacists available for prescription reviews.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Security Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
-            Drugs &amp; Cosmetics Act 1940 &amp; Rule 65 Compliant
+            Verified Pharmacy Sourcing &amp; Prescription Standards
           </span>
-          <span className="font-mono text-[#5B7C72]">256-Bit TLS • Data Privacy Standard</span>
+          <span className="font-mono text-[#5B7C72]">TLS Encryption • Data Privacy Standard</span>
         </div>
       </div>
 
@@ -519,7 +519,7 @@ const LoginPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
-            Protected by end-to-end encryption &amp; robust healthcare security controls
+            Protected by TLS encryption &amp; standard healthcare privacy controls
           </p>
         </div>
       </div>

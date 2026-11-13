@@ -377,7 +377,7 @@ const RegisterPage = () => {
 
           <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
             Create your account to access digital prescription refills, doorstep medicine delivery,
-            and direct consultation with registered medical practitioners.
+            and direct consultation with qualified healthcare practitioners.
           </p>
 
           {/* Three Clinical Proof Points */}
@@ -389,7 +389,7 @@ const RegisterPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Hyperlocal Neighborhood Fulfillment</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Routed directly from certified local retail chemists with insulated delivery.
+                  Routed directly from partner neighborhood chemists with protective delivery.
                 </p>
               </div>
             </div>
@@ -401,7 +401,7 @@ const RegisterPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Licensed Pharmacist Review</h2>
                 <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
-                  Every order is verified by a registered pharmacist under Rule 65 before packaging.
+                  Every prescription order is reviewed by a qualified pharmacist before packaging.
                 </p>
               </div>
             </div>
@@ -420,11 +420,11 @@ const RegisterPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Security Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
-            Drugs &amp; Cosmetics Act 1940 &amp; Rule 65 Compliant
+            Prescription Review &amp; Patient Safety Protocols
           </span>
           <span className="font-mono text-[#5B7C72]">Patient Data Sovereignty &amp; Confidentiality</span>
         </div>
@@ -1079,7 +1079,7 @@ const RegisterPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
-            Protected by end-to-end encryption &amp; robust healthcare security controls
+            Protected by TLS encryption &amp; standard healthcare privacy controls
           </p>
         </div>
       </div>

@@ -193,11 +193,11 @@ const ForgotPasswordPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Security Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
-            256-Bit TLS Healthcare Security Protection
+            TLS Protected Healthcare Security Controls
           </span>
           <span className="font-mono text-[#5B7C72]">MedsZop Auth Guard</span>
         </div>
@@ -496,7 +496,7 @@ const ForgotPasswordPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
-            Protected by end-to-end encryption &amp; robust healthcare security controls
+            Protected by TLS encryption &amp; standard healthcare privacy controls
           </p>
         </div>
       </div>

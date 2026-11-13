@@ -97,7 +97,7 @@ const DoctorLoginPage = () => {
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-800 text-sky-300 text-xs font-mono">
             <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
-            NMC RMP
+            CLINICAL SUITE
           </div>
         </div>
 
@@ -105,7 +105,7 @@ const DoctorLoginPage = () => {
         <div className="relative z-10 max-w-xl my-auto py-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A2238] border border-[#123E66] text-sky-300 text-xs font-semibold mb-6 tracking-wide shadow-sm">
             <ShieldCheck className="h-3.5 w-3.5 text-sky-400" aria-hidden="true" />
-            Registered Medical Practitioner Workspace
+            Physician &amp; Teleconsultation Workspace
           </div>
 
           <h1 className="font-heading text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white leading-[1.18]">
@@ -113,8 +113,8 @@ const DoctorLoginPage = () => {
           </h1>
 
           <p className="mt-4 text-sm xl:text-base text-slate-300 leading-relaxed">
-            Conduct encrypted video consultations, review patient health histories, and issue digitally signed
-            prescriptions compliant with Telemedicine Practice Guidelines.
+            Conduct encrypted video consultations, review patient health histories, and issue
+            structured electronic prescriptions for patient care.
           </p>
 
           {/* Three Clinical Highlights */}
@@ -138,7 +138,7 @@ const DoctorLoginPage = () => {
               <div>
                 <h2 className="font-semibold text-sm text-white">Digital Prescription Pad (Rx)</h2>
                 <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                  AI-assisted dosage validation, contraindication checks, and compliant digital signatures.
+                  Dosage validation, contraindication checks, and secure digital signatures.
                 </p>
               </div>
             </div>
@@ -157,13 +157,13 @@ const DoctorLoginPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Clinical Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-sky-400" aria-hidden="true" />
-            Telemedicine Practice Guidelines 2020 Compliant
+            Structured Telemedicine Consultations
           </span>
-          <span className="font-mono text-slate-500">NMC Registered Physician Network</span>
+          <span className="font-mono text-slate-500">Verified Practitioner Network</span>
         </div>
       </div>
 
@@ -179,7 +179,7 @@ const DoctorLoginPage = () => {
           </div>
 
           <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 rounded">
-            NMC RMP
+            CLINICAL
           </span>
         </div>
 
@@ -288,7 +288,7 @@ const DoctorLoginPage = () => {
           <div className="mt-8 pt-6 border-t border-slate-200 dark:border-[#16293D] flex flex-col gap-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
-              <span>Compliant with Telemedicine Practice Guidelines &amp; NMC</span>
+              <span>Teleconsultation &amp; Prescription Management</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               Not registered as a physician partner? Apply via the MedsZop Doctor Onboarding Portal.
@@ -300,7 +300,7 @@ const DoctorLoginPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" aria-hidden="true" />
-            Encrypted clinical communication channel • NMC Authenticated
+            Secure clinical communication channel • Verified Practitioner Access
           </p>
         </div>
       </div>

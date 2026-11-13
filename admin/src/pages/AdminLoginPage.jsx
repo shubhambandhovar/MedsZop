@@ -109,12 +109,12 @@ const AdminLoginPage = () => {
           </div>
 
           <h1 className="font-heading text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white leading-[1.18]">
-            Centralized platform administration, telemetry, and compliance.
+            Centralized platform administration, telemetry, and operations.
           </h1>
 
           <p className="mt-4 text-sm xl:text-base text-slate-300 leading-relaxed">
-            Real-time oversight across regional fulfillment nodes, cold-chain logistics, practitioner
-            credentials, and regulatory compliance ledgers.
+            Real-time oversight across regional fulfillment nodes, logistics operations, practitioner
+            accounts, and platform audit ledgers.
           </p>
 
           {/* Three Operational Highlights */}
@@ -136,7 +136,7 @@ const AdminLoginPage = () => {
                 <FileCheck2 className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="font-semibold text-sm text-white">Immutable Regulatory Audit Trail</h2>
+                <h2 className="font-semibold text-sm text-white">Platform System Audit Trail</h2>
                 <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
                   All administrative mutations logged with timestamp, user ID, and IP signature.
                 </p>
@@ -157,11 +157,11 @@ const AdminLoginPage = () => {
           </div>
         </div>
 
-        {/* Bottom Regulatory Assurance */}
+        {/* Bottom Security Assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-blue-400" aria-hidden="true" />
-            256-Bit TLS Healthcare Security Protection
+            TLS Encrypted Healthcare Security Protection
           </span>
           <span className="font-mono text-slate-500">MedsZop Security Core v2.0</span>
         </div>
@@ -296,7 +296,7 @@ const AdminLoginPage = () => {
         <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-            End-to-end encrypted administrative management session
+            Encrypted administrative management session
           </p>
         </div>
       </div>
