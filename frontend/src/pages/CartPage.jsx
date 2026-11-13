@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
@@ -24,6 +25,7 @@ import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
 const CartPage = () => {
+  const { t } = useTranslation(['checkout', 'common']);
   const navigate = useNavigate();
   const { token } = useAuth();
   const { cart, loading, updateCart, clearCart } = useCart();
@@ -121,7 +123,7 @@ const CartPage = () => {
               <div className="p-2 sm:p-2.5 rounded-xl bg-primary/10 text-primary">
                 <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
-              Shopping Cart
+              {t("checkout:cart.title")}
               <Badge variant="secondary" className="text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {itemsCount} {itemsCount === 1 ? "item" : "items"}
               </Badge>
@@ -136,7 +138,7 @@ const CartPage = () => {
               aria-label="Clear all items from shopping cart"
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-              Clear Cart
+              {t("checkout:cart.clear_cart")}
             </Button>
           )}
         </div>
@@ -147,14 +149,16 @@ const CartPage = () => {
               <div className="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-2">
                 <ShoppingBag className="h-10 w-10" />
               </div>
-              <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">Your cart is empty</h3>
+              <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
+                {t("checkout:cart.empty_title")}
+              </h3>
               <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
-                Looks like you haven't added any medicines or healthcare essentials yet.
+                {t("checkout:cart.empty_desc")}
               </p>
               <div className="pt-2">
                 <Link to="/medicines">
                   <Button className="rounded-xl px-7 h-12 font-semibold shadow-md shadow-primary/20 active-press">
-                    Browse Medicines
+                    {t("checkout:cart.explore_btn")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -300,7 +304,7 @@ const CartPage = () => {
                   </div>
                   <Separator />
                   <div className="flex justify-between items-baseline">
-                    <span className="font-heading font-bold text-base">Total</span>
+                    <span className="font-heading font-bold text-base">{t("checkout:summary.total_amount")}</span>
                     <span className="font-heading font-extrabold text-2xl text-primary tabular-nums" data-testid="cart-total">
                       ₹{cart.total.toFixed(2)}
                     </span>
@@ -311,13 +315,13 @@ const CartPage = () => {
                     onClick={() => navigate("/checkout")}
                     data-testid="proceed-to-checkout"
                   >
-                    Proceed to Checkout
+                    {t("checkout:summary.proceed_to_checkout")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
 
                   <Link to="/medicines" className="block">
                     <Button variant="outline" className="w-full rounded-xl text-sm h-11">
-                      Continue Shopping
+                      {t("checkout:cart.explore_btn")}
                     </Button>
                   </Link>
 

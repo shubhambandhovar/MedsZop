@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -56,6 +57,7 @@ L.Icon.Default.mergeOptions({
 const API_URL = import.meta.env.VITE_API_URL;
 
 const OrderTrackingPage = () => {
+  const { t } = useTranslation(['orders', 'common']);
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -343,7 +345,7 @@ const OrderTrackingPage = () => {
                 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground mt-1"
                 data-testid="order-tracking-title"
               >
-                Track Your Medicine Delivery
+                {t("orders:tracking.title")}
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Placed on {formatDate(order.createdAt || order.created_at)} • Hyperlocal Cold-Chain Express

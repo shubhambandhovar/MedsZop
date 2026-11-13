@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "मुलाइफोर",
+    "scan_prescription": "प्रिस्क्रिपसन स्क्यान खालाम",
+    "ai_doctor": "AI डाक्टर",
+    "consult_doctor": "डाक्टरजों सावराय",
+    "dashboard": "डेशबर्ड",
+    "my_orders": "आंनि अर्डारफोर",
+    "settings": "सेटिंफोर",
+    "log_out": "अंखारलां",
+    "log_in": "हाब",
+    "get_started": "जागाय",
+    "cart": "थलि",
+    "profile": "प्रफाइल",
+    "upload_rx": "प्रिस्क्रिपसन आपलड"
+  },
+  "actions": {
+    "save": "दोनथुम",
+    "cancel": "दानगार",
+    "submit": "गथाय",
+    "confirm": "थार खालाम",
+    "continue": "सालायलांबाय था",
+    "back": "उलथाय",
+    "close": "बन्द खालाम",
+    "delete": "मोरोजोब",
+    "edit": "सोलाय",
+    "view_all": "गासैखौ नाय",
+    "retry": "फिन नाजा",
+    "search": "नायगिर",
+    "apply": "बाहाय",
+    "clear_all": "गासैखौ साफा खालाम"
+  },
+  "badges": {
+    "rx_required": "प्रिस्क्रिपसन नांगौ",
+    "in_stock": "स्टकाव दं",
+    "out_of_stock": "गैलिया",
+    "verified_pharmacy": "आनजाद खालामनाय फार्मेसि",
+    "genuine": "100% थार",
+    "fast_delivery": "अग्रिम हरनाय",
+    "cold_chain": "दुंथाय सामलायनाय"
+  },
+  "footer": {
+    "tagline": "भारतनि फोथायजाथाव दिजितेल साहाइय्या संगि — गनायथि मोननाय फार्मेसिफोर आरो साग्लोबफोरखौ गोख्रैयै आरो रैखाथिजों फोनांजाबो।",
+    "quick_links": "गोख्रै लिकंफोर",
+    "specialist_portals": "पार्टनार पर्तेलबो",
+    "pharmacy_login": "फार्मेसि पर्तेल",
+    "doctor_login": "डाक्टर पर्तेल",
+    "delivery_login": "डेलिभारि हान्जा",
+    "admin_login": "सामलायग्रा",
+    "help_support": "हेफाजाब आरो आदार",
+    "faqs": "सोंबाय थानाय सोंलुफोर",
+    "privacy_policy": "गोपनीयता नीति",
+    "terms_conditions": "नेम आरो रादायफोर",
+    "refund_policy": "फिन हरनाय नीति",
+    "contact_us": "सम्पर्क खालाम",
+    "emergency_notice": "गोख्रै देहा फाहामथायनि थाखाय खाथिनि हस्पिटालाव थां एबा 112 आव कल खालाम।",
+    "all_rights_reserved": "गासै हक संवोस्रायनाय।",
+    "legal_disclaimer": "MedsZop मुलै आरो प्रसाधन आइननि नेम मानिनानै फार्मेसिजों साग्लोबफोरखौ फोनांजाबो।"
+  },
+  "language_selector": {
+    "label": "राव",
+    "select_language": "राव सायख'",
+    "search_placeholder": "राव एबा लिपि नागिर...",
+    "scheduled_languages": "22 संबिधानिक भारतिया रावफोर",
+    "core_languages": "गाहाय रावफोर",
+    "all_languages": "गासै रावफोर",
+    "active": "सोलिबाय थानाय",
+    "switch_success": "रावखौ मोजाङै सोलायबाय",
+    "rtl_notice": "आगदा-आगसि लिरथाय खान्थि मोहरे सोलायबाय"
+  },
+  "toasts": {
+    "success": "हाबाया मोजाङै जाफुंबाय",
+    "error": "गोरोन्थि जाबाय। फिन नाजाफिन।",
+    "network_error": "नेटवर्क गोरोन्थि। इन्टारनेट आनजाद खालाम।",
+    "session_expired": "सम जोबबाय। फिन लग इन खालामफिन।"
+  }
+}

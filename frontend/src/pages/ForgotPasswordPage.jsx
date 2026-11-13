@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "../components/LanguageSelector";
 import {
   Loader2,
   ArrowLeft,
@@ -26,6 +28,7 @@ import { Card, CardContent } from "../components/ui/card";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const ForgotPasswordPage = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
   const [loading, setLoading] = useState(false);
@@ -205,6 +208,18 @@ const ForgotPasswordPage = () => {
 
       {/* ================= RIGHT FORM PANEL ================= */}
       <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-screen flex flex-col justify-between p-6 sm:p-10 md:p-12 lg:p-10 xl:p-14 2xl:p-16 relative">
+        {/* Desktop Top Bar */}
+        <div className="hidden lg:flex items-center justify-between w-full mb-2">
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("auth:forgot_password.back_to_login")}
+          </Link>
+          <LanguageSelector variant="navbar" />
+        </div>
+
         {/* Mobile Header */}
         <div className="flex items-center justify-between w-full lg:hidden mb-6">
           <Link to="/" className="inline-block">
@@ -215,13 +230,16 @@ const ForgotPasswordPage = () => {
             />
           </Link>
 
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Login
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSelector variant="navbar" />
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("auth:forgot_password.back_to_login")}
+            </Link>
+          </div>
         </div>
 
         {/* Form Container (Optimal measure ~420px for readability) */}
@@ -272,14 +290,14 @@ const ForgotPasswordPage = () => {
                   className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground"
                   data-testid="forgot-password-title"
                 >
-                  {step === 1 && "Reset Password"}
-                  {step === 2 && "Enter Verification Code"}
-                  {step === 3 && "Create New Password"}
+                  {step === 1 && t("auth:forgot_password.title")}
+                  {step === 2 && t("auth:forgot_password.step2_title")}
+                  {step === 3 && t("auth:forgot_password.step3_title")}
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {step === 1 && "Enter your registered email to receive a secure 6-digit recovery code."}
-                  {step === 2 && `Enter the 6-digit verification code sent to ${email}`}
-                  {step === 3 && "Choose a strong password with at least 6 characters."}
+                  {step === 1 && t("auth:forgot_password.subtitle")}
+                  {step === 2 && t("auth:forgot_password.step2_subtitle")}
+                  {step === 3 && t("auth:forgot_password.step3_subtitle")}
                 </p>
               </div>
 
@@ -288,7 +306,7 @@ const ForgotPasswordPage = () => {
                 <form className="space-y-4" onSubmit={handleSendOTP} noValidate>
                   <div className="space-y-1.5">
                     <Label htmlFor="reset-email" className="text-xs font-semibold text-foreground">
-                      Registered Email Address
+                      {t("auth:login.email_label")}
                     </Label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -314,10 +332,10 @@ const ForgotPasswordPage = () => {
                     {loading ? (
                       <>
                         <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                        Sending Code...
+                        {t("auth:forgot_password.sending")}
                       </>
                     ) : (
-                      "Send Recovery Code"
+                      t("auth:forgot_password.send_code_btn")
                     )}
                   </Button>
                 </form>
@@ -379,7 +397,7 @@ const ForgotPasswordPage = () => {
                 <form className="space-y-4" onSubmit={handleResetPassword} noValidate>
                   <div className="space-y-1.5">
                     <Label htmlFor="new-password" className="text-xs font-semibold text-foreground">
-                      New Password
+                      {t("auth:forgot_password.new_password_label")}
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -417,7 +435,7 @@ const ForgotPasswordPage = () => {
 
                   <div className="space-y-1.5">
                     <Label htmlFor="confirm-password" className="text-xs font-semibold text-foreground">
-                      Confirm New Password
+                      {t("auth:forgot_password.confirm_new_password_label")}
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -455,7 +473,7 @@ const ForgotPasswordPage = () => {
                   {capsLockOn && (
                     <p className="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1 animate-in fade-in-50">
                       <ArrowUpSquare className="h-3.5 w-3.5" aria-hidden="true" />
-                      Caps Lock is ON
+                      {t("auth:login.caps_lock_on")}
                     </p>
                   )}
 
@@ -468,10 +486,10 @@ const ForgotPasswordPage = () => {
                     {loading ? (
                       <>
                         <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                        Updating Password...
+                        {t("auth:forgot_password.resetting")}
                       </>
                     ) : (
-                      "Save New Password"
+                      t("auth:forgot_password.reset_btn")
                     )}
                   </Button>
                 </form>

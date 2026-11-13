@@ -1,0 +1,49 @@
+{
+  "title": "دوائون ۽ هيلٿ ڪيئر سامان",
+  "subtitle": "لائسنس يافته فارميسين مان اصلي دوائون ۽ صحت جون شيون حاصل ڪريو.",
+  "search_placeholder": "دوائون، اجزاء يا برانڊ ڳوليو...",
+  "filter_title": "فلٽر",
+  "categories_title": "قسم",
+  "sort_by": "ترتيب",
+  "sort_options": {
+    "relevance": "مطابقت",
+    "price_low_high": "قيمت: گهٽ کان وڌيڪ",
+    "price_high_low": "قيمت: وڌيڪ کان گهٽ",
+    "rating": "ريٽنگ",
+    "popular": "مشهور"
+  },
+  "categories": {
+    "all": "سڀ دوائون",
+    "antibiotics": "اينٽي بائيوٽڪس",
+    "cardiac": "دل ۽ بلڊ پريشر",
+    "diabetes": "شوگر سنڀال",
+    "pain_relief": "سور ۽ بخار",
+    "respiratory": "ساهه ۽ کنگهه",
+    "vitamins": "وٽامنز ۽ سپليمينٽس",
+    "gastro": "هضمي جي صحت",
+    "skin_care": "چمڙي سنڀال",
+    "ayurveda": "آيورويدڪ سنڀال"
+  },
+  "medicine_card": {
+    "rx_needed": "نسخو لازمي",
+    "composition": "ترڪيب",
+    "manufacturer": "ٺاهيندڙ",
+    "mrp": "وڌ ۾ وڌ قيمت",
+    "add_to_cart": "ٽوڪري ۾ وجهو",
+    "adding": "وجهي رهيو آهي...",
+    "in_cart": "ٽوڪري ۾ آهي",
+    "out_of_stock": "ختم"
+  },
+  "detail": {
+    "dosage_form": "خوراک قسم",
+    "packaging": "پيڪنگ",
+    "salt_composition": "سالٽ / ترڪيب",
+    "manufacturer_name": "ڪمپني",
+    "prescription_notice": "هي دوا خريد ڪرڻ لاءِ ڊاڪٽر جو نسخو هجڻ لازمي آهي.",
+    "how_to_use": "استعمال جو طريقو",
+    "side_effects": "عام اثرات",
+    "safety_advice": "حفاظتي مشورو",
+    "storage_instructions": "محفوظ رکڻ جون هدايتون",
+    "disclaimer": "ڏنل معلومات صرف ڄاڻ لاءِ آهي. دوا کائڻ کان اڳ ڊاڪٽر سان صلاح ڪريو."
+  }
+}

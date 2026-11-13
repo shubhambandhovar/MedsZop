@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
+import { LanguageSelector } from "./LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -128,13 +129,7 @@ const Navbar = () => {
     { href: "/medicines", label: "nav.medicines", icon: Pill },
     { href: "/prescription-scan", label: "nav.scan_prescription", auth: true, icon: ScanLine },
     { href: "/doctor-chat", label: "nav.ai_doctor", auth: true, icon: MessageSquare },
-    { href: "/consult-doctor", label: "Consult Doctor", auth: true, icon: Stethoscope },
-  ];
-
-  const languages = [
-    { code: "en", name: "English" },
-    { code: "hi", name: "Hindi (हिंदी)" },
-    { code: "bn", name: "Bengali (বাংলা)" },
+    { href: "/consult-doctor", label: "nav.consult_doctor", auth: true, icon: Stethoscope },
   ];
 
   const getDashboardLink = () => {
@@ -262,32 +257,14 @@ const Navbar = () => {
                     data-testid="navbar-upload-rx-btn"
                   >
                     <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Upload Rx</span>
+                    <span>{t("nav.upload_rx")}</span>
                   </Button>
                 </Link>
               )}
 
-              {/* Language Selector (Desktop) */}
-              <div className="hidden xl:block">
-                <Select
-                  onValueChange={(value) => i18n.changeLanguage(value)}
-                  defaultValue={i18n.language || "en"}
-                >
-                  <SelectTrigger
-                    className="h-9 w-[110px] rounded-full border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-                    aria-label="Select display language"
-                  >
-                    <Globe className="h-3.5 w-3.5 mr-1 text-muted-foreground" aria-hidden="true" />
-                    <SelectValue placeholder="Language" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {languages.map((lang) => (
-                      <SelectItem key={lang.code} value={lang.code} className="text-xs">
-                        {lang.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              {/* Pan-Indian Language Selector (Desktop & Tablet) */}
+              <div className="hidden md:block">
+                <LanguageSelector variant="navbar" />
               </div>
 
               {/* Theme Toggle Button */}
@@ -386,7 +363,7 @@ const Navbar = () => {
                         <DropdownMenuItem asChild className="rounded-xl">
                           <Link to="/consult-doctor" className="flex items-center gap-2.5 text-sm py-2">
                             <Stethoscope className="h-4 w-4 text-primary" aria-hidden="true" />
-                            <span>Consult Doctor</span>
+                            <span>{t("nav.consult_doctor")}</span>
                           </Link>
                         </DropdownMenuItem>
                       </>
@@ -397,7 +374,7 @@ const Navbar = () => {
                     <DropdownMenuItem asChild className="rounded-xl">
                       <Link to="/settings" className="flex items-center gap-2.5 text-sm py-2">
                         <Settings className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                        <span>Settings</span>
+                        <span>{t("nav.settings")}</span>
                       </Link>
                     </DropdownMenuItem>
 
@@ -566,25 +543,7 @@ const Navbar = () => {
 
                   {/* Drawer Footer Controls */}
                   <div className="p-6 border-t border-slate-100 dark:border-slate-800 space-y-3 bg-slate-50/50 dark:bg-slate-900/50">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Language</span>
-                      <Select
-                        onValueChange={(value) => i18n.changeLanguage(value)}
-                        defaultValue={i18n.language || "en"}
-                      >
-                        <SelectTrigger className="h-8 w-[120px] rounded-lg text-xs" aria-label="Mobile language selector">
-                          <Globe className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
-                          <SelectValue placeholder="Language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {languages.map((lang) => (
-                            <SelectItem key={lang.code} value={lang.code} className="text-xs">
-                              {lang.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <LanguageSelector variant="mobile" />
 
                     {isAuthenticated && (
                       <Button

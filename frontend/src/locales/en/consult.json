@@ -1,0 +1,44 @@
+{
+  "doctor": {
+    "title": "Consult Qualified Doctors",
+    "subtitle": "Connect with registered healthcare practitioners for consultations, second opinions, and verified digital prescriptions.",
+    "specialties": {
+      "general_physician": "General Physician",
+      "dermatologist": "Dermatologist",
+      "pediatrician": "Pediatrician",
+      "cardiologist": "Cardiologist",
+      "orthopedic": "Orthopedic",
+      "gynecologist": "Gynecologist"
+    },
+    "book_btn": "Book Consultation",
+    "experience": "{{years}} years experience",
+    "fee": "Consultation Fee: ₹{{fee}}"
+  },
+  "ai_chat": {
+    "title": "MedsZop AI Health Assistant",
+    "subtitle": "Get instant answers regarding drug information, side effects, and routine wellness questions.",
+    "disclaimer": "Important: This AI assistant provides informational guidance only and is not a substitute for professional medical diagnosis or treatment.",
+    "input_placeholder": "Ask about medication uses, dosages, or health topics...",
+    "send_btn": "Send Message",
+    "suggested_prompts": {
+      "dosage": "What are common side effects of Paracetamol?",
+      "food": "Can I take antibiotics on an empty stomach?",
+      "storage": "How should insulin cartridges be stored?"
+    }
+  },
+  "scanner": {
+    "title": "Scan & Upload Prescription",
+    "subtitle": "Upload an image or PDF of your doctor's prescription. Our optical system identifies medicines for licensed pharmacist review.",
+    "dropzone_title": "Drag & drop your prescription here",
+    "dropzone_subtitle": "Supports JPG, PNG, WebP, or PDF up to 10MB",
+    "browse_files": "Browse Files",
+    "use_camera": "Take Photo with Camera",
+    "processing": "Analyzing prescription text...",
+    "detected_title": "Detected Medications",
+    "detected_subtitle": "Please review and confirm each extracted item before adding to cart:",
+    "confirm_btn": "Confirm & Find in Pharmacies",
+    "reupload_btn": "Upload Different Prescription",
+    "legal_notice": "In compliance with the Drugs & Cosmetics Act, all uploaded prescriptions are verified by a licensed pharmacist before medicine dispatch."
+  }
+}
+

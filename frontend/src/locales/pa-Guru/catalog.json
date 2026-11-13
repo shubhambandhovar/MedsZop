@@ -1,0 +1,49 @@
+{
+  "title": "ਦਵਾਈਆਂ ਅਤੇ ਸਿਹਤ ਸੰਭਾਲ ਉਤਪਾਦ",
+  "subtitle": "ਲਾਇਸੰਸਸ਼ੁਦਾ ਫਾਰਮੇਸੀਆਂ ਤੋਂ ਅਸਲੀ ਦਵਾਈਆਂ ਅਤੇ ਸਿਹਤ ਉਤਪਾਦ ਪ੍ਰਾਪਤ ਕਰੋ।",
+  "search_placeholder": "ਦਵਾਈਆਂ, ਸਾਲਟ ਜਾਂ ਬ੍ਰਾਂਡ ਖੋਜੋ...",
+  "filter_title": "ਫਿਲਟਰ",
+  "categories_title": "ਸ਼੍ਰੇਣੀਆਂ",
+  "sort_by": "ਤਰਤੀਬ ਦਿਓ",
+  "sort_options": {
+    "relevance": "ਸਾਰਥਕਤਾ",
+    "price_low_high": "ਕੀਮਤ: ਘੱਟ ਤੋਂ ਵੱਧ",
+    "price_high_low": "ਕੀਮਤ: ਵੱਧ ਤੋਂ ਘੱਟ",
+    "rating": "ਗਾਹਕ ਰੇਟਿੰਗ",
+    "popular": "ਪ੍ਰਸਿੱਧੀ"
+  },
+  "categories": {
+    "all": "ਸਾਰੀਆਂ ਦਵਾਈਆਂ",
+    "antibiotics": "ਐਂਟੀਬਾਇਓਟਿਕਸ",
+    "cardiac": "ਦਿਲ ਅਤੇ ਬਲੱਡ ਪ੍ਰੈਸ਼ਰ",
+    "diabetes": "ਸ਼ੂਗਰ ਦੀ ਦੇਖਭਾਲ",
+    "pain_relief": "ਦਰਦ ਨਿਵਾਰਕ ਅਤੇ ਬੁਖ਼ਾਰ",
+    "respiratory": "ਸਾਹ ਅਤੇ ਖੰਘ",
+    "vitamins": "ਵਿਟਾਮਿਨ ਅਤੇ ਸਪਲੀਮੈਂਟਸ",
+    "gastro": "ਪਾਚਨ ਸਿਹਤ",
+    "skin_care": "ਚਮੜੀ ਦੀ ਦੇਖਭਾਲ",
+    "ayurveda": "ਆਯੁਰਵੈਦਿਕ ਦੇਖਭਾਲ"
+  },
+  "medicine_card": {
+    "rx_needed": "ਨੁਸਖ਼ਾ ਜ਼ਰੂਰੀ",
+    "composition": "ਬਣਤਰ",
+    "manufacturer": "ਨਿਰਮਾਤਾ",
+    "mrp": "ਵੱਧ ਤੋਂ ਵੱਧ ਪ੍ਰਚੂਨ ਮੁੱਲ",
+    "add_to_cart": "ਕਾਰਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ",
+    "adding": "ਸ਼ਾਮਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+    "in_cart": "ਕਾਰਟ ਵਿੱਚ ਹੈ",
+    "out_of_stock": "ਸਟਾਕ ਖ਼ਤਮ"
+  },
+  "detail": {
+    "dosage_form": "ਖ਼ੁਰਾਕ ਦਾ ਰੂਪ",
+    "packaging": "ਪੈਕੇਜਿੰਗ",
+    "salt_composition": "ਸਰਗਰਮ ਸਮੱਗਰੀ / ਰਚਨਾ",
+    "manufacturer_name": "ਨਿਰਮਾਤਾ ਕੰਪਨੀ",
+    "prescription_notice": "ਇਹ ਦਵਾਈ ਖਰੀਦਣ ਲਈ ਰਜਿਸਟਰਡ ਡਾਕਟਰ ਦਾ ਵੈਧ ਨੁਸਖ਼ਾ ਲਾਜ਼ਮੀ ਹੈ।",
+    "how_to_use": "ਵਰਤੋਂ ਦੇ ਨਿਰਦੇਸ਼",
+    "side_effects": "ਆਮ ਮਾੜੇ ਪ੍ਰਭਾਵ",
+    "safety_advice": "ਸੁਰੱਖਿਆ ਸਲਾਹ",
+    "storage_instructions": "ਸੰਭਾਲ ਦੇ ਨਿਰਦੇਸ਼",
+    "disclaimer": "ਦਿੱਤੀ ਜਾਣਕਾਰੀ ਸਿਰਫ਼ ਵਿੱਦਿਅਕ ਉਦੇਸ਼ਾਂ ਲਈ ਹੈ। ਕੋਈ ਵੀ ਦਵਾਈ ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਯੋਗ ਡਾਕਟਰ ਦੀ ਸਲਾਹ ਲਓ।"
+  }
+}

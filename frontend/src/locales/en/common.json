@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "medicines": "Medicines",
+    "scan_prescription": "Scan Prescription",
+    "ai_doctor": "AI Doctor",
+    "consult_doctor": "Consult Doctor",
+    "dashboard": "Dashboard",
+    "my_orders": "My Orders",
+    "settings": "Settings",
+    "log_out": "Log Out",
+    "log_in": "Log In",
+    "get_started": "Get Started",
+    "cart": "Cart",
+    "profile": "Profile",
+    "upload_rx": "Upload Rx"
+  },
+  "actions": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "continue": "Continue",
+    "back": "Back",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view_all": "View All",
+    "retry": "Try Again",
+    "search": "Search",
+    "apply": "Apply",
+    "clear_all": "Clear All"
+  },
+  "badges": {
+    "rx_required": "Prescription Required",
+    "in_stock": "In Stock",
+    "out_of_stock": "Out of Stock",
+    "verified_pharmacy": "Verified Pharmacy",
+    "genuine": "100% Genuine",
+    "fast_delivery": "Priority Dispatch",
+    "cold_chain": "Temperature Monitored"
+  },
+  "footer": {
+    "tagline": "India's trusted digital healthcare companion — bridging licensed neighborhood pharmacies and patients with speed, safety, and care.",
+    "quick_links": "Quick Links",
+    "specialist_portals": "Partner Portals",
+    "pharmacy_login": "Pharmacy Portal",
+    "doctor_login": "Doctor Portal",
+    "delivery_login": "Delivery Fleet",
+    "admin_login": "Administrator",
+    "help_support": "Help & Support",
+    "faqs": "Frequently Asked Questions",
+    "privacy_policy": "Privacy Policy",
+    "terms_conditions": "Terms & Conditions",
+    "refund_policy": "Refund Policy",
+    "contact_us": "Contact Support",
+    "emergency_notice": "For medical emergencies, please immediately visit the nearest emergency medical facility or call 112.",
+    "all_rights_reserved": "All rights reserved.",
+    "legal_disclaimer": "MedsZop connects patients with licensed retail pharmacies adhering to Drugs and Cosmetics Act regulations."
+  },
+  "language_selector": {
+    "label": "Language",
+    "select_language": "Select Language",
+    "search_placeholder": "Search languages or scripts...",
+    "scheduled_languages": "22 Scheduled Indian Languages",
+    "core_languages": "Popular Languages",
+    "all_languages": "All Languages",
+    "active": "Active",
+    "switch_success": "Language updated successfully",
+    "rtl_notice": "Switched to Right-to-Left script layout"
+  },
+  "toasts": {
+    "success": "Operation successful",
+    "error": "An error occurred. Please try again.",
+    "network_error": "Network error. Please check your internet connection.",
+    "session_expired": "Session expired. Please log in again."
+  }
+}
+

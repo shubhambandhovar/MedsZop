@@ -1,0 +1,30 @@
+{
+  "welcome": "স্বাগতম, {{name}}",
+  "overview": {
+    "active_orders": "চলমান অর্ডার",
+    "saved_prescriptions": "সংরক্ষিত প্রেসক্রিপশন",
+    "saved_addresses": "সংরক্ষিত ঠিকানা",
+    "consultations": "পরামর্শসমূহ"
+  },
+  "sections": {
+    "recent_orders": "সাম্প্রতিক অর্ডার",
+    "active_prescriptions": "সক্রিয় প্রেসক্রিপশন",
+    "quick_reorder": "দ্রুত রি-অর্ডার",
+    "family_profiles": "পারিবারিক প্রোফাইল"
+  },
+  "settings": {
+    "title": "অ্যাকাউন্ট সেটিংস",
+    "profile_tab": "প্রোফাইল বিবরণ",
+    "addresses_tab": "সংরক্ষিত ঠিকানা",
+    "security_tab": "নিরাপত্তা ও পাসওয়ার্ড",
+    "language_tab": "ভাষা ও অঞ্চল",
+    "notifications_tab": "বিজ্ঞপ্তি",
+    "change_password": "পাসওয়ার্ড পরিবর্তন",
+    "current_password": "বর্তমান পাসওয়ার্ড",
+    "new_password": "নতুন পাসওয়ার্ড",
+    "confirm_new_password": "নতুন পাসওয়ার্ড নিশ্চিত করুন",
+    "preferred_language": "পছন্দের ভাষা",
+    "language_description": "২২টি সাংবিধানিক ভারতীয় ভাষা এবং ইংরেজির মধ্য থেকে বেছে নিন।",
+    "save_preferences": "পছন্দ সংরক্ষণ করুন"
+  }
+}

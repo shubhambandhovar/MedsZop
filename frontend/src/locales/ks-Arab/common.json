@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "دَوا",
+    "scan_prescription": "نُسخہٕ سِکین کٔرِو",
+    "ai_doctor": "AI ڈاکٹَر",
+    "consult_doctor": "ڈاکٹَرَس سٟتؠ مشوَرَ",
+    "dashboard": "ڈیش بورڈ",
+    "my_orders": "مےٚأنی آرڈَر",
+    "settings": "تَرتیبات",
+    "log_out": "نیبر نؠرِو",
+    "log_in": "لاگ اِن",
+    "get_started": "شُروع کٔرِو",
+    "cart": "ٹوکری",
+    "profile": "پروفائل",
+    "upload_rx": "نُسخہٕ اَپلوڈ"
+  },
+  "actions": {
+    "save": "تَبدیلی مَحفوظ کٔرِو",
+    "cancel": "مَنسوخ",
+    "submit": "پیش کٔرِو",
+    "confirm": "تَصدیق کٔرِو",
+    "continue": "جاری تھٲوِو",
+    "back": "واپَس",
+    "close": "بَند کٔرِو",
+    "delete": "مِٹٲوِو",
+    "edit": "تَرمیم کٔرِو",
+    "view_all": "سٲری وُچھِو",
+    "retry": "دوبارٕ کوشِش",
+    "search": "تَلاش کٔرِو",
+    "apply": "لاگو کٔرِو",
+    "clear_all": "سٲری صاف کٔرِو"
+  },
+  "badges": {
+    "rx_required": "نُسخہٕ ضَروری",
+    "in_stock": "دَستِیاب",
+    "out_of_stock": "خَتٕم",
+    "verified_pharmacy": "تَصدیق شُدٕ فارمیسی",
+    "genuine": "100% اَصلی",
+    "fast_delivery": "تیز تَرسِیل",
+    "cold_chain": "ٹیمپرَیچَر مَحفوظ"
+  },
+  "footer": {
+    "tagline": "ہِندوستانُک بااِعتبار ڈیجیٹَل صِحَتھ سٲتھی — لايسَنٕس دار فارمیسین تہٕ مٔریٖضَن حِفاظَتھ تہٕ تؠزی سان جوڈان۔",
+    "quick_links": "جَلدی لِنک",
+    "specialist_portals": "پارتنَر پورتَل",
+    "pharmacy_login": "فارمیسی پورتَل",
+    "doctor_login": "ڈاکٹَر پورتَل",
+    "delivery_login": "تَرسِیل ٹیٖم",
+    "admin_login": "مُنتَظِم",
+    "help_support": "مَدَتھ",
+    "faqs": "عام سَوالات",
+    "privacy_policy": "رازداری ہُنٛد عَہَد",
+    "terms_conditions": "شَرائط",
+    "refund_policy": "واپَسی پالیسی",
+    "contact_us": "رابطہٕ کٔرِو",
+    "emergency_notice": "ہنگامی صُورتَس مَنٛز ہسپتال گژھِو یا 112 پؠٹھ کال کٔرِو۔",
+    "all_rights_reserved": "سٲری حَقوق مَحفوظ۔",
+    "legal_disclaimer": "MedsZop چھُ ڈرگز اینڈ کاسمیٹکس ایکٹ کہِ مَطٲبِق فارمیسیَن سان وابَستہٕ۔"
+  },
+  "language_selector": {
+    "label": "زَبان",
+    "select_language": "زَبان ژارِو",
+    "search_placeholder": "زَبان یا خَط تَلاش کٔرِو...",
+    "scheduled_languages": "22 دستوری ہِندوستٲنی زَبانہٕ",
+    "core_languages": "مَشہوٗر زَبانہٕ",
+    "all_languages": "سٲری زَبانہٕ",
+    "active": "چالو",
+    "switch_success": "زَبان گٔیہِ بَدلاونہٕ",
+    "rtl_notice": "دٔچھنہِ پؠٹھٕ کھووُر طرزِ تَحریر لاگو"
+  },
+  "toasts": {
+    "success": "کٲم سَپدی مَحفوظ",
+    "error": "خَرابی گٔیہِ۔ دوبارٕ کوشِش کٔرِو۔",
+    "network_error": "نؠٹوَرک خَرابی۔ اِنٹَرنیٚٹ جانچِو۔",
+    "session_expired": "وَقٕت گۆو خَتٕم۔ دوبارٕ لاگ اِن کٔرِو۔"
+  }
+}

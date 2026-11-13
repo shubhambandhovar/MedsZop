@@ -1,0 +1,30 @@
+{
+  "welcome": "స్వాగతం, {{name}}",
+  "overview": {
+    "active_orders": "యాక్టివ్ ఆర్డర్లు",
+    "saved_prescriptions": "సేవ్ చేసిన ప్రిస్క్రిప్షన్‌లు",
+    "saved_addresses": "సేవ్ చేసిన చిరునామాలు",
+    "consultations": "కన్సల్టేషన్‌లు"
+  },
+  "sections": {
+    "recent_orders": "ఇటీవలి ఆర్డర్లు",
+    "active_prescriptions": "యాక్టివ్ ప్రిస్క్రిప్షన్‌లు",
+    "quick_reorder": "త్వరిత రీ-ఆర్డర్",
+    "family_profiles": "కుటుంబ ఆరోగ్య ప్రొఫైల్‌లు"
+  },
+  "settings": {
+    "title": "ఖాతా సెట్టింగ్‌లు",
+    "profile_tab": "ప్రొఫైల్ వివరాలు",
+    "addresses_tab": "సేవ్ చేసిన చిరునామాలు",
+    "security_tab": "భద్రత & పాస్‌వర్డ్",
+    "language_tab": "భాష & ప్రాంతం",
+    "notifications_tab": "నోటిఫికేషన్‌లు",
+    "change_password": "పాస్‌వర్డ్ మార్చండి",
+    "current_password": "ప్రస్తుత పాస్‌వర్డ్",
+    "new_password": "కొత్త పాస్‌వర్డ్",
+    "confirm_new_password": "కొత్త పాస్‌వర్డ్ నిర్ధారించండి",
+    "preferred_language": "ఇష్టపడే ప్రదర్శన భాష",
+    "language_description": "22 అధికారిక భారతీయ భాషలు మరియు ఆంగ్లం నుండి ఎంచుకోండి.",
+    "save_preferences": "ప్రాధాన్యతలను సేవ్ చేయండి"
+  }
+}

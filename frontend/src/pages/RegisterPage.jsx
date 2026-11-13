@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../contexts/AuthContext";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -33,6 +35,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const RegisterPage = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -432,8 +435,20 @@ const RegisterPage = () => {
 
       {/* ================= RIGHT FORM PANEL (In-Place Flow) ================= */}
       <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-[100dvh] lg:min-h-0 lg:h-full flex flex-col justify-between p-6 sm:p-8 lg:px-8 lg:py-4 xl:px-12 xl:py-5 relative overflow-y-auto">
+        {/* Desktop Top Bar */}
+        <div className="hidden lg:flex items-center justify-between w-full mb-1">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("common:actions.back")}
+          </Link>
+          <LanguageSelector variant="navbar" />
+        </div>
+
         {/* Mobile & Tablet Header */}
-        <div className="flex items-center justify-between w-full lg:hidden mb-6">
+        <div className="flex items-center justify-between w-full lg:hidden mb-4">
           <Link to="/" className="inline-block">
             <img
               src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
@@ -442,13 +457,16 @@ const RegisterPage = () => {
             />
           </Link>
 
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Back
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSelector variant="navbar" />
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("common:actions.back")}
+            </Link>
+          </div>
         </div>
 
         {/* Form Container (Optimal measure ~420px for readability) */}
@@ -470,10 +488,10 @@ const RegisterPage = () => {
                     Step 1 of 2 · Account Info
                   </div>
                   <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                    Create your account
+                    {t("auth:register.title")}
                   </h2>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">
-                    Timely medicine deliveries, digital prescriptions, and doctor consultations.
+                    {t("auth:register.subtitle")}
                   </p>
                 </div>
 
@@ -482,7 +500,7 @@ const RegisterPage = () => {
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <Label htmlFor="name" className="text-xs font-semibold text-foreground">
-                        Full Name
+                        {t("auth:register.name_label")}
                       </Label>
                       {isNameValid && touched.name && (
                         <span className="inline-flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -545,7 +563,7 @@ const RegisterPage = () => {
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
                         <Label htmlFor="email" className="text-xs font-semibold text-foreground">
-                          Email Address
+                          {t("auth:register.email_label")}
                         </Label>
                         {isEmailValid && touched.email && (
                           <span className="inline-flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -606,7 +624,7 @@ const RegisterPage = () => {
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
                         <Label htmlFor="phone" className="text-xs font-semibold text-foreground">
-                          Phone Number
+                          {t("auth:register.phone_label")}
                         </Label>
                         {isPhoneValid && touched.phone && (
                           <span className="inline-flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -675,7 +693,7 @@ const RegisterPage = () => {
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <Label htmlFor="password" className="text-xs font-semibold text-foreground">
-                        Create Password
+                        {t("auth:register.password_label")}
                       </Label>
                       {strength.label && (
                         <span className={`text-xs font-medium ${strength.text}`}>
@@ -794,7 +812,7 @@ const RegisterPage = () => {
                         htmlFor="confirmPassword"
                         className="text-xs font-semibold text-foreground"
                       >
-                        Confirm Password
+                        {t("auth:register.confirm_password_label")}
                       </Label>
                       {isPasswordMatching && (
                         <span className="inline-flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -908,10 +926,10 @@ const RegisterPage = () => {
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
-                        Sending Verification Code...
+                        {t("auth:register.creating_account")}
                       </>
                     ) : (
-                      "Continue to Email Verification"
+                      t("auth:register.sign_up_btn")
                     )}
                   </Button>
                 </form>
@@ -923,7 +941,7 @@ const RegisterPage = () => {
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-[#FAFBF9] dark:bg-[#080E0B] px-3 text-muted-foreground font-medium tracking-wider">
-                      Or sign up with
+                      {t("auth:register.or_signup_with")}
                     </span>
                   </div>
                 </div>
@@ -944,13 +962,13 @@ const RegisterPage = () => {
                 {/* Link to Login */}
                 <div className="mt-3.5 sm:mt-4 pt-3 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
                   <p className="text-sm text-muted-foreground">
-                    Already registered with MedsZop?{" "}
+                    {t("auth:register.have_account")}{" "}
                     <Link
                       to="/login"
-                      className="text-[#046A47] dark:text-[#34D399] font-semibold hover:underline focus-visible:outline-none focus-visible:underline"
+                      className="text-[#046A47] dark:text-[#34D399] font-semibold hover:underline focus-visible:outline-none focus-visible:underline ml-1"
                       data-testid="login-link"
                     >
-                      Sign in here
+                      {t("auth:register.sign_in_link")}
                     </Link>
                   </p>
                 </div>
@@ -971,10 +989,10 @@ const RegisterPage = () => {
                     Step 2 of 2 · Security Verification
                   </div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                    Verify email address
+                    {t("auth:otp.title")}
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                    We sent a 6-digit confirmation code to:
+                    {t("auth:otp.subtitle")}
                   </p>
                   <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0F1714] border border-slate-200 dark:border-[#1E2E27] text-xs font-semibold text-foreground">
                     <span>{formData.email}</span>
@@ -985,7 +1003,7 @@ const RegisterPage = () => {
                       title="Edit email address"
                     >
                       <Edit3 className="h-3 w-3" />
-                      Edit
+                      {t("auth:otp.change_email")}
                     </button>
                   </div>
                 </div>
@@ -1024,12 +1042,12 @@ const RegisterPage = () => {
                   {otpLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" />
-                      Verifying Code...
+                      {t("auth:otp.verifying")}
                     </>
                   ) : (
                     <>
                       <ShieldCheck className="h-5 w-5 mr-2" aria-hidden="true" />
-                      Verify &amp; Activate Account
+                      {t("auth:otp.verify_btn")}
                     </>
                   )}
                 </Button>
@@ -1049,11 +1067,11 @@ const RegisterPage = () => {
                       }`}
                     >
                       {resendTimer > 0 ? (
-                        `Resend code in ${resendTimer}s`
+                        t("auth:otp.resend_in", { seconds: resendTimer })
                       ) : (
                         <>
                           <RotateCcw className="h-3 w-3" aria-hidden="true" />
-                          Resend OTP Code
+                          {t("auth:otp.resend_btn")}
                         </>
                       )}
                     </button>

@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "ओखदां",
+    "scan_prescription": "प्रिस्क्रिप्शन स्कॅन",
+    "ai_doctor": "AI दोतोर",
+    "consult_doctor": "दोतोराचो सल्लो",
+    "dashboard": "डॅशबोर्ड",
+    "my_orders": "म्हजे ऑर्डर्स",
+    "settings": "मांडणी",
+    "log_out": "भायर सरात",
+    "log_in": "भितर सरा",
+    "get_started": "सुरू करात",
+    "cart": "पेटूल",
+    "profile": "प्रोफाइल",
+    "upload_rx": "प्रिस्क्रिप्शन अपलोड"
+  },
+  "actions": {
+    "save": "बदल सांबाळात",
+    "cancel": "रद्द करात",
+    "submit": "दाखल करात",
+    "confirm": "निश्चीत करात",
+    "continue": "चालू दवरात",
+    "back": "फाटीं",
+    "close": "धांपा",
+    "delete": "काडून उडयात",
+    "edit": "दुरुस्त करात",
+    "view_all": "सगळें पळयात",
+    "retry": "परत यत्न करात",
+    "search": "सोदात",
+    "apply": "लागू करात",
+    "clear_all": "सगळें पुसात"
+  },
+  "badges": {
+    "rx_required": "प्रिस्क्रिप्शन जाय",
+    "in_stock": "उपलब्ध आसा",
+    "out_of_stock": "संपलें",
+    "verified_pharmacy": "तपासिल्ली फार्मसी",
+    "genuine": "100% खरें",
+    "fast_delivery": "पयली डिलिव्हरी",
+    "cold_chain": "तापमान नियंत्रणात"
+  },
+  "footer": {
+    "tagline": "भारताचो भरंवशाचो डिजिटल भलायकी सांगाती — परवानो आशिल्ल्या स्थानिक फार्मसींक आनी दुयेंतींक वेग, सुरक्षा आनी काsecretळजीन जोडटा.",
+    "quick_links": "तातडीचे दुवे",
+    "specialist_portals": "भागीदार पोर्टल",
+    "pharmacy_login": "फार्मसी पोर्टल",
+    "doctor_login": "दोतोर पोर्टल",
+    "delivery_login": "डिलिव्हरी पंगड",
+    "admin_login": "प्रशासक",
+    "help_support": "मदत आनी आदार",
+    "faqs": "परत परत विचारिल्ले प्रश्न",
+    "privacy_policy": "गुप्तताय धोरण",
+    "terms_conditions": "नेम आनी अटी",
+    "refund_policy": "परतावो धोरण",
+    "contact_us": "सम्पर्क करात",
+    "emergency_notice": "तातडीच्या वेळार बेगोबेग लागींच्या हॉस्पिटलांत वचात वा 112 फोन करात.",
+    "all_rights_reserved": "सगळे हक्क सुरक्षीत.",
+    "legal_disclaimer": "MedsZop वखदां आनी प्रसाधनां कायद्याचे नेम पाळपी फार्मसींक दुयेंतीं कडेन जोडटा."
+  },
+  "language_selector": {
+    "label": "भास",
+    "select_language": "भास वेचात",
+    "search_placeholder": "भास वा लिपी सोदात...",
+    "scheduled_languages": "22 भारतीय संविधानात्मक भासो",
+    "core_languages": "मुखेल भासो",
+    "all_languages": "सगळ्यो भासो",
+    "active": "सक्रिय",
+    "switch_success": "भास येशोस्वीपणान बदलली",
+    "rtl_notice": "उजव्या कडल्यान दाव्या लिपींत बदललें"
+  },
+  "toasts": {
+    "success": "काम येशोस्वी जालें",
+    "error": "एक चूक जाली. उपकार करून परत यत्न करात.",
+    "network_error": "नेटवर्क चूक. इंटरनेट तपासणी करात.",
+    "session_expired": "सत्र संपलें. उपकार करून परत भितर सरा."
+  }
+}

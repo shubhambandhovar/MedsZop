@@ -1,0 +1,30 @@
+{
+  "welcome": "நல்வரவு, {{name}}",
+  "overview": {
+    "active_orders": "நடப்பு ஆர்டர்கள்",
+    "saved_prescriptions": "சேமிக்கப்பட்ட சீட்டுகள்",
+    "saved_addresses": "சேமிக்கப்பட்ட முகவரிகள்",
+    "consultations": "ஆலோசனைகள்"
+  },
+  "sections": {
+    "recent_orders": "சமீபத்திய ஆர்டர்கள்",
+    "active_prescriptions": "செயலில் உள்ள சீட்டுகள்",
+    "quick_reorder": "விரைவு மறு-ஆர்டர்",
+    "family_profiles": "குடும்ப சுகாதார விவரங்கள்"
+  },
+  "settings": {
+    "title": "கணக்கு அமைப்புகள்",
+    "profile_tab": "சுயவிவரம்",
+    "addresses_tab": "முகவரிகள்",
+    "security_tab": "பாதுகாப்பு & கடவுச்சொல்",
+    "language_tab": "மொழி & பகுதி",
+    "notifications_tab": "அறிவிப்புகள்",
+    "change_password": "கடவுச்சொல்லை மாற்று",
+    "current_password": "தற்போதைய கடவுச்சொல்",
+    "new_password": "புதிய கடவுச்சொல்",
+    "confirm_new_password": "புதிய கடவுச்சொல்லை உறுதிப்படுத்து",
+    "preferred_language": "விருப்ப மொழி",
+    "language_description": "22 இந்திய மொழிகள் மற்றும் ஆங்கிலத்தில் இருந்து தேர்வு செய்யவும்.",
+    "save_preferences": "விருப்பங்களைச் சேமி"
+  }
+}

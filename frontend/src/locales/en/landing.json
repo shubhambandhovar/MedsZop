@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "badge": "Licensed Indian Healthcare Ecosystem",
+    "title_part1": "Your Health,",
+    "title_highlight": "Delivered",
+    "title_part2": "with Care",
+    "subtitle": "Order genuine pharmaceuticals directly from licensed neighborhood pharmacies, consult verified doctors, and scan prescriptions with intelligent clinical recognition.",
+    "explore_btn": "Explore Medicines",
+    "scan_btn": "Scan Prescription",
+    "trusted_by": "Serving patients nationwide",
+    "delivered_card": "Direct Pharmacy Sourcing",
+    "in_min": "Priority Dispatch",
+    "ai_card": "Clinical Recognition",
+    "scanned_status": "Batch-traceable fulfillment"
+  },
+  "stats": {
+    "customers": "Active Patients",
+    "medicines": "Verified Medicines",
+    "pharmacies": "Licensed Pharmacies",
+    "delivery": "Average Dispatch"
+  },
+  "features": {
+    "badge": "Core Capabilities",
+    "title": "Why Patients Trust MedsZop",
+    "subtitle": "Combining certified pharmaceutical sourcing with modern health tech for dependable care.",
+    "scanner_title": "Intelligent Prescription Scanner",
+    "scanner_desc": "Upload doctor prescriptions to quickly identify medications, dosage forms, and strengths with clinical oversight.",
+    "chat_title": "AI Clinical Assistant",
+    "chat_desc": "Explore general drug information, safe usage precautions, and contraindications verified by medical literature.",
+    "delivery_title": "Reliable Neighborhood Dispatch",
+    "delivery_desc": "Medicines packaged directly from licensed local chemists with tamper-evident safety seals.",
+    "genuine_title": "Batch-Verified Pharmaceuticals",
+    "genuine_desc": "Every medicine sourced directly through authorized pharmaceutical supply chains adhering to quality standards."
+  },
+  "ai": {
+    "badge": "Digital Healthcare",
+    "title": "Smart Tools for Safer Medication",
+    "description": "Our intelligent platform streamlines your healthcare routine with instant prescription scanning, drug information lookup, and personalized refill reminders.",
+    "list": {
+      "extraction": "Optical prescription reading with chemist verification",
+      "recognition": "Comprehensive Indian pharmaceutical catalog lookup",
+      "guidance": "Dosage schedule planning and refill alerts",
+      "warnings": "Standard drug interaction and storage reminders"
+    },
+    "scanner_btn": "Scan Your Prescription",
+    "chat_btn": "Ask Health Assistant"
+  },
+  "testimonials": {
+    "badge": "Patient Experiences",
+    "title": "Trusted by Families Across India",
+    "subtitle": "Real experiences from patients managing regular healthcare needs with MedsZop.",
+    "content_1": "Ordering maintenance medicines for my parents has never been smoother. Prescriptions are verified promptly and delivered securely.",
+    "author_1": "Rajesh Sharma",
+    "role_1": "Caregiver, New Delhi",
+    "content_2": "The prescription scanner makes reordering effortless. Knowing that orders come from licensed local chemists gives me peace of mind.",
+    "author_2": "Ananya Sen",
+    "role_2": "Software Engineer, Kolkata",
+    "content_3": "As a local pharmacy owner, MedsZop has enabled us to serve our neighborhood with fast, organized digital fulfillment.",
+    "author_3": "Vikas Patel",
+    "role_3": "Retail Pharmacist, Ahmedabad"
+  },
+  "cta": {
+    "title": "Begin Your Health Journey with MedsZop",
+    "subtitle": "Experience dependable, licensed medicine delivery and clinical assistance designed for India.",
+    "get_started": "Create Free Account",
+    "browse": "Browse Medicines Catalog"
+  }
+}
+

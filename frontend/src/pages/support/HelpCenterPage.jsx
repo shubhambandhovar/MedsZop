@@ -1,6 +1,7 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Package,
   FileText,
@@ -147,6 +148,7 @@ const quickLinks = [
 ];
 
 const HelpCenterPage = () => {
+  const { t } = useTranslation(['support', 'common']);
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -155,10 +157,10 @@ const HelpCenterPage = () => {
       <div className="bg-primary pt-16 pb-20 text-center px-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight font-heading">
-            Help Center
+            {t("help_center.title", "Help Center")}
           </h1>
           <p className="text-sm sm:text-base text-primary-foreground/90 max-w-xl mx-auto">
-            Find answers to common questions and get support for your orders, payments, and account.
+            {t("help_center.subtitle", "Find answers to common questions and get support for your orders, payments, and account.")}
           </p>
 
           {/* Quick Links Grid */}

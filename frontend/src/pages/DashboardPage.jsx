@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar.jsx";
@@ -59,6 +60,7 @@ import { useAuth } from "../contexts/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const DashboardPage = () => {
+  const { t } = useTranslation(['dashboard', 'common']);
   const { user, token } = useAuth();
   const [data, setData] = useState({
     orders: [],
@@ -275,7 +277,7 @@ const DashboardPage = () => {
                 Verified Patient Account · Hyperlocal Express
               </div>
               <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white" data-testid="dashboard-title">
-                Welcome back, {user?.name ? user.name.split(" ")[0] : "Patient"}! 👋
+                {t("dashboard:welcome", { name: user?.name ? user.name.split(" ")[0] : "Patient" })}! 👋
               </h1>
               <p className="text-slate-300 text-sm sm:text-base max-w-xl leading-relaxed">
                 Manage your digital prescriptions, active medicine shipments, and 24/7 licensed doctor consultations.
@@ -286,13 +288,13 @@ const DashboardPage = () => {
               <Link to="/prescription-scan">
                 <Button className="rounded-xl h-11 px-5 font-semibold bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg transition-all active:scale-95">
                   <ScanLine className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Upload Prescription
+                  {t("common:nav.upload_rx")}
                 </Button>
               </Link>
               <Link to="/orders">
                 <Button variant="ghost" className="rounded-xl h-11 px-5 font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/10 transition-all active:scale-95">
                   <Package className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Order History
+                  {t("common:nav.my_orders")}
                 </Button>
               </Link>
             </div>

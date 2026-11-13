@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
@@ -24,6 +25,7 @@ import { Textarea } from "../components/ui/textarea";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const ConsultDoctorPage = () => {
+    const { t } = useTranslation(['consult', 'common']);
     const { token } = useAuth();
     const [doctors, setDoctors] = useState([]);
     const [symptoms, setSymptoms] = useState("");
@@ -137,13 +139,13 @@ const ConsultDoctorPage = () => {
           <div>
             <Badge className="mb-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-semibold px-3 py-1 rounded-full">
               <UserCheck className="h-3.5 w-3.5 mr-1.5" />
-              Verified Healthcare Specialists
+              {t("doctor.verified_specialists", "Verified Healthcare Specialists")}
             </Badge>
             <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-              Consult a Doctor
+              {t("doctor.title", "Consult a Doctor")}
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm max-w-xl mt-1 leading-relaxed">
-              Connect with verified medical specialists for diagnosis, guidance, and prescriptions via encrypted chat or high-definition video call.
+              {t("doctor.subtitle", "Connect with verified medical specialists for diagnosis, guidance, and prescriptions via encrypted chat or high-definition video call.")}
             </p>
           </div>
 
@@ -168,9 +170,9 @@ const ConsultDoctorPage = () => {
             <Card className="col-span-full text-center py-16 px-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg mx-auto">
               <CardContent className="space-y-3">
                 <Stethoscope className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
-                <h3 className="font-heading font-bold text-lg text-foreground">No Doctors Currently Available</h3>
+                <h3 className="font-heading font-bold text-lg text-foreground">{t("doctor.no_doctors", "No Doctors Currently Available")}</h3>
                 <p className="text-muted-foreground text-xs sm:text-sm">
-                  Our specialists are currently offline or in consultations. Please check back shortly or consult with our AI Health Assistant in the meantime.
+                  {t("doctor.no_doctors_desc", "Our specialists are currently offline or in consultations. Please check back shortly or consult with our AI Health Assistant in the meantime.")}
                 </p>
               </CardContent>
             </Card>
@@ -259,7 +261,7 @@ const ConsultDoctorPage = () => {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button className="w-full rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm h-11 active-press shadow-xs">
-                            Book Consultation
+                            {t("doctor.book_btn", "Book Consultation")}
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-md w-full max-h-[90dvh] rounded-3xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col">

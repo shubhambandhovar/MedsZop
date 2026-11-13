@@ -1,0 +1,30 @@
+{
+  "welcome": "स्वागत छ, {{name}}",
+  "overview": {
+    "active_orders": "सक्रिय अर्डरहरू",
+    "saved_prescriptions": "सुरक्षित गरिएका प्रिस्क्रिप्सन",
+    "saved_addresses": "सुरक्षित गरिएका ठेगानाहरू",
+    "consultations": "परामर्शहरू"
+  },
+  "sections": {
+    "recent_orders": "भर्खरका अर्डरहरू",
+    "active_prescriptions": "सक्रिय प्रिस्क्रिप्सनहरू",
+    "quick_reorder": "द्रुत पुनः अर्डर",
+    "family_profiles": "पारिवारिक प्रोफाइलहरू"
+  },
+  "settings": {
+    "title": "खाता सेटिङहरू",
+    "profile_tab": "व्यक्तिगत विवरण",
+    "addresses_tab": "सुरक्षित ठेगानाहरू",
+    "security_tab": "सुरक्षा र पासवर्ड",
+    "language_tab": "भाषा र क्षेत्र",
+    "notifications_tab": "सूचनाहरू",
+    "change_password": "पासवर्ड परिवर्तन गर्नुहोस्",
+    "current_password": "हालको पासवर्ड",
+    "new_password": "नयाँ पासवर्ड",
+    "confirm_new_password": "नयाँ पासवर्ड पुष्टि गर्नुहोस्",
+    "preferred_language": "रोजेको भाषा",
+    "language_description": "22 भारतीय भाषाहरू र अङ्ग्रेजीबाट छान्नुहोस्।",
+    "save_preferences": "प्राथमिकताहरू सुरक्षित गर्नुहोस्"
+  }
+}

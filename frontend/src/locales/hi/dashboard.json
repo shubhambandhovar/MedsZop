@@ -1,0 +1,30 @@
+{
+  "welcome": "वापसी पर स्वागत है, {{name}}",
+  "overview": {
+    "active_orders": "सक्रिय ऑर्डर",
+    "saved_prescriptions": "सहेजे गए नुस्खे",
+    "saved_addresses": "सहेजे गए पते",
+    "consultations": "परामर्श"
+  },
+  "sections": {
+    "recent_orders": "हालिया दवा ऑर्डर",
+    "active_prescriptions": "सक्रिय नुस्खे",
+    "quick_reorder": "त्वरित पुनः ऑर्डर",
+    "family_profiles": "परिवार स्वास्थ्य प्रोफाइल"
+  },
+  "settings": {
+    "title": "खाता सेटिंग्स",
+    "profile_tab": "प्रोफ़ाइल विवरण",
+    "addresses_tab": "सहेजे गए पते",
+    "security_tab": "सुरक्षा एवं पासवर्ड",
+    "language_tab": "भाषा एवं क्षेत्र",
+    "notifications_tab": "सूचनाएं",
+    "change_password": "पासवर्ड बदलें",
+    "current_password": "वर्तमान पासवर्ड",
+    "new_password": "नया पासवर्ड",
+    "confirm_new_password": "नए पासवर्ड की पुष्टि करें",
+    "preferred_language": "पसंदीदा प्रदर्शन भाषा",
+    "language_description": "सभी 22 आधिकारिक भारतीय भाषाओं और अंग्रेजी में से चुनें।",
+    "save_preferences": "प्राथमिकताएं सहेजें"
+  }
+}

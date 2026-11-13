@@ -1,0 +1,50 @@
+{
+  "title": "Medicines & Healthcare",
+  "subtitle": "Browse authentic pharmaceuticals, healthcare products, and wellness essentials sourced from licensed pharmacies.",
+  "search_placeholder": "Search medicines, active salts, or brands...",
+  "filter_title": "Filter Products",
+  "categories_title": "Categories",
+  "sort_by": "Sort By",
+  "sort_options": {
+    "relevance": "Relevance",
+    "price_low_high": "Price: Low to High",
+    "price_high_low": "Price: High to Low",
+    "rating": "Customer Rating",
+    "popular": "Popularity"
+  },
+  "categories": {
+    "all": "All Medicines",
+    "antibiotics": "Antibiotics",
+    "cardiac": "Cardiac & BP",
+    "diabetes": "Diabetes Care",
+    "pain_relief": "Pain Relief & Fever",
+    "respiratory": "Respiratory & Cough",
+    "vitamins": "Vitamins & Supplements",
+    "gastro": "Digestive Health",
+    "skin_care": "Skin & Dermatology",
+    "ayurveda": "Ayurvedic Care"
+  },
+  "medicine_card": {
+    "rx_needed": "Rx Required",
+    "composition": "Composition",
+    "manufacturer": "Manufacturer",
+    "mrp": "MRP",
+    "add_to_cart": "Add to Cart",
+    "adding": "Adding...",
+    "in_cart": "In Cart",
+    "out_of_stock": "Out of Stock"
+  },
+  "detail": {
+    "dosage_form": "Dosage Form",
+    "packaging": "Packaging",
+    "salt_composition": "Active Salt / Composition",
+    "manufacturer_name": "Marketed / Manufactured by",
+    "prescription_notice": "A valid prescription from a registered medical practitioner is required to purchase this medicine.",
+    "how_to_use": "Directions for Use",
+    "side_effects": "Common Side Effects",
+    "safety_advice": "Safety Advice",
+    "storage_instructions": "Storage Instructions",
+    "disclaimer": "The information provided is for educational purposes only. Always consult a qualified physician before starting any medication."
+  }
+}
+

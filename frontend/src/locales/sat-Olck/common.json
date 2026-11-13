@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "ᱨᱟᱱ ᱠᱚ",
+    "scan_prescription": "ᱯᱨᱤᱥᱠᱨᱤᱯᱥᱚᱱ ᱥᱠᱮᱱ",
+    "ai_doctor": "AI ᱰᱟᱠᱛᱟᱨ",
+    "consult_doctor": "ᱰᱟᱠᱛᱟᱨ ᱥᱟᱞᱟᱜ ᱥᱟᱞᱟᱦᱟ",
+    "dashboard": "ᱰᱮᱥᱵᱳᱨᱰ",
+    "my_orders": "ᱤᱧᱟᱜ ᱚᱰᱟᱨ ᱠᱚ",
+    "settings": "ᱥᱟᱡᱟᱣ ᱠᱚ",
+    "log_out": "ᱚᱰᱚᱠᱚᱜ",
+    "log_in": "ᱵᱚᱞᱚᱱ",
+    "get_started": "ᱮᱛᱚᱦᱚᱵ",
+    "cart": "ᱴᱷᱩᱸᱜᱤ",
+    "profile": "ᱯᱨᱳᱯᱷᱟᱭᱤᱞ",
+    "upload_rx": "ᱯᱨᱤᱥᱠᱨᱤᱯᱥᱚᱱ ᱞᱟᱫᱮ"
+  },
+  "actions": {
+    "save": "ᱥᱟᱺᱪᱟᱣ",
+    "cancel": "ᱵᱟᱹᱜᱤ",
+    "submit": "ᱮᱢ",
+    "confirm": "ᱴᱷᱟᱹᱣᱠᱟᱹ",
+    "continue": "ᱞᱟᱦᱟᱜ",
+    "back": "ᱛᱟᱭᱚᱢ",
+    "close": "ᱵᱚᱸᱫᱽ",
+    "delete": "ᱜᱮᱫ ᱜᱤᱰᱤ",
+    "edit": "ᱥᱟᱯᱲᱟᱣ",
+    "view_all": "ᱡᱚᱛᱚ ᱧᱮᱞ",
+    "retry": "ᱫᱚᱲᱦᱟ ᱠᱩᱨᱩᱢᱩᱴᱩ",
+    "search": "ᱥᱮᱸᱫᱽᱨᱟ",
+    "apply": "ᱞᱟᱜᱟᱣ",
+    "clear_all": "ᱡᱚᱛᱚ ᱯᱷᱟᱨᱪᱟ"
+  },
+  "badges": {
+    "rx_required": "ᱯᱨᱤᱥᱠᱨᱤᱯᱥᱚᱱ ᱞᱟᱹᱠᱛᱤᱭᱟ",
+    "in_stock": "ᱢᱮᱱᱟᱜ-ᱟ",
+    "out_of_stock": "ᱪᱟᱵᱟᱭᱮᱱᱟ",
+    "verified_pharmacy": "ᱯᱟᱹᱨᱠᱷᱟᱹᱣ ᱨᱟᱱ ᱫᱩᱠᱟᱱ",
+    "genuine": "100% ᱟᱹᱥᱚᱞ",
+    "fast_delivery": "ᱞᱟᱦᱟ ᱥᱮᱴᱮᱨ",
+    "cold_chain": "ᱞᱚᱞᱚ-ᱨᱮᱭᱟᱲ ᱡᱚᱛᱚᱱ"
+  },
+  "footer": {
+    "tagline": "ᱵᱷᱟᱨᱚᱛ ᱨᱮᱱᱟᱜ ᱯᱟᱹᱛᱭᱟᱹᱣᱟᱱ ᱰᱤᱡᱤᱴᱟᱞ ᱦᱚᱲᱢᱚ ᱥᱟᱶᱛᱟ — ᱞᱟᱭᱥᱮᱱᱥ ᱧᱟᱢ ᱨᱟᱱ ᱫᱩᱠᱟᱱ ᱟᱨ ᱨᱩᱜᱤ ᱠᱚ ᱞᱚᱜᱚᱱ ᱟᱨ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱛᱮ ᱡᱚᱲᱟᱣᱟᱭ.",
+    "quick_links": "ᱞᱚᱜᱚᱱ ᱡᱚᱲᱟᱣ",
+    "specialist_portals": "ᱜᱟᱛᱮ ᱯᱳᱨᱴᱟᱞ ᱠᱚ",
+    "pharmacy_login": "ᱨᱟᱱ ᱫᱩᱠᱟᱱ ᱯᱳᱨᱴᱟᱞ",
+    "doctor_login": "ᱰᱟᱠᱛᱟᱨ ᱯᱳᱨᱴᱟᱞ",
+    "delivery_login": "ᱥᱮᱴᱮᱨ ᱫᱚᱞ",
+    "admin_login": "ᱪᱟᱪᱞᱟᱣᱤᱡ",
+    "help_support": "ᱜᱚᱲᱚ ᱟᱨ ᱜᱚᱲᱚᱣᱟᱱ",
+    "faqs": "ᱵᱟᱨ-ᱵᱟᱨ ᱠᱩᱠᱞᱤ ᱠᱚ",
+    "privacy_policy": "ᱩᱠᱩ ᱫᱚᱦᱚ ᱨᱤᱛ",
+    "terms_conditions": "ᱱᱤᱭᱚᱢ ᱟᱨ ᱥᱚᱨᱛᱚ",
+    "refund_policy": "ᱴᱟᱠᱟ ᱨᱩᱣᱟᱹᱲ ᱨᱤᱛ",
+    "contact_us": "ᱥᱟᱹᱜᱟᱹᱭ ᱡᱚᱲᱟᱣ",
+    "emergency_notice": "ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱨᱩᱣᱟᱹ ᱦᱟᱹᱥᱩ ᱚᱠᱛᱚ ᱥᱩᱨ ᱦᱟᱥᱯᱟᱛᱟᱞ ᱥᱮᱱᱚᱜ ᱯᱮ ᱥᱮ 112 ᱨᱮ ᱯᱷᱳᱱ ᱢᱮ.",
+    "all_rights_reserved": "ᱡᱚᱛᱚ ᱦᱚᱠ ᱨᱟᱠᱷᱟ ᱢᱮᱱᱟᱜ-ᱟ.",
+    "legal_disclaimer": "MedsZop ᱫᱚ ᱨᱟᱱ ᱟᱨ ᱥᱟᱡᱟᱣ ᱠᱟᱹᱱᱩᱱ ᱢᱟᱱᱟᱣ ᱨᱟᱱ ᱫᱩᱠᱟᱱ ᱠᱚ ᱥᱟᱶ ᱨᱩᱜᱤ ᱠᱚ ᱡᱚᱲᱟᱣ ᱠᱚᱣᱟᱭ."
+  },
+  "language_selector": {
+    "label": "ᱯᱟᱹᱨᱥᱤ",
+    "select_language": "ᱯᱟᱹᱨᱥᱤ ᱵᱟᱪᱷᱟᱣ",
+    "search_placeholder": "ᱯᱟᱹᱨᱥᱤ ᱥᱮ ᱚᱞ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ...",
+    "scheduled_languages": "22 ᱵᱷᱟᱨᱚᱛ ᱥᱚᱝᱵᱤᱫᱷᱟᱱ ᱯᱟᱹᱨᱥᱤ ᱠᱚ",
+    "core_languages": "ᱢᱟᱨᱟᱝ ᱯᱟᱹᱨᱥᱤ ᱠᱚ",
+    "all_languages": "ᱡᱚᱛᱚ ᱯᱟᱹᱨᱥᱤ ᱠᱚ",
+    "active": "ᱪᱟᱹᱞᱩ",
+    "switch_success": "ᱯᱟᱹᱨᱥᱤ ᱵᱚᱫᱚᱞ ᱥᱟᱹᱛ ᱮᱱᱟ",
+    "rtl_notice": "ᱡᱚᱡᱚᱢ ᱠᱷᱚᱱ ᱞᱮᱸᱜᱟ ᱚᱞ ᱥᱟᱡᱟᱣ ᱨᱮ ᱵᱚᱫᱚᱞ ᱮᱱᱟ"
+  },
+  "toasts": {
+    "success": "ᱠᱟᱹᱢᱤ ᱱᱟᱯᱟᱭ ᱛᱮ ᱦᱩᱭᱮᱱᱟ",
+    "error": "ᱵᱷᱩᱞ ᱦᱩᱭᱮᱱᱟ. ᱫᱚᱲᱦᱟ ᱪᱮᱥᱴᱟᱭ ᱢᱮ.",
+    "network_error": "ᱱᱮᱴᱣᱟᱨᱠ ᱵᱷᱩᱞ. ᱤᱱᱴᱟᱨᱱᱮᱴ ᱧᱮᱞ ᱢᱮ.",
+    "session_expired": "ᱚᱠᱛᱚ ᱪᱟᱵᱟᱭᱮᱱᱟ. ᱫᱚᱲᱦᱟ ᱞᱚᱜᱽ ᱤᱱ ᱢᱮ."
+  }
+}

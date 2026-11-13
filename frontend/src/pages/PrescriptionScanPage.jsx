@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -35,6 +36,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PrescriptionScanPage = () => {
+  const { t } = useTranslation(['consult', 'common']);
   const navigate = useNavigate();
   const { token } = useAuth();
   const { addToCart } = useCart();
@@ -250,10 +252,10 @@ const PrescriptionScanPage = () => {
         </div>
 
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 text-foreground">
-          Upload & Scan Prescription (पर्चा)
+          {t("consult:scanner.title")}
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-3xl leading-relaxed">
-          Upload a paper slip or doctor's digital prescription. Our clinical AI extracts drug names, dosages, and active chemical salts, followed by double-blind review by registered pharmacists under the Drugs & Cosmetics Act.
+          {t("consult:scanner.subtitle")}
         </p>
 
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">

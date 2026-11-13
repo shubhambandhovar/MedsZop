@@ -1,0 +1,49 @@
+{
+  "title": "دَوا تہٕ صِحَتھ مصنوعات",
+  "subtitle": "لايسَنٕس دار فارمیسین پؠٹھٕ اَصلی دَوا تہٕ صِحَتھ سَامان تَلاش کٔرِو۔",
+  "search_placeholder": "دَوا، اجزاء یا بَرانٛڈ تَلاش کٔرِو...",
+  "filter_title": "فِلٹَر",
+  "categories_title": "قِسم",
+  "sort_by": "تَرتیب",
+  "sort_options": {
+    "relevance": "مُطابِقَت",
+    "price_low_high": "قِیمَت: کَم پؠٹھٕ زِیادٕ",
+    "price_high_low": "قِیمَت: زِیادٕ پؠٹھٕ کَم",
+    "rating": "ریٹِنگ",
+    "popular": "مَقبول"
+  },
+  "categories": {
+    "all": "سٲری دَوا",
+    "antibiotics": "اینٹی بائیوٹِکس",
+    "cardiac": "دِل تہٕ بِلڈ پریشَر",
+    "diabetes": "شُوگَر سَنبھال",
+    "pain_relief": "دَگ تہٕ بُخار",
+    "respiratory": "دَم تہٕ کھوٚکھ",
+    "vitamins": "وِٹامِن تہٕ سَپلیمَنٹس",
+    "gastro": "مؠدٕ صِحَتھ",
+    "skin_care": "ژَم کِچ سَنبھال",
+    "ayurveda": "آیورویدِک دَوا"
+  },
+  "medicine_card": {
+    "rx_needed": "نُسخہٕ ضَروری",
+    "composition": "تَرکِیب",
+    "manufacturer": "بَناون وول",
+    "mrp": "زیادٕ قِیمَت",
+    "add_to_cart": "ٹوکری مَنٛز تھٲوِو",
+    "adding": "تَھوان...",
+    "in_cart": "ٹوکری مَنٛز",
+    "out_of_stock": "خَتٕم"
+  },
+  "detail": {
+    "dosage_form": "ڈوز قِسم",
+    "packaging": "پؠکِنگ",
+    "salt_composition": "سالٹ / تَرکِیب",
+    "manufacturer_name": "کَمپَنی",
+    "prescription_notice": "یہِ دَوا مَنٛگاونہٕ خٲطِر ڈاکٹَر سُنٛد نُسخہٕ ضَروری چھُ۔",
+    "how_to_use": "اِستعمالُک طَریقہٕ",
+    "side_effects": "عام نُقصانات",
+    "safety_advice": "حِفاظتی مَشْوَرَ",
+    "storage_instructions": "تَھونٕچ ہِدایات",
+    "disclaimer": "فَراہَم کٔرمٕژ معلوٗمات چھِ صِرف جانکاری خٲطِر۔ دَوا کِھینہٕ برٛونٛہہ ڈاکٹَرَس سٟتؠ مشوَرَ کٔرِو।"
+  }
+}

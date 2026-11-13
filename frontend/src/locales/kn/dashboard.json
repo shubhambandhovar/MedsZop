@@ -1,0 +1,30 @@
+{
+  "welcome": "ಮರಳಿ ಸ್ವಾಗತ, {{name}}",
+  "overview": {
+    "active_orders": "ಸಕ್ರಿಯ ಆರ್ಡರ್‌ಗಳು",
+    "saved_prescriptions": "ಉಳಿಸಿದ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್‌ಗಳು",
+    "saved_addresses": "ಉಳಿಸಿದ ವಿಳಾಸಗಳು",
+    "consultations": "ಸಮಾಲೋಚನೆಗಳು"
+  },
+  "sections": {
+    "recent_orders": "ಇತ್ತೀಚಿನ ಆರ್ಡರ್‌ಗಳು",
+    "active_prescriptions": "ಸಕ್ರಿಯ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್‌ಗಳು",
+    "quick_reorder": "ತ್ವರಿತ ಮರು-ಆರ್ಡರ್",
+    "family_profiles": "ಕುಟುಂಬದ ಪ್ರೊಫೈಲ್‌ಗಳು"
+  },
+  "settings": {
+    "title": "ಖಾತೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "profile_tab": "ಪ್ರೊಫೈಲ್ ವಿವರಗಳು",
+    "addresses_tab": "ಉಳಿಸಿದ ವಿಳಾಸಗಳು",
+    "security_tab": "ಭದ್ರತೆ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್",
+    "language_tab": "ಭಾಷೆ ಮತ್ತು ಪ್ರದೇಶ",
+    "notifications_tab": "ಅಧಿಸೂಚನೆಗಳು",
+    "change_password": "ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಯಿಸಿ",
+    "current_password": "ಪ್ರಸ್ತುತ ಪಾಸ್‌ವರ್ಡ್",
+    "new_password": "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್",
+    "confirm_new_password": "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
+    "preferred_language": "ಆದ್ಯತೆಯ ಭಾಷೆ",
+    "language_description": "22 ಭಾರತೀಯ ಭಾಷೆಗಳು ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಿಂದ ಆಯ್ಕೆಮಾಡಿ.",
+    "save_preferences": "ಆದ್ಯತೆಗಳನ್ನು ಉಳಿಸಿ"
+  }
+}

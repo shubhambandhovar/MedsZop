@@ -1,0 +1,30 @@
+{
+  "welcome": "স্বাগতম, {{name}}",
+  "overview": {
+    "active_orders": "বৰ্তমানৰ অৰ্ডাৰ",
+    "saved_prescriptions": "সংৰক্ষিত প্ৰেছক্ৰিপশ্বন",
+    "saved_addresses": "সংৰক্ষিত ঠিকনা",
+    "consultations": "পৰামৰ্শসমূহ"
+  },
+  "sections": {
+    "recent_orders": "শেহতীয়া অৰ্ডাৰ",
+    "active_prescriptions": "সক্ৰিয় প্ৰেছক্ৰিপশ্বন",
+    "quick_reorder": "দ্ৰুত পুনৰ-অৰ্ডাৰ",
+    "family_profiles": "পাৰিবাৰিক প্ৰফাইল"
+  },
+  "settings": {
+    "title": "একাউণ্ট ছেটিংছ",
+    "profile_tab": "প্ৰফাইল বিৱৰণ",
+    "addresses_tab": "সংৰক্ষিত ঠিকনা",
+    "security_tab": "সুৰক্ষা আৰু পাছৱৰ্ড",
+    "language_tab": "ভাষা আৰু অঞ্চল",
+    "notifications_tab": "জাননীসমূহ",
+    "change_password": "পাছৱৰ্ড সলনি কৰক",
+    "current_password": "বৰ্তমানৰ পাছৱৰ্ড",
+    "new_password": "নতুন পাছৱৰ্ড",
+    "confirm_new_password": "নতুন পাছৱৰ্ড নিশ্চিত কৰক",
+    "preferred_language": "পছন্দৰ ভাষা",
+    "language_description": "২২টা ভাৰতীয় ভাষা আৰু ইংৰাজীৰ পৰা বাছনি কৰক।",
+    "save_preferences": "পছন্দ সংৰক্ষণ কৰক"
+  }
+}

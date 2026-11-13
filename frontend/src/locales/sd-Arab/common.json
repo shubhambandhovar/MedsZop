@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "دوائون",
+    "scan_prescription": "نسخو اسڪين ڪريو",
+    "ai_doctor": "AI ڊاڪٽر",
+    "consult_doctor": "ڊاڪٽر سان صلاح",
+    "dashboard": "ڊيش بورڊ",
+    "my_orders": "منهنجا آرڊر",
+    "settings": "ترتيبون",
+    "log_out": "لاگ آئوٽ",
+    "log_in": "لاگ ان",
+    "get_started": "شروع ڪريو",
+    "cart": "ٽوڪري",
+    "profile": "پروفائل",
+    "upload_rx": "نسخو اپلوڊ"
+  },
+  "actions": {
+    "save": "تبديليون محفوظ ڪريو",
+    "cancel": "رد ڪريو",
+    "submit": "جمع ڪريو",
+    "confirm": "پڪ ڪريو",
+    "continue": "جاري رکو",
+    "back": "واپس",
+    "close": "بند ڪريو",
+    "delete": "ختم ڪريو",
+    "edit": "سڌارو",
+    "view_all": "سڀ ڏسو",
+    "retry": "ٻيهر ڪوشش",
+    "search": "ڳوليو",
+    "apply": "لاڳو ڪريو",
+    "clear_all": "سڀ صاف ڪريو"
+  },
+  "badges": {
+    "rx_required": "ڊاڪٽر جو نسخو لازمي",
+    "in_stock": "موجود آهي",
+    "out_of_stock": "موجود ناهي",
+    "verified_pharmacy": "تصديق ٿيل فارميسي",
+    "genuine": "100% اصلي",
+    "fast_delivery": "ترجيحي پهچ",
+    "cold_chain": "حرارت ضابطي هيٺ"
+  },
+  "footer": {
+    "tagline": "هندستان جو معتبر ڊيجيٽل صحت ساٿي — لائسنس يافته مقامي فارميسين ۽ مريضن کي تيزي ۽ حفاظت سان ڳنڍي ٿو.",
+    "quick_links": "تيز لنڪس",
+    "specialist_portals": "پارٽنر پورٽل",
+    "pharmacy_login": "فارميسي پورٽل",
+    "doctor_login": "ڊاڪٽر پورٽل",
+    "delivery_login": "پهچ ٽيم",
+    "admin_login": "منتظم",
+    "help_support": "مدد ۽ سهڪار",
+    "faqs": "عام سوال",
+    "privacy_policy": "رازداري پاليسي",
+    "terms_conditions": "شرطون",
+    "refund_policy": "رقم واپسي پاليسي",
+    "contact_us": "رابطو ڪريو",
+    "emergency_notice": "هنگامي حالتن ۾ فوري طور ويجهي اسپتال وڃو يا 112 تي ڪال ڪريو.",
+    "all_rights_reserved": "سڀ حق محفوظ آهن.",
+    "legal_disclaimer": "MedsZop ڊرگز اينڊ ڪاسميٽڪس ائڪٽ جي ضابطن هيٺ لائسنس يافته فارميسين سان ڳنڍي ٿو."
+  },
+  "language_selector": {
+    "label": "ٻولي",
+    "select_language": "ٻولي چونڊيو",
+    "search_placeholder": "ٻولي يا رسم الخط ڳوليو...",
+    "scheduled_languages": "22 آئيني هندوستاني ٻوليون",
+    "core_languages": "مشهور ٻوليون",
+    "all_languages": "سڀ ٻوليون",
+    "active": "چالو",
+    "switch_success": "ٻولي ڪاميابي سان مٽجي وئي",
+    "rtl_notice": "ساڄي کان کاٻي رسم الخط لاڳو ٿيو"
+  },
+  "toasts": {
+    "success": "ڪم ڪاميابي سان پورو ٿيو",
+    "error": "هڪ غلطي ٿي پئي. ٻيهر ڪوشش ڪريو.",
+    "network_error": "نيٽ ورڪ خرابي. انٽرنيٽ چيڪ ڪريو.",
+    "session_expired": "مدو ختم ٿي ويو. ٻيهر لاگ ان ٿيو."
+  }
+}

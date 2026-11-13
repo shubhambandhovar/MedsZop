@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -24,6 +25,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const MedicinesPage = () => {
+  const { t } = useTranslation(['catalog', 'common']);
   const [medicines, setMedicines] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -147,10 +149,10 @@ const MedicinesPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6 sm:mb-8">
           <div>
             <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground" data-testid="medicines-title">
-              Verified Pharmaceutical Formulary
+              {t("catalog:title")}
             </h1>
             <p className="text-muted-foreground text-sm sm:text-base mt-1">
-              Find and order from our wide range of genuine, chemical-salt disclosed medicines from licensed community chemists
+              {t("catalog:subtitle")}
             </p>
           </div>
           {!loading && medicines.length > 0 && (
@@ -167,7 +169,7 @@ const MedicinesPage = () => {
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                 <Input
-                  placeholder="Search medicines, brands, or generic names..."
+                  placeholder={t("catalog:search_placeholder")}
                   value={search}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-11 pr-10 h-12 rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs text-sm placeholder:text-muted-foreground focus-visible:ring-primary text-foreground"

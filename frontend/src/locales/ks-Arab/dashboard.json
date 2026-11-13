@@ -1,0 +1,30 @@
+{
+  "welcome": "خوش آمَدید، {{name}}",
+  "overview": {
+    "active_orders": "چالو آرڈَر",
+    "saved_prescriptions": "مَحفوظ نُسخہٕ",
+    "saved_addresses": "مَحفوظ پَتہٕ",
+    "consultations": "مشوَرَ"
+  },
+  "sections": {
+    "recent_orders": "حالِیَہ آرڈَر",
+    "active_prescriptions": "چالو نُسخہٕ",
+    "quick_reorder": "تیز دوبارٕ آرڈَر",
+    "family_profiles": "خانٛدانی پروفائل"
+  },
+  "settings": {
+    "title": "کھاتہٕ تَرتیبات",
+    "profile_tab": "پروفائل تَفصیٖل",
+    "addresses_tab": "مَحفوظ پَتہٕ",
+    "security_tab": "حِفاظَتھ تہٕ پاس وَرڈ",
+    "language_tab": "زَبان تہٕ عِلاقہٕ",
+    "notifications_tab": "اِطّلاع",
+    "change_password": "پاس وَرڈ بَدلاوِو",
+    "current_password": "حالِیَہ پاس وَرڈ",
+    "new_password": "نۆو پاس وَرڈ",
+    "confirm_new_password": "نۆو پاس وَرڈ تَصدیق کٔرِو",
+    "preferred_language": "پَسَندیدہ زَبان",
+    "language_description": "22 ہِندوستٲنی زَبانَن تہٕ انگریزی مَنٛز ژارِو۔",
+    "save_preferences": "تَرتیبات مَحفوظ کٔرِو"
+  }
+}

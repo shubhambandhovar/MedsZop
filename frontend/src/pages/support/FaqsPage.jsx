@@ -1,5 +1,6 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../../components/ui/accordion";
 
 const faqs = [
@@ -117,6 +118,8 @@ const faqs = [
 ];
 
 const FaqsPage = () => {
+  const { t } = useTranslation(['support', 'common']);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -125,10 +128,10 @@ const FaqsPage = () => {
       <div className="bg-primary/10 py-12 sm:py-16 text-center">
         <div className="max-w-4xl mx-auto px-4">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-foreground mb-3 tracking-tight">
-            Frequently Asked Questions
+            {t("faq.title", "Frequently Asked Questions")}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-            Find simple, clear answers to common questions about our online medicine delivery, AI consultations, and more.
+            {t("faq.subtitle", "Find simple, clear answers to common questions about our online medicine delivery, AI consultations, and more.")}
           </p>
         </div>
       </div>

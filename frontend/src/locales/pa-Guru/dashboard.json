@@ -1,0 +1,30 @@
+{
+  "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ, {{name}}",
+  "overview": {
+    "active_orders": "ਸਰਗਰਮ ਆਰਡਰ",
+    "saved_prescriptions": "ਸੰਭਾਲੇ ਹੋਏ ਨੁਸਖ਼ੇ",
+    "saved_addresses": "ਸੰਭਾਲੇ ਪਤੇ",
+    "consultations": "ਸਲਾਹ-ਮਸ਼ਵਰੇ"
+  },
+  "sections": {
+    "recent_orders": "ਤਾਜ਼ਾ ਆਰਡਰ",
+    "active_prescriptions": "ਸਰਗਰਮ ਨੁਸਖ਼ੇ",
+    "quick_reorder": "ਤੁਰੰਤ ਮੁੜ-ਆਰਡਰ",
+    "family_profiles": "ਪਰਿਵਾਰਕ ਪ੍ਰੋਫਾਈਲ"
+  },
+  "settings": {
+    "title": "ਖਾਤਾ ਸੈਟਿੰਗਾਂ",
+    "profile_tab": "ਪ੍ਰੋਫਾਈਲ ਵੇਰਵੇ",
+    "addresses_tab": "ਸੰਭਾਲੇ ਪਤੇ",
+    "security_tab": "ਸੁਰੱਖਿਆ ਅਤੇ ਪਾਸਵਰਡ",
+    "language_tab": "ਭਾਸ਼ਾ ਅਤੇ ਖੇਤਰ",
+    "notifications_tab": "ਸੂਚਨਾਵਾਂ",
+    "change_password": "ਪਾਸਵਰਡ ਬਦਲੋ",
+    "current_password": "ਮੌਜੂਦਾ ਪਾਸਵਰਡ",
+    "new_password": "ਨਵਾਂ ਪਾਸਵਰਡ",
+    "confirm_new_password": "ਨਵੇਂ ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
+    "preferred_language": "ਤਰਜੀਹੀ ਭਾਸ਼ਾ",
+    "language_description": "22 ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ ਅਤੇ ਅੰਗਰੇਜ਼ੀ ਵਿੱਚੋਂ ਚੁਣੋ।",
+    "save_preferences": "ਤਰਜੀਹਾਂ ਸੰਭਾਲੋ"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "ਦਵਾਈਆਂ",
+    "scan_prescription": "ਨੁਸਖ਼ਾ ਸਕੈਨ",
+    "ai_doctor": "AI ਡਾਕਟਰ",
+    "consult_doctor": "ਡਾਕਟਰ ਦੀ ਸਲਾਹ",
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "my_orders": "ਮੇਰੇ ਆਰਡਰ",
+    "settings": "ਸੈਟਿੰਗਾਂ",
+    "log_out": "ਲਾਗ ਆਉਟ",
+    "log_in": "ਲਾਗ ਇਨ",
+    "get_started": "ਸ਼ੁਰੂ ਕਰੋ",
+    "cart": "ਕਾਰਟ",
+    "profile": "ਪ੍ਰੋਫਾਈਲ",
+    "upload_rx": "ਨੁਸਖ਼ਾ ਅੱਪਲੋਡ"
+  },
+  "actions": {
+    "save": "ਤਬਦੀਲੀਆਂ ਸੰਭਾਲੋ",
+    "cancel": "ਰੱਦ ਕਰੋ",
+    "submit": "ਜਮ੍ਹਾਂ ਕਰੋ",
+    "confirm": "ਪੁਸ਼ਟੀ ਕਰੋ",
+    "continue": "ਜਾਰੀ ਰੱਖੋ",
+    "back": "ਪਿੱਛੇ",
+    "close": "ਬੰਦ ਕਰੋ",
+    "delete": "ਮਿਟਾਓ",
+    "edit": "ਸੋਧੋ",
+    "view_all": "ਸਾਰੇ ਦੇਖੋ",
+    "retry": "ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
+    "search": "ਖੋਜੋ",
+    "apply": "ਲਾਗੂ ਕਰੋ",
+    "clear_all": "ਸਭ ਸਾਫ਼ ਕਰੋ"
+  },
+  "badges": {
+    "rx_required": "ਨੁਸਖ਼ਾ ਜ਼ਰੂਰੀ ਹੈ",
+    "in_stock": "ਸਟਾਕ ਵਿੱਚ ਉਪਲਬਧ",
+    "out_of_stock": "ਸਟਾਕ ਖ਼ਤਮ",
+    "verified_pharmacy": "ਪ੍ਰਮਾਣਿਤ ਫਾਰਮੇਸੀ",
+    "genuine": "100% ਅਸਲੀ",
+    "fast_delivery": "ਤਰਜੀਹੀ ਡਿਲੀਵਰੀ",
+    "cold_chain": "ਤਾਪਮਾਨ ਨਿਯੰਤਰਿਤ"
+  },
+  "footer": {
+    "tagline": "ਭਾਰਤ ਦਾ ਭਰੋਸੇਯੋਗ ਡਿਜੀਟਲ ਸਿਹਤ ਸਾਥੀ — ਲਾਇਸੰਸਸ਼ੁਦਾ ਸਥਾਨਕ ਫਾਰਮੇਸੀਆਂ ਅਤੇ ਮਰੀਜ਼ਾਂ ਨੂੰ ਤੇਜ਼ੀ, ਸੁਰੱਖਿਆ ਅਤੇ ਦੇਖਭਾਲ ਨਾਲ ਜੋੜਦਾ ਹੈ।",
+    "quick_links": "ਜ਼ਰੂਰੀ ਲਿੰਕ",
+    "specialist_portals": "ਸਹਿਭਾਗੀ ਪੋਰਟਲ",
+    "pharmacy_login": "ਫਾਰਮੇਸੀ ਪੋਰਟਲ",
+    "doctor_login": "ਡਾਕਟਰ ਪੋਰਟਲ",
+    "delivery_login": "ਡਿਲੀਵਰੀ ਫਲੀਟ",
+    "admin_login": "ਪ੍ਰਸ਼ਾਸਕ",
+    "help_support": "ਮਦਦ ਅਤੇ ਸਹਾਇਤਾ",
+    "faqs": "ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਸਵਾਲ",
+    "privacy_policy": "ਨਿੱਜਤਾ ਨੀਤੀ",
+    "terms_conditions": "ਨਿਯਮ ਅਤੇ ਸ਼ਰਤਾਂ",
+    "refund_policy": "ਰਿਫੰਡ ਨੀਤੀ",
+    "contact_us": "ਸਹਾਇਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
+    "emergency_notice": "ਐਮਰਜੈਂਸੀ ਲਈ ਤੁਰੰਤ ਨਜ਼ਦੀਕੀ ਹਸਪਤਾਲ ਜਾਓ ਜਾਂ 112 'ਤੇ ਕਾਲ ਕਰੋ।",
+    "all_rights_reserved": "ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।",
+    "legal_disclaimer": "MedsZop ਡਰੱਗਜ਼ ਐਂਡ ਕਾਸਮੈਟਿਕਸ ਐਕਟ ਦੇ ਨਿਯਮਾਂ ਅਧੀਨ ਲਾਇਸੰਸਸ਼ੁਦਾ ਫਾਰਮੇਸੀਆਂ ਨਾਲ ਮਰੀਜ਼ਾਂ ਨੂੰ ਜੋੜਦਾ ਹੈ।"
+  },
+  "language_selector": {
+    "label": "ਭਾਸ਼ਾ",
+    "select_language": "ਭਾਸ਼ਾ ਚੁਣੋ",
+    "search_placeholder": "ਭਾਸ਼ਾ ਜਾਂ ਲਿਪੀ ਖੋਜੋ...",
+    "scheduled_languages": "22 ਸੰਵਿਧਾਨਕ ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ",
+    "core_languages": "ਪ੍ਰਮੁੱਖ ਭਾਸ਼ਾਵਾਂ",
+    "all_languages": "ਸਾਰੀਆਂ ਭਾਸ਼ਾਵਾਂ",
+    "active": "ਸਰਗਰਮ",
+    "switch_success": "ਭਾਸ਼ਾ ਸਫਲਤਾਪੂਰਵਕ ਬਦਲੀ ਗਈ",
+    "rtl_notice": "ਸੱਜੇ ਤੋਂ ਖੱਬੇ ਲਿਪੀ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ"
+  },
+  "toasts": {
+    "success": "ਕੰਮ ਸਫਲਤਾਪੂਰਵਕ ਪੂਰਾ ਹੋਇਆ",
+    "error": "ਇੱਕ ਗਲਤੀ ਹੋਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "network_error": "ਨੈੱਟਵਰਕ ਗਲਤੀ। ਕਿਰਪਾ ਕਰਕੇ ਇੰਟਰਨੈੱਟ ਚੈੱਕ ਕਰੋ।",
+    "session_expired": "ਸੈਸ਼ਨ ਸਮਾਪਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਲਾਗ ਇਨ ਕਰੋ।"
+  }
+}

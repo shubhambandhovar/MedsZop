@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer";
@@ -50,6 +51,7 @@ const loadRazorpayScript = () => {
 };
 
 const CheckoutPage = () => {
+  const { t } = useTranslation(['checkout', 'common']);
   const navigate = useNavigate();
   const { token, user } = useAuth();
   const { cart, refreshCart } = useCart();
@@ -440,7 +442,7 @@ const CheckoutPage = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 lg:pb-8">
         <h1 className="font-heading text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-foreground tracking-tight" data-testid="checkout-title">
-          Checkout
+          {t("checkout:checkout.title")}
         </h1>
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
@@ -452,7 +454,7 @@ const CheckoutPage = () => {
                   <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
                     <MapPin className="h-5 w-5" />
                   </div>
-                  Delivery Address
+                  {t("checkout:checkout.delivery_address_title")}
                 </CardTitle>
                 <Dialog open={showAddressForm} onOpenChange={setShowAddressForm}>
                   <DialogTrigger asChild>
@@ -734,7 +736,7 @@ const CheckoutPage = () => {
                   <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
                     <CreditCard className="h-5 w-5" />
                   </div>
-                  Payment Method
+                  {t("checkout:checkout.payment_method_title")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6">
@@ -752,8 +754,8 @@ const CheckoutPage = () => {
                         <Wallet className="h-5 w-5" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-sm text-foreground">Cash on Delivery (COD)</p>
-                        <p className="text-xs text-muted-foreground">Pay cash or UPI upon package arrival</p>
+                        <p className="font-semibold text-sm text-foreground">{t("checkout:checkout.cash_on_delivery")}</p>
+                        <p className="text-xs text-muted-foreground">{t("checkout:checkout.cash_on_delivery_desc")}</p>
                       </div>
                     </div>
 
@@ -849,7 +851,7 @@ const CheckoutPage = () => {
                 </div>
                 <Separator />
                 <div className="flex justify-between items-baseline">
-                  <span className="font-heading font-bold text-base">Total Payable</span>
+                  <span className="font-heading font-bold text-base">{t("checkout:summary.total_amount")}</span>
                   <span className="font-heading font-extrabold text-2xl text-primary tabular-nums">
                     ₹{cart.total.toFixed(2)}
                   </span>
@@ -866,7 +868,7 @@ const CheckoutPage = () => {
                   ) : (
                     <>
                       <CheckCircle className="mr-2 h-5 w-5" />
-                      Place Order
+                      {t("checkout:summary.place_order")}
                     </>
                   )}
                 </Button>
