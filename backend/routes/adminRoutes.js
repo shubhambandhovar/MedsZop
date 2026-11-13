@@ -32,7 +32,8 @@ const {
   getPayments,
   getRefunds,
   getAuditLogs,
-  getSystemHealth
+  getSystemHealth,
+  reconcileCodPayment
 } = require("../controllers/adminController");
 
 // All admin routes strictly enforce JWT auth + role(['admin'])
@@ -46,6 +47,7 @@ router.get("/analytics", getAnalytics);
 router.get("/orders", getOrders);
 router.get("/orders/:id", getOrderById);
 router.patch("/orders/:id/status", updateOrderStatus);
+router.patch("/orders/:orderId/reconcile-cod", reconcileCodPayment);
 
 // 3. Medicine Catalog
 router.get("/medicines", getMedicines);

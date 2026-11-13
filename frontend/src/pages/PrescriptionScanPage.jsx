@@ -243,17 +243,17 @@ const PrescriptionScanPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        <Badge className="mb-3 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-0 px-3.5 py-1 text-xs font-semibold rounded-full">
-          <ScanLine className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-          AI Powered Prescription Scanner
-        </Badge>
+      <main className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
+          <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Clinical Prescription Intake & Pharmacist Audit</span>
+        </div>
 
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 text-foreground">
-          Upload & Scan Prescription
+          Upload & Scan Prescription (पर्चा)
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-          Upload a paper slip or doctor's digital prescription. Our clinical AI extracts drug names, dosages, and schedules for instant ordering.
+        <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-3xl leading-relaxed">
+          Upload a paper slip or doctor's digital prescription. Our clinical AI extracts drug names, dosages, and active chemical salts, followed by double-blind review by registered pharmacists under the Drugs & Cosmetics Act.
         </p>
 
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">

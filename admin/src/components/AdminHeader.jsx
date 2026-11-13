@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { adminApi } from "@/lib/api";
 
 const ROUTE_NAMES = {
   "/dashboard": "Executive Dashboard",
@@ -32,10 +33,37 @@ const ROUTE_NAMES = {
 export default function AdminHeader({ onOpenMobile, onRefresh, isRefreshing = false }) {
   const location = useLocation();
   const { user } = useAuth();
+  const [healthStatus, setHealthStatus] = useState({ healthy: true, text: "System Telemetry Active" });
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains("dark") ||
       localStorage.getItem("medszop_admin_theme") === "dark";
   });
+
+  useEffect(() => {
+    let mounted = true;
+    const checkHealth = async () => {
+      try {
+        const res = await adminApi.getSystemHealth();
+        if (mounted) {
+          const isDbOk = res?.database === "connected" || res?.status === "healthy" || res?.db_status === "connected";
+          setHealthStatus({
+            healthy: isDbOk,
+            text: isDbOk ? "Atlas Cluster Live" : "DB Disconnected"
+          });
+        }
+      } catch (err) {
+        if (mounted) {
+          setHealthStatus({ healthy: false, text: "Health Telemetry Offline" });
+        }
+      }
+    };
+    checkHealth();
+    const interval = setInterval(checkHealth, 30000); // 30s passive poll
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     if (isDark) {
@@ -74,7 +102,21 @@ export default function AdminHeader({ onOpenMobile, onRefresh, isRefreshing = fa
       </div>
 
       {/* Right: Actions & Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
+        {/* Dynamic Real-Time Operational Telemetry LED */}
+        <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-muted-foreground px-2.5 py-1 rounded-md bg-muted/60 border border-border">
+          <span className={`h-2 w-2 rounded-full ${healthStatus.healthy ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
+          <span>{healthStatus.text}</span>
+        </div>
+
+        {/* Protected Super Admin Indicator */}
+        {(user?.isProtectedAdmin || user?.email === "shubhambandhovar@gmail.com") && (
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+            <ShieldCheck className="h-3.5 w-3.5 text-amber-500" />
+            <span>Protected Super Admin</span>
+          </div>
+        )}
+
         {onRefresh && (
           <Button
             variant="outline"
@@ -110,7 +152,7 @@ export default function AdminHeader({ onOpenMobile, onRefresh, isRefreshing = fa
           {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
         </Button>
 
-        {/* Verified Badge */}
+        {/* Verified RBAC Badge */}
         <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium">
           <ShieldCheck className="h-3.5 w-3.5" />
           <span>Secured RBAC</span>

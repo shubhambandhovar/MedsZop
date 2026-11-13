@@ -99,9 +99,11 @@ function validateEmailConfig() {
  * Supports multipart/alternative (both html and plain-text)
  */
 const sendEmail = async (to, subject, html, text = "") => {
-  if (process.env.NODE_ENV === "test") {
-    console.log(`[Email Mock (test mode)] To: ${maskEmail(to)}, Subject: ${subject}`);
-    return { id: "test-mock-email-" + Date.now(), messageId: "test-mock-msg-" + Date.now() };
+  // UNCONDITIONAL MOCK IN TEST AND STAGING ENVIRONMENTS
+  // Strictly blocks any outbound network dispatch to real inboxes
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "staging") {
+    console.log(`[Email Mock (${process.env.NODE_ENV} mode)] Blocked live dispatch to: ${maskEmail(to)}, Subject: ${subject}`);
+    return { id: `${process.env.NODE_ENV}-mock-email-` + Date.now(), messageId: `${process.env.NODE_ENV}-mock-msg-` + Date.now() };
   }
 
   // Priority 1: Resend HTTP API if configured

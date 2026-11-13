@@ -19,8 +19,17 @@ function getRedisClient() {
       }
     });
 
+    const maskRedisUrl = (raw) => {
+      try {
+        const u = new URL(raw);
+        return `${u.protocol}//${u.host}`;
+      } catch {
+        return "configured cluster";
+      }
+    };
+
     redisClient.on("connect", () => {
-      console.log(`[Redis] Connected successfully to ${redisUrl}`);
+      console.log(`[Redis] Connected successfully to ${maskRedisUrl(redisUrl)}`);
     });
 
     redisClient.on("error", (err) => {

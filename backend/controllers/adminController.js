@@ -1397,3 +1397,57 @@ exports.getSystemHealth = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve health status", error: err.message });
   }
 };
+
+/**
+ * RECONCILE COD PAYMENT
+ * Dedicated Admin endpoint to separate delivery OTP handover from accounting reconciliation
+ */
+exports.reconcileCodPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    if (order.payment_method !== "cod") {
+      return res.status(400).json({ message: "Only Cash on Delivery orders require cash reconciliation." });
+    }
+
+    if (!order.handover_verified || order.order_status !== "delivered") {
+      return res.status(400).json({ message: "Cannot reconcile COD before order handover is verified and delivered." });
+    }
+
+    if (order.cod_reconciled) {
+      return res.status(400).json({ message: "Order COD payment is already reconciled." });
+    }
+
+    order.cod_reconciled = true;
+    order.cod_reconciled_at = new Date();
+    order.cod_reconciled_by = req.user.id;
+    await order.save();
+
+    if (AuditLog) {
+      try {
+        await AuditLog.create({
+          user: req.user.id,
+          action: "COD_PAYMENT_RECONCILED",
+          details: { orderId: order._id, amount: order.cod_collected_amount || order.total }
+        });
+      } catch (e) {
+        console.warn("AuditLog warning:", e.message);
+      }
+    }
+
+    res.json({
+      message: "COD payment successfully reconciled with accounts ledger.",
+      order: {
+        _id: order._id,
+        cod_collected: order.cod_collected,
+        cod_collected_amount: order.cod_collected_amount,
+        cod_reconciled: order.cod_reconciled,
+        cod_reconciled_at: order.cod_reconciled_at
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to reconcile COD payment", error: err.message });
+  }
+};

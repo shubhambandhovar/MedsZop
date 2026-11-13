@@ -28,12 +28,19 @@ function assertDatabaseSafety(uri, env = process.env.NODE_ENV) {
     }
   }
 
-  // In staging mode, strictly guarantee staging cannot connect to the primary production database
+  // In staging mode, strictly enforce the exact permitted database name 'medszop_staging'
   if (env === "staging") {
-    const dbPath = (uri.split("/").pop() || "").split("?")[0].toLowerCase();
-    if (dbPath === "medszop" || dbPath === "production") {
+    let dbPath = "";
+    try {
+      const u = new URL(uri);
+      dbPath = (u.pathname || "").replace(/^\//, "").toLowerCase();
+    } catch {
+      dbPath = (uri.split("/").pop() || "").split("?")[0].toLowerCase();
+    }
+
+    if (dbPath !== "medszop_staging") {
       throw new Error(
-        `🚨 CRITICAL SAFETY INTERVENTION: Staging environment attempted to connect to production database '${dbPath}'. Staging must target an isolated database (e.g. 'medszop_staging'). Connection aborted.`
+        `🚨 CRITICAL SAFETY INTERVENTION: Staging environment attempted to connect to unauthorized database '${dbPath || "(empty)"}'. Staging is strictly restricted to the exact database 'medszop_staging'. Connection aborted.`
       );
     }
   }
