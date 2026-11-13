@@ -148,55 +148,55 @@ input:-webkit-autofill:active {
 
 @layer base {
     :root {
-        --background: 147 20% 98%;
-        --foreground: 213 68% 15%;
+        --background: 150 15% 98.5%;
+        --foreground: 218 55% 12%;
         --card: 0 0% 100%;
-        --card-foreground: 213 68% 15%;
+        --card-foreground: 218 55% 12%;
         --popover: 0 0% 100%;
-        --popover-foreground: 213 68% 15%;
-        --primary: 160 100% 26%;
+        --popover-foreground: 218 55% 12%;
+        --primary: 160 84% 36%;
         --primary-foreground: 0 0% 100%;
         --secondary: 150 25% 94%;
         --secondary-foreground: 160 100% 20%;
         --muted: 150 15% 95%;
-        --muted-foreground: 210 19% 42%;
+        --muted-foreground: 215 18% 40%;
         --accent: 33 100% 50%;
         --accent-foreground: 0 0% 100%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 100%;
-        --border: 147 11% 88%;
-        --input: 147 11% 88%;
-        --ring: 160 100% 26%;
-        --radius: 0.625rem;
+        --border: 150 12% 88%;
+        --input: 150 12% 88%;
+        --ring: 160 84% 36%;
+        --radius: 0.75rem;
         --success: 160 84% 32%;
         --warning: 33 100% 50%;
-        --chart-1: 160 100% 26%;
+        --chart-1: 160 84% 36%;
         --chart-2: 33 100% 50%;
-        --chart-3: 213 68% 15%;
+        --chart-3: 218 55% 12%;
         --chart-4: 187 94% 43%;
         --chart-5: 0 84% 60%;
     }
 
     .dark {
-        --background: 214 44% 8%;
+        --background: 220 50% 6%;
         --foreground: 210 40% 98%;
-        --card: 215 46% 12%;
+        --card: 222 47% 9%;
         --card-foreground: 210 40% 98%;
-        --popover: 215 46% 12%;
+        --popover: 222 47% 9%;
         --popover-foreground: 210 40% 98%;
-        --primary: 160 84% 39%;
-        --primary-foreground: 214 44% 8%;
-        --secondary: 215 35% 18%;
+        --primary: 160 74% 45%;
+        --primary-foreground: 220 50% 6%;
+        --secondary: 222 35% 14%;
         --secondary-foreground: 210 40% 98%;
-        --muted: 215 35% 18%;
+        --muted: 222 35% 14%;
         --muted-foreground: 215 20% 65%;
         --accent: 33 100% 50%;
         --accent-foreground: 0 0% 100%;
         --destructive: 0 84% 65%;
         --destructive-foreground: 222 47% 11%;
-        --border: 216 30% 20%;
-        --input: 216 30% 20%;
-        --ring: 160 84% 39%;
+        --border: 222 30% 18%;
+        --input: 222 30% 18%;
+        --ring: 160 74% 45%;
         --success: 160 84% 45%;
         --warning: 33 100% 55%;
     }
@@ -287,27 +287,168 @@ input, textarea {
     }
 }
 
-/* Glass morphism utility */
+/* ==========================================================================
+   MedsZop Glass Experience V3 — Core Design System Styles
+   ========================================================================== */
+
+/* Ambient depth mesh background */
+.glass-ambient-mesh {
+    background-color: hsl(var(--background));
+    background-image: 
+        radial-gradient(at 10% 12%, rgba(16, 185, 129, 0.05) 0px, transparent 45%),
+        radial-gradient(at 88% 85%, rgba(6, 182, 212, 0.04) 0px, transparent 45%),
+        radial-gradient(at 50% 50%, rgba(248, 250, 248, 0.6) 0px, transparent 100%);
+    background-attachment: fixed;
+}
+
+.dark .glass-ambient-mesh {
+    background-color: #070c17;
+    background-image: 
+        radial-gradient(at 12% 14%, rgba(16, 185, 129, 0.07) 0px, transparent 40%),
+        radial-gradient(at 88% 85%, rgba(14, 165, 233, 0.05) 0px, transparent 45%),
+        radial-gradient(at 50% 50%, rgba(11, 19, 41, 0.4) 0px, transparent 100%);
+    background-attachment: fixed;
+}
+
+/* Standard frosted glass surface */
+.glass-surface {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background-color: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-surface {
+    background-color: rgba(11, 19, 41, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.42);
+}
+
+/* Elevated frosted glass surface */
+.glass-surface-elevated {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    box-shadow: 0 14px 40px 0 rgba(0, 0, 0, 0.08);
+}
+
+.dark .glass-surface-elevated {
+    background-color: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 14px 44px 0 rgba(0, 0, 0, 0.55);
+}
+
+/* Subtle frosted glass surface (for nested elements, chips, badges) */
+.glass-surface-subtle {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.50);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.dark .glass-surface-subtle {
+    background-color: rgba(15, 23, 42, 0.50);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+/* Opaque/High-legibility surface (for medical dosages, data tables, critical readouts) */
+.glass-surface-opaque {
+    background-color: rgba(255, 255, 255, 0.97);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.03);
+}
+
+.dark .glass-surface-opaque {
+    background-color: rgba(11, 19, 41, 0.97);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Interactive card hover */
+.glass-card-interactive {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.glass-card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 42px 0 rgba(0, 0, 0, 0.09);
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
+.dark .glass-card-interactive:hover {
+    box-shadow: 0 16px 44px 0 rgba(0, 0, 0, 0.55);
+    border-color: rgba(52, 211, 153, 0.30);
+}
+
+/* Floating / Sticky Glass Navigation Bar */
+.glass-navbar {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.82);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.dark .glass-navbar {
+    background-color: rgba(7, 12, 23, 0.82);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+}
+
+/* Glass Pill / Badge */
+.glass-pill {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-pill {
+    background-color: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+/* Glass Input Focus Ring */
+.glass-input-ring {
+    transition: all 0.15s ease-in-out;
+}
+
+.glass-input-ring:focus-within {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+
+/* Legacy utility aliases for backward compatibility */
 .glass {
-    @apply backdrop-blur-xl bg-white/70 border border-white/20;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background-color: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(255, 255, 255, 0.75);
 }
 
 .dark .glass {
-    @apply bg-slate-900/70 border-slate-700/20;
+    background-color: rgba(11, 19, 41, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 /* Gradient backgrounds */
 .gradient-hero {
-    background: linear-gradient(135deg, #EBF5FF 0%, #FFFFFF 50%, #E0F7FA 100%);
+    background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f0fdf4 100%);
 }
 
 .dark .gradient-hero {
-    background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+    background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.10) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+                linear-gradient(135deg, #070c17 0%, #0b1329 50%, #070c17 100%);
 }
 
 /* Card hover effects */
 .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+    @apply transition-all duration-200 hover:shadow-glass-hover hover:-translate-y-0.5;
 }
 
 /* Button glow effect */

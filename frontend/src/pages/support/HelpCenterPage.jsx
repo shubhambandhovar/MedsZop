@@ -150,11 +150,11 @@ const quickLinks = [
 const HelpCenterPage = () => {
   const { t } = useTranslation(['support', 'common']);
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       {/* Header Section */}
-      <div className="bg-primary pt-16 pb-20 text-center px-4">
+      <div className="relative overflow-hidden pt-16 pb-20 text-center px-4 bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 text-white border-b border-white/10 shadow-xl">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight font-heading">
             {t("help_center.title", "Help Center")}

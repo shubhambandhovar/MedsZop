@@ -130,14 +130,14 @@ const ConsultDoctorPage = () => {
     };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
-            <Badge className="mb-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-semibold px-3 py-1 rounded-full">
+            <Badge className="mb-2.5 backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-semibold px-3 py-1 rounded-full shadow-xs">
               <UserCheck className="h-3.5 w-3.5 mr-1.5" />
               {t("doctor.verified_specialists", "Verified Healthcare Specialists")}
             </Badge>
@@ -151,8 +151,8 @@ const ConsultDoctorPage = () => {
 
           {consultations.length > 0 && (
             <div className="flex items-center gap-2 self-start sm:self-auto">
-              <Badge variant="outline" className="text-xs font-medium px-3 py-1.5 rounded-xl border-slate-200 dark:border-slate-800 bg-card gap-1.5">
-                <CalendarCheck className="h-3.5 w-3.5 text-primary" />
+              <Badge variant="outline" className="text-xs font-medium px-3.5 py-1.5 rounded-2xl backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-slate-200 dark:border-slate-800 gap-1.5 shadow-xs">
+                <CalendarCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 {consultations.length} {consultations.length === 1 ? "Consultation" : "Consultations"}
               </Badge>
             </div>

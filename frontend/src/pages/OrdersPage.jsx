@@ -171,14 +171,14 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col selection:bg-primary/20">
+    <div className="min-h-[100dvh] glass-ambient-mesh flex flex-col selection:bg-emerald-500/20">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         {/* ================= HEADER SECTION ================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800/60 pb-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold tracking-wider uppercase mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold tracking-wider uppercase mb-2 border border-emerald-500/20 shadow-xs">
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
               Patient Care Journey
             </div>
@@ -186,7 +186,7 @@ const OrdersPage = () => {
               className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3"
               data-testid="orders-title"
             >
-              <Package className="h-7 w-7 text-primary" aria-hidden="true" />
+              <Package className="h-7 w-7 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
               {t("orders:title")}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -196,13 +196,13 @@ const OrdersPage = () => {
 
           <div className="flex items-center gap-2.5">
             <Link to="/prescription-scan">
-              <Button variant="outline" className="rounded-xl font-semibold active-press text-xs sm:text-sm h-10 px-4">
+              <Button variant="outline" className="rounded-xl font-semibold active-press text-xs sm:text-sm h-10 px-4 backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 shadow-xs">
                 <ScanLine className="h-4 w-4 mr-1.5" aria-hidden="true" />
                 {t("common:nav.scan_prescription")}
               </Button>
             </Link>
             <Link to="/medicines">
-              <Button className="rounded-xl font-semibold shadow-xs hover:shadow transition-all active-press text-xs sm:text-sm h-10 px-4">
+              <Button className="rounded-xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm hover:shadow-emerald-glow transition-all active-press text-xs sm:text-sm h-10 px-4">
                 <Pill className="h-4 w-4 mr-1.5" aria-hidden="true" />
                 {t("orders:start_shopping")}
               </Button>
@@ -211,7 +211,7 @@ const OrdersPage = () => {
         </div>
 
         {/* ================= SEARCH & STATUS FILTER BAR ================= */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 p-3 sm:p-4 rounded-3xl border border-white/70 dark:border-white/10 shadow-glass">
           {/* Status Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto py-1">
             {[

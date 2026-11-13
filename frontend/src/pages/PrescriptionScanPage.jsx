@@ -242,13 +242,13 @@ const PrescriptionScanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen glass-ambient-mesh text-foreground">
       <Navbar />
 
       <main className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-3 border border-emerald-500/20 shadow-xs">
           <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Clinical Prescription Intake & Pharmacist Audit</span>
+          <span>Clinical Prescription Intake &amp; Pharmacist Audit</span>
         </div>
 
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 text-foreground">

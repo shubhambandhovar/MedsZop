@@ -437,7 +437,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen glass-ambient-mesh text-foreground">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 lg:pb-8">
@@ -448,10 +448,10 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             {/* Delivery Address Card */}
-            <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+            <Card className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 shadow-glass overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                 <CardTitle className="font-heading text-lg sm:text-xl flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                  <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                     <MapPin className="h-5 w-5" />
                   </div>
                   {t("checkout:checkout.delivery_address_title")}

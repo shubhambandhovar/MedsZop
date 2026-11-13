@@ -31,6 +31,19 @@ export default {
         "3xl": "1920px",
         "4xl": "2560px"
       },
+      backdropBlur: {
+        xs: "2px",
+        glass: "16px",
+        "glass-lg": "24px"
+      },
+      boxShadow: {
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.06)",
+        "glass-hover": "0 14px 40px 0 rgba(0, 0, 0, 0.10)",
+        "glass-dark": "0 8px 32px 0 rgba(0, 0, 0, 0.40)",
+        "glass-dark-hover": "0 14px 44px 0 rgba(0, 0, 0, 0.55)",
+        "emerald-glow": "0 0 25px -4px rgba(16, 185, 129, 0.28)",
+        "emerald-glow-sm": "0 0 15px -3px rgba(16, 185, 129, 0.22)"
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

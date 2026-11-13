@@ -261,7 +261,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50/50 dark:bg-slate-950 flex flex-col selection:bg-primary/20">
+    <div className="min-h-[100dvh] glass-ambient-mesh flex flex-col selection:bg-emerald-500/20">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

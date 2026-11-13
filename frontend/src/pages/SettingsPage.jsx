@@ -99,12 +99,12 @@ const SettingsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen glass-ambient-mesh text-foreground">
             <Navbar />
             <main className="max-w-4xl mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+                <h1 className="text-3xl font-bold mb-6 font-heading tracking-tight">Account Settings</h1>
 
-                <Card>
+                <Card className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 shadow-glass overflow-hidden">
                     <CardHeader>
                         <CardTitle>Profile Information</CardTitle>
                         <CardDescription>Update your personal or business details</CardDescription>
