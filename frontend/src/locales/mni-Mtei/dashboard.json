@@ -1,0 +1,30 @@
+{
+  "welcome": "ꯇꯔꯥꯝꯅ ꯑꯣꯛꯆꯔꯤ, {{name}}",
+  "overview": {
+    "active_orders": "ꯆꯠꯅꯔꯤꯕ ꯑꯣꯔꯗꯔ",
+    "saved_prescriptions": "ꯊꯝꯖꯤꯜꯂꯕ ꯄ꯭ꯔꯤꯁ꯭ꯛꯔꯤꯄꯁꯟ",
+    "saved_addresses": "ꯊꯝꯖꯤꯜꯂꯕ ꯃꯐꯝ",
+    "consultations": "ꯇꯥꯟꯅꯕꯁꯤꯡ"
+  },
+  "sections": {
+    "recent_orders": "ꯍꯟꯗꯛꯀꯤ ꯑꯣꯔꯗꯔ",
+    "active_prescriptions": "ꯆꯠꯅꯔꯤꯕ ꯄ꯭ꯔꯤꯁ꯭ꯛꯔꯤꯄꯁꯟ",
+    "quick_reorder": "ꯊꯨꯅ ꯑꯃꯨꯛ ꯑꯣꯔꯗꯔ",
+    "family_profiles": "ꯏꯃꯨꯡꯒꯤ ꯃꯁꯛ"
+  },
+  "settings": {
+    "title": "ꯑꯦꯀꯥꯎꯟꯇ ꯁꯦꯇꯤꯡꯁ",
+    "profile_tab": "ꯃꯁꯛ ꯇꯥꯛꯄ",
+    "addresses_tab": "ꯊꯝꯖꯤꯜꯂꯕ ꯃꯐꯝ",
+    "security_tab": "ꯆꯦꯛꯁꯤꯟꯕ ꯑꯃꯁꯨꯡ ꯄꯥꯁꯋꯥꯔꯗ",
+    "language_tab": "ꯂꯣꯟ ꯑꯃꯁꯨꯡ ꯃꯐꯝ",
+    "notifications_tab": "ꯄꯥꯎꯇꯥꯛ",
+    "change_password": "ꯄꯥꯁꯋꯥꯔꯗ ꯁꯣꯡꯗꯣꯛꯎ",
+    "current_password": "ꯍꯧꯖꯤꯛꯀꯤ ꯄꯥꯁꯋꯥꯔꯗ",
+    "new_password": "ꯑꯅꯧꯕ ꯄꯥꯁꯋꯥꯔꯗ",
+    "confirm_new_password": "ꯑꯅꯧꯕ ꯄꯥꯁꯋꯥꯔꯗ ꯆꯨꯝꯃꯤ ꯍꯥꯌꯕꯤꯌꯨ",
+    "preferred_language": "ꯄꯥꯝꯖꯕ ꯂꯣꯟ",
+    "language_description": "ꯚꯥꯔꯠꯀꯤ ꯂꯣꯟ 22 ꯑꯃꯁꯨꯡ ꯏꯪꯂꯤꯁꯇꯒꯤ ꯈꯟꯕꯤꯌꯨ।",
+    "save_preferences": "ꯊꯝꯕꯤꯌꯨ"
+  }
+}

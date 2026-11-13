@@ -1,0 +1,30 @@
+{
+  "welcome": "फिन बरायबाय, {{name}}",
+  "overview": {
+    "active_orders": "सोलिबाय थानाय अर्डार",
+    "saved_prescriptions": "दोनथुमनाय प्रिस्क्रिपसन",
+    "saved_addresses": "दोनथुमनाय थं",
+    "consultations": "सावरायनायफोर"
+  },
+  "sections": {
+    "recent_orders": "दानाय अर्डार",
+    "active_prescriptions": "सोलिनाय प्रिस्क्रिपसन",
+    "quick_reorder": "गोख्रै फिन अर्डार",
+    "family_profiles": "नखर प्रफाइल"
+  },
+  "settings": {
+    "title": "खाता सेटिंफोर",
+    "profile_tab": "प्रफाइल विवरण",
+    "addresses_tab": "दोनथुमनाय थं",
+    "security_tab": "रैखाथि आरो पासवार्ड",
+    "language_tab": "राव आरो ओनसोल",
+    "notifications_tab": "सांग्रांथि",
+    "change_password": "पासवार्ड सोलाय",
+    "current_password": "दानि पासवार्ड",
+    "new_password": "गोदान पासवार्ड",
+    "confirm_new_password": "गोदान पासवार्ड थार खालाम",
+    "preferred_language": "मोजां मोननाय राव",
+    "language_description": "22 भारतिया राव आरो इंराजिनिफ्राय सायख'ना ला।",
+    "save_preferences": "दोनथुम"
+  }
+}

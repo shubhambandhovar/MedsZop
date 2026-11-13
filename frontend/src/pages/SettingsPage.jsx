@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
-import { ShieldCheck, User } from "lucide-react";
+import { ShieldCheck, User, Globe } from "lucide-react";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SettingsPage = () => {
+    const { t } = useTranslation(['dashboard', 'common']);
     const { token, user, fetchUser } = useAuth();
     const [profileForm, setProfileForm] = useState({
         name: user?.name || "",
@@ -192,6 +195,27 @@ const SettingsPage = () => {
                                 {loading ? "Saving..." : "Save Changes"}
                             </Button>
                         </form>
+                    </CardContent>
+                </Card>
+
+                {/* Language & Regional Preferences Card */}
+                <Card className="mt-6 rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-heading text-xl">
+                            <Globe className="w-5 h-5 text-primary" /> {t("dashboard:settings.language_tab")}
+                        </CardTitle>
+                        <CardDescription>
+                            {t("dashboard:settings.language_description")}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
+                            <div>
+                                <p className="font-semibold text-sm text-foreground">{t("dashboard:settings.preferred_language")}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">Switch dynamically across all 22 scheduled Indian languages and English.</p>
+                            </div>
+                            <LanguageSelector variant="navbar" />
+                        </div>
                     </CardContent>
                 </Card>
 

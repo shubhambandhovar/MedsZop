@@ -1,0 +1,30 @@
+{
+  "welcome": "फेर सँ स्वागत, {{name}}",
+  "overview": {
+    "active_orders": "सक्रिय अर्डर",
+    "saved_prescriptions": "सुरक्षित नुस्खा",
+    "saved_addresses": "सुरक्षित ठेगाना",
+    "consultations": "परामर्श सभ"
+  },
+  "sections": {
+    "recent_orders": "हालिया अर्डर",
+    "active_prescriptions": "सक्रिय नुस्खा",
+    "quick_reorder": "त्वरित पुनः-अर्डर",
+    "family_profiles": "पारिवारिक प्रोफाइल"
+  },
+  "settings": {
+    "title": "खाता सेटिंग्स",
+    "profile_tab": "प्रोफाइल विवरण",
+    "addresses_tab": "सुरक्षित ठेगाना",
+    "security_tab": "सुरक्षा आ पासवर्ड",
+    "language_tab": "भाषा आ क्षेत्र",
+    "notifications_tab": "सूचना सभ",
+    "change_password": "पासवर्ड बदलू",
+    "current_password": "वर्तमान पासवर्ड",
+    "new_password": "नव पासवर्ड",
+    "confirm_new_password": "नव पासवर्ड पुष्टि करू",
+    "preferred_language": "पसंदीदा भाषा",
+    "language_description": "22 भारतीय भाषा आ अंग्रेजी सँ चुनू।",
+    "save_preferences": "प्राथमिकता सुरक्षित करू"
+  }
+}

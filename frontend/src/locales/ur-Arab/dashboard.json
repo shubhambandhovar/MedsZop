@@ -1,0 +1,30 @@
+{
+  "welcome": "خوش آمدید، {{name}}",
+  "overview": {
+    "active_orders": "فعال آرڈرز",
+    "saved_prescriptions": "محفوظ کردہ نسخے",
+    "saved_addresses": "محفوظ پتے",
+    "consultations": "مشورے"
+  },
+  "sections": {
+    "recent_orders": "حالیہ آرڈرز",
+    "active_prescriptions": "فعال نسخے",
+    "quick_reorder": "فوری دوبارہ آرڈر",
+    "family_profiles": "خاندانی پروفائلز"
+  },
+  "settings": {
+    "title": "اکاؤنٹ کی ترتیبات",
+    "profile_tab": "پروفائل کی تفصیلات",
+    "addresses_tab": "محفوظ پتے",
+    "security_tab": "سیکیورٹی اور پاس ورڈ",
+    "language_tab": "زبان اور خطہ",
+    "notifications_tab": "اطلاعات",
+    "change_password": "پاس ورڈ تبدیل کریں",
+    "current_password": "موجودہ پاس ورڈ",
+    "new_password": "نیا پاس ورڈ",
+    "confirm_new_password": "نئے پاس ورڈ کی تصدیق کریں",
+    "preferred_language": "پسندیدہ زبان",
+    "language_description": "22 ہندوستانی زبانوں اور انگریزی میں سے انتخاب کریں۔",
+    "save_preferences": "ترجیحات محفوظ کریں"
+  }
+}

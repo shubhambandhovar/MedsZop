@@ -1,0 +1,49 @@
+{
+  "title": "दवाइ आ स्वास्थ्य सामग्री",
+  "subtitle": "लाइसेंस प्राप्त फार्मेसी सँ असली दवाइ आ स्वास्थ्य उत्पाद खोजू।",
+  "search_placeholder": "दवाइ, साल्ट वा ब्रान्ड खोजू...",
+  "filter_title": "फिल्टर सभ",
+  "categories_title": "श्रेणी सभ",
+  "sort_by": "क्रमबद्ध करू",
+  "sort_options": {
+    "relevance": "प्रासंगिकता",
+    "price_low_high": "मूल्य: कम सँ बेसी",
+    "price_high_low": "मूल्य: बेसी सँ कम",
+    "rating": "ग्राहक रेटिंग",
+    "popular": "लोकप्रियता"
+  },
+  "categories": {
+    "all": "सभ दवाइ",
+    "antibiotics": "एन्टीबायोटिक्स",
+    "cardiac": "हार्ट आ बीपी",
+    "diabetes": "मधुमेह देखरेख",
+    "pain_relief": "दर्द निवारक आ बुखार",
+    "respiratory": "सांस आ खोंखी",
+    "vitamins": "विटामिन आ सप्लीमेन्ट",
+    "gastro": "पाचन स्वास्थ्य",
+    "skin_care": "चर्म रोग",
+    "ayurveda": "आयुर्वेदिक देखरेख"
+  },
+  "medicine_card": {
+    "rx_needed": "नुस्खा आवश्यक",
+    "composition": "रचना",
+    "manufacturer": "निर्माता",
+    "mrp": "अधिकतम खुदरा मूल्य",
+    "add_to_cart": "झोलीमे जोड़ू",
+    "adding": "जोड़ल जा रहल अछि...",
+    "in_cart": "झोलीमे अछि",
+    "out_of_stock": "समाप्त"
+  },
+  "detail": {
+    "dosage_form": "खुराक रूप",
+    "packaging": "पैकेजिंग",
+    "salt_composition": "सक्रिय घटक / रचना",
+    "manufacturer_name": "उत्पादक कम्पनी",
+    "prescription_notice": "ई दवाइ किनबाक लेल पंजीकृत डाक्टरक वैध नुस्खा अनिवार्य अछि।",
+    "how_to_use": "उपयोगक विधि",
+    "side_effects": "सामान्य साइड इफेक्ट",
+    "safety_advice": "सुरक्षा सलाह",
+    "storage_instructions": "भण्डारण निर्देश",
+    "disclaimer": "प्रदान कएल गेल जानकारी केवल शैक्षिक उद्देश्यक लेल अछि। कोनो दवाइ लेबा सँ पूर्व डाक्टर सँ परामर्श लिय'।"
+  }
+}

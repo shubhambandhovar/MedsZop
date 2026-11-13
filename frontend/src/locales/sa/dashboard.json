@@ -1,0 +1,30 @@
+{
+  "welcome": "पुनरागमनेन स्वागतम्, {{name}}",
+  "overview": {
+    "active_orders": "सक्रियाः आदेशाः",
+    "saved_prescriptions": "सुरक्षितानि व्यवस्थापत्राणि",
+    "saved_addresses": "सुरक्षिताः सङ्केताः",
+    "consultations": "परामर्शाः"
+  },
+  "sections": {
+    "recent_orders": "सद्यस्तनाः आदेशाः",
+    "active_prescriptions": "सक्रियाणि व्यवस्थापत्राणि",
+    "quick_reorder": "शीघ्र-पुनरादेशः",
+    "family_profiles": "कौटुम्बिक-विवरणम्"
+  },
+  "settings": {
+    "title": "खाता-विन्यासाः",
+    "profile_tab": "व्यक्तिगत-विवरणम्",
+    "addresses_tab": "सुरक्षिताः सङ्केताः",
+    "security_tab": "सुरक्षा कूटशब्दश्च",
+    "language_tab": "भाषा प्रदेशश्च",
+    "notifications_tab": "सूचनाः",
+    "change_password": "कूटशब्दं परिवर्तयतु",
+    "current_password": "वर्तमानः कूटशब्दः",
+    "new_password": "नवीनः कूटशब्दः",
+    "confirm_new_password": "नवीनं कूटशब्दं दृढीकुर्वन्तु",
+    "preferred_language": "अभीष्टा भाषा",
+    "language_description": "22 भारतीय-भाषाभ्यः आङ्ग्लभाषायाश्च वृणुवन्तु।",
+    "save_preferences": "प्राथमिकताः संरक्षन्तु"
+  }
+}

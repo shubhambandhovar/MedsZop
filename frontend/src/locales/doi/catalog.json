@@ -1,0 +1,49 @@
+{
+  "title": "दवाइयां ते सेहत दियां चीजां",
+  "subtitle": "लाइसेंसी फार्मेसियें थमां खरी दवाइयां ते सेहत दियां चीजां खोजो।",
+  "search_placeholder": "दवाई, घटक जां ब्राण्ड खोजो...",
+  "filter_title": "फिल्टर",
+  "categories_title": "श्रेणियां",
+  "sort_by": "क्रम",
+  "sort_options": {
+    "relevance": "मुताबिक",
+    "price_low_high": "मोल: घट्ट थमां बद्ध",
+    "price_high_low": "मोल: बद्ध थमां घट्ट",
+    "rating": "ग्राहक रेटिंग",
+    "popular": "मशहूर"
+  },
+  "categories": {
+    "all": "सारियां दवाइयां",
+    "antibiotics": "एंटीबायोटिक्स",
+    "cardiac": "दिल ते बीपी",
+    "diabetes": "शुगर सम्हाल",
+    "pain_relief": "पीड़ा नाशक ते ताप्प",
+    "respiratory": "साह ते खंघ",
+    "vitamins": "विटामिन ते सप्लीमेंट",
+    "gastro": "पाचन सेहत",
+    "skin_care": "चमड़ी सम्हाल",
+    "ayurveda": "आयुर्वेदिक सम्हाल"
+  },
+  "medicine_card": {
+    "rx_needed": "नुस्खा जरूरी",
+    "composition": "घटक",
+    "manufacturer": "बनाने आला",
+    "mrp": "बद्धो-बद्ध फुटकर मोल",
+    "add_to_cart": "झोली च पाओ",
+    "adding": "पैंदा पेआ ऐ...",
+    "in_cart": "झोली च ऐ",
+    "out_of_stock": "मुक्की गेआ"
+  },
+  "detail": {
+    "dosage_form": "खुराक रूप",
+    "packaging": "पैकिंग",
+    "salt_composition": "सक्रिय साल्ट / बनावट",
+    "manufacturer_name": "कंपनी दा नां",
+    "prescription_notice": "एह दवाई लैने लेई डाक्टर दा सही नुस्खा जरूरी ऐ।",
+    "how_to_use": "इस्तेमाल दा तरीका",
+    "side_effects": "आम बुरे असर",
+    "safety_advice": "सुरक्षा सलाह",
+    "storage_instructions": "रक्खने दियां हिदायतां",
+    "disclaimer": "दित्ती गेदी जानकारी सिर्फ सिखने लेई ऐ। दवाई शुरू करने थमां पैह् ले डाक्टर कन्नै सलाह करो।"
+  }
+}

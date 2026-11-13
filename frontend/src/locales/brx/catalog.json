@@ -1,0 +1,49 @@
+{
+  "title": "मुलै आरो देहा फाहामथाय बेसादफोर",
+  "subtitle": "गनायथि मोननाय फार्मेसिनिफ्राय थार मुलै आरो देहानि मुवाफोर नायगिर।",
+  "search_placeholder": "मुलै, मुवा एबा ब्रान्ड नायगिर...",
+  "filter_title": "फिल्टार",
+  "categories_title": "थाखोफोर",
+  "sort_by": "सारि खालाम",
+  "sort_options": {
+    "relevance": "गोरोबनाय",
+    "price_low_high": "बेसेन: खमनिफ्राय बांसिन",
+    "price_high_low": "बेसेन: बांसिननिफ्राय खम",
+    "rating": "बाहायग्रानि मान",
+    "popular": "मख'जाथाव"
+  },
+  "categories": {
+    "all": "गासै मुलैफोर",
+    "antibiotics": "एन्टिबायतिक्स",
+    "cardiac": "बिथ' आरो बिपि",
+    "diabetes": "सुगार जथोन",
+    "pain_relief": "सानाय आरो बेराम",
+    "respiratory": "हां लानाय आरो खुसलि",
+    "vitamins": "भिटामिन आरो सप्लिमेन्ट्स",
+    "gastro": "उदै जथोन",
+    "skin_care": "बिगुर जथोन",
+    "ayurveda": "आयुरबेदिक जथोन"
+  },
+  "medicine_card": {
+    "rx_needed": "प्रिस्क्रिपसन नांगौ",
+    "composition": "मुवा",
+    "manufacturer": "बानायग्रा",
+    "mrp": "बांसिन बेसेन",
+    "add_to_cart": "थलियाव सोदोप",
+    "adding": "सोदोपबाय थादों...",
+    "in_cart": "थलियाव दं",
+    "out_of_stock": "गैलिया"
+  },
+  "detail": {
+    "dosage_form": "डोज मोहर",
+    "packaging": "प्याकेजिं",
+    "salt_composition": "गाहाय मुवा / रड",
+    "manufacturer_name": "कम्पानि",
+    "prescription_notice": "बे मुलैखौ बायनो डाक्टरनि थार प्रिस्क्रिपसन नांगौ।",
+    "how_to_use": "बाहायनाय खान्थि",
+    "side_effects": "सरासनस्रा खहा",
+    "safety_advice": "रैखाथि बुद्धि",
+    "storage_instructions": "दोनथुमनाय नेम",
+    "disclaimer": "बे लिरनाया फरायनायनि थाखायसो। मुलै लानो सिगां डाक्टरजों सावराय।"
+  }
+}

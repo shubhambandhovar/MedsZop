@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "दवाइयां",
+    "scan_prescription": "नुस्खा स्कैन करो",
+    "ai_doctor": "AI डाक्टर",
+    "consult_doctor": "डाक्टर कन्नै सलाह",
+    "dashboard": "डैशबोर्ड",
+    "my_orders": "मेरे आर्डर",
+    "settings": "सेटिंग्स",
+    "log_out": "लाग आउट",
+    "log_in": "लाग इन",
+    "get_started": "शुरू करो",
+    "cart": "झोली",
+    "profile": "प्रोफाइल",
+    "upload_rx": "नुस्खा अपलोड"
+  },
+  "actions": {
+    "save": "बदलाव संजोओ",
+    "cancel": "रद्द करो",
+    "submit": "पेस करो",
+    "confirm": "पक्का करो",
+    "continue": "जारी रक्खो",
+    "back": "पिच्छे",
+    "close": "बंद करो",
+    "delete": "हटाओ",
+    "edit": "सुधारो",
+    "view_all": "सब्ब देखो",
+    "retry": "मुड़ कोशिश करो",
+    "search": "खोजो",
+    "apply": "लागू करो",
+    "clear_all": "सब्ब साफ़ करो"
+  },
+  "badges": {
+    "rx_required": "नुस्खा जरूरी ऐ",
+    "in_stock": "स्टाक च ऐ",
+    "out_of_stock": "मुक्की गेआ",
+    "verified_pharmacy": "प्रमाणित फार्मेसी",
+    "genuine": "100% असली",
+    "fast_delivery": "पहलो डिलीवरी",
+    "cold_chain": "तापमान काबू च"
+  },
+  "footer": {
+    "tagline": "भारत दा भरोसेमंद डिजिटल सेहत साथी — लाइसेंसी फार्मेसियें ते मरीनें गी तेज़ी, सुरक्षा ते सम्हाल कन्नै जोड़दा ऐ।",
+    "quick_links": "झटपट लिंक",
+    "specialist_portals": "साझेदार पोर्टल",
+    "pharmacy_login": "फार्मेसी पोर्टल",
+    "doctor_login": "डाक्टर पोर्टल",
+    "delivery_login": "डिलीवरी फ्लीट",
+    "admin_login": "प्रशासक",
+    "help_support": "मदद ते समर्थन",
+    "faqs": "अकसर पुच्छे गेदे सवाल",
+    "privacy_policy": "गोपनीयता नीति",
+    "terms_conditions": "नियम ते शर्तें",
+    "refund_policy": "रिफंड नीति",
+    "contact_us": "सम्पर्क करो",
+    "emergency_notice": "एमरजेंसी लेई तुरत नेड़े दे हस्पताल जाओ जां 112 पर फोन करो।",
+    "all_rights_reserved": "सारे हक महफूज न।",
+    "legal_disclaimer": "MedsZop ड्रग्स एंड कास्मेटिक्स कानून दे नियमें तहत लाइसेंसी फार्मेसियें कन्नै मरीनें गी जोड़दा ऐ।"
+  },
+  "language_selector": {
+    "label": "बोली",
+    "select_language": "बोली चुनो",
+    "search_placeholder": "बोली जां लिपि खोजो...",
+    "scheduled_languages": "22 संवैधानिक भारतीय बोलियां",
+    "core_languages": "मुख बोलियां",
+    "all_languages": "सारियां बोलियां",
+    "active": "चालू",
+    "switch_success": "बोली सफलतापूर्वक बदली गेई",
+    "rtl_notice": "सज्जे थमां खब्बे लिपि च बदल्या गेआ"
+  },
+  "toasts": {
+    "success": "कम सफलतापूर्वक होई गेआ",
+    "error": "कोई गलती होई गेई। मुड़ कोशिश करो।",
+    "network_error": "नेटवर्क खराबी। इंटरनेट चेक करो।",
+    "session_expired": "समां मुक्की गेआ। परतिए लाग इन करो।"
+  }
+}

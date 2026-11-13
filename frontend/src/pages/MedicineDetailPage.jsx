@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -26,6 +27,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const MedicineDetailPage = () => {
+  const { t } = useTranslation(['catalog', 'common']);
   const { id } = useParams();
   const navigate = useNavigate();
   const [medicine, setMedicine] = useState(null);
@@ -112,7 +114,7 @@ const MedicineDetailPage = () => {
             aria-label="Return to previous page"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Medicines
+            {t("detail.back_to_medicines", "Back to Medicines")}
           </Button>
         </div>
 
@@ -130,7 +132,7 @@ const MedicineDetailPage = () => {
                 {medicine.requires_prescription && (
                   <Badge className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-amber-500 hover:bg-amber-600 text-white shadow-sm text-xs font-semibold px-3 py-1">
                     <AlertTriangle className="h-3.5 w-3.5 mr-1" />
-                    Prescription Required
+                    {t("medicine_card.rx_needed", "Prescription Required")}
                   </Badge>
                 )}
                 {discount > 0 && (
@@ -183,7 +185,7 @@ const MedicineDetailPage = () => {
 
             {/* Quantity Stepper */}
             <div className="flex items-center gap-4 sm:gap-6 py-2">
-              <span className="text-sm font-semibold text-foreground">Quantity:</span>
+              <span className="text-sm font-semibold text-foreground">{t("detail.quantity", "Quantity")}:</span>
               <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                 <Button
                   variant="ghost"
@@ -222,7 +224,9 @@ const MedicineDetailPage = () => {
                 data-testid="add-to-cart-btn"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {medicine.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                {medicine.stock === 0
+                  ? t("medicine_card.out_of_stock", "Out of Stock")
+                  : (addingToCart ? t("medicine_card.adding", "Adding...") : t("medicine_card.add_to_cart", "Add to Cart"))}
               </Button>
               <Link to="/cart" className="flex-1">
                 <Button
@@ -230,7 +234,7 @@ const MedicineDetailPage = () => {
                   variant="outline"
                   className="w-full h-12 sm:h-14 rounded-xl text-sm sm:text-base font-semibold border-slate-200 dark:border-slate-700 hover:border-primary/50"
                 >
-                  Go to Cart
+                  {t("detail.view_cart", "Go to Cart")}
                 </Button>
               </Link>
             </div>

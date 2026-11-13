@@ -1,0 +1,40 @@
+{
+  "title": "منهنجا آرڊر",
+  "subtitle": "هلندڙ آرڊر ٽريڪ ڪريو ۽ پراڻي تاريخ ڏسو.",
+  "empty_title": "ڪوبه آرڊر نه مليو",
+  "empty_desc": "توهان اڃا تائين ڪا به دوا آرڊر ناهي ڪئي.",
+  "start_shopping": "دوائون ڳوليو",
+  "order_number": "آرڊر #{{id}}",
+  "placed_on": "{{date}} تي ڏنو ويو",
+  "status": {
+    "pending": "آرڊر مليو",
+    "confirmed": "فارميسي منظور ڪيو",
+    "preparing": "پيڪ ٿي رهيو آهي",
+    "out_for_delivery": "پهچ لاءِ نڪتو",
+    "delivered": "پهچي ويو",
+    "cancelled": "رد ٿيو"
+  },
+  "actions": {
+    "track": "ٽريڪ ڪريو",
+    "view_details": "تفصيل ڏسو",
+    "download_invoice": "بل ڊائون لوڊ",
+    "reorder": "ٻيهر آرڊر",
+    "cancel_order": "آرڊر رد ڪريو"
+  },
+  "tracking": {
+    "title": "لائيو پهچ ٽريڪنگ",
+    "est_arrival": "پهچڻ جو وقت",
+    "delivery_partner": "پهچائيندڙ ساٿي",
+    "call_partner": "ڪال ڪريو",
+    "delivery_otp": "پهچ تصديق پن",
+    "delivery_otp_desc": "پهچڻ تي هي 4-انگن وارو ڪوڊ پهچائيندڙ کي ٻڌايو",
+    "timeline": {
+      "placed": "آرڊر مڃيو ويو",
+      "verified": "ڪيمسٽ نسخو چيڪ ڪيو",
+      "packed": "سيل پيڪنگ مڪمل",
+      "picked_up": "پهچائيندڙ حوالي ٿيو",
+      "delivered": "ڪاميابي سان پهچي ويو"
+    },
+    "map_placeholder": "لائيو جي پي ايس ٽريڪنگ چالو آهي"
+  }
+}

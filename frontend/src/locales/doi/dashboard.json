@@ -1,0 +1,30 @@
+{
+  "welcome": "तुंदा स्वागत ऐ, {{name}}",
+  "overview": {
+    "active_orders": "चलदे आर्डर",
+    "saved_prescriptions": "सांभे दे नुस्खे",
+    "saved_addresses": "सांभे दे पते",
+    "consultations": "सलाह"
+  },
+  "sections": {
+    "recent_orders": "हाल दे आर्डर",
+    "active_prescriptions": "चालू नुस्खे",
+    "quick_reorder": "झटपट मुड़ आर्डर",
+    "family_profiles": "परिवार प्रोफाइल"
+  },
+  "settings": {
+    "title": "खाता सेटिंग्स",
+    "profile_tab": "प्रोफाइल हाल",
+    "addresses_tab": "सांभे दे पते",
+    "security_tab": "सुरक्षा ते पासवर्ड",
+    "language_tab": "बोली ते इलाका",
+    "notifications_tab": "होशियारी",
+    "change_password": "पासवर्ड बदलो",
+    "current_password": "हुण दा पासवर्ड",
+    "new_password": "नवा पासवर्ड",
+    "confirm_new_password": "नवा पासवर्ड पक्का करो",
+    "preferred_language": "पसंदीदा बोली",
+    "language_description": "22 भारतीय बोलियां ते अंग्रेजी च चुनो।",
+    "save_preferences": "पसंदीदा संजोओ"
+  }
+}

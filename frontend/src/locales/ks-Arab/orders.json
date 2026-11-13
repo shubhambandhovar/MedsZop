@@ -1,0 +1,40 @@
+{
+  "title": "مےٚأنی آرڈَر",
+  "subtitle": "حالِیَہ تَرسِیل ٹریک کٔرِو تہٕ پُرٲنؠ آرڈَر وُچھِو۔",
+  "empty_title": "کانٛہہ آرڈَر مِلیو نَہ",
+  "empty_desc": "تُہؠ چِھونہٕ اَز تام کانٛہہ دَوا آرڈَر کٔرمٕژ۔",
+  "start_shopping": "دَوا تَلاش کٔرِو",
+  "order_number": "آرڈَر #{{id}}",
+  "placed_on": "{{date}} پؠٹھ دِتمُت",
+  "status": {
+    "pending": "آرڈَر مِلیو",
+    "confirmed": "فارمیسی تَصدیق",
+    "preparing": "دَوا پؠک گَژھان",
+    "out_for_delivery": "تَرسِیل نؠریو",
+    "delivered": "پُہنچی گۆو",
+    "cancelled": "مَنسوخ"
+  },
+  "actions": {
+    "track": "ٹریک کٔرِو",
+    "view_details": "تَفصیٖل وُچھِو",
+    "download_invoice": "بِل ڈاوُنلوڈ",
+    "reorder": "دوبارٕ آرڈَر",
+    "cancel_order": "آرڈَر مَنسوخ"
+  },
+  "tracking": {
+    "title": "لائیو تَرسِیل ٹریکِنگ",
+    "est_arrival": "پُہنچنُک وَقٕت",
+    "delivery_partner": "تَرسِیل کَرَن وول",
+    "call_partner": "فون کٔرِو",
+    "delivery_otp": "تَرسِیل پِن",
+    "delivery_otp_desc": "پُہنچنہٕ پؠٹھ یہِ 4-ہِندسَن ہُند کوڈ دِیو",
+    "timeline": {
+      "placed": "آرڈَر مِلیو",
+      "verified": "نُسخہٕ جانچُم",
+      "packed": "سیٖل بَند پؠکِٹ مُکَمَل",
+      "picked_up": "تَرسِیل کارَس دِژمُژ",
+      "delivered": "کامیابی سان پُہت"
+    },
+    "map_placeholder": "لائیو جی پی ایس ٹریکِنگ چالو"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "welcome": "परत येवकार, {{name}}",
+  "overview": {
+    "active_orders": "चालू ऑर्डर्स",
+    "saved_prescriptions": "सांबाळिल्लीं प्रिस्क्रिप्शनां",
+    "saved_addresses": "सांबाळिल्ले पत्ते",
+    "consultations": "सल्ले"
+  },
+  "sections": {
+    "recent_orders": "हालींचे ऑर्डर्स",
+    "active_prescriptions": "सक्रिय प्रिस्क्रिप्शनां",
+    "quick_reorder": "रोखडी परत अर्डर",
+    "family_profiles": "कुटुंब प्रोफाइल"
+  },
+  "settings": {
+    "title": "खातें मांडणी",
+    "profile_tab": "प्रोफाइल तपशील",
+    "addresses_tab": "सांबाळिल्ले पत्ते",
+    "security_tab": "सुरक्षा आनी पासवर्ड",
+    "language_tab": "भास आनी वाठार",
+    "notifications_tab": "शिटकावण्यो",
+    "change_password": "पासवर्ड बदलात",
+    "current_password": "सध्याचो पासवर्ड",
+    "new_password": "नवो पासवर्ड",
+    "confirm_new_password": "नवो पासवर्ड निश्चीत करात",
+    "preferred_language": "पसंतीची भास",
+    "language_description": "22 भारतीय भासो आनी इंग्लीश हातूंतल्यान वेचात.",
+    "save_preferences": "पसंती सांबाळात"
+  }
+}

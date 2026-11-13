@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "medicines": "દવાઓ",
+    "scan_prescription": "પ્રિસ્ક્રિપ્શન સ્કેન",
+    "ai_doctor": "AI ડૉક્ટર",
+    "consult_doctor": "ડૉક્ટરની સલાહ",
+    "dashboard": "ડેશબોર્ડ",
+    "my_orders": "મારા ઓર્ડર",
+    "settings": "સેટિંગ્સ",
+    "log_out": "લૉગ આઉટ",
+    "log_in": "લૉગ ઇન",
+    "get_started": "શરૂ કરો",
+    "cart": "કાર્ટ",
+    "profile": "પ્રોફાઇલ",
+    "upload_rx": "પ્રિસ્ક્રિપ્શન અપલોડ"
+  },
+  "actions": {
+    "save": "ફેરફારો સાચવો",
+    "cancel": "રદ કરો",
+    "submit": "સબમિટ કરો",
+    "confirm": "ખાતરી કરો",
+    "continue": "ચાલુ રાખો",
+    "back": "પાછા જાઓ",
+    "close": "બંધ કરો",
+    "delete": "કાઢી નાખો",
+    "edit": "સંપાદિત કરો",
+    "view_all": "બધા જુઓ",
+    "retry": "ફરી પ્રયાસ કરો",
+    "search": "શોધો",
+    "apply": "લાગુ કરો",
+    "clear_all": "બધું સાફ કરો"
+  },
+  "badges": {
+    "rx_required": "પ્રિસ્ક્રિપ્શન જરૂરી",
+    "in_stock": "સ્ટોકમાં ઉપલબ્ધ",
+    "out_of_stock": "સ્ટોક બહાર",
+    "verified_pharmacy": "પ્રમાણિત ફાર્મસી",
+    "genuine": "100% અસલ",
+    "fast_delivery": "અગ્રતા વિતરણ",
+    "cold_chain": "તાપમાન નિયંત્રિત"
+  },
+  "footer": {
+    "tagline": "ભારતનો વિશ્વસનીય ડિજિટલ હેલ્થકેર સાથી — લાયસન્સ પ્રાપ્ત સ્થાનિક ફાર્મસીઓ અને દર્દીઓને ઝડપ, સુરક્ષા અને કાળજી સાથે જોડે છે.",
+    "quick_links": "ઝડપી લિંક્સ",
+    "specialist_portals": "પાર્ટનર પોર્ટલ",
+    "pharmacy_login": "ફાર્મસી પોર્ટલ",
+    "doctor_login": "ડૉક્ટર પોર્ટલ",
+    "delivery_login": "ડિલિવરી ફ્લીટ",
+    "admin_login": "એડમિનિસ્ટ્રેટર",
+    "help_support": "મદદ અને સપોર્ટ",
+    "faqs": "વારંવાર પૂછાતા પ્રશ્નો",
+    "privacy_policy": "ગોપનીયતા નીતિ",
+    "terms_conditions": "નિયમો અને શરતો",
+    "refund_policy": "રિફંડ નીતિ",
+    "contact_us": "સપોર્ટનો સંપર્ક કરો",
+    "emergency_notice": "તબીબી કટોકટી માટે તરત નજીકની હોસ્પિટલ જાઓ અથવા 112 પર કૉલ કરો.",
+    "all_rights_reserved": "સર્વાધિકાર સુરક્ષિત.",
+    "legal_disclaimer": "MedsZop ડ્રગ્સ એન્ડ કોસ્મેટિક્સ એક્ટનું પાલન કરતી લાયસન્સ ધરાવતી ફાર્મસીઓ સાથે દર્દીઓને જોડે છે."
+  },
+  "language_selector": {
+    "label": "ભાષા",
+    "select_language": "ભાષા પસંદ કરો",
+    "search_placeholder": "ભાષા અથવા લિપિ શોધો...",
+    "scheduled_languages": "22 સત્તાવાર ભારતીય ભાષાઓ",
+    "core_languages": "લોકપ્રિય ભાષાઓ",
+    "all_languages": "તમામ ભાષાઓ",
+    "active": "સક્રિય",
+    "switch_success": "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ",
+    "rtl_notice": "જમણેથી ડાબે લિપિમાં બદલાયું"
+  },
+  "toasts": {
+    "success": "કાર્ય સફળતાપૂર્વક પૂર્ણ થયું",
+    "error": "ભૂલ આવી. કૃપા કરીને ફરી પ્રયાસ કરો.",
+    "network_error": "નેટવર્ક ભૂલ. ઇન્ટરનેટ કનેક્શન તપાસો.",
+    "session_expired": "સત્ર સમાપ્ત. કૃપા કરીને ફરી લૉગ ઇન કરો."
+  }
+}

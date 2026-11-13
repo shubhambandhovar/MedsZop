@@ -1,0 +1,30 @@
+{
+  "welcome": "തിരികെ സ്വാഗതം, {{name}}",
+  "overview": {
+    "active_orders": "നിലവിലെ ഓർഡറുകൾ",
+    "saved_prescriptions": "സൂക്ഷിച്ച പ്രിസ്ക്രിപ്ഷനുകൾ",
+    "saved_addresses": "സൂക്ഷിച്ച വിലാസങ്ങൾ",
+    "consultations": "കൺസൾട്ടേഷനുകൾ"
+  },
+  "sections": {
+    "recent_orders": "സമീപകാല ഓർഡറുകൾ",
+    "active_prescriptions": "നിലവിലെ പ്രിസ്ക്രിപ്ഷനുകൾ",
+    "quick_reorder": "വേഗത്തിലുള്ള റീ-ഓർഡർ",
+    "family_profiles": "കുടുംബ പ്രൊഫൈലുകൾ"
+  },
+  "settings": {
+    "title": "അക്കൗണ്ട് ക്രമീകരണങ്ങൾ",
+    "profile_tab": "പ്രൊഫൈൽ വിവരങ്ങൾ",
+    "addresses_tab": "സൂക്ഷിച്ച വിലാസങ്ങൾ",
+    "security_tab": "സുരക്ഷ & പാസ്‌വേഡ്",
+    "language_tab": "ഭാഷ & പ്രദേശം",
+    "notifications_tab": "അറിയിപ്പുകൾ",
+    "change_password": "പാസ്‌വേഡ് മാറ്റുക",
+    "current_password": "നിലവിലെ പാസ്‌വേഡ്",
+    "new_password": "പുതിയ പാസ്‌വേഡ്",
+    "confirm_new_password": "പുതിയ പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക",
+    "preferred_language": "തിരഞ്ഞെടുത്ത ഭാഷ",
+    "language_description": "22 ഇന്ത്യൻ ഭാഷകളിൽ നിന്നും ഇംഗ്ലീഷിൽ നിന്നും തിരഞ്ഞെടുക്കുക.",
+    "save_preferences": "സംരക്ഷിക്കുക"
+  }
+}

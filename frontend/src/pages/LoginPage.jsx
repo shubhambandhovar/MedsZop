@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../contexts/AuthContext";
+import { LanguageSelector } from "../components/LanguageSelector";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -27,6 +29,7 @@ import {
 import { toast } from "sonner";
 
 const LoginPage = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -265,8 +268,20 @@ const LoginPage = () => {
 
       {/* ================= RIGHT FORM PANEL ================= */}
       <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-[100dvh] lg:min-h-0 lg:h-full flex flex-col justify-between p-6 sm:p-8 lg:px-8 lg:py-6 xl:px-12 xl:py-8 relative overflow-y-auto">
+        {/* Desktop Top Bar */}
+        <div className="hidden lg:flex items-center justify-between w-full mb-1">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("common:actions.back")}
+          </Link>
+          <LanguageSelector variant="navbar" />
+        </div>
+
         {/* Mobile & Tablet Header */}
-        <div className="flex items-center justify-between w-full lg:hidden mb-6">
+        <div className="flex items-center justify-between w-full lg:hidden mb-4">
           <Link to="/" className="inline-block">
             <img
               src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
@@ -275,13 +290,16 @@ const LoginPage = () => {
             />
           </Link>
 
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Back
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSelector variant="navbar" />
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("common:actions.back")}
+            </Link>
+          </div>
         </div>
 
         {/* Form Container (Optimal measure ~420px for readability) */}
@@ -298,10 +316,10 @@ const LoginPage = () => {
                 MedsZop Care Identity
               </div>
               <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                Welcome back
+                {t("auth:login.title")}
               </h2>
               <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                Sign in to manage your prescriptions, track orders, and consult doctors.
+                {t("auth:login.subtitle")}
               </p>
             </div>
 
@@ -311,7 +329,7 @@ const LoginPage = () => {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="email" className="text-xs font-semibold text-foreground">
-                    Email Address
+                    {t("auth:login.email_label")}
                   </Label>
                   {isEmailValid && emailTouched && (
                     <span className="inline-flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -372,7 +390,7 @@ const LoginPage = () => {
               {/* PASSWORD FIELD */}
               <div className="space-y-1.5">
                 <Label htmlFor="password" className="text-xs font-semibold text-foreground">
-                  Password
+                  {t("auth:login.password_label")}
                 </Label>
 
                 <div className="relative">
@@ -433,7 +451,7 @@ const LoginPage = () => {
                 {capsLockOn && (
                   <p className="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1 animate-in fade-in-50 slide-in-from-top-1 duration-150">
                     <ArrowUpSquare className="h-3.5 w-3.5" aria-hidden="true" />
-                    Caps Lock is ON
+                    {t("auth:login.caps_lock_on")}
                   </p>
                 )}
                 {passwordError && (
@@ -453,7 +471,7 @@ const LoginPage = () => {
                     to="/forgot-password"
                     className="text-xs font-semibold text-[#046A47] dark:text-[#34D399] hover:underline focus-visible:outline-none focus-visible:underline py-0.5 inline-block transition-colors"
                   >
-                    Forgot password?
+                    {t("auth:login.forgot_password")}
                   </Link>
                 </div>
               </div>
@@ -468,10 +486,10 @@ const LoginPage = () => {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
-                    Signing In...
+                    {t("auth:login.signing_in")}
                   </>
                 ) : (
-                  "Sign In to MedsZop"
+                  t("auth:login.sign_in_btn")
                 )}
               </Button>
             </form>
@@ -483,7 +501,7 @@ const LoginPage = () => {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-[#FAFBF9] dark:bg-[#080E0B] px-3 text-muted-foreground font-medium tracking-wider">
-                  Or continue with
+                  {t("auth:login.or_continue_with")}
                 </span>
               </div>
             </div>
@@ -504,13 +522,13 @@ const LoginPage = () => {
             {/* Create Account Link Footer */}
             <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
               <p className="text-sm text-muted-foreground">
-                Don&apos;t have a MedsZop account?{" "}
+                {t("login.no_account", "Don't have a MedsZop account?")}{" "}
                 <Link
                   to="/register"
-                  className="text-[#046A47] dark:text-[#34D399] font-semibold hover:underline focus-visible:outline-none focus-visible:underline"
+                  className="text-[#046A47] dark:text-[#34D399] font-semibold hover:underline focus-visible:outline-none focus-visible:underline ml-1"
                   data-testid="register-link"
                 >
-                  Create free account
+                  {t("login.create_account", "Create account")}
                 </Link>
               </p>
             </div>

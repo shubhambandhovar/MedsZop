@@ -1,0 +1,30 @@
+{
+  "welcome": "ڀلي ڪري آيا، {{name}}",
+  "overview": {
+    "active_orders": "هلندڙ آرڊر",
+    "saved_prescriptions": "محفوظ نسخا",
+    "saved_addresses": "محفوظ پتا",
+    "consultations": "مشورا"
+  },
+  "sections": {
+    "recent_orders": "تازا آرڊر",
+    "active_prescriptions": "هلندڙ نسخا",
+    "quick_reorder": "تيز ٻيهر آرڊر",
+    "family_profiles": "خانداني پروفائل"
+  },
+  "settings": {
+    "title": "کاتي جون ترتيبون",
+    "profile_tab": "پروفائل تفصيل",
+    "addresses_tab": "محفوظ پتا",
+    "security_tab": "حفاظت ۽ پاس ورڊ",
+    "language_tab": "ٻولي ۽ علائقو",
+    "notifications_tab": "اطلاع",
+    "change_password": "پاس ورڊ مٽايو",
+    "current_password": "موجوده پاس ورڊ",
+    "new_password": "نئون پاس ورڊ",
+    "confirm_new_password": "نئون پاس ورڊ پڪ ڪريو",
+    "preferred_language": "پسنديده ٻولي",
+    "language_description": "22 هندوستاني ٻولين ۽ انگريزي مان چونڊيو.",
+    "save_preferences": "محفوظ ڪريو"
+  }
+}

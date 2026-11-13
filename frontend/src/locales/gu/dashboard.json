@@ -1,0 +1,30 @@
+{
+  "welcome": "પાછા ફરવા બદલ સ્વાગત છે, {{name}}",
+  "overview": {
+    "active_orders": "સક્રિય ઓર્ડર",
+    "saved_prescriptions": "સાચવેલા પ્રિસ્ક્રિપ્શન",
+    "saved_addresses": "સાચવેલા સરનામા",
+    "consultations": "પરામર્શ"
+  },
+  "sections": {
+    "recent_orders": "તાજેતરના ઓર્ડર",
+    "active_prescriptions": "સક્રિય પ્રિસ્ક્રિપ્શન",
+    "quick_reorder": "ઝડપી પુનઃ ઓર્ડર",
+    "family_profiles": "કૌટુંબિક પ્રોફાઇલ"
+  },
+  "settings": {
+    "title": "એકાઉન્ટ સેટિંગ્સ",
+    "profile_tab": "પ્રોફાઇલ વિગતો",
+    "addresses_tab": "સાચવેલા સરનામા",
+    "security_tab": "સુરક્ષા અને પાસવર્ડ",
+    "language_tab": "ભાષા અને પ્રદેશ",
+    "notifications_tab": "સૂચનાઓ",
+    "change_password": "પાસવર્ડ બદલો",
+    "current_password": "વર્તમાન પાસવર્ડ",
+    "new_password": "નવો પાસવર્ડ",
+    "confirm_new_password": "નવા પાસવર્ડની પુષ્ટિ કરો",
+    "preferred_language": "પસંદગીની ભાષા",
+    "language_description": "22 ભારતીય ભાષાઓ અને અંગ્રેજીમાંથી પસંદ કરો.",
+    "save_preferences": "પસંદગીઓ સાચવો"
+  }
+}

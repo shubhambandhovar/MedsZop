@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -36,6 +37,7 @@ import { useAuth } from "../contexts/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const OrdersPage = () => {
+  const { t } = useTranslation(['orders', 'common']);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -185,10 +187,10 @@ const OrdersPage = () => {
               data-testid="orders-title"
             >
               <Package className="h-7 w-7 text-primary" aria-hidden="true" />
-              My Orders & Refills
+              {t("orders:title")}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Track live deliveries, review digital prescriptions, and re-order verified medications.
+              {t("orders:subtitle")}
             </p>
           </div>
 
@@ -196,13 +198,13 @@ const OrdersPage = () => {
             <Link to="/prescription-scan">
               <Button variant="outline" className="rounded-xl font-semibold active-press text-xs sm:text-sm h-10 px-4">
                 <ScanLine className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                Scan Rx
+                {t("common:nav.scan_prescription")}
               </Button>
             </Link>
             <Link to="/medicines">
               <Button className="rounded-xl font-semibold shadow-xs hover:shadow transition-all active-press text-xs sm:text-sm h-10 px-4">
                 <Pill className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                Browse Medicines
+                {t("orders:start_shopping")}
               </Button>
             </Link>
           </div>
@@ -446,7 +448,7 @@ const OrdersPage = () => {
                             data-testid={`view-order-${order._id}`}
                           >
                             <Eye className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                            Track Order
+                            {t("orders:actions.track")}
                           </Button>
                         </Link>
                       </div>

@@ -1,0 +1,41 @@
+{
+  "title": "My Orders",
+  "subtitle": "Track current medicine deliveries and view complete order history.",
+  "empty_title": "No orders found",
+  "empty_desc": "You haven't placed any medicine orders yet.",
+  "start_shopping": "Browse Medicines",
+  "order_number": "Order #{{id}}",
+  "placed_on": "Placed on {{date}}",
+  "status": {
+    "pending": "Order Placed",
+    "confirmed": "Confirmed by Pharmacy",
+    "preparing": "Packaging Medicines",
+    "out_for_delivery": "Out for Delivery",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "track": "Track Delivery",
+    "view_details": "Order Details",
+    "download_invoice": "Download Invoice",
+    "reorder": "Reorder Items",
+    "cancel_order": "Cancel Order"
+  },
+  "tracking": {
+    "title": "Live Delivery Tracking",
+    "est_arrival": "Estimated Delivery",
+    "delivery_partner": "Assigned Delivery Fleet Partner",
+    "call_partner": "Call Partner",
+    "delivery_otp": "Delivery Verification PIN",
+    "delivery_otp_desc": "Share this 4-digit code with the delivery partner upon arrival",
+    "timeline": {
+      "placed": "Order Placed & Received",
+      "verified": "Prescription Verified by Licensed Chemist",
+      "packed": "Tamper-Evident Packaging Completed",
+      "picked_up": "Handed to Delivery Fleet",
+      "delivered": "Delivered to Doorstep"
+    },
+    "map_placeholder": "Live GPS route tracking active"
+  }
+}
+

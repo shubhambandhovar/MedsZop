@@ -1,0 +1,40 @@
+{
+  "title": "ᱤᱧᱟᱜ ᱚᱰᱟᱨ ᱠᱚ",
+  "subtitle": "ᱱᱤᱛᱚᱜ ᱪᱟᱞᱟᱜ ᱠᱟᱱ ᱥᱮᱴᱮᱨ ᱯᱟᱸᱡᱟᱭ ᱢᱮ ᱟᱨ ᱢᱟᱲᱟᱝ ᱚᱰᱟᱨ ᱠᱚ ᱧᱮᱞ ᱢᱮ.",
+  "empty_title": "ᱡᱟᱦᱟᱸᱱᱟᱜ ᱚᱰᱟᱨ ᱵᱟᱹᱱᱩᱜ-ᱟ",
+  "empty_desc": "ᱟᱢ ᱱᱤᱛ ᱫᱷᱟᱹᱵᱤᱡ ᱡᱟᱦᱟᱸᱱᱟᱜ ᱨᱟᱱ ᱵᱟᱢ ᱚᱰᱟᱨ ᱟᱠᱟᱫ-ᱟ.",
+  "start_shopping": "ᱨᱟᱱ ᱠᱚ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ",
+  "order_number": "ᱚᱰᱟᱨ #{{id}}",
+  "placed_on": "{{date}} ᱨᱮ ᱮᱢ ᱟᱠᱟᱱᱟ",
+  "status": {
+    "pending": "ᱚᱰᱟᱨ ᱧᱟᱢ ᱮᱱᱟ",
+    "confirmed": "ᱨᱟᱱ ᱫᱩᱠᱟᱱ ᱮ ᱦᱮᱸ ᱠᱮᱫ-ᱟ",
+    "preparing": "ᱨᱟᱱ ᱯᱮᱠ ᱦᱩᱭᱩᱜ ᱠᱟᱱᱟ",
+    "out_for_delivery": "ᱥᱮᱴᱮᱨ ᱞᱟᱹᱜᱤᱫ ᱚᱰᱚᱠ ᱮᱱᱟ",
+    "delivered": "ᱥᱮᱴᱮᱨ ᱮᱱᱟ",
+    "cancelled": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ"
+  },
+  "actions": {
+    "track": "ᱯᱟᱸᱡᱟᱭ ᱢᱮ",
+    "view_details": "ᱚᱰᱟᱨ ᱵᱤᱵᱚᱨᱚᱱ",
+    "download_invoice": "ᱵᱤᱞ ᱰᱟᱣᱩᱱᱞᱳᱰ",
+    "reorder": "ᱫᱚᱲᱦᱟ ᱚᱰᱟᱨ",
+    "cancel_order": "ᱚᱰᱟᱨ ᱵᱟᱹᱜᱤ"
+  },
+  "tracking": {
+    "title": "ᱞᱟᱭᱤᱵᱷ ᱥᱮᱴᱮᱨ ᱯᱟᱸᱡᱟ",
+    "est_arrival": "ᱥᱮᱴᱮᱨᱚᱜ ᱚᱠᱛᱚ",
+    "delivery_partner": "ᱥᱮᱴᱮᱨ ᱜᱟᱛᱮ",
+    "call_partner": "ᱯᱷᱳᱱ ᱢᱮ",
+    "delivery_otp": "ᱥᱮᱴᱮᱨ ᱯᱤᱱ",
+    "delivery_otp_desc": "ᱥᱮᱴᱮᱨ ᱚᱠᱛᱚ ᱱᱚᱶᱟ 4-ᱮᱞᱠᱷᱟ ᱠᱳᱰ ᱥᱮᱴᱮᱨᱤᱡ ᱮᱢᱟᱭ ᱢᱮ",
+    "timeline": {
+      "placed": "ᱚᱰᱟᱨ ᱦᱟᱛᱟᱣ ᱮᱱᱟ",
+      "verified": "ᱨᱟᱱ ᱵᱮᱯᱟᱨᱤ ᱯᱨᱤᱥᱠᱨᱤᱯᱥᱚᱱ ᱮ ᱧᱮᱞ ᱠᱮᱫ-ᱟ",
+      "packed": "ᱥᱤᱞ ᱯᱮᱠᱤᱝ ᱥᱟᱹᱛ ᱮᱱᱟ",
+      "picked_up": "ᱥᱮᱴᱮᱨᱤᱡ ᱴᱷᱮᱱ ᱮᱢ ᱮᱱᱟ",
+      "delivered": "ᱱᱟᱯᱟᱭ ᱛᱮ ᱥᱮᱴᱮᱨ ᱮᱱᱟ"
+    },
+    "map_placeholder": "ᱞᱟᱭᱤᱵᱷ ᱡᱤᱯᱤᱮᱥ ᱪᱟᱹᱞᱩ ᱢᱮᱱᱟᱜ-ᱟ"
+  }
+}

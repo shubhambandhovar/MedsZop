@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -26,6 +27,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AIDoctorPage = () => {
+    const { t } = useTranslation(['consult', 'common']);
     const { token } = useAuth();
     const [messages, setMessages] = useState([
         {
@@ -158,10 +160,10 @@ const AIDoctorPage = () => {
                         AI-Powered Self Help
                     </Badge>
                     <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                        AI Health Assistant
+                        {t("consult:ai_chat.title")}
                     </h1>
                     <p className="text-muted-foreground text-xs sm:text-sm max-w-md mx-auto mt-1">
-                        Informational guidance about symptoms, wellness, and medicines.
+                        {t("consult:ai_chat.subtitle")}
                     </p>
                 </div>
 
@@ -184,7 +186,7 @@ const AIDoctorPage = () => {
                             <Link to="/consult-doctor" className="hidden sm:inline-flex">
                                 <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold h-8 gap-1.5">
                                     <Stethoscope className="h-3.5 w-3.5 text-primary" />
-                                    Consult Real Doctor
+                                    {t("common:nav.consult_doctor")}
                                 </Button>
                             </Link>
                         </div>
@@ -282,7 +284,7 @@ const AIDoctorPage = () => {
                             <div className="max-w-3xl mx-auto flex items-center gap-2 sm:gap-3">
                                 <Input
                                     ref={inputRef}
-                                    placeholder="Type your health or medicine question here..."
+                                    placeholder={t("consult:ai_chat.input_placeholder")}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={handleKeyPress}

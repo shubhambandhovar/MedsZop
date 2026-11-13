@@ -1,0 +1,30 @@
+{
+  "welcome": "स्वागत आहे, {{name}}",
+  "overview": {
+    "active_orders": "सक्रिय ऑर्डर्स",
+    "saved_prescriptions": "जतन केलेले प्रिस्क्रिप्शन",
+    "saved_addresses": "जतन केलेले पत्ते",
+    "consultations": "सल्लामसलत"
+  },
+  "sections": {
+    "recent_orders": "अलीकडील ऑर्डर्स",
+    "active_prescriptions": "सक्रिय प्रिस्क्रिप्शन",
+    "quick_reorder": "जलद री-ऑर्डर",
+    "family_profiles": "कौटुंबिक आरोग्य प्रोफाइल"
+  },
+  "settings": {
+    "title": "खाते सेटिंग्ज",
+    "profile_tab": "प्रोफाइल तपशील",
+    "addresses_tab": "जतन केलेले पत्ते",
+    "security_tab": "सुरक्षा आणि पासवर्ड",
+    "language_tab": "भाषा आणि प्रदेश",
+    "notifications_tab": "सूचना",
+    "change_password": "पासवर्ड बदला",
+    "current_password": "सध्याचा पासवर्ड",
+    "new_password": "नवीन पासवर्ड",
+    "confirm_new_password": "नवीन पासवर्डची पुष्टी करा",
+    "preferred_language": "पसंतीची भाषा",
+    "language_description": "22 भारतीय भाषा आणि इंग्रजीतून निवडा.",
+    "save_preferences": "पसंती जतन करा"
+  }
+}

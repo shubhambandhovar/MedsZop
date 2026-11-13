@@ -1,0 +1,49 @@
+{
+  "title": "ꯍꯤꯗꯥꯛ ꯑꯃꯁꯨꯡ ꯍꯦꯜꯊꯀꯦꯌꯔ ꯄꯣꯠꯊꯣꯛꯁꯤꯡ",
+  "subtitle": "ꯂꯥꯏꯁꯦꯟꯁ ꯂꯩꯕ ꯐꯥꯔꯃꯦꯁꯤꯁꯤꯡꯗꯒꯤ ꯑꯁꯦꯡꯕ ꯍꯤꯗꯥꯛ ꯑꯃꯁꯨꯡ ꯍꯛꯁꯦꯜꯒꯤ ꯄꯣꯠꯆꯩꯁꯤꯡ ꯊꯤꯕꯤꯌꯨ।",
+  "search_placeholder": "ꯍꯤꯗꯥꯛ, ꯃꯆꯥꯛ ꯅꯠꯇ꯭ꯔꯒ ꯕ꯭ꯔꯥꯟꯗ ꯊꯤꯕꯤꯌꯨ...",
+  "filter_title": "ꯐꯤꯜꯇꯔꯁꯤꯡ",
+  "categories_title": "ꯃꯈꯜꯁꯤꯡ",
+  "sort_by": "ꯄꯔꯤꯡ ꯊꯝꯕꯤꯌꯨ",
+  "sort_options": {
+    "relevance": "ꯃꯔꯤ ꯂꯩꯅꯕ",
+    "price_low_high": "ꯃꯃꯜ: ꯅꯦꯝꯕꯗꯒꯤ ꯋꯥꯡꯕ",
+    "price_high_low": "ꯃꯃꯜ: ꯋꯥꯡꯕꯗꯒꯤ ꯅꯦꯝꯕ",
+    "rating": "ꯀꯁ꯭ꯇꯃꯔ ꯔꯦꯇꯤꯡ",
+    "popular": "ꯃꯃꯤꯡ ꯆꯠꯄ"
+  },
+  "categories": {
+    "all": "ꯍꯤꯗꯥꯛ ꯄꯨꯝꯅꯃꯛ",
+    "antibiotics": "ꯑꯦꯟꯇꯤꯕꯥꯌꯣꯇꯤꯛꯁ",
+    "cardiac": "ꯊꯃꯣꯏ ꯑꯃꯁꯨꯡ ꯕꯤꯄꯤ",
+    "diabetes": "ꯁꯨꯒꯔ ꯌꯦꯡꯁꯤꯟꯕ",
+    "pain_relief": "ꯆꯦꯛꯁꯤꯟꯕ ꯑꯃꯁꯨꯡ ꯂꯥꯡꯍꯟꯕ",
+    "respiratory": "ꯁ꯭ꯋꯥꯁ ꯂꯧꯕ ꯑꯃꯁꯨꯡ ꯈꯣꯛꯄ",
+    "vitamins": "ꯚꯤꯇꯥꯃꯤꯟ ꯑꯃꯁꯨꯡ ꯁꯞꯂꯤꯃꯦꯟꯇ",
+    "gastro": "ꯄꯣꯠ ꯆꯥꯎꯕ ꯍꯛꯁꯦꯜ",
+    "skin_care": "ꯎꯟꯁꯥꯒꯤ ꯌꯦꯡꯁꯤꯟꯕ",
+    "ayurveda": "ꯑꯥꯌꯨꯔꯕꯦꯗꯤꯛ ꯌꯦꯡꯁꯤꯟꯕ"
+  },
+  "medicine_card": {
+    "rx_needed": "ꯄ꯭ꯔꯤꯁ꯭ꯛꯔꯤꯄꯁꯟ ꯃꯊꯧ ꯇꯥꯏ",
+    "composition": "ꯃꯆꯥꯛꯁꯤꯡ",
+    "manufacturer": "ꯁꯦꯝꯕ ꯃꯤ",
+    "mrp": "ꯈ꯭ꯋꯥꯏꯗꯒꯤ ꯋꯥꯡꯕ ꯃꯃꯜ",
+    "add_to_cart": "ꯈꯥꯎꯗ ꯊꯝꯃꯨ",
+    "adding": "ꯊꯝꯂꯤ...",
+    "in_cart": "ꯈꯥꯎꯗ ꯂꯩꯔꯦ",
+    "out_of_stock": "ꯁ꯭ꯇꯣꯛ ꯂꯩꯇꯦ"
+  },
+  "detail": {
+    "dosage_form": "ꯗꯣꯖ ꯃꯑꯣꯡ",
+    "packaging": "ꯄꯦꯛ ꯇꯧꯕ",
+    "salt_composition": "ꯁꯤꯖꯤꯟꯅꯔꯤꯕ ꯃꯆꯥꯛ",
+    "manufacturer_name": "ꯀꯝꯄꯦꯅꯤ",
+    "prescription_notice": "ꯍꯤꯗꯥꯛ ꯑꯁꯤ ꯂꯧꯅꯕ ꯗꯣꯛꯇꯔꯒꯤ ꯄ꯭ꯔꯤꯁ꯭ꯛꯔꯤꯄꯁꯟ ꯃꯊꯧ ꯇꯥꯏ।",
+    "how_to_use": "ꯁꯤꯖꯤꯟꯅꯕꯒꯤ ꯅꯤꯌꯝ",
+    "side_effects": "ꯑꯀꯥꯌꯕ ꯄꯤꯕ ꯌꯥꯕ",
+    "safety_advice": "ꯆꯦꯛꯁꯤꯟꯅꯕ ꯋꯥꯐꯝ",
+    "storage_instructions": "ꯊꯝꯒꯗꯕ ꯃꯑꯣꯡ",
+    "disclaimer": "ꯄꯤꯔꯤꯕ ꯋꯥꯐꯝꯁꯤꯡ ꯑꯁꯤ ꯈꯪꯅꯕ ꯈꯛꯇꯅꯤ। ꯍꯤꯗꯥꯛ ꯆꯥꯗ꯭ꯔꯤꯉꯩꯗ ꯗꯣꯛꯇꯔꯒ ꯇꯥꯟꯅꯕꯤꯌꯨ।"
+  }
+}

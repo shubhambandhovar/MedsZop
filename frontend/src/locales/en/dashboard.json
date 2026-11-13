@@ -1,0 +1,31 @@
+{
+  "welcome": "Welcome back, {{name}}",
+  "overview": {
+    "active_orders": "Active Orders",
+    "saved_prescriptions": "Saved Prescriptions",
+    "saved_addresses": "Saved Addresses",
+    "consultations": "Consultations"
+  },
+  "sections": {
+    "recent_orders": "Recent Medicine Orders",
+    "active_prescriptions": "Active Prescriptions",
+    "quick_reorder": "Quick Reorder",
+    "family_profiles": "Family Health Profiles"
+  },
+  "settings": {
+    "title": "Account Settings",
+    "profile_tab": "Profile Details",
+    "addresses_tab": "Saved Addresses",
+    "security_tab": "Security & Password",
+    "language_tab": "Language & Region",
+    "notifications_tab": "Notifications",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_new_password": "Confirm New Password",
+    "preferred_language": "Preferred Display Language",
+    "language_description": "Choose from all 22 official scheduled Indian languages and English.",
+    "save_preferences": "Save Preferences"
+  }
+}
+

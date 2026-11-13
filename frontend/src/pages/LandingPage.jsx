@@ -39,7 +39,7 @@ import { toast } from "sonner";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const LandingPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['landing', 'common']);
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
@@ -342,15 +342,15 @@ const LandingPage = () => {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <span>Government-Approved Formulations & Genuine Salts</span>
+                <span>{t("landing:hero.badge")}</span>
               </div>
 
               <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.12]">
-                Genuine Medicines, Transparent Salt Pricing, Direct to Your Door.
+                {t("landing:hero.title_part1")} <span className="text-primary">{t("landing:hero.title_highlight")}</span> {t("landing:hero.title_part2")}
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl font-body">
-                Order genuine prescription medicines directly from licensed community pharmacies. Search by active chemical salt or commercial brand, compare Jan Aushadhi generic alternatives, or upload your doctor's prescription for double-blind clinical review.
+                {t("landing:hero.subtitle")}
               </p>
 
               {/* PRIMARY COMMAND SEARCH OMNIBAR */}
@@ -811,7 +811,7 @@ const LandingPage = () => {
                 <Link to="/consult-doctor" className="block w-full">
                   <Button className="w-full h-11 bg-primary text-primary-foreground font-heading font-semibold text-sm rounded-xl">
                     <Stethoscope className="mr-2 h-4 w-4" />
-                    <span>Request Doctor Consultation</span>
+                    <span>{t("common:nav.consult_doctor")}</span>
                   </Button>
                 </Link>
               </div>
@@ -822,13 +822,13 @@ const LandingPage = () => {
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
                   <Sparkles className="h-3.5 w-3.5 text-accent" />
-                  <span>Informational Health Knowledge Compass</span>
+                  <span>{t("landing:ai.badge")}</span>
                 </div>
                 <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
-                  MedsZop Health Knowledge Assistant
+                  {t("landing:ai.title")}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  An automated AI tool designed to explain generic chemical compositions, decode complex medical terminology, clarify medication timing, and provide general health literacy.
+                  {t("landing:ai.description")}
                 </p>
                 
                 {/* Explicit Disclaimer */}
@@ -844,7 +844,7 @@ const LandingPage = () => {
                 <Link to="/doctor-chat" className="block w-full">
                   <Button variant="outline" className="w-full h-11 border-border text-foreground hover:bg-card font-heading font-semibold text-sm rounded-xl">
                     <MessageSquare className="mr-2 h-4 w-4 text-primary" />
-                    <span>Ask AI Medicine Questions</span>
+                    <span>{t("landing:ai.chat_btn")}</span>
                   </Button>
                 </Link>
               </div>

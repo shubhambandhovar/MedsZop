@@ -1,0 +1,30 @@
+{
+  "welcome": "ସ୍ୱାଗତ, {{name}}",
+  "overview": {
+    "active_orders": "ସକ୍ରିୟ ଅର୍ଡର",
+    "saved_prescriptions": "ସଂରକ୍ଷିତ ପ୍ରେସକ୍ରିପସନ୍",
+    "saved_addresses": "ସଂରକ୍ଷିତ ଠିକଣା",
+    "consultations": "ପରାମର୍ଶସମୂହ"
+  },
+  "sections": {
+    "recent_orders": "ସମ୍ପ୍ରତି ଅର୍ଡର",
+    "active_prescriptions": "ସକ୍ରିୟ ପ୍ରେସକ୍ରିପସନ୍",
+    "quick_reorder": "ଦ୍ରୁତ ପୁନଃ-ଅର୍ଡର",
+    "family_profiles": "ପାରିବାରିକ ପ୍ରୋଫାଇଲ୍"
+  },
+  "settings": {
+    "title": "ଖାତା ସେଟିଙ୍ଗ୍ସ",
+    "profile_tab": "ପ୍ରୋଫାଇଲ୍ ବିବରଣୀ",
+    "addresses_tab": "ସଂରକ୍ଷିତ ଠିକଣା",
+    "security_tab": "ସୁରକ୍ଷା ଓ ପାସୱାର୍ଡ",
+    "language_tab": "ଭାଷା ଓ ଅଞ୍ଚଳ",
+    "notifications_tab": "ବିଜ୍ଞପ୍ତି",
+    "change_password": "ପାସୱାର୍ଡ ବଦଳାନ୍ତୁ",
+    "current_password": "ବର୍ତ୍ତମାନର ପାସୱାର୍ଡ",
+    "new_password": "ନୂଆ ପାସୱାର୍ଡ",
+    "confirm_new_password": "ନୂଆ ପାସୱାର୍ଡ ନିଶ୍ଚିତ କରନ୍ତୁ",
+    "preferred_language": "ପସନ୍ଦର ଭାଷା",
+    "language_description": "୨୨ଟି ଭାରତୀୟ ଭାଷା ଏବଂ ଇଂରାଜୀରୁ ବାଛନ୍ତୁ।",
+    "save_preferences": "ପସନ୍ଦ ସଂରକ୍ଷଣ କରନ୍ତୁ"
+  }
+}

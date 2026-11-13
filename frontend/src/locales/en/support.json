@@ -1,0 +1,30 @@
+{
+  "help_center": {
+    "title": "How can we help you today?",
+    "subtitle": "Search help articles, browse FAQs, or reach out to our dedicated healthcare support team.",
+    "search_placeholder": "Search topics (e.g., prescription verification, order tracking, returns)..."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "categories": {
+      "ordering": "Ordering Medicines",
+      "prescriptions": "Prescription Verification",
+      "delivery": "Delivery & Tracking",
+      "payments": "Payments & Refunds"
+    },
+    "q1": "How does MedsZop verify my prescription?",
+    "a1": "Every uploaded prescription is reviewed and validated by a licensed pharmacist registered with the state pharmacy council prior to order confirmation.",
+    "q2": "Are all medicines sourced from genuine pharmacies?",
+    "a2": "Yes. MedsZop exclusively partners with licensed retail pharmacies adhering strictly to the Drugs & Cosmetics Act standards.",
+    "q3": "Can I order prescription-only (Schedule H / H1) medicines without a prescription?",
+    "a3": "No. Under Indian pharmaceutical law, Schedule H and H1 medications strictly require a valid prescription from a registered medical practitioner.",
+    "q4": "What should I do if I need to cancel my order?",
+    "a4": "You can cancel your order from the My Orders dashboard at any time before the pharmacy packages the items for delivery dispatch."
+  },
+  "legal": {
+    "privacy_title": "Privacy Policy",
+    "terms_title": "Terms & Conditions",
+    "refund_title": "Refund & Cancellation Policy"
+  }
+}
+

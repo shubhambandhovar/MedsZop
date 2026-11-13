@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Pill, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 const Footer = () => {
+  const { t } = useTranslation('common');
   const { user } = useAuth();
   const role = user?.role;
 
@@ -21,7 +23,7 @@ const Footer = () => {
               />
             </Link>
             <p className="text-sm leading-relaxed mb-6 text-slate-400 font-body">
-              India's transparent healthcare network. Verified prescription medicines, licensed community pharmacy partners, and bioequivalent generic substitution under CDSCO guidelines.
+              {t("footer.tagline")}
             </p>
             <div className="flex gap-4">
               <a
@@ -65,65 +67,64 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-heading font-semibold text-white mb-6">Quick Links</h4>
+            <h4 className="font-heading font-semibold text-white mb-6">{t("footer.quick_links")}</h4>
             <ul className="space-y-3">
               {role === "pharmacy" ? (
                 <>
-                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Dashboard</Link></li>
+                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">{t("nav.dashboard")}</Link></li>
                   <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Inventory</Link></li>
-                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">Orders</Link></li>
-                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">Settings</Link></li>
+                  <li><Link to="/pharmacy" className="text-sm hover:text-primary transition-colors">{t("nav.my_orders")}</Link></li>
+                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">{t("nav.settings")}</Link></li>
                 </>
               ) : role === "delivery" ? (
                 <>
-                  <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Dashboard</Link></li>
+                  <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">{t("nav.dashboard")}</Link></li>
                   <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Active Deliveries</Link></li>
                   <li><Link to="/delivery" className="text-sm hover:text-primary transition-colors">Earnings History</Link></li>
-                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">Profile</Link></li>
+                  <li><Link to="/settings" className="text-sm hover:text-primary transition-colors">{t("nav.profile")}</Link></li>
                 </>
               ) : (
                 <>
-                  <li><Link to="/medicines" className="text-sm hover:text-primary transition-colors">Browse Medicines</Link></li>
-                  <li><Link to="/prescription-scan" className="text-sm hover:text-primary transition-colors">Upload Prescription</Link></li>
-                  <li><Link to="/doctor-chat" className="text-sm hover:text-primary transition-colors">AI Doctor Chat</Link></li>
-                  <li><Link to="/orders" className="text-sm hover:text-primary transition-colors">Track Order</Link></li>
+                  <li><Link to="/medicines" className="text-sm hover:text-primary transition-colors">{t("nav.medicines")}</Link></li>
+                  <li><Link to="/prescription-scan" className="text-sm hover:text-primary transition-colors">{t("nav.scan_prescription")}</Link></li>
+                  <li><Link to="/doctor-chat" className="text-sm hover:text-primary transition-colors">{t("nav.ai_doctor")}</Link></li>
+                  <li><Link to="/orders" className="text-sm hover:text-primary transition-colors">{t("nav.my_orders")}</Link></li>
                 </>
               )}
             </ul>
           </div>
 
           {/* Support */}
-
           <div>
-            <h4 className="font-heading font-semibold text-white mb-6">Support</h4>
+            <h4 className="font-heading font-semibold text-white mb-6">{t("footer.help_support")}</h4>
             <ul className="space-y-3">
               <li>
                 <Link to="/help" className="text-sm hover:text-primary transition-colors">
-                  Help Center
+                  {t("footer.help_support")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/faqs" className="text-sm hover:text-primary transition-colors">
-                  FAQs
+                  {t("footer.faqs")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/refund-policy" className="text-sm hover:text-primary transition-colors">
-                  Refund Policy
+                  {t("footer.refund_policy")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/privacy-policy" className="text-sm hover:text-primary transition-colors">
-                  Privacy Policy
+                  {t("footer.privacy_policy")}
                 </Link>
               </li>
 
               <li>
                 <Link to="/terms" className="text-sm hover:text-primary transition-colors">
-                  Terms of Service
+                  {t("footer.terms_conditions")}
                 </Link>
               </li>
             </ul>
@@ -131,7 +132,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-heading font-semibold text-white mb-6">Contact Us</h4>
+            <h4 className="font-heading font-semibold text-white mb-6">{t("footer.contact_us")}</h4>
             <ul className="space-y-4">
               <li>
                 <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 hover:text-primary transition-colors">
@@ -157,7 +158,7 @@ const Footer = () => {
 
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
           <p>
-            © {new Date().getFullYear()} MedsZop. All rights reserved. • Licensed Healthcare & Pharmacy Aggregator operating in compliance with the Drugs and Cosmetics Act, 1940 and IT Act, 2000.
+            © {new Date().getFullYear()} MedsZop. {t("footer.all_rights_reserved")} • {t("footer.legal_disclaimer")}
           </p>
           <div className="flex items-center gap-5">
             <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Secure Payments</span>
