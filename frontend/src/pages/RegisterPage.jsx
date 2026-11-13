@@ -324,9 +324,9 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#FAFBF9] dark:bg-[#080E0B] text-foreground selection:bg-[#046A47]/20">
+    <div className="min-h-[100dvh] lg:h-[100dvh] w-full flex flex-col lg:flex-row bg-[#FAFBF9] dark:bg-[#080E0B] text-foreground selection:bg-[#046A47]/20 lg:overflow-hidden">
       {/* ================= LEFT EDITORIAL HERO PANEL (Desktop) ================= */}
-      <div className="hidden lg:flex lg:w-[50%] xl:w-[52%] 2xl:w-[55%] relative min-h-screen flex-col justify-between p-10 xl:p-14 2xl:p-16 bg-[#061A13] text-white overflow-hidden border-r border-[#0E2E22]">
+      <div className="hidden lg:flex lg:w-[50%] xl:w-[52%] 2xl:w-[55%] relative lg:h-full flex-col justify-between p-8 xl:p-12 2xl:p-14 bg-[#061A13] text-white overflow-hidden border-r border-[#0E2E22]">
         {/* Subtle Ambient Illumination */}
         <div
           className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-[#046A47]/25 blur-3xl pointer-events-none"
@@ -365,8 +365,8 @@ const RegisterPage = () => {
         </div>
 
         {/* Center Editorial Narrative */}
-        <div className="relative z-10 max-w-xl my-auto py-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-6 tracking-wide shadow-sm">
+        <div className="relative z-10 max-w-xl my-auto py-4 xl:py-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-4 xl:mb-5 tracking-wide shadow-sm">
             <BadgeCheck className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
             Patient Care &amp; Healthcare Network
           </div>
@@ -375,13 +375,13 @@ const RegisterPage = () => {
             Your personal pharmacy and dedicated clinical care network.
           </h1>
 
-          <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
+          <p className="mt-3.5 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
             Create your account to access digital prescription refills, doorstep medicine delivery,
             and direct consultation with qualified healthcare practitioners.
           </p>
 
           {/* Three Clinical Proof Points */}
-          <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/10">
+          <div className="grid grid-cols-1 gap-3 xl:gap-3.5 mt-5 xl:mt-8 pt-5 xl:pt-8 border-t border-white/10">
             <div className="flex items-start gap-3.5">
               <div className="h-10 w-10 rounded-xl bg-[#0B2E21] border border-[#144F38] text-[#34D399] flex items-center justify-center shrink-0">
                 <Clock className="h-5 w-5" aria-hidden="true" />
@@ -421,7 +421,7 @@ const RegisterPage = () => {
         </div>
 
         {/* Bottom Security Assurance */}
-        <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
+        <div className="relative z-10 pt-5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
             Prescription Review &amp; Patient Safety Protocols
@@ -431,7 +431,7 @@ const RegisterPage = () => {
       </div>
 
       {/* ================= RIGHT FORM PANEL (In-Place Flow) ================= */}
-      <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-screen flex flex-col justify-between p-6 sm:p-10 md:p-12 lg:p-10 xl:p-14 2xl:p-16 relative">
+      <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-[100dvh] lg:min-h-0 lg:h-full flex flex-col justify-between p-6 sm:p-8 lg:px-8 lg:py-4 xl:px-12 xl:py-5 relative overflow-y-auto">
         {/* Mobile & Tablet Header */}
         <div className="flex items-center justify-between w-full lg:hidden mb-6">
           <Link to="/" className="inline-block">
@@ -452,7 +452,7 @@ const RegisterPage = () => {
         </div>
 
         {/* Form Container (Optimal measure ~420px for readability) */}
-        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto my-auto py-4">
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto my-auto py-1">
           <AnimatePresence mode="wait">
             {!otpSent ? (
               /* ================= STEP 1: ACCOUNT REGISTRATION ================= */
@@ -464,20 +464,20 @@ const RegisterPage = () => {
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 {/* Header */}
-                <div className="mb-6">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#046A47]/10 dark:bg-[#046A47]/20 text-[#046A47] dark:text-[#34D399] text-xs font-semibold tracking-wide uppercase mb-3">
+                <div className="mb-3 sm:mb-4">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#046A47]/10 dark:bg-[#046A47]/20 text-[#046A47] dark:text-[#34D399] text-xs font-semibold tracking-wide uppercase mb-1.5">
                     <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
                     Step 1 of 2 · Account Info
                   </div>
-                  <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                     Create your account
                   </h2>
-                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">
                     Timely medicine deliveries, digital prescriptions, and doctor consultations.
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
+                <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3" noValidate>
                   {/* FULL NAME */}
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
@@ -516,7 +516,7 @@ const RegisterPage = () => {
                         onBlur={() => handleBlur("name")}
                         aria-invalid={touched.name && !isNameValid}
                         aria-describedby={touched.name && !isNameValid ? "name-error" : undefined}
-                        className={`pl-10 h-11 sm:h-12 rounded-xl text-base sm:text-sm transition-all bg-white dark:bg-[#0F1714] ${
+                        className={`pl-10 h-10 sm:h-11 rounded-xl text-base sm:text-sm transition-all bg-white dark:bg-[#0F1714] ${
                           touched.name && !isNameValid
                             ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                             : isNameValid && touched.name
@@ -579,7 +579,7 @@ const RegisterPage = () => {
                           onBlur={() => handleBlur("email")}
                           aria-invalid={touched.email && !isEmailValid}
                           aria-describedby={touched.email && !isEmailValid ? "email-error" : undefined}
-                          className={`pl-10 h-11 sm:h-12 rounded-xl text-base sm:text-sm transition-all bg-white dark:bg-[#0F1714] ${
+                          className={`pl-10 h-10 sm:h-11 rounded-xl text-base sm:text-sm transition-all bg-white dark:bg-[#0F1714] ${
                             touched.email && !isEmailValid
                               ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                               : isEmailValid && touched.email
@@ -647,7 +647,7 @@ const RegisterPage = () => {
                           onBlur={() => handleBlur("phone")}
                           aria-invalid={touched.phone && !isPhoneValid}
                           aria-describedby={touched.phone && !isPhoneValid ? "phone-error" : undefined}
-                          className={`pl-10 h-11 sm:h-12 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
+                          className={`pl-10 h-10 sm:h-11 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
                             touched.phone && !isPhoneValid
                               ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                               : isPhoneValid && touched.phone
@@ -719,7 +719,7 @@ const RegisterPage = () => {
                         }}
                         aria-invalid={touched.password && !isPasswordLengthValid}
                         aria-describedby="password-rules"
-                        className={`pl-10 pr-12 h-11 sm:h-12 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
+                        className={`pl-10 pr-12 h-10 sm:h-11 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
                           touched.password && !isPasswordLengthValid
                             ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                             : "border-slate-200 dark:border-[#1E2E27] hover:border-slate-300 dark:hover:border-[#2C4238] focus-visible:ring-[#046A47]/20 focus-visible:border-[#046A47]"
@@ -844,7 +844,7 @@ const RegisterPage = () => {
                         aria-describedby={
                           touched.confirmPassword && !isPasswordMatching ? "confirm-error" : undefined
                         }
-                        className={`pl-10 pr-12 h-11 sm:h-12 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
+                        className={`pl-10 pr-12 h-10 sm:h-11 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
                           touched.confirmPassword && !isPasswordMatching
                             ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                             : isPasswordMatching
@@ -901,7 +901,7 @@ const RegisterPage = () => {
                   {/* SUBMIT BUTTON */}
                   <Button
                     type="submit"
-                    className="w-full h-12 rounded-xl font-semibold text-base bg-[#046A47] hover:bg-[#035438] text-white shadow-md shadow-[#046A47]/20 transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed mt-1"
+                    className="w-full h-11 rounded-xl font-semibold text-base bg-[#046A47] hover:bg-[#035438] text-white shadow-md shadow-[#046A47]/20 transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed mt-1.5"
                     disabled={loading || (formData.confirmPassword && !isPasswordMatching)}
                     data-testid="register-submit"
                   >
@@ -917,7 +917,7 @@ const RegisterPage = () => {
                 </form>
 
                 {/* Google OAuth Divider */}
-                <div className="relative my-5">
+                <div className="relative my-3 sm:my-3.5">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-slate-200 dark:border-[#1E2E27]" />
                   </div>
@@ -928,13 +928,13 @@ const RegisterPage = () => {
                   </div>
                 </div>
 
-                {/* Google Signup Button */}
+                {/* Google Signup Button - size="medium" with text="signup_with" disables personalization per GIS spec */}
                 <div className="w-full flex justify-center">
                   <GoogleLogin
                     onSuccess={handleGoogleSuccess}
                     onError={handleGoogleError}
                     theme={isDark ? "filled_black" : "outline"}
-                    size="large"
+                    size="medium"
                     width="380"
                     text="signup_with"
                     shape="rectangular"
@@ -942,7 +942,7 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Link to Login */}
-                <div className="mt-6 pt-5 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
+                <div className="mt-3.5 sm:mt-4 pt-3 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
                   <p className="text-sm text-muted-foreground">
                     Already registered with MedsZop?{" "}
                     <Link
@@ -1076,7 +1076,7 @@ const RegisterPage = () => {
         </div>
 
         {/* Right Footer Security Note */}
-        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-2 pb-1 shrink-0">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
             Protected by TLS encryption &amp; standard healthcare privacy controls
