@@ -14,6 +14,7 @@ import {
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ScanLine,
   Upload,
@@ -260,7 +261,7 @@ const PrescriptionScanPage = () => {
 
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* UPLOAD CARD */}
-          <Card className="rounded-2xl border-border bg-card shadow-xs">
+          <GlassCard variant="elevated" className="rounded-3xl shadow-glass p-0">
             <CardHeader className="p-4 sm:p-6 pb-2">
               <CardTitle className="font-heading text-xl flex items-center gap-2">
                 <Upload className="h-5 w-5 text-primary" aria-hidden="true" /> Upload Document
@@ -360,8 +361,10 @@ const PrescriptionScanPage = () => {
                       <RotateCcw className="h-4 w-4 mr-1.5" />
                       Change Image
                     </Button>
-                    <Button
-                      className="flex-2 rounded-xl h-11 text-xs sm:text-sm font-bold shadow-md shadow-primary/20 active-press"
+                    <GlassButton
+                      variant="primary"
+                      size="md"
+                      className="flex-2"
                       onClick={handleScan}
                       disabled={scanning}
                       data-testid="scan-prescription-submit-btn"
@@ -377,7 +380,7 @@ const PrescriptionScanPage = () => {
                           Extract Medicines
                         </>
                       )}
-                    </Button>
+                    </GlassButton>
                   </div>
                 </div>
               )}
@@ -409,10 +412,10 @@ const PrescriptionScanPage = () => {
                 </p>
               </div>
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* RESULT CARD */}
-          <Card className="rounded-2xl border-border bg-card shadow-xs flex flex-col">
+          <GlassCard variant="default" className="rounded-3xl shadow-glass flex flex-col p-0">
             <CardHeader className="p-4 sm:p-6 pb-2">
               <CardTitle className="font-heading text-xl flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" aria-hidden="true" /> Extraction Results
@@ -530,7 +533,7 @@ const PrescriptionScanPage = () => {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
         </div>
       </main>
 

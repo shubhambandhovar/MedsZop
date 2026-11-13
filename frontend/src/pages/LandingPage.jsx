@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   Pill,
   Truck,
@@ -407,7 +408,7 @@ const LandingPage = () => {
             </div>
 
             {/* Right Intake Track: Prescription Upload Card (5 Columns) */}
-            <div className="lg:col-span-5 backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-glass">
+            <GlassCard variant="elevated" className="lg:col-span-5 rounded-3xl p-6 sm:p-8">
               <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                 <div>
                   <h2 className="font-heading text-lg sm:text-xl font-bold text-foreground">
@@ -468,7 +469,7 @@ const LandingPage = () => {
                   Operated in strict compliance with the Drugs and Cosmetics Rules, 1945.
                 </p>
               </div>
-            </div>
+            </GlassCard>
 
           </div>
         </div>
@@ -514,7 +515,7 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Comparison Radar Card */}
-          <div className="backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border border-white/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-glass">
+          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
               {/* Chemical Salt Detail */}
@@ -599,7 +600,7 @@ const LandingPage = () => {
               </div>
 
             </div>
-          </div>
+          </GlassCard>
 
         </div>
       </section>
@@ -632,10 +633,12 @@ const LandingPage = () => {
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (
-                <div
+                <GlassCard
                   key={cat.id}
+                  interactive
+                  variant="default"
                   onClick={() => navigate(`/medicines?category=${encodeURIComponent(cat.query)}`)}
-                  className="group p-5 rounded-2xl backdrop-blur-md bg-white/75 dark:bg-slate-900/75 border border-white/70 dark:border-white/10 hover:border-emerald-500/40 hover:shadow-glass-hover hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between"
+                  className="group p-5 rounded-2xl flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors flex items-center justify-center shadow-xs">
@@ -657,7 +660,7 @@ const LandingPage = () => {
                     <span>Browse Lot</span>
                     <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
-                </div>
+                </GlassCard>
               );
             })}
           </div>
@@ -696,9 +699,11 @@ const LandingPage = () => {
           {/* Product Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {catalogMedicines.map((med) => (
-              <div
+              <GlassCard
                 key={med.id || med._id}
-                className="rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/70 dark:border-white/10 p-5 flex flex-col justify-between hover:border-emerald-500/40 hover:shadow-glass-hover transition-all"
+                interactive
+                variant="default"
+                className="rounded-2xl p-5 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   {/* Badges */}
@@ -746,15 +751,15 @@ const LandingPage = () => {
                       </div>
                     )}
                   </div>
-                  <Button
+                  <GlassButton
                     onClick={() => handleQuickAdd(med)}
                     size="sm"
-                    className="h-9 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-heading font-semibold text-xs shadow-xs"
+                    variant="primary"
                   >
                     + Add to Cart
-                  </Button>
+                  </GlassButton>
                 </div>
-              </div>
+              </GlassCard>
             ))}
           </div>
 

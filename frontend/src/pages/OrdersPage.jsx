@@ -9,6 +9,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
+import { GlassCard, GlassButton } from "../components/glass";
 import { Input } from "../components/ui/input";
 import {
   Package,
@@ -362,12 +363,14 @@ const OrdersPage = () => {
           /* Filtered Orders List */
           <div className="space-y-4">
             {filteredOrders.map((order) => (
-              <Card
+              <GlassCard
                 key={order._id}
-                className="overflow-hidden rounded-2xl border-border bg-card hover:border-primary/40 hover:shadow-md transition-all"
+                interactive
+                variant="default"
+                className="overflow-hidden rounded-2xl"
                 data-testid={`order-${order._id}`}
               >
-                <CardContent className="p-4 sm:p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-5">
                     {/* Left Info Column */}
                     <div className="flex-1 space-y-3">
@@ -443,19 +446,21 @@ const OrdersPage = () => {
 
                       <div className="flex items-center gap-2">
                         <Link to={`/orders/${order._id}`}>
-                          <Button
-                            className="rounded-xl px-4 sm:px-5 h-11 text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all active-press"
+                          <GlassButton
+                            variant="primary"
+                            size="md"
+                            className="rounded-xl px-4 sm:px-5"
                             data-testid={`view-order-${order._id}`}
                           >
                             <Eye className="h-4 w-4 mr-1.5" aria-hidden="true" />
                             {t("orders:actions.track")}
-                          </Button>
+                          </GlassButton>
                         </Link>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassCard>
             ))}
           </div>
         )}

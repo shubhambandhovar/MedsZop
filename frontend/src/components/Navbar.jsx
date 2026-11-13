@@ -272,7 +272,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="h-9 w-9 rounded-full text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
                 aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
                 data-testid="theme-toggle"
               >
@@ -289,7 +289,7 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-slate-700 dark:text-slate-300 hover:text-primary hover:bg-primary/10 transition-all"
+                    className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-slate-700 dark:text-slate-300 hover:text-primary hover:bg-primary/10 transition-all"
                     aria-label={`Shopping cart with ${cartCount} items`}
                   >
                     <ShoppingCart className="h-4 w-4" aria-hidden="true" />
@@ -309,7 +309,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 text-foreground hover:ring-2 hover:ring-primary/20 transition-all"
+                      className="h-11 w-11 sm:h-9 sm:w-9 rounded-full border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 text-foreground hover:ring-2 hover:ring-primary/20 transition-all"
                       aria-label="User account menu"
                       data-testid="user-menu"
                     >
@@ -419,7 +419,7 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-foreground"
+                    className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-foreground"
                     aria-label="Open mobile navigation menu"
                     data-testid="mobile-menu"
                   >

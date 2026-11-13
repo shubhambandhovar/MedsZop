@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../../components/ui/accordion";
+import { GlassCard } from "../../components/glass";
 
 const helpCategories = [
   {
@@ -180,7 +181,7 @@ const HelpCenterPage = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 -mt-8 pb-16 flex-grow w-full relative z-10">
-        <div className="bg-card text-foreground rounded-2xl shadow-sm border border-border p-5 sm:p-8">
+        <GlassCard variant="elevated" className="p-5 sm:p-8 rounded-3xl">
 
           <div className="space-y-10 sm:space-y-12">
             {helpCategories.map((category, idx) => (
@@ -214,10 +215,10 @@ const HelpCenterPage = () => {
             ))}
           </div>
 
-        </div>
+        </GlassCard>
 
         {/* Support Contact Section */}
-        <div className="mt-8 sm:mt-10 bg-card rounded-2xl shadow-xs border border-border p-6 sm:p-8 text-center">
+        <GlassCard variant="surface" className="mt-8 sm:mt-10 p-6 sm:p-8 text-center">
           <h2 className="text-xl sm:text-2xl font-bold font-heading mb-2 text-foreground">Still Need Help?</h2>
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
             Our dedicated support team is here for you. If you couldn't find the answer you were looking for, don't hesitate to reach out!
@@ -235,7 +236,7 @@ const HelpCenterPage = () => {
             </a>
           </div>
           <p className="text-xs text-muted-foreground mt-5">🕒 24/7 Digital Health Support</p>
-        </div>
+        </GlassCard>
       </main>
 
       <Footer />

@@ -10,6 +10,7 @@ import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
+import { GlassCard, GlassButton, GlassSkeleton } from "../components/glass";
 import {
   Select,
   SelectContent,
@@ -274,23 +275,12 @@ const MedicinesPage = () => {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4 sm:gap-6" role="status" aria-label="Loading medicines">
             {[...Array(8)].map((_, i) => (
-              <Card key={i} className="overflow-hidden rounded-2xl border-slate-200 dark:border-slate-800">
-                <Skeleton className="aspect-4/3 w-full" />
-                <CardContent className="p-4 space-y-2">
-                  <Skeleton className="h-4 w-3/4 rounded-md" />
-                  <Skeleton className="h-3 w-1/2 rounded-md" />
-                  <Skeleton className="h-3 w-1/3 rounded-md" />
-                  <div className="pt-2 flex justify-between items-center">
-                    <Skeleton className="h-6 w-1/4 rounded-md" />
-                    <Skeleton className="h-9 w-9 rounded-xl" />
-                  </div>
-                </CardContent>
-              </Card>
+              <GlassSkeleton key={i} variant="card" className="h-72 w-full rounded-2xl" />
             ))}
           </div>
         ) : medicines.length === 0 ? (
-          <Card className="text-center py-16 px-4 rounded-3xl border-slate-200 dark:border-slate-800 max-w-lg mx-auto my-8">
-            <CardContent className="space-y-4">
+          <GlassCard variant="elevated" className="text-center py-16 px-4 rounded-3xl max-w-lg mx-auto my-8">
+            <div className="space-y-4">
               <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-800 text-muted-foreground flex items-center justify-center mx-auto mb-2">
                 <AlertCircle className="h-8 w-8" aria-hidden="true" />
               </div>
@@ -299,15 +289,16 @@ const MedicinesPage = () => {
                 We couldn't find any medicines matching your search or active category filters.
               </p>
               <div className="pt-2">
-                <Button
-                  className="rounded-xl px-6 h-11 font-semibold active-press"
+                <GlassButton
+                  variant="primary"
+                  className="rounded-xl px-6 h-11 font-semibold"
                   onClick={() => { setSearch(""); setSelectedCategory(""); }}
                 >
                   Clear Filters
-                </Button>
+                </GlassButton>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -321,8 +312,10 @@ const MedicinesPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03, duration: 0.2 }}
               >
-                <Card
-                  className="overflow-hidden group hover:shadow-glass-hover hover:-translate-y-1 transition-all duration-300 rounded-2xl border border-white/70 dark:border-white/10 flex flex-col h-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 shadow-glass"
+                <GlassCard
+                  interactive
+                  variant="default"
+                  className="overflow-hidden group flex flex-col h-full rounded-2xl"
                   data-testid={`medicine-card-${medicine.id}`}
                 >
                   <Link to={`/medicines/${medicine.id}`} className="block relative overflow-hidden">
@@ -346,7 +339,7 @@ const MedicinesPage = () => {
                     </div>
                   </Link>
 
-                  <CardContent className="p-4 flex-1 flex flex-col justify-between">
+                  <div className="p-4 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wide truncate" title={medicine.generic_name}>
                         SALT: {medicine.generic_name || "Verified Salt IP"}
@@ -376,18 +369,18 @@ const MedicinesPage = () => {
                           </span>
                         )}
                       </div>
-                      <Button
-                        size="sm"
-                        className="rounded-xl h-9 w-9 p-0 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm active:scale-95 transition-all"
+                      <GlassButton
+                        size="icon"
+                        variant="primary"
                         onClick={() => handleAddToCart(medicine)}
                         aria-label={`Add ${medicine.name} to cart`}
                         data-testid={`add-to-cart-${medicine.id}`}
                       >
                         <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      </GlassButton>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </GlassCard>
               </motion.div>
             ))}
           </motion.div>

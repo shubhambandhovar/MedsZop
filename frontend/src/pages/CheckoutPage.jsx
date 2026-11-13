@@ -25,6 +25,7 @@ import "leaflet/dist/leaflet.css";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
+import { GlassCard, GlassButton } from "../components/glass";
 
 // Fix leaflet icon issue
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -448,7 +449,7 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             {/* Delivery Address Card */}
-            <Card className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 shadow-glass overflow-hidden">
+            <GlassCard variant="surface" className="rounded-3xl overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                 <CardTitle className="font-heading text-lg sm:text-xl flex items-center gap-2">
                   <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -727,10 +728,10 @@ const CheckoutPage = () => {
                   </RadioGroup>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
 
             {/* Payment Method Card */}
-            <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <GlassCard variant="surface" className="rounded-2xl overflow-hidden">
               <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="font-heading text-lg sm:text-xl flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
@@ -778,7 +779,7 @@ const CheckoutPage = () => {
                   </div>
                 </RadioGroup>
               </CardContent>
-            </Card>
+            </GlassCard>
 
             {/* Prescription Upload Section (Required Logic) */}
             {requiresPrescription && (
@@ -823,7 +824,7 @@ const CheckoutPage = () => {
 
           {/* Desktop Order Summary Sidebar */}
           <div className="hidden lg:block">
-            <Card className="sticky top-24 rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
+            <GlassCard variant="surface" className="sticky top-24 rounded-2xl">
               <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="font-heading text-lg font-bold">Order Summary</CardTitle>
               </CardHeader>
@@ -857,8 +858,10 @@ const CheckoutPage = () => {
                   </span>
                 </div>
 
-                <Button
-                  className="w-full h-12 rounded-xl text-base font-bold shadow-md shadow-primary/20 active-press"
+                <GlassButton
+                  variant="primary"
+                  size="lg"
+                  className="w-full text-base font-bold shadow-md shadow-primary/20"
                   onClick={handlePlaceOrder}
                   disabled={loading || addresses.length === 0 || (requiresPrescription && !prescriptionUrl)}
                   data-testid="place-order-btn"
@@ -871,7 +874,7 @@ const CheckoutPage = () => {
                       {t("checkout:summary.place_order")}
                     </>
                   )}
-                </Button>
+                </GlassButton>
 
                 {addresses.length === 0 && (
                   <p className="text-center text-xs text-amber-600 dark:text-amber-400 font-medium">
@@ -884,7 +887,7 @@ const CheckoutPage = () => {
                   </p>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
           </div>
         </div>
 

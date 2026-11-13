@@ -56,6 +56,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
+import { GlassCard, GlassButton } from "../components/glass";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -286,16 +287,16 @@ const DashboardPage = () => {
 
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <Link to="/prescription-scan">
-                <Button className="rounded-xl h-11 px-5 font-semibold bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg transition-all active:scale-95">
+                <GlassButton variant="primary" size="md">
                   <ScanLine className="h-4 w-4 mr-2" aria-hidden="true" />
                   {t("common:nav.upload_rx")}
-                </Button>
+                </GlassButton>
               </Link>
               <Link to="/orders">
-                <Button variant="ghost" className="rounded-xl h-11 px-5 font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/10 transition-all active:scale-95">
+                <GlassButton variant="ghost" size="md" className="bg-white/10 hover:bg-white/15 text-white border border-white/10">
                   <Package className="h-4 w-4 mr-2" aria-hidden="true" />
                   {t("common:nav.my_orders")}
-                </Button>
+                </GlassButton>
               </Link>
             </div>
           </div>
@@ -356,84 +357,76 @@ const DashboardPage = () => {
         {/* ================= CLINICAL METRICS BENTO ================= */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {/* Card 1: Active Orders */}
-          <Card className="rounded-2xl border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Active Orders
-                </p>
-                <div className="h-8 w-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <Package className="h-4 w-4" aria-hidden="true" />
-                </div>
+          <GlassCard variant="surface" className="p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Active Orders
+              </p>
+              <div className="h-8 w-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <Package className="h-4 w-4" aria-hidden="true" />
               </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
-                  {activeOrders.length}
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">in transit</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
+                {activeOrders.length}
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">in transit</span>
+            </div>
+          </GlassCard>
 
           {/* Card 2: Prescriptions */}
-          <Card className="rounded-2xl border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Digital Rx
-                </p>
-                <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
-                  <FileText className="h-4 w-4" aria-hidden="true" />
-                </div>
+          <GlassCard variant="surface" className="p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Digital Rx
+              </p>
+              <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                <FileText className="h-4 w-4" aria-hidden="true" />
               </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
-                  {data.prescriptions.length}
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">verified</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
+                {data.prescriptions.length}
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">verified</span>
+            </div>
+          </GlassCard>
 
           {/* Card 3: Total Spent */}
-          <Card className="rounded-2xl border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Health Spent
-                </p>
-                <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <TrendingUp className="h-4 w-4" aria-hidden="true" />
-                </div>
+          <GlassCard variant="surface" className="p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Health Spent
+              </p>
+              <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <TrendingUp className="h-4 w-4" aria-hidden="true" />
               </div>
-              <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-base font-semibold text-muted-foreground">₹</span>
-                <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
-                  {totalSpent.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="mt-3 flex items-baseline gap-1">
+              <span className="text-base font-semibold text-muted-foreground">₹</span>
+              <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
+                {totalSpent.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+              </span>
+            </div>
+          </GlassCard>
 
           {/* Card 4: Saved Locations */}
-          <Card className="rounded-2xl border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Saved Hubs
-                </p>
-                <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                  <MapPin className="h-4 w-4" aria-hidden="true" />
-                </div>
+          <GlassCard variant="surface" className="p-5">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Saved Hubs
+              </p>
+              <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                <MapPin className="h-4 w-4" aria-hidden="true" />
               </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
-                  {data.addresses.length}
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">addresses</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="font-heading text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
+                {data.addresses.length}
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">addresses</span>
+            </div>
+          </GlassCard>
         </div>
 
         {/* ================= CLINICAL SHORTCUT TILES ================= */}

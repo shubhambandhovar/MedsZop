@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { Skeleton } from "../components/ui/skeleton";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ShoppingCart,
   Plus,
@@ -144,8 +145,8 @@ const CartPage = () => {
         </div>
 
         {!itemsCount ? (
-          <Card className="text-center py-16 px-4 rounded-3xl backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border border-white/70 dark:border-white/10 shadow-glass max-w-2xl mx-auto my-8">
-            <CardContent className="space-y-4">
+          <GlassCard variant="elevated" className="text-center py-16 px-4 rounded-3xl max-w-2xl mx-auto my-8">
+            <div className="space-y-4">
               <div className="h-20 w-20 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-2 shadow-xs">
                 <ShoppingBag className="h-10 w-10" />
               </div>
@@ -157,14 +158,14 @@ const CartPage = () => {
               </p>
               <div className="pt-2">
                 <Link to="/medicines">
-                  <Button className="rounded-xl px-7 h-12 font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm active:scale-98 transition-all">
+                  <GlassButton size="lg" variant="primary" className="rounded-xl px-7">
                     {t("checkout:cart.explore_btn")}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  </GlassButton>
                 </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         ) : (
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
             {/* Cart Items List */}
@@ -173,12 +174,13 @@ const CartPage = () => {
                 const price = item.medicine.discount_price || item.medicine.price;
                 const hasDiscount = Boolean(item.medicine.discount_price);
                 return (
-                  <Card
+                  <GlassCard
                     key={item.medicine.id}
-                    className="overflow-hidden rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/70 dark:border-white/10 shadow-glass hover:shadow-glass-hover transition-all"
+                    variant="default"
+                    className="overflow-hidden rounded-2xl"
                     data-testid={`cart-item-${item.medicine.id}`}
                   >
-                    <CardContent className="p-4 sm:p-5">
+                    <div className="p-4 sm:p-5">
                       <div className="flex gap-3.5 sm:gap-4">
                         {/* Medicine Thumbnail */}
                         <Link
@@ -275,19 +277,19 @@ const CartPage = () => {
                           Remove
                         </Button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </GlassCard>
                 );
               })}
             </div>
 
             {/* Desktop Order Summary Sidebar */}
             <div className="hidden lg:block">
-              <Card className="sticky top-24 rounded-3xl border border-white/80 dark:border-white/10 shadow-glass backdrop-blur-xl bg-white/85 dark:bg-slate-900/85">
-                <CardHeader className="pb-3 border-b border-slate-200/60 dark:border-slate-800/60">
-                  <CardTitle className="font-heading text-lg font-bold">Order Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="p-5 space-y-4">
+              <GlassCard variant="elevated" className="sticky top-24 rounded-3xl p-6 sm:p-7">
+                <div className="pb-3 border-b border-slate-200/60 dark:border-slate-800/60">
+                  <h3 className="font-heading text-lg font-bold text-foreground">Order Summary</h3>
+                </div>
+                <div className="py-4 space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-medium tabular-nums">₹{cart.total.toFixed(2)}</span>
@@ -310,19 +312,21 @@ const CartPage = () => {
                     </span>
                   </div>
 
-                  <Button
-                    className="w-full h-12 rounded-xl text-base font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm active:scale-98 transition-all"
+                  <GlassButton
+                    size="lg"
+                    variant="primary"
+                    className="w-full"
                     onClick={() => navigate("/checkout")}
                     data-testid="proceed-to-checkout"
                   >
                     {t("checkout:summary.proceed_to_checkout")}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  </GlassButton>
 
                   <Link to="/medicines" className="block">
-                    <Button variant="outline" className="w-full rounded-xl text-sm h-11 border-slate-200 dark:border-slate-800">
+                    <GlassButton variant="secondary" size="md" className="w-full">
                       {t("checkout:cart.explore_btn")}
-                    </Button>
+                    </GlassButton>
                   </Link>
 
                   {/* Trust assurance micro-badges */}
@@ -336,8 +340,8 @@ const CartPage = () => {
                       <span>Cold-chain delivery guaranteed</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassCard>
             </div>
           </div>
         )}

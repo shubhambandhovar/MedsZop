@@ -26,7 +26,7 @@ const PartnersNavbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 glass-navbar">
       {/* Top Sovereign Health Banner */}
       <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6">
         <div className="max-w-[1720px] mx-auto flex items-center justify-between">

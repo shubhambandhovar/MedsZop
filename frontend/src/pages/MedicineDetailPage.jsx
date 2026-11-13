@@ -9,6 +9,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
 import { Separator } from "../components/ui/separator";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ShoppingCart,
   ArrowLeft,
@@ -162,26 +163,24 @@ const MedicineDetailPage = () => {
             </div>
 
             {/* Price Card */}
-            <Card className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 shadow-glass">
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 mb-2">
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="medicine-price">
-                    ₹{finalPrice}
-                  </span>
-                  {medicine.discount_price && (
-                    <>
-                      <span className="text-lg sm:text-xl text-muted-foreground line-through tabular-nums">
-                        ₹{medicine.price}
-                      </span>
-                      <Badge className="bg-emerald-600 text-white text-xs font-semibold">
-                        Save ₹{medicine.price - medicine.discount_price}
-                      </Badge>
-                    </>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">Inclusive of all taxes • 100% Genuine product</p>
-              </CardContent>
-            </Card>
+            <GlassCard variant="elevated" className="rounded-3xl p-5 sm:p-6">
+              <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 mb-2">
+                <span className="font-heading font-extrabold text-3xl sm:text-4xl text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="medicine-price">
+                  ₹{finalPrice}
+                </span>
+                {medicine.discount_price && (
+                  <>
+                    <span className="text-lg sm:text-xl text-muted-foreground line-through tabular-nums">
+                      ₹{medicine.price}
+                    </span>
+                    <Badge className="bg-emerald-600 text-white text-xs font-semibold">
+                      Save ₹{medicine.price - medicine.discount_price}
+                    </Badge>
+                  </>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">Inclusive of all taxes • 100% Genuine product</p>
+            </GlassCard>
 
             {/* Quantity Stepper */}
             <div className="flex items-center gap-4 sm:gap-6 py-2">
@@ -216,9 +215,10 @@ const MedicineDetailPage = () => {
 
             {/* Desktop Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1">
-              <Button
+              <GlassButton
                 size="lg"
-                className="flex-1 h-12 sm:h-14 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-primary/20 active-press"
+                variant="primary"
+                className="flex-1"
                 onClick={handleAddToCart}
                 disabled={addingToCart || medicine.stock === 0}
                 data-testid="add-to-cart-btn"
@@ -227,15 +227,15 @@ const MedicineDetailPage = () => {
                 {medicine.stock === 0
                   ? t("medicine_card.out_of_stock", "Out of Stock")
                   : (addingToCart ? t("medicine_card.adding", "Adding...") : t("medicine_card.add_to_cart", "Add to Cart"))}
-              </Button>
+              </GlassButton>
               <Link to="/cart" className="flex-1">
-                <Button
+                <GlassButton
                   size="lg"
-                  variant="outline"
-                  className="w-full h-12 sm:h-14 rounded-xl text-sm sm:text-base font-semibold border-slate-200 dark:border-slate-700 hover:border-primary/50"
+                  variant="secondary"
+                  className="w-full"
                 >
                   {t("detail.view_cart", "Go to Cart")}
-                </Button>
+                </GlassButton>
               </Link>
             </div>
 

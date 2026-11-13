@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * GlassButton — MedsZop Glass Experience V3
- * Tactile glass button with micro-motion, emerald accents, and accessible touch targets.
+ * Tactile glass button with micro-motion, emerald accents, and accessible touch targets
+ * that respects prefers-reduced-motion.
  */
 export const GlassButton = forwardRef(function GlassButton(
   {
@@ -19,6 +20,7 @@ export const GlassButton = forwardRef(function GlassButton(
   },
   ref
 ) {
+  const shouldReduceMotion = useReducedMotion();
   const variantStyles = {
     primary:
       'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm hover:shadow-emerald-glow border border-emerald-400/30',
@@ -48,8 +50,8 @@ export const GlassButton = forwardRef(function GlassButton(
       ref={ref}
       type={type}
       disabled={disabled || loading}
-      whileTap={!disabled && !loading ? { scale: 0.98 } : undefined}
-      transition={{ duration: 0.12 }}
+      whileTap={!disabled && !loading && !shouldReduceMotion ? { scale: 0.985 } : undefined}
+      transition={{ duration: 0.1 }}
       className={`inline-flex items-center justify-center font-semibold tracking-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 select-none ${variantStyles[variant] || variantStyles.primary} ${sizeStyles[size] || sizeStyles.md} ${disabledStyles} ${className}`}
       onClick={onClick}
       {...props}

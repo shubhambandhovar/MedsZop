@@ -1,10 +1,10 @@
 import React, { forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * GlassCard — MedsZop Glass Experience V3
  * A frosted translucent card component with WCAG 2.2 AA compliant contrast
- * and optional Framer Motion microinteractions.
+ * and optional Framer Motion microinteractions respecting prefers-reduced-motion.
  */
 export const GlassCard = forwardRef(function GlassCard(
   {
@@ -18,6 +18,8 @@ export const GlassCard = forwardRef(function GlassCard(
   },
   ref
 ) {
+  const shouldReduceMotion = useReducedMotion();
+
   const variantStyles = {
     default:
       'backdrop-blur-md bg-white/75 dark:bg-slate-900/75 border border-white/70 dark:border-white/10 shadow-glass dark:shadow-glass-dark',
@@ -30,7 +32,9 @@ export const GlassCard = forwardRef(function GlassCard(
   };
 
   const interactiveStyles = interactive
-    ? 'cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-glass-hover dark:hover:shadow-glass-dark-hover hover:border-emerald-500/35 dark:hover:border-emerald-400/30'
+    ? shouldReduceMotion
+      ? 'cursor-pointer transition-colors duration-150 hover:border-emerald-500/35 dark:hover:border-emerald-400/30'
+      : 'cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-glass-hover dark:hover:shadow-glass-dark-hover hover:border-emerald-500/35 dark:hover:border-emerald-400/30'
     : '';
 
   const glowStyles = glow
@@ -43,12 +47,12 @@ export const GlassCard = forwardRef(function GlassCard(
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        whileHover={interactive ? { y: -2 } : undefined}
-        whileTap={interactive ? { scale: 0.99 } : undefined}
+        exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -6 }}
+        transition={{ duration: shouldReduceMotion ? 0.1 : 0.25, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={interactive && !shouldReduceMotion ? { y: -2 } : undefined}
+        whileTap={interactive && !shouldReduceMotion ? { scale: 0.99 } : undefined}
         className={baseClasses}
         {...props}
       >

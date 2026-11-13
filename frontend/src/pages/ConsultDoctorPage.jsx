@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
     MessageSquare,
     Send,
@@ -189,9 +190,11 @@ const ConsultDoctorPage = () => {
               const lastCompleted = docConsultations.find((c) => c.status === "COMPLETED");
 
               return (
-                <Card
+                <GlassCard
                   key={doc._id}
-                  className="rounded-3xl border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all duration-200 group overflow-hidden bg-card flex flex-col justify-between"
+                  interactive
+                  variant="default"
+                  className="rounded-3xl hover:shadow-lg transition-all duration-200 group overflow-hidden flex flex-col justify-between"
                 >
                   <div>
                     <CardHeader className="flex flex-row items-center gap-3.5 sm:gap-4 p-5 pb-3">
@@ -304,7 +307,7 @@ const ConsultDoctorPage = () => {
                       </Button>
                     )}
                   </CardContent>
-                </Card>
+                </GlassCard>
               );
             })
           )}

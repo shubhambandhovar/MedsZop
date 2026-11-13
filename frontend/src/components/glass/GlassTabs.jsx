@@ -1,9 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * GlassTabs — MedsZop Glass Experience V3
- * Animated pill-style glass tabs with smooth Framer Motion active indicator.
+ * Animated pill-style glass tabs with smooth Framer Motion active indicator,
+ * respecting prefers-reduced-motion.
  */
 export function GlassTabs({
   tabs = [], // Array of { id, label, icon: Icon, count }
@@ -12,6 +13,7 @@ export function GlassTabs({
   className = '',
   tabClassName = '',
 }) {
+  const shouldReduceMotion = useReducedMotion();
   return (
     <div
       role="tablist"
@@ -36,9 +38,9 @@ export function GlassTabs({
           >
             {isActive && (
               <motion.div
-                layoutId="active-glass-tab-indicator"
+                layoutId={shouldReduceMotion ? undefined : "active-glass-tab-indicator"}
                 className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 shadow-emerald-glow-sm"
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                transition={shouldReduceMotion ? { duration: 0.05 } : { type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
 

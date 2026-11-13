@@ -2,6 +2,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../../components/ui/accordion";
+import { GlassCard } from "../../components/glass";
 
 const faqs = [
   {
@@ -137,7 +138,7 @@ const FaqsPage = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-8 sm:py-12 flex-grow w-full">
-        <div className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 shadow-glass p-5 sm:p-8">
+        <GlassCard variant="surface" className="rounded-3xl p-5 sm:p-8">
 
           {faqs.map((section, idx) => (
             <div key={idx} className="mb-8 sm:mb-10 last:mb-0">
@@ -159,7 +160,7 @@ const FaqsPage = () => {
             </div>
           ))}
 
-        </div>
+        </GlassCard>
 
         {/* SEO context text (invisible to users but readable by screen readers/crawlers) */}
         <div className="sr-only">

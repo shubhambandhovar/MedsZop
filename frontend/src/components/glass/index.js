@@ -13,4 +13,5 @@ export { GlassTabs } from './GlassTabs';
 export { GlassSearch } from './GlassSearch';
 export { GlassToast } from './GlassToast';
 export { GlassSkeleton } from './GlassSkeleton';
+export * from './motionVariants';
 
