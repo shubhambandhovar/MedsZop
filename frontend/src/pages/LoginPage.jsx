@@ -18,8 +18,11 @@ import {
   ShieldCheck,
   Zap,
   Sparkles,
-  HeartHandshake,
-  ArrowUpSquare
+  ArrowUpSquare,
+  Clock,
+  Shield,
+  BadgeCheck,
+  PhoneCall
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -43,15 +46,15 @@ const LoginPage = () => {
   // Inline Validation
   const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
   const isEmailValid = isValidEmail(email);
-  const emailError = emailTouched && email.trim().length > 0 && !isEmailValid
-    ? "Please enter a valid email address (e.g. name@example.com)"
-    : emailTouched && email.trim().length === 0
-    ? "Email address is required"
-    : null;
+  const emailError =
+    emailTouched && email.trim().length > 0 && !isEmailValid
+      ? "Please enter a valid email address (e.g. name@example.com)"
+      : emailTouched && email.trim().length === 0
+      ? "Email address is required"
+      : null;
 
-  const passwordError = passwordTouched && password.length === 0
-    ? "Password is required"
-    : null;
+  const passwordError =
+    passwordTouched && password.length === 0 ? "Password is required" : null;
 
   const navigateByRole = (user) => {
     switch (user?.role?.toLowerCase()) {
@@ -97,10 +100,11 @@ const LoginPage = () => {
 
     try {
       const user = await login(email.trim(), password);
-      toast.success("Welcome back!");
+      toast.success("Welcome back to MedsZop!");
       navigateByRole(user);
     } catch (error) {
-      const isNetworkErr = error?.message?.includes("Network Error") || error?.code === "ERR_NETWORK";
+      const isNetworkErr =
+        error?.message?.includes("Network Error") || error?.code === "ERR_NETWORK";
       const msg = isNetworkErr
         ? "Unable to connect to MedsZop servers. Please check your network connection."
         : typeof error === "string"
@@ -115,30 +119,33 @@ const LoginPage = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const user = await googleLogin(credentialResponse.credential);
-      toast.success("Welcome back!");
+      toast.success("Welcome back to MedsZop!");
       navigateByRole(user);
     } catch (error) {
       const msg = typeof error === "string" ? error : error?.message;
       if (msg && msg.includes("No account found")) {
-        toast.custom(() => (
-          <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 px-7 py-6 w-[min(340px,calc(100vw-32px))]">
-            <div className="h-11 w-11 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center">
-              <AlertCircle className="h-6 w-6" aria-hidden="true" />
+        toast.custom(
+          () => (
+            <div className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 px-7 py-6 w-[min(340px,calc(100vw-32px))]">
+              <div className="h-11 w-11 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <AlertCircle className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <p className="text-sm text-center text-foreground font-medium">
+                No account found with this Google email. Please create an account first.
+              </p>
+              <button
+                onClick={() => {
+                  toast.dismiss();
+                  navigate("/register");
+                }}
+                className="w-full bg-[#046A47] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#035438] transition-all shadow-sm"
+              >
+                Go to Sign Up
+              </button>
             </div>
-            <p className="text-sm text-center text-foreground font-medium">
-              No account found with this Google email. Please create an account first.
-            </p>
-            <button
-              onClick={() => {
-                toast.dismiss();
-                navigate("/register");
-              }}
-              className="w-full bg-primary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-primary/90 transition-all shadow-sm"
-            >
-              Go to Sign Up
-            </button>
-          </div>
-        ), { position: "top-center", duration: 6000 });
+          ),
+          { position: "top-center", duration: 6000 }
+        );
       } else {
         toast.error(msg || "Google login failed. Please try standard sign in.");
       }
@@ -150,147 +157,160 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 flex flex-col justify-center items-center py-10 sm:py-8 pt-16 sm:pt-8 px-4 sm:px-6 lg:px-8 relative selection:bg-primary/20">
-      {/* Background Accent Gradient */}
-      <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/70 via-background to-background dark:from-blue-950/20 dark:via-background dark:to-background -z-10 pointer-events-none"
-        aria-hidden="true"
-      />
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#FAFBF9] dark:bg-[#080E0B] text-foreground selection:bg-[#046A47]/20">
+      {/* ================= LEFT EDITORIAL HERO PANEL (Desktop) ================= */}
+      <div className="hidden lg:flex lg:w-[50%] xl:w-[52%] 2xl:w-[55%] relative min-h-screen flex-col justify-between p-10 xl:p-14 2xl:p-16 bg-[#061A13] text-white overflow-hidden border-r border-[#0E2E22]">
+        {/* Subtle Ambient Illumination */}
+        <div
+          className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-[#046A47]/25 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-32 -right-32 w-[520px] h-[520px] rounded-full bg-[#10B981]/15 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-[radial-gradient(#143D2E_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none"
+          aria-hidden="true"
+        />
 
-      {/* Floating Back to Home Button */}
-      <div className="absolute top-4 sm:top-5 left-4 sm:left-5 z-20">
-        <Link to="/">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow hover:bg-white dark:hover:bg-slate-900 px-3.5 py-2 sm:px-4 min-h-[38px] text-xs sm:text-sm text-foreground font-medium transition-all active:scale-95"
+        {/* Top Branding Bar */}
+        <div className="relative z-10 flex items-center justify-between">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] rounded-xl group transition-all"
+            aria-label="MedsZop Home"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" aria-hidden="true" />
-            Back to Home
-          </Button>
-        </Link>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-4xl xl:max-w-5xl my-auto"
-      >
-        <div className="grid lg:grid-cols-12 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800/80 shadow-2xl bg-card">
-          {/* ================= LEFT TRUST / BRAND SHOWCASE PANEL ================= */}
-          <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 text-white p-8 lg:p-10 flex-col justify-between relative overflow-hidden lg:border-r lg:border-slate-800/60">
-            {/* Subtle Tech Glow Overlay */}
-            <div
-              className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/20 blur-3xl pointer-events-none"
-              aria-hidden="true"
+            <img
+              src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
+              alt="MedsZop Logo"
+              className="h-10 w-auto object-contain brightness-0 invert group-hover:opacity-90 transition-opacity"
             />
-            <div
-              className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none"
-              aria-hidden="true"
-            />
+          </Link>
 
-            {/* Top Branding */}
-            <div className="relative z-10">
-              <Link to="/" className="inline-block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl">
-                <img
-                  src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
-                  alt="MedsZop Logo"
-                  className="h-10 w-auto object-contain brightness-0 invert"
-                />
-              </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#93B4A6] hover:text-white transition-colors px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-white/20 active:scale-95"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            Back to store
+          </Link>
+        </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 text-xs font-semibold mb-4 border border-cyan-500/20">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                Licensed Healthcare Ecosystem
-              </div>
-
-              <h2 className="font-heading text-3xl font-bold tracking-tight text-white leading-snug">
-                Verified healthcare, delivered in 28 minutes.
-              </h2>
-            </div>
-
-            {/* Feature Highlights */}
-            <div className="space-y-4 my-8 relative z-10">
-              <div className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20">
-                  <Zap className="h-4 w-4" aria-hidden="true" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-slate-100">Cold-Chain Express</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Insulated temperature-controlled dispatch directly from local licensed pharmacies.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/20">
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-slate-100">AI Clinical Recognition</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Instantly scan prescriptions and receive drug-interaction alerts.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                  <HeartHandshake className="h-4 w-4" aria-hidden="true" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-slate-100">100% Genuine Guarantee</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Complete batch traceability on every OTC and prescription medicine.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Editorial Testimonial Accent */}
-            <div className="border-t border-slate-800/80 pt-5 relative z-10">
-              <p className="font-accent italic text-xs text-slate-300 leading-relaxed">
-                &ldquo;MedsZop is transforming chronic care delivery with pharmaceutical rigor and instant local access.&rdquo;
-              </p>
-              <p className="text-[11px] font-semibold text-cyan-400 mt-1.5">
-                Dr. Arvind Rao, Chief Clinical Advisor
-              </p>
-            </div>
+        {/* Center Editorial Narrative */}
+        <div className="relative z-10 max-w-xl my-auto py-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-6 tracking-wide shadow-sm">
+            <BadgeCheck className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
+            Licensed Indian Healthcare Ecosystem
           </div>
 
-          {/* ================= RIGHT FORM PANEL ================= */}
-          <div className="col-span-12 lg:col-span-7 p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
-            {/* Mobile Header Logo */}
-            <div className="lg:hidden text-center mb-6">
-              <Link to="/" className="inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl">
-                <img
-                  src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
-                  alt="MedsZop Logo"
-                  className="h-9 w-auto object-contain mx-auto"
-                />
-              </Link>
+          <h1 className="font-heading text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white leading-[1.18]">
+            Restoring trust in medicine, from prescription to doorstep.
+          </h1>
+
+          <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
+            Direct cold-chain delivery from licensed neighborhood pharmacies, batch-traceable
+            pharmaceuticals, and qualified doctor consultations.
+          </p>
+
+          {/* Three Clinical Proof Points */}
+          <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/10">
+            <div className="flex items-start gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-[#0B2E21] border border-[#144F38] text-[#34D399] flex items-center justify-center shrink-0">
+                <Clock className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-sm text-white">Insulated Cold-Chain Delivery</h2>
+                <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
+                  Temperature-controlled insulated transit preserving vaccine, insulin, and antibiotic efficacy.
+                </p>
+              </div>
             </div>
 
-            <div className="mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-1.5 mb-2.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold tracking-wider uppercase">
-                <ShieldCheck className="h-3 w-3" aria-hidden="true" />
-                Patient &amp; Pharmacy Portal
+            <div className="flex items-start gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-[#0B2E21] border border-[#144F38] text-[#34D399] flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-5 w-5" aria-hidden="true" />
               </div>
-              <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              <div>
+                <h2 className="font-semibold text-sm text-white">Verifiable Batch Traceability</h2>
+                <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
+                  Direct CDSCO-compliant pharmacy sourcing with barcode tamper-evident packaging.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-[#0B2E21] border border-[#144F38] text-[#34D399] flex items-center justify-center shrink-0">
+                <PhoneCall className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-sm text-white">Qualified Healthcare Consultations</h2>
+                <p className="text-xs text-[#8BAAA0] mt-0.5 leading-relaxed">
+                  Registered Medical Practitioners and clinical pharmacists available for prescription reviews.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Regulatory Assurance */}
+        <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
+          <span className="flex items-center gap-1.5 font-medium">
+            <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
+            Drugs &amp; Cosmetics Act 1940 &amp; Rule 65 Compliant
+          </span>
+          <span className="font-mono text-[#5B7C72]">256-Bit TLS • Data Privacy Standard</span>
+        </div>
+      </div>
+
+      {/* ================= RIGHT FORM PANEL ================= */}
+      <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-screen flex flex-col justify-between p-6 sm:p-10 md:p-12 lg:p-10 xl:p-14 2xl:p-16 relative">
+        {/* Mobile & Tablet Header */}
+        <div className="flex items-center justify-between w-full lg:hidden mb-6">
+          <Link to="/" className="inline-block">
+            <img
+              src="https://res.cloudinary.com/dih1im0zi/image/upload/v1771198740/medszoplogo_hjhsxv.svg"
+              alt="MedsZop Logo"
+              className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
+            />
+          </Link>
+
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            Back
+          </Link>
+        </div>
+
+        {/* Form Container (Optimal measure ~420px for readability) */}
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto my-auto py-4">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            {/* Form Header */}
+            <div className="mb-7">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#046A47]/10 dark:bg-[#046A47]/20 text-[#046A47] dark:text-[#34D399] text-xs font-semibold tracking-wide uppercase mb-3">
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                MedsZop Care Identity
+              </div>
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 Welcome back
-              </h1>
+              </h2>
               <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                Sign in to manage prescriptions, orders, and 24/7 doctor consults.
+                Sign in to manage your prescriptions, track orders, and consult doctors.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              {/* EMAIL INPUT */}
-              <div className="space-y-2">
+            {/* Login Form */}
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {/* EMAIL FIELD */}
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+                  <Label htmlFor="email" className="text-xs font-semibold text-foreground">
                     Email Address
                   </Label>
                   {isEmailValid && emailTouched && (
@@ -306,8 +326,8 @@ const LoginPage = () => {
                     className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
                       emailError
                         ? "text-destructive"
-                        : isEmailValid
-                        ? "text-emerald-500"
+                        : isEmailValid && emailTouched
+                        ? "text-emerald-600 dark:text-emerald-400"
                         : "text-muted-foreground"
                     }`}
                     aria-hidden="true"
@@ -326,12 +346,12 @@ const LoginPage = () => {
                     onBlur={() => setEmailTouched(true)}
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? "email-error" : undefined}
-                    className={`pl-10 h-12 rounded-xl text-base sm:text-sm transition-all ${
+                    className={`pl-10 h-12 rounded-xl text-base sm:text-sm transition-all bg-white dark:bg-[#0F1714] ${
                       emailError
                         ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
                         : isEmailValid && emailTouched
-                        ? "border-emerald-500 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500"
-                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 focus-visible:ring-primary/20 focus-visible:border-primary"
+                        ? "border-emerald-600 dark:border-emerald-500 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-600"
+                        : "border-slate-200 dark:border-[#1E2E27] hover:border-slate-300 dark:hover:border-[#2C4238] focus-visible:ring-[#046A47]/20 focus-visible:border-[#046A47]"
                     }`}
                     required
                     data-testid="login-email"
@@ -341,7 +361,7 @@ const LoginPage = () => {
                   <p
                     id="email-error"
                     role="alert"
-                    className="text-xs font-medium text-destructive flex items-center gap-1 mt-1 animate-in fade-in-50 duration-200"
+                    className="text-xs font-medium text-destructive flex items-center gap-1 mt-1 animate-in fade-in-50 duration-150"
                   >
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     {emailError}
@@ -349,15 +369,15 @@ const LoginPage = () => {
                 )}
               </div>
 
-              {/* PASSWORD INPUT */}
-              <div className="space-y-2">
+              {/* PASSWORD FIELD */}
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="password" className="text-sm font-semibold text-foreground">
+                  <Label htmlFor="password" className="text-xs font-semibold text-foreground">
                     Password
                   </Label>
                   <Link
                     to="/forgot-password"
-                    className="text-xs font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:underline py-0.5 inline-block"
+                    className="text-xs font-semibold text-[#046A47] dark:text-[#34D399] hover:underline focus-visible:outline-none focus-visible:underline py-0.5 inline-block"
                   >
                     Forgot password?
                   </Link>
@@ -375,7 +395,7 @@ const LoginPage = () => {
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     maxLength={128}
-                    placeholder="••••••••"
+                    placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -397,10 +417,10 @@ const LoginPage = () => {
                     }}
                     aria-invalid={!!passwordError}
                     aria-describedby={passwordError ? "password-error" : undefined}
-                    className={`pl-10 pr-12 h-12 rounded-xl text-base sm:text-sm tabular-nums transition-all ${
+                    className={`pl-10 pr-12 h-12 rounded-xl text-base sm:text-sm tabular-nums transition-all bg-white dark:bg-[#0F1714] ${
                       passwordError
                         ? "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive bg-destructive/5"
-                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 focus-visible:ring-primary/20 focus-visible:border-primary"
+                        : "border-slate-200 dark:border-[#1E2E27] hover:border-slate-300 dark:hover:border-[#2C4238] focus-visible:ring-[#046A47]/20 focus-visible:border-[#046A47]"
                     }`}
                     required
                     data-testid="login-password"
@@ -408,7 +428,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary active:scale-90"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#046A47] active:scale-90"
                     aria-label={showPassword ? "Hide password text" : "Show password text"}
                   >
                     {showPassword ? (
@@ -439,7 +459,7 @@ const LoginPage = () => {
               {/* SUBMIT BUTTON */}
               <Button
                 type="submit"
-                className="w-full h-12 rounded-xl font-semibold text-base shadow-md hover:shadow-lg transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed"
+                className="w-full h-12 rounded-xl font-semibold text-base bg-[#046A47] hover:bg-[#035438] text-white shadow-md shadow-[#046A47]/20 transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed mt-2"
                 disabled={loading}
                 data-testid="login-submit"
               >
@@ -455,12 +475,12 @@ const LoginPage = () => {
             </form>
 
             {/* Google OAuth Divider */}
-            <div className="relative my-5 sm:my-6">
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-200 dark:border-slate-800" />
+                <span className="w-full border-t border-slate-200 dark:border-[#1E2E27]" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-3 text-muted-foreground font-medium tracking-wider">
+                <span className="bg-[#FAFBF9] dark:bg-[#080E0B] px-3 text-muted-foreground font-medium tracking-wider">
                   Or continue with
                 </span>
               </div>
@@ -473,28 +493,36 @@ const LoginPage = () => {
                 onError={handleGoogleError}
                 theme={isDark ? "filled_black" : "outline"}
                 size="large"
-                width="100%"
+                width="380"
                 text="signin_with"
                 shape="rectangular"
               />
             </div>
 
-            {/* Register Link Footer */}
-            <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
+            {/* Create Account Link Footer */}
+            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
               <p className="text-sm text-muted-foreground">
                 Don&apos;t have a MedsZop account?{" "}
                 <Link
                   to="/register"
-                  className="text-primary font-semibold hover:underline focus-visible:outline-none focus-visible:underline"
+                  className="text-[#046A47] dark:text-[#34D399] font-semibold hover:underline focus-visible:outline-none focus-visible:underline"
                   data-testid="register-link"
                 >
                   Create free account
                 </Link>
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </motion.div>
+
+        {/* Right Footer Security Note */}
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
+          <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
+            Protected by end-to-end encryption &amp; robust healthcare security controls
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
