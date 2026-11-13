@@ -157,9 +157,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#FAFBF9] dark:bg-[#080E0B] text-foreground selection:bg-[#046A47]/20">
+    <div className="min-h-[100dvh] lg:h-[100dvh] w-full flex flex-col lg:flex-row bg-[#FAFBF9] dark:bg-[#080E0B] text-foreground selection:bg-[#046A47]/20 lg:overflow-hidden">
       {/* ================= LEFT EDITORIAL HERO PANEL (Desktop) ================= */}
-      <div className="hidden lg:flex lg:w-[50%] xl:w-[52%] 2xl:w-[55%] relative min-h-screen flex-col justify-between p-10 xl:p-14 2xl:p-16 bg-[#061A13] text-white overflow-hidden border-r border-[#0E2E22]">
+      <div className="hidden lg:flex lg:w-[50%] xl:w-[52%] 2xl:w-[55%] relative lg:h-full flex-col justify-between p-8 xl:p-12 2xl:p-14 bg-[#061A13] text-white overflow-hidden border-r border-[#0E2E22]">
         {/* Subtle Ambient Illumination */}
         <div
           className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-[#046A47]/25 blur-3xl pointer-events-none"
@@ -198,8 +198,8 @@ const LoginPage = () => {
         </div>
 
         {/* Center Editorial Narrative */}
-        <div className="relative z-10 max-w-xl my-auto py-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-6 tracking-wide shadow-sm">
+        <div className="relative z-10 max-w-xl my-auto py-4 xl:py-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C20] border border-[#144A36] text-[#6EE7B7] text-xs font-semibold mb-4 xl:mb-5 tracking-wide shadow-sm">
             <BadgeCheck className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
             Licensed Indian Healthcare Ecosystem
           </div>
@@ -208,13 +208,13 @@ const LoginPage = () => {
             Restoring trust in medicine, from prescription to doorstep.
           </h1>
 
-          <p className="mt-4 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
+          <p className="mt-3.5 text-sm xl:text-base text-[#9EBAAE] leading-relaxed">
             Direct delivery from licensed neighborhood pharmacies, batch-traceable
             pharmaceuticals, and qualified doctor consultations.
           </p>
 
           {/* Three Clinical Proof Points */}
-          <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/10">
+          <div className="grid grid-cols-1 gap-3 xl:gap-3.5 mt-5 xl:mt-8 pt-5 xl:pt-8 border-t border-white/10">
             <div className="flex items-start gap-3.5">
               <div className="h-10 w-10 rounded-xl bg-[#0B2E21] border border-[#144F38] text-[#34D399] flex items-center justify-center shrink-0">
                 <Clock className="h-5 w-5" aria-hidden="true" />
@@ -254,7 +254,7 @@ const LoginPage = () => {
         </div>
 
         {/* Bottom Security Assurance */}
-        <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
+        <div className="relative z-10 pt-5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#789A8F]">
           <span className="flex items-center gap-1.5 font-medium">
             <Shield className="h-3.5 w-3.5 text-[#34D399]" aria-hidden="true" />
             Verified Pharmacy Sourcing &amp; Prescription Standards
@@ -264,7 +264,7 @@ const LoginPage = () => {
       </div>
 
       {/* ================= RIGHT FORM PANEL ================= */}
-      <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-screen flex flex-col justify-between p-6 sm:p-10 md:p-12 lg:p-10 xl:p-14 2xl:p-16 relative">
+      <div className="w-full lg:w-[50%] xl:w-[48%] 2xl:w-[45%] min-h-[100dvh] lg:min-h-0 lg:h-full flex flex-col justify-between p-6 sm:p-8 lg:px-8 lg:py-6 xl:px-12 xl:py-8 relative overflow-y-auto">
         {/* Mobile & Tablet Header */}
         <div className="flex items-center justify-between w-full lg:hidden mb-6">
           <Link to="/" className="inline-block">
@@ -285,15 +285,15 @@ const LoginPage = () => {
         </div>
 
         {/* Form Container (Optimal measure ~420px for readability) */}
-        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto my-auto py-4">
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto my-auto py-2">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             {/* Form Header */}
-            <div className="mb-7">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#046A47]/10 dark:bg-[#046A47]/20 text-[#046A47] dark:text-[#34D399] text-xs font-semibold tracking-wide uppercase mb-3">
+            <div className="mb-5 sm:mb-6">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#046A47]/10 dark:bg-[#046A47]/20 text-[#046A47] dark:text-[#34D399] text-xs font-semibold tracking-wide uppercase mb-2.5">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
                 MedsZop Care Identity
               </div>
@@ -371,17 +371,9 @@ const LoginPage = () => {
 
               {/* PASSWORD FIELD */}
               <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="password" className="text-xs font-semibold text-foreground">
-                    Password
-                  </Label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs font-semibold text-[#046A47] dark:text-[#34D399] hover:underline focus-visible:outline-none focus-visible:underline py-0.5 inline-block"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password" className="text-xs font-semibold text-foreground">
+                  Password
+                </Label>
 
                 <div className="relative">
                   <Lock
@@ -454,12 +446,22 @@ const LoginPage = () => {
                     {passwordError}
                   </p>
                 )}
+
+                {/* Forgot Password Link - positioned directly below password input, right-aligned */}
+                <div className="flex justify-end pt-1">
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs font-semibold text-[#046A47] dark:text-[#34D399] hover:underline focus-visible:outline-none focus-visible:underline py-0.5 inline-block transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
 
               {/* SUBMIT BUTTON */}
               <Button
                 type="submit"
-                className="w-full h-12 rounded-xl font-semibold text-base bg-[#046A47] hover:bg-[#035438] text-white shadow-md shadow-[#046A47]/20 transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed mt-2"
+                className="w-full h-12 rounded-xl font-semibold text-base bg-[#046A47] hover:bg-[#035438] text-white shadow-md shadow-[#046A47]/20 transition-all active:scale-[0.99] disabled:shadow-none disabled:cursor-not-allowed mt-2.5"
                 disabled={loading}
                 data-testid="login-submit"
               >
@@ -475,7 +477,7 @@ const LoginPage = () => {
             </form>
 
             {/* Google OAuth Divider */}
-            <div className="relative my-6">
+            <div className="relative my-4 sm:my-5">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-200 dark:border-[#1E2E27]" />
               </div>
@@ -500,7 +502,7 @@ const LoginPage = () => {
             </div>
 
             {/* Create Account Link Footer */}
-            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
+            <div className="mt-5 sm:mt-6 pt-4 border-t border-slate-200/80 dark:border-[#1E2E27] text-center">
               <p className="text-sm text-muted-foreground">
                 Don&apos;t have a MedsZop account?{" "}
                 <Link
@@ -516,7 +518,7 @@ const LoginPage = () => {
         </div>
 
         {/* Right Footer Security Note */}
-        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-4">
+        <div className="w-full max-w-[420px] xl:max-w-[440px] mx-auto text-center pt-2 pb-1 shrink-0">
           <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-[#046A47] dark:text-[#34D399]" aria-hidden="true" />
             Protected by TLS encryption &amp; standard healthcare privacy controls
