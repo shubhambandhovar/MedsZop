@@ -63,6 +63,10 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
+  RotateCcw,
+  UserCheck,
+  CheckCheck,
+  HelpCircle,
   Printer,
   Calendar,
   Sparkles,
@@ -118,6 +122,19 @@ const PharmacyDashboardPage = () => {
   const [loadingRxBlob, setLoadingRxBlob] = useState(false);
   const [rxBlobError, setRxBlobError] = useState(false);
   const [isPdf, setIsPdf] = useState(false);
+
+  // Prescription Review Queue State (V2 Pharmacist Workstation)
+  const [rxReviewQueue, setRxReviewQueue] = useState([]);
+  const [loadingRxQueue, setLoadingRxQueue] = useState(false);
+  const [selectedRxForReview, setSelectedRxForReview] = useState(null);
+  const [rxReviewItems, setRxReviewItems] = useState([]);
+  const [rxReviewNotes, setRxReviewNotes] = useState("");
+  const [rxRejectionReason, setRxRejectionReason] = useState("");
+  const [submittingRxReview, setSubmittingRxReview] = useState(false);
+  const [rxAuditViewBlobUrl, setRxAuditViewBlobUrl] = useState(null);
+  const [loadingRxAuditBlob, setLoadingRxAuditBlob] = useState(false);
+  const [rxAuditZoom, setRxAuditZoom] = useState(1);
+  const [rxAuditRotation, setRxAuditRotation] = useState(0);
 
   // Pick checklist state for order packing
   const [packedItems, setPackedItems] = useState({});
@@ -192,6 +209,16 @@ const PharmacyDashboardPage = () => {
 
       setDashboardData(dashboardRes.data);
       setOrders(ordersRes.data || []);
+
+      // Fetch Prescriptions awaiting clinical review
+      try {
+        const rxQueueRes = await axios.get(`${API_URL}/prescriptions/review-queue`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setRxReviewQueue(rxQueueRes.data?.items || []);
+      } catch (queueErr) {
+        // Fallback gracefully
+      }
     } catch (error) {
       console.error(error);
       toast.error("Failed to refresh pharmacy fulfillment data");
@@ -312,6 +339,119 @@ const PharmacyDashboardPage = () => {
 
   const togglePackedItem = (idx) => {
     setPackedItems(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  // ================= PRESCRIPTION WORKSTATION AUDIT ACTIONS =================
+  const openRxVerificationModal = async (rx) => {
+    setSelectedRxForReview(rx);
+    setRxReviewNotes("");
+    setRxRejectionReason("");
+    setRxAuditZoom(1);
+    setRxAuditRotation(0);
+
+    const initialMedicines = (rx.parsed_data?.medicines || []).map((m, idx) => ({
+      id: idx,
+      medicineName: m.medicineName || m.name || "",
+      strength: m.strength || m.dosage || "",
+      prescribedDose: m.prescribedDose || "1 unit",
+      frequency: m.frequency || "OD",
+      duration: m.duration || "5 days",
+      instructions: m.instructions || "",
+      recognitionStatus: m.recognitionStatus || "RECOGNIZED_UNVERIFIED",
+      fieldConfidence: m.fieldConfidence || 0.9,
+      lasaAlert: m.lasaAlert || null,
+      sourceText: m.sourceText || m.medicineName || "",
+      isApproved: true
+    }));
+    setRxReviewItems(initialMedicines);
+
+    // Fetch authenticated blob for prescription image
+    if (rx.filename) {
+      setLoadingRxAuditBlob(true);
+      try {
+        const res = await axios.get(`${API_URL}/prescriptions/file/${encodeURIComponent(rx.filename)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: "blob"
+        });
+        const blobUrl = URL.createObjectURL(res.data);
+        setRxAuditViewBlobUrl(blobUrl);
+      } catch (blobErr) {
+        console.warn("Could not load rx blob for audit:", blobErr.message);
+        setRxAuditViewBlobUrl(null);
+      } finally {
+        setLoadingRxAuditBlob(false);
+      }
+    }
+  };
+
+  const closeRxVerificationModal = () => {
+    if (rxAuditViewBlobUrl) {
+      URL.revokeObjectURL(rxAuditViewBlobUrl);
+    }
+    setRxAuditViewBlobUrl(null);
+    setSelectedRxForReview(null);
+    setRxReviewItems([]);
+  };
+
+  const handleUpdateRxItem = (index, field, value) => {
+    setRxReviewItems((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleAddRxItem = () => {
+    setRxReviewItems((prev) => [
+      ...prev,
+      {
+        id: prev.length,
+        medicineName: "",
+        strength: "",
+        prescribedDose: "1 unit",
+        frequency: "OD",
+        duration: "5 days",
+        instructions: "",
+        recognitionStatus: "PHARMACIST_APPROVED",
+        fieldConfidence: 1.0,
+        lasaAlert: null,
+        sourceText: "Pharmacist addition",
+        isApproved: true
+      }
+    ]);
+  };
+
+  const handleRemoveRxItem = (index) => {
+    setRxReviewItems((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const handleSubmitRxReview = async (decision) => {
+    if (!selectedRxForReview) return;
+    setSubmittingRxReview(true);
+
+    try {
+      const payload = {
+        decision,
+        reviewedMedicines: rxReviewItems,
+        notes: rxReviewNotes,
+        rejectionReason: decision === "reject" ? rxRejectionReason || "Illegible or invalid prescription" : ""
+      };
+
+      const res = await axios.post(`${API_URL}/prescriptions/${selectedRxForReview._id}/review`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data.success) {
+        toast.success(`Prescription ${decision.replace(/_/g, " ")} successfully recorded in audit log`);
+        closeRxVerificationModal();
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Prescription review error:", err);
+      toast.error(err.response?.data?.message || "Failed to submit prescription review");
+    } finally {
+      setSubmittingRxReview(false);
+    }
   };
 
   // ================= MEDICINE FORM STATE & LOGIC =================
@@ -1207,36 +1347,136 @@ const PharmacyDashboardPage = () => {
           </TabsContent>
 
           {/* ================= TAB 3: PRESCRIPTION AUDIT DESK ================= */}
-          <TabsContent value="rx_desk" className="space-y-4">
+          <TabsContent value="rx_desk" className="space-y-6">
+            {/* 1. Multimodal AI Ingested Review Queue */}
+            <Card className="rounded-xl border-slate-200/90 bg-white shadow-xs">
+              <CardHeader className="p-4 sm:p-5 border-b border-slate-200/80">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div>
+                    <CardTitle className="text-base sm:text-lg font-bold text-slate-900 font-heading flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-emerald-600" />
+                      AI Multimodal Prescription Review Queue
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500">
+                      Prescriptions analyzed by Gemini &amp; Sharp OCR awaiting mandatory pharmacist clinical audit and sign-off.
+                    </CardDescription>
+                  </div>
+                  <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-mono text-xs py-1 px-3 w-fit">
+                    {rxReviewQueue.length} Documents In Intake Queue
+                  </Badge>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-4 sm:p-5">
+                {rxReviewQueue.length === 0 ? (
+                  <div className="text-center py-10 text-slate-400">
+                    <ShieldCheck className="h-10 w-10 text-emerald-500 mx-auto mb-2" />
+                    <h3 className="text-sm font-bold text-slate-700">AI Intake Queue Clear</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">No standalone prescriptions pending pharmacist review.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {rxReviewQueue.map((rx) => {
+                      const hasLasa = rx.parsed_data?.medicines?.some((m) => m.lasaAlert);
+                      const hasUncertain = rx.parsed_data?.medicines?.some(
+                        (m) => m.recognitionStatus === "UNCERTAIN" || m.recognitionStatus === "ILLEGIBLE"
+                      );
+                      const itemsCount = rx.parsed_data?.medicines?.length || 0;
+
+                      return (
+                        <div
+                          key={rx._id}
+                          className={`border rounded-xl p-4 transition-all bg-white flex flex-col justify-between gap-3 shadow-2xs ${
+                            hasLasa
+                              ? "border-red-300 hover:border-red-400 bg-red-50/20"
+                              : hasUncertain
+                              ? "border-amber-300 hover:border-amber-400 bg-amber-50/20"
+                              : "border-slate-200 hover:border-emerald-300"
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-mono text-xs font-bold text-slate-900 truncate max-w-[160px]">
+                                Rx #{rx._id.slice(-6).toUpperCase()}
+                              </span>
+                              <Badge
+                                className={`text-[10px] ${
+                                  hasLasa
+                                    ? "bg-red-100 text-red-800 border-red-300"
+                                    : hasUncertain
+                                    ? "bg-amber-100 text-amber-800 border-amber-300"
+                                    : "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                }`}
+                              >
+                                {hasLasa ? "LASA Alert" : hasUncertain ? "Uncertain Lines" : "AI Parsed"}
+                              </Badge>
+                            </div>
+
+                            <p className="text-xs font-semibold text-slate-900 truncate">
+                              File: {rx.original_name || rx.filename}
+                            </p>
+                            <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                              {itemsCount} medicine{itemsCount !== 1 ? "s" : ""} extracted
+                            </p>
+
+                            {/* LASA or Uncertainty Callout */}
+                            {hasLasa && (
+                              <p className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1">
+                                <AlertTriangle className="h-3 w-3 shrink-0" /> Sound-Alike drug pair detected
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[11px] text-slate-400">
+                              {new Date(rx.createdAt).toLocaleDateString()}
+                            </span>
+                            <Button
+                              size="sm"
+                              onClick={() => openRxVerificationModal(rx)}
+                              className="h-8 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                            >
+                              Audit &amp; Sign Off &rarr;
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* 2. Order-Linked Prescription Verification */}
             <Card className="rounded-xl border-slate-200/90 bg-white shadow-xs">
               <CardHeader className="p-4 sm:p-5 border-b border-slate-200/80">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div>
                     <CardTitle className="text-base sm:text-lg font-bold text-slate-900 font-heading flex items-center gap-2">
                       <FileCheck className="h-5 w-5 text-amber-600" />
-                      Pharmacist Prescription Audit Station
+                      Order-Linked Prescription Audits
                     </CardTitle>
                     <CardDescription className="text-xs text-slate-500">
-                      Mandatory pharmacist sign-off queue for Schedule H/H1 medications pursuant to Rule 65 of Drugs and Cosmetics Rules.
+                      Prescriptions attached directly to customer orders requiring dispensing clearance.
                     </CardDescription>
                   </div>
                   <Badge className="bg-amber-100 text-amber-800 border-amber-300 font-mono text-xs py-1 px-3 w-fit">
-                    {stats.pending_verification} Rx In Verification Queue
+                    {stats.pending_verification} Orders Waiting
                   </Badge>
                 </div>
               </CardHeader>
 
               <CardContent className="p-4 sm:p-5">
-                {orders.filter(o => o.prescription_url).length === 0 ? (
-                  <div className="text-center py-16 text-slate-400">
-                    <ShieldCheck className="h-12 w-12 text-emerald-500 mx-auto mb-2" />
-                    <h3 className="text-sm font-bold text-slate-700">All Prescriptions Audited</h3>
-                    <p className="text-xs text-slate-400 mt-1">There are no outstanding prescription orders waiting for verification.</p>
+                {orders.filter((o) => o.prescription_url).length === 0 ? (
+                  <div className="text-center py-10 text-slate-400">
+                    <ShieldCheck className="h-10 w-10 text-emerald-500 mx-auto mb-2" />
+                    <h3 className="text-sm font-bold text-slate-700">All Order Prescriptions Audited</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">There are no outstanding order prescriptions waiting for verification.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {orders
-                      .filter(o => o.prescription_url)
+                      .filter((o) => o.prescription_url)
                       .map((order) => (
                         <div
                           key={order._id}
@@ -1254,7 +1494,7 @@ const PharmacyDashboardPage = () => {
 
                             <p className="text-xs font-semibold text-slate-900">{order.address?.name || "Patient Order"}</p>
                             <p className="text-[11px] text-slate-500 font-mono">
-                              Items: {order.items?.map(i => i.name).join(", ") || "Prescription order"}
+                              Items: {order.items?.map((i) => i.name).join(", ") || "Prescription order"}
                             </p>
                           </div>
 
@@ -1942,6 +2182,355 @@ const PharmacyDashboardPage = () => {
             )
           ) : (
             <div className="text-white text-sm">No preview available</div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ================= PRESCRIPTION CLINICAL VERIFICATION WORKSTATION MODAL ================= */}
+      <Dialog open={Boolean(selectedRxForReview)} onOpenChange={(open) => !open && closeRxVerificationModal()}>
+        <DialogContent className="max-w-6xl max-h-[94vh] overflow-y-auto p-5 sm:p-6 bg-white">
+          <DialogHeader className="border-b border-slate-200 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <DialogTitle className="text-lg font-bold font-heading text-slate-900 flex items-center gap-2">
+                  <FileCheck className="h-5 w-5 text-emerald-600" />
+                  Pharmacist Prescription Verification &amp; Clinical Audit Workstation
+                </DialogTitle>
+                <DialogDescription className="text-xs text-slate-500 font-mono mt-0.5">
+                  Rx ID: {selectedRxForReview?._id} • Status: {selectedRxForReview?.status} • Rule 65 Compliance Verification
+                </DialogDescription>
+              </div>
+              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-mono text-xs w-fit">
+                Pharmacist Sign-off Station
+              </Badge>
+            </div>
+          </DialogHeader>
+
+          {selectedRxForReview && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-3">
+              {/* Left Column (5 cols): Prescription Document Inspection Viewport */}
+              <div className="lg:col-span-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+                    Document Visual Inspection
+                  </h4>
+                  {rxAuditViewBlobUrl && (
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-7 w-7"
+                        onClick={() => setRxAuditZoom((z) => Math.min(z + 0.25, 3))}
+                        title="Zoom In"
+                      >
+                        <ZoomIn className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-7 w-7"
+                        onClick={() => setRxAuditZoom((z) => Math.max(z - 0.25, 0.75))}
+                        title="Zoom Out"
+                      >
+                        <ZoomOut className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-7 w-7"
+                        onClick={() => setRxAuditRotation((r) => (r + 90) % 360)}
+                        title="Rotate 90°"
+                      >
+                        <RotateCw className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-7 w-7"
+                        onClick={() => {
+                          setRxAuditZoom(1);
+                          setRxAuditRotation(0);
+                        }}
+                        title="Reset View"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Viewport Frame */}
+                <div className="h-80 sm:h-96 rounded-xl border border-slate-200 bg-slate-950/5 flex items-center justify-center overflow-hidden relative p-2">
+                  {loadingRxAuditBlob ? (
+                    <div className="flex flex-col items-center gap-2 text-slate-500">
+                      <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+                      <span className="text-xs">Decrypting Document Binary...</span>
+                    </div>
+                  ) : rxAuditViewBlobUrl ? (
+                    selectedRxForReview.mime_type === "application/pdf" ||
+                    selectedRxForReview.filename?.toLowerCase().endsWith(".pdf") ? (
+                      <iframe
+                        src={rxAuditViewBlobUrl}
+                        className="w-full h-full rounded"
+                        title="Prescription PDF"
+                      />
+                    ) : (
+                      <img
+                        src={rxAuditViewBlobUrl}
+                        alt="Prescription Document"
+                        style={{
+                          transform: `scale(${rxAuditZoom}) rotate(${rxAuditRotation}deg)`,
+                          transition: "transform 0.15s ease"
+                        }}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    )
+                  ) : (
+                    <div className="text-center p-4 text-slate-400 text-xs">
+                      <FileText className="h-8 w-8 mx-auto mb-1 text-slate-300" />
+                      Original document preview unavailable.
+                    </div>
+                  )}
+                </div>
+
+                {/* Document Quality Audit Badge */}
+                {selectedRxForReview.parsed_data?.qualityAudit && (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <span className="font-semibold text-slate-700 block text-[11px] uppercase tracking-wider">
+                      Automated Preprocessing Stats
+                    </span>
+                    <div className="flex items-center justify-between text-slate-500 text-[11px]">
+                      <span>
+                        Edge Variance: {selectedRxForReview.parsed_data.qualityAudit.edgeVariance || "Optimal"}
+                      </span>
+                      <span>
+                        Resolution: {selectedRxForReview.parsed_data.qualityAudit.dimensions?.width}×
+                        {selectedRxForReview.parsed_data.qualityAudit.dimensions?.height}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column (7 cols): Item-by-item editable review UI */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <CheckCheck className="h-4 w-4 text-emerald-600" />
+                    Line-Item Clinical Reconciliation ({rxReviewItems.length} items)
+                  </h4>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAddRxItem}
+                    className="h-7 text-xs px-2.5 rounded-lg gap-1 text-emerald-700 border-emerald-300 hover:bg-emerald-50"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add Medication
+                  </Button>
+                </div>
+
+                {/* Line items list */}
+                <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                  {rxReviewItems.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-xl border transition-all ${
+                        item.lasaAlert
+                          ? "bg-red-50/40 border-red-200"
+                          : item.recognitionStatus === "UNCERTAIN"
+                          ? "bg-amber-50/40 border-amber-200"
+                          : "bg-slate-50/50 border-slate-200"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold font-mono text-slate-700">
+                            #{index + 1}
+                          </span>
+                          <Badge
+                            className={`text-[9px] px-1.5 py-0 ${
+                              item.recognitionStatus === "UNCERTAIN"
+                                ? "bg-amber-100 text-amber-800 border-amber-300"
+                                : item.recognitionStatus === "ILLEGIBLE"
+                                ? "bg-red-100 text-red-800 border-red-300"
+                                : "bg-emerald-100 text-emerald-800 border-emerald-300"
+                            }`}
+                          >
+                            {item.recognitionStatus}
+                          </Badge>
+                          {item.sourceText && item.sourceText !== item.medicineName && (
+                            <span className="text-[10px] text-slate-500 font-mono">
+                              (Original: "{item.sourceText}")
+                            </span>
+                          )}
+                        </div>
+
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleRemoveRxItem(index)}
+                          className="h-6 w-6 text-slate-400 hover:text-red-500"
+                          title="Remove item"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+
+                      {/* LASA Alert Banner */}
+                      {item.lasaAlert && (
+                        <div className="mb-2 p-2 rounded-lg bg-red-100/60 border border-red-200 text-[11px] text-red-800 flex items-start gap-1.5">
+                          <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                          <span>
+                            <strong>Look-Alike Sound-Alike Alert:</strong> {item.lasaAlert.warning}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Form inputs for line item */}
+                      <div className="grid grid-cols-12 gap-2 text-xs">
+                        <div className="col-span-6">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Medicine Name
+                          </label>
+                          <input
+                            type="text"
+                            value={item.medicineName}
+                            onChange={(e) => handleUpdateRxItem(index, "medicineName", e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-emerald-500 font-semibold"
+                            placeholder="e.g. Paracetamol"
+                          />
+                        </div>
+
+                        <div className="col-span-3">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Strength
+                          </label>
+                          <input
+                            type="text"
+                            value={item.strength}
+                            onChange={(e) => handleUpdateRxItem(index, "strength", e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-emerald-500 font-mono"
+                            placeholder="e.g. 650mg"
+                          />
+                        </div>
+
+                        <div className="col-span-3">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Frequency
+                          </label>
+                          <input
+                            type="text"
+                            value={item.frequency}
+                            onChange={(e) => handleUpdateRxItem(index, "frequency", e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-emerald-500"
+                            placeholder="e.g. BD, TID"
+                          />
+                        </div>
+
+                        <div className="col-span-4">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Dosage / Unit
+                          </label>
+                          <input
+                            type="text"
+                            value={item.prescribedDose}
+                            onChange={(e) => handleUpdateRxItem(index, "prescribedDose", e.target.value)}
+                            className="w-full px-2 py-1 text-xs rounded border border-slate-200"
+                            placeholder="e.g. 1 Tablet"
+                          />
+                        </div>
+
+                        <div className="col-span-4">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Duration
+                          </label>
+                          <input
+                            type="text"
+                            value={item.duration}
+                            onChange={(e) => handleUpdateRxItem(index, "duration", e.target.value)}
+                            className="w-full px-2 py-1 text-xs rounded border border-slate-200"
+                            placeholder="e.g. 5 days"
+                          />
+                        </div>
+
+                        <div className="col-span-4">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Instructions
+                          </label>
+                          <input
+                            type="text"
+                            value={item.instructions}
+                            onChange={(e) => handleUpdateRxItem(index, "instructions", e.target.value)}
+                            className="w-full px-2 py-1 text-xs rounded border border-slate-200"
+                            placeholder="e.g. After food"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pharmacist Clinical Audit Notes */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    Pharmacist Clinical Notes &amp; Verification Rationale
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={rxReviewNotes}
+                    onChange={(e) => setRxReviewNotes(e.target.value)}
+                    placeholder="Enter pharmacist verification notes, verified RMP registration, or clinical instructions..."
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-emerald-500 resize-none text-slate-800"
+                  />
+                </div>
+
+                {/* Decision Actions Bar */}
+                <div className="pt-2 border-t border-slate-200 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    disabled={submittingRxReview}
+                    onClick={() => handleSubmitRxReview("approve")}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-9 gap-1"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Approve As Prescribed
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    disabled={submittingRxReview}
+                    onClick={() => handleSubmitRxReview("correct_and_approve")}
+                    className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs h-9 gap-1"
+                  >
+                    <UserCheck className="h-4 w-4" />
+                    Correct &amp; Sign Off
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={submittingRxReview}
+                    onClick={() => handleSubmitRxReview("request_clarification")}
+                    className="text-amber-700 border-amber-300 hover:bg-amber-50 font-semibold text-xs h-9 gap-1"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                    Clarification Required
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    disabled={submittingRxReview}
+                    onClick={() => handleSubmitRxReview("reject")}
+                    className="text-white font-semibold text-xs h-9 gap-1"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Reject Rx
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
