@@ -212,6 +212,16 @@ exports.uploadPrescription = async (req, res) => {
       }
     }
 
+    // Safely parse extraction data if forwarded from scan
+    let parsedData = null;
+    if (req.body.parsedData) {
+      try {
+        parsedData = typeof req.body.parsedData === "string" ? JSON.parse(req.body.parsedData) : req.body.parsedData;
+      } catch (parseErr) {
+        console.warn("Could not parse forwarded extraction data:", parseErr.message);
+      }
+    }
+
     // Save prescription record tied to authenticated user
     const prescription = await Prescription.create({
       user_id: req.user.id,
@@ -220,8 +230,24 @@ exports.uploadPrescription = async (req, res) => {
       original_name: req.file.originalname,
       mime_type: req.file.mimetype,
       file_size: req.file.size,
-      status: "uploaded"
+      parsed_data: parsedData,
+      raw_text: parsedData?.rawExtractedText || parsedData?.rawTranscript || "",
+      order_id: req.body.order_id || null,
+      pharmacy_id: req.body.pharmacy_id || null,
+      status: "needs_review"
     });
+
+    // If order_id was provided, synchronize relation back to Order
+    if (req.body.order_id) {
+      try {
+        await Order.findByIdAndUpdate(req.body.order_id, {
+          prescription_id: prescription._id.toString(),
+          prescription_url: filePath
+        });
+      } catch (linkErr) {
+        console.warn("Could not link uploaded prescription to order:", linkErr.message);
+      }
+    }
 
     return res.status(201).json({
       success: true,
@@ -483,7 +509,7 @@ exports.getPrescriptionFile = async (req, res) => {
  */
 exports.getReviewQueue = async (req, res) => {
   try {
-    const { status = "needs_review", page = 1, limit = 20 } = req.query;
+    const { status, page = 1, limit = 20 } = req.query;
     const pharmacyId = req.user.role === "pharmacy" ? req.user.id : null;
     const result = await prescriptionReviewService.getReviewQueue({
       pharmacyId,
@@ -494,7 +520,8 @@ exports.getReviewQueue = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     console.error("Fetch review queue error:", error.message);
-    return res.status(500).json({ message: "Failed to fetch review queue", error: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("Unauthorized") ? 401 : 500);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -506,18 +533,12 @@ exports.getReviewQueue = async (req, res) => {
 exports.getPrescriptionReviewDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const rx = await prescriptionReviewService.getPrescriptionDetails(id);
-    if (!rx) {
-      return res.status(404).json({ message: "Prescription not found" });
-    }
-    // Authorization check: admin, pharmacy, or owning customer
-    if (req.user.role === "customer" && rx.user_id !== req.user.id) {
-      return res.status(403).json({ message: "Forbidden: You do not own this prescription" });
-    }
+    const rx = await prescriptionReviewService.getPrescriptionDetails(id, req.user);
     return res.status(200).json(rx);
   } catch (error) {
     console.error("Prescription review details error:", error.message);
-    return res.status(404).json({ message: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 500);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -541,7 +562,8 @@ exports.submitPrescriptionReview = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     console.error("Submit prescription review error:", error.message);
-    return res.status(400).json({ message: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("Unauthorized") ? 401 : 400);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
