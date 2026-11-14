@@ -301,16 +301,27 @@ const PrescriptionScanPage = () => {
     }
   };
 
-  // ---------- ADD TO CART ----------
-  const handleAddMedicineToCart = async (medicineName) => {
+  // ---------- ADD TO CART (CLINICAL SAFETY ENFORCED) ----------
+  const handleAddMedicineToCart = async (medicineName, med) => {
     try {
       const res = await axios.get(
         `${API_URL}/medicines/search?q=${encodeURIComponent(medicineName)}`
       );
 
       if (res.data?.length > 0) {
-        await addToCart(res.data[0]._id, 1);
-        toast.success(`${res.data[0].name} added to cart`);
+        const matchedItem = res.data[0];
+        const isRxOnly = matchedItem.requiresPrescription || matchedItem.requires_prescription || med?.requiresPrescription;
+
+        if (isRxOnly) {
+          toast.warning(
+            `"${matchedItem.name}" is a prescription-only formulation. Clinical verification by a licensed pharmacist is required before order dispensing.`,
+            { duration: 6000 }
+          );
+        } else {
+          toast.success(`${matchedItem.name} added to cart`);
+        }
+
+        await addToCart(matchedItem._id, 1);
       } else {
         toast.error(`"${medicineName}" not currently found in catalog inventory.`);
       }
@@ -369,7 +380,7 @@ const PrescriptionScanPage = () => {
         {/* Header Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-3 border border-emerald-500/20 shadow-xs">
           <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Prescription Intelligence V2 • Zero-Hallucination Pharmacist Verification</span>
+          <span>Prescription Intelligence V2 • AI-Assisted Recognition with Uncertainty Warnings & Pharmacist Verification</span>
         </div>
 
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 text-foreground">
@@ -713,7 +724,7 @@ const PrescriptionScanPage = () => {
                 )}
               </CardTitle>
               <CardDescription>
-                Zero-hallucination analysis cross-referenced with CDSCO and Jan Aushadhi catalogs
+                AI-assisted recognition cross-referenced with MedsZop medicine database & approved catalogs; requires licensed pharmacist verification
               </CardDescription>
             </CardHeader>
 
@@ -814,7 +825,7 @@ const PrescriptionScanPage = () => {
                                       </p>
                                       <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 text-[10px] px-1.5 py-0 flex items-center gap-1 font-medium">
                                         <CheckCircle className="h-3 w-3" />
-                                        AI Recognized • Pharmacist Verification Pending
+                                        AI-Assisted Recognition • Pending Pharmacist Verification
                                       </Badge>
                                     </div>
 
@@ -844,14 +855,14 @@ const PrescriptionScanPage = () => {
                                     </div>
 
                                     <p className="text-[10px] text-muted-foreground mt-2 italic">
-                                      * Prescription order requires licensed pharmacist clinical verification before dispatch.
+                                      * AI-assisted recognition. Prescription-only dispensing strictly requires clinical authorization by a licensed pharmacist prior to dispatch.
                                     </p>
                                   </div>
 
                                   <Button
                                     size="sm"
                                     className="rounded-xl px-3.5 h-8 text-xs font-semibold shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 active-press"
-                                    onClick={() => handleAddMedicineToCart(med.medicineName || med.name)}
+                                    onClick={() => handleAddMedicineToCart(med.medicineName || med.name, med)}
                                   >
                                     <ShoppingCart className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
                                     Add to Cart
@@ -929,6 +940,11 @@ const PrescriptionScanPage = () => {
                                                 Evidence: {match.evidence}
                                               </p>
                                             )}
+                                            {(match.heuristicMatchScore || match.confidenceScore) && (
+                                              <p className="text-[9px] text-muted-foreground/80 mt-0.5 font-mono">
+                                                Heuristic match: {Math.round((match.heuristicMatchScore || match.confidenceScore) * 100)}% (Structural agreement)
+                                              </p>
+                                            )}
                                           </div>
                                         ))}
                                       </div>
@@ -956,7 +972,7 @@ const PrescriptionScanPage = () => {
                             );
                           }
 
-                          // RED: Illegible line / zero hallucination
+                          // RED: Illegible line / recognition blocked for safety
                           return (
                             <div
                               key={i}
@@ -966,7 +982,7 @@ const PrescriptionScanPage = () => {
                                 <div className="flex items-center justify-between gap-2 flex-wrap">
                                   <Badge variant="outline" className="border-red-500/50 text-red-600 dark:text-red-400 bg-red-500/10 text-[11px] px-2 py-0.5 flex items-center gap-1 font-semibold">
                                     <AlertCircle className="h-3.5 w-3.5" />
-                                    Illegible Line • Zero Hallucination
+                                    Illegible Line • Recognition Blocked for Safety
                                   </Badge>
                                   <span className="text-[10px] text-red-600/90 dark:text-red-400/90 font-medium">
                                     Unreadable by AI
@@ -978,7 +994,7 @@ const PrescriptionScanPage = () => {
                                     Cannot safely decipher medication from visible pen strokes.
                                   </p>
                                   <p className="text-[11px] text-muted-foreground mt-1">
-                                    MedsZop strictly prevents guessing drug names to avoid clinical risk.
+                                    MedsZop enforces strict uncertainty safeguards: unreadable lines are prevented from guessing to avoid clinical dispensing risks.
                                     {med.sourceText && (
                                       <span className="font-mono block mt-1">Scattered strokes: "{med.sourceText}"</span>
                                     )}

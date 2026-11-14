@@ -495,7 +495,7 @@ exports.getPrescriptionFile = async (req, res) => {
  */
 exports.getReviewQueue = async (req, res) => {
   try {
-    const { status = "needs_review", page = 1, limit = 20 } = req.query;
+    const { status, page = 1, limit = 20 } = req.query;
     const pharmacyId = req.user.role === "pharmacy" ? req.user.id : null;
     const result = await prescriptionReviewService.getReviewQueue({
       pharmacyId,
@@ -506,7 +506,8 @@ exports.getReviewQueue = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     console.error("Fetch review queue error:", error.message);
-    return res.status(500).json({ message: "Failed to fetch review queue", error: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("Unauthorized") ? 401 : 500);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -518,18 +519,12 @@ exports.getReviewQueue = async (req, res) => {
 exports.getPrescriptionReviewDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const rx = await prescriptionReviewService.getPrescriptionDetails(id);
-    if (!rx) {
-      return res.status(404).json({ message: "Prescription not found" });
-    }
-    // Authorization check: admin, pharmacy, or owning customer
-    if (req.user.role === "customer" && rx.user_id !== req.user.id) {
-      return res.status(403).json({ message: "Forbidden: You do not own this prescription" });
-    }
+    const rx = await prescriptionReviewService.getPrescriptionDetails(id, req.user);
     return res.status(200).json(rx);
   } catch (error) {
     console.error("Prescription review details error:", error.message);
-    return res.status(404).json({ message: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 500);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
@@ -553,7 +548,8 @@ exports.submitPrescriptionReview = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     console.error("Submit prescription review error:", error.message);
-    return res.status(400).json({ message: error.message });
+    const statusCode = error.statusCode || (error.message.includes("Forbidden") ? 403 : error.message.includes("Unauthorized") ? 401 : 400);
+    return res.status(statusCode).json({ message: error.message });
   }
 };
 
