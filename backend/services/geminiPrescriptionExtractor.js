@@ -3,7 +3,7 @@
  * 
  * Core AI interpretation engine using Gemini Multimodal Vision API with:
  * 1. Native Structured JSON Schema generation (`responseMimeType: "application/json"`, `responseSchema`).
- * 2. Zero-hallucination clinical prompt boundaries.
+ * 2. AI-assisted recognition with uncertainty warnings and pharmacist verification.
  * 3. Partial handwriting recognition separating observations from suggestions.
  * 4. Preserved visible character fragments (e.g. "Met...ol") with up to 3 evidence-backed candidate readings.
  * 5. High-resolution buffer and PDF support.
@@ -39,7 +39,7 @@ CRITICAL CLINICAL TRANSCRIPTION & SAFETY DIRECTIVES:
    - If visible evidence suggests plausible candidate medications, provide up to 3 candidate readings in "possibleMatches" with an explicit "evidence" description (e.g. "Visible prefix 'Met' and suffix 'ol'").
    - Set "recognitionStatus" to "UNCERTAIN".
 
-3. ZERO-HALLUCINATION ILLEGIBLE GATE:
+4. SAFETY UNCERTAINTY GATE: ILLEGIBLE SCRIBBLE DETECTION:
    - If a handwritten line is an unreadable scribble, wavy line, or doctor signature with no identifiable character fragments, you MUST mark "recognitionStatus" as "ILLEGIBLE", "medicineName" as null, "recognizedFragment" as null, and "possibleMatches" as [] (empty array).
    - NEVER fabricate or invent medication candidates out of thin air when there is no visible character evidence.
 

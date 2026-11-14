@@ -136,7 +136,7 @@ class ExtractionValidator {
           med.recognizedFragment = med.sourceText;
         }
 
-        // Rule A: Illegible line detection (Zero Hallucination Gate)
+        // Rule A: Illegible line detection (Safety Uncertainty Gate)
         const isScribble =
           med.recognitionStatus === "ILLEGIBLE" ||
           ((!med.medicineName || med.medicineName.trim() === "" || /^\?+$/.test(med.medicineName)) &&
@@ -148,7 +148,7 @@ class ExtractionValidator {
           med.possibleMatches = []; // Refuse to fabricate candidates
           med.recognitionStatus = "ILLEGIBLE";
           med.visualState = "RED";
-          uncertaintyReasons.push("Handwriting for this medicine line is unreadable scribble. Zero hallucination enforced.");
+          uncertaintyReasons.push("Handwriting for this medicine line is unreadable scribble. Recognition prevented to eliminate clinical dispensing risk.");
         }
 
         // Rule B: Partial handwriting observation (e.g. "Met...ol", "Ce~f~~ime")

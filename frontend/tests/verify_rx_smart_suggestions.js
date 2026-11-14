@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = 5173;
 const BASE_URL = `http://localhost:${PORT}`;
-const SCREENSHOT_DIR = 'C:/Users/ASUS/.gemini/antigravity/brain/f034dc02-3c65-495b-bdff-0ffa5eb3384f/screenshots/prescription_intelligence_v2';
+const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR || path.resolve(__dirname, 'screenshots', 'prescription_intelligence_v2');
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -221,16 +221,22 @@ async function run() {
           }
         }
 
-        // Verify key elements are rendered:
+        // Strict UI assertions: All expected elements must be present or test fails
         // 1. GREEN state
         const greenItem = page.locator('text=/Augmentin 625 Duo/i').first();
         const greenTitle = await greenItem.isVisible();
+        if (!greenTitle) {
+          throw new Error(`[Assertion Failure] Green state item "Augmentin 625 Duo" not visible for ${vp.name} (${theme})`);
+        }
         console.log(`  ✓ Green State Medication Visible: ${greenTitle}`);
 
         // 2. AMBER state: Observed Handwriting & Candidates
         const amberItem = page.locator('text=/Observed Handwriting/i').first();
         const amberCandidate = page.locator('text=/Metoprolol Succinate 50mg/i').first();
         const amberVisible = (await amberItem.isVisible()) && (await amberCandidate.isVisible());
+        if (!amberVisible) {
+          throw new Error(`[Assertion Failure] Amber state fragment/candidates not visible for ${vp.name} (${theme})`);
+        }
         console.log(`  ✓ Amber State Fragment & Candidates Visible: ${amberVisible}`);
 
         // 3. RED state: Illegible Line
@@ -238,7 +244,10 @@ async function run() {
         const redLineInDom = (await redItem.count()) > 0;
         await redItem.scrollIntoViewIfNeeded();
         const redLineVisible = await redItem.isVisible();
-        console.log(`  ✓ Red State Zero-Hallucination Visible: ${redLineVisible} (In DOM: ${redLineInDom})`);
+        if (!redLineVisible || !redLineInDom) {
+          throw new Error(`[Assertion Failure] Red state uncertainty callout not visible for ${vp.name} (${theme})`);
+        }
+        console.log(`  ✓ Red State Uncertainty Safeguard Visible: ${redLineVisible}`);
 
         // Capture full page screenshot
         const screenshotPath = path.join(SCREENSHOT_DIR, `rx_smart_suggestions_${vp.name}_${theme}.png`);

@@ -8,6 +8,10 @@ const prescriptionPreprocessor = require("../services/prescriptionPreprocessor")
 const { validateExtraction } = require("../services/extractionValidator");
 const medicineMatcher = require("../services/medicineMatcher");
 const { getOCRProvider } = require("../services/ocrProviderAdapter");
+const prescriptionReviewService = require("../services/prescriptionReviewService");
+const Prescription = require("../models/Prescription");
+const Pharmacy = require("../models/Pharmacy");
+const Order = require("../models/Order");
 
 async function runTests() {
   console.log("\n============================================================");
@@ -128,7 +132,7 @@ async function runTests() {
     assert.strictEqual(validated.medicines[0].recognitionStatus, "RECOGNIZED_UNVERIFIED");
   });
 
-  test("Extraction Validator: Zero Hallucination gate rejects null/empty candidates gracefully", () => {
+  test("Extraction Validator: Uncertainty safeguard rejects null/empty candidates gracefully", () => {
     const emptyAiOutput = {
       doctor: {},
       patient: {},
@@ -202,7 +206,7 @@ async function runTests() {
     };
 
     const matched = await medicineMatcher.match(item);
-    // Clinical Zero Hallucination: Unverified guess is NOT assigned to medicineName
+    // Clinical Uncertainty Safeguard: Unverified guess is NOT assigned to medicineName
     assert.strictEqual(matched.medicineName, null, "medicineName must remain null until verified");
     assert.strictEqual(matched.visualState, "AMBER", "visualState must be AMBER for partial handwriting");
     assert.strictEqual(matched.recognitionStatus, "UNCERTAIN");
@@ -228,7 +232,7 @@ async function runTests() {
     assert.strictEqual(matched.medicineName, null);
     assert.strictEqual(matched.visualState, "RED", "Illegible scribble must have visualState RED");
     assert.strictEqual(matched.recognitionStatus, "ILLEGIBLE");
-    assert.strictEqual(matched.possibleMatches.length, 0, "Zero Hallucination: Must not fabricate candidates on scribble");
+    assert.strictEqual(matched.possibleMatches.length, 0, "Uncertainty Safeguard: Must not fabricate candidates on scribble");
   });
 
   await asyncTest("Medicine Matcher: Missing strength triggers missingStrengthWarning and AMBER visualState", async () => {
@@ -313,6 +317,363 @@ async function runTests() {
 
     const docAiProvider = getOCRProvider("documentai");
     assert.strictEqual(docAiProvider.getName(), "google-cloud-documentai");
+  });
+
+  // ----------------------------------------------------
+  // 5. Clinical Authorization & Cross-Pharmacy Access Control
+  // ----------------------------------------------------
+  await asyncTest("Clinical Auth: Unverified pharmacy cannot access review queue (403)", async () => {
+    // Stub Pharmacy.findOne to simulate unverified pharmacy account
+    const origFindOne = Pharmacy.findOne;
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-unverified-id",
+      user_id: "user-unverified",
+      name: "Unverified Pharmacy",
+      verified: false
+    });
+
+    try {
+      let threw = false;
+      try {
+        await prescriptionReviewService.getReviewQueue({ pharmacyId: "user-unverified" });
+      } catch (err) {
+        threw = true;
+        assert(err.message.includes("Forbidden") || err.statusCode === 403);
+        assert(err.message.includes("verified licensed pharmacist"));
+      }
+      assert(threw, "Must throw 403 Forbidden for unverified pharmacy accessing review queue");
+    } finally {
+      Pharmacy.findOne = origFindOne;
+    }
+  });
+
+  await asyncTest("Clinical Auth: Pharmacy review queue enforces strict pharmacy tenancy filtering", async () => {
+    const origFindOne = Pharmacy.findOne;
+    const origCount = Prescription.countDocuments;
+    const origFind = Prescription.find;
+
+    let capturedQuery = null;
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-A-id",
+      user_id: "user-pharma-A",
+      name: "MedPlus Pharmacy A",
+      verified: true
+    });
+
+    Prescription.countDocuments = async (q) => {
+      capturedQuery = q;
+      return 1;
+    };
+    Prescription.find = (q) => ({
+      sort: () => ({
+        skip: () => ({
+          limit: () => ({
+            lean: async () => [
+              {
+                _id: "rx-001",
+                pharmacy_id: "pharma-A-id",
+                status: "needs_review"
+              }
+            ]
+          })
+        })
+      })
+    });
+
+    try {
+      const res = await prescriptionReviewService.getReviewQueue({ pharmacyId: "user-pharma-A" });
+      assert.strictEqual(res.total, 1);
+      assert(capturedQuery, "Query must be executed");
+      // Tenancy check: Ensure the query includes pharmacy_id matching Pharmacy A
+      const queryStr = JSON.stringify(capturedQuery);
+      assert(queryStr.includes("pharma-A-id"), "Queue query must filter by Pharmacy A ID");
+    } finally {
+      Pharmacy.findOne = origFindOne;
+      Prescription.countDocuments = origCount;
+      Prescription.find = origFind;
+    }
+  });
+
+  await asyncTest("Clinical Auth: Cross-pharmacy prescription details access is strictly denied (403)", async () => {
+    const origFindById = Prescription.findById;
+    const origFindOne = Pharmacy.findOne;
+
+    // Prescription is assigned to Pharmacy A
+    Prescription.findById = () => ({
+      lean: async () => ({
+        _id: "rx-assigned-to-A",
+        user_id: "cust-1",
+        pharmacy_id: "pharma-A-id",
+        file_url: "https://medszop.com/rx/rx-01.jpg"
+      })
+    });
+
+    // Pharmacy B attempts to inspect Pharmacy A's prescription
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-B-id",
+      user_id: "user-pharma-B",
+      name: "MedPlus Pharmacy B",
+      verified: true
+    });
+
+    try {
+      let threw = false;
+      try {
+        await prescriptionReviewService.getPrescriptionDetails("rx-assigned-to-A", {
+          id: "user-pharma-B",
+          role: "pharmacy"
+        });
+      } catch (err) {
+        threw = true;
+        assert.strictEqual(err.statusCode, 403);
+        assert(err.message.includes("Cross-pharmacy access denied"));
+      }
+      assert(threw, "Pharmacy B must be denied access to Pharmacy A's prescription");
+    } finally {
+      Prescription.findById = origFindById;
+      Pharmacy.findOne = origFindOne;
+    }
+  });
+
+  await asyncTest("Clinical Auth: Cross-pharmacy review approval is strictly denied (403)", async () => {
+    const origFindById = Prescription.findById;
+    const origFindOne = Pharmacy.findOne;
+
+    Prescription.findById = async () => ({
+      _id: "rx-assigned-to-A",
+      pharmacy_id: "pharma-A-id",
+      parsed_data: { medicines: [] },
+      markModified: () => {},
+      save: async () => {}
+    });
+
+    // Pharmacist B attempts to sign off on Pharmacy A's prescription
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-B-id",
+      user_id: "user-pharma-B",
+      verified: true,
+      license_number: "DL-2024-B"
+    });
+
+    try {
+      let threw = false;
+      try {
+        await prescriptionReviewService.submitReview({
+          prescriptionId: "rx-assigned-to-A",
+          decision: "approve",
+          reviewedMedicines: [],
+          pharmacist: { id: "user-pharma-B", role: "pharmacy", name: "Pharmacist B" }
+        });
+      } catch (err) {
+        threw = true;
+        assert.strictEqual(err.statusCode, 403);
+        assert(err.message.includes("Cross-pharmacy review denied"));
+      }
+      assert(threw, "Must throw 403 Forbidden on cross-pharmacy review approval");
+    } finally {
+      Prescription.findById = origFindById;
+      Pharmacy.findOne = origFindOne;
+    }
+  });
+
+  await asyncTest("Clinical Auth: Non-pharmacist role is rejected from clinical review approval (403)", async () => {
+    try {
+      let threw = false;
+      try {
+        await prescriptionReviewService.submitReview({
+          prescriptionId: "rx-001",
+          decision: "approve",
+          pharmacist: { id: "cust-99", role: "customer", name: "Unauthorized Customer" }
+        });
+      } catch (err) {
+        threw = true;
+        assert.strictEqual(err.statusCode, 403);
+        assert(err.message.includes("Unauthorized") || err.message.includes("licensed pharmacists"));
+      }
+      assert(threw, "Non-pharmacists must be strictly rejected from approval");
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  await asyncTest("Clinical Auth: Verified assigned pharmacist approval succeeds with license audit trail", async () => {
+    const origFindById = Prescription.findById;
+    const origFindOne = Pharmacy.findOne;
+
+    let savedRx = null;
+    Prescription.findById = async () => ({
+      _id: "rx-assigned-to-A",
+      pharmacy_id: "pharma-A-id",
+      status: "needs_review",
+      parsed_data: { medicines: [{ medicineName: "Augmentin", strength: "625mg" }] },
+      markModified: () => {},
+      save: async function () {
+        savedRx = this;
+      }
+    });
+
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-A-id",
+      user_id: "user-pharma-A",
+      pharmacist_name: "Dr. Ramesh Gupta",
+      verified: true,
+      license_number: "DL-MH-2024-88392"
+    });
+
+    try {
+      const result = await prescriptionReviewService.submitReview({
+        prescriptionId: "rx-assigned-to-A",
+        decision: "approve",
+        reviewedMedicines: [{ medicineName: "Augmentin", strength: "625mg", prescribedDose: "1 tab BD" }],
+        notes: "Clinically verified against doctor registration #48291",
+        pharmacist: { id: "user-pharma-A", role: "pharmacy" }
+      });
+
+      assert.strictEqual(result.success, true);
+      assert.strictEqual(result.status, "verified");
+      assert.strictEqual(result.reviewEvent.pharmacistLicense, "DL-MH-2024-88392");
+      assert.strictEqual(savedRx.parsed_data.reviewedByLicense, "DL-MH-2024-88392");
+    } finally {
+      Prescription.findById = origFindById;
+      Pharmacy.findOne = origFindOne;
+    }
+  });
+
+  await asyncTest("Prescription Model Relations: Schema defines Mongoose references & virtual relations", async () => {
+    // Assert schema paths have configured refs
+    assert.strictEqual(Prescription.schema.path("user_id").options.ref, "User");
+    assert.strictEqual(Prescription.schema.path("order_id").options.ref, "Order");
+    assert.strictEqual(Prescription.schema.path("pharmacy_id").options.ref, "Pharmacy");
+    assert.strictEqual(Prescription.schema.path("assigned_pharmacist_id").options.ref, "User");
+
+    // Assert virtual relations exist
+    assert(Prescription.schema.virtuals.user, "Virtual 'user' must be configured");
+    assert(Prescription.schema.virtuals.order, "Virtual 'order' must be configured");
+    assert(Prescription.schema.virtuals.pharmacy, "Virtual 'pharmacy' must be configured");
+    assert(Prescription.schema.virtuals.assignedPharmacist, "Virtual 'assignedPharmacist' must be configured");
+
+    // Order model relations
+    assert.strictEqual(Order.schema.path("prescription_id").options.ref, "Prescription");
+    assert(Order.schema.virtuals.prescription, "Virtual 'prescription' must be configured in Order");
+  });
+
+  await asyncTest("Prescription Review: Syncs linked order status to 'confirmed' upon pharmacist verification", async () => {
+    const origFindById = Prescription.findById;
+    const origPharmacyFindOne = Pharmacy.findOne;
+    const origOrderFindById = Order.findById;
+
+    let updatedOrder = null;
+    Prescription.findById = async () => ({
+      _id: "rx-sync-100",
+      order_id: "order-999",
+      pharmacy_id: "pharma-A-id",
+      status: "needs_review",
+      parsed_data: { medicines: [{ medicineName: "Amoxicillin", strength: "500mg" }] },
+      markModified: () => {},
+      save: async () => {}
+    });
+
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-A-id",
+      user_id: "user-pharma-A",
+      pharmacist_name: "Dr. Ramesh Gupta",
+      verified: true,
+      license_number: "DL-MH-2024-88392"
+    });
+
+    Order.findById = async (id) => ({
+      _id: id,
+      order_status: "pending_verification",
+      prescription_verified: false,
+      save: async function() {
+        updatedOrder = this;
+      }
+    });
+
+    try {
+      const result = await prescriptionReviewService.submitReview({
+        prescriptionId: "rx-sync-100",
+        decision: "approve",
+        reviewedMedicines: [{ medicineName: "Amoxicillin", strength: "500mg" }],
+        pharmacist: { id: "user-pharma-A", role: "pharmacy" }
+      });
+
+      assert.strictEqual(result.status, "verified");
+      assert(updatedOrder !== null, "Linked order must be retrieved and updated");
+      assert.strictEqual(updatedOrder.order_status, "confirmed");
+      assert.strictEqual(updatedOrder.prescription_verified, true);
+    } finally {
+      Prescription.findById = origFindById;
+      Pharmacy.findOne = origPharmacyFindOne;
+      Order.findById = origOrderFindById;
+    }
+  });
+
+  // ----------------------------------------------------
+  // 6. Real Scanner Evaluation & Candidate Safety Rules
+  // ----------------------------------------------------
+  await asyncTest("Scanner Pipeline: Realistic SVG handwritten prescription evaluates sharpness & quality metrics", async () => {
+    // Generate realistic multi-stroke prescription test image with simulated ink strokes and doctor stamp
+    const syntheticRxBuffer = await sharp({
+      create: {
+        width: 1400,
+        height: 1000,
+        channels: 3,
+        background: { r: 252, g: 250, b: 245 }
+      }
+    })
+      .composite([
+        {
+          input: Buffer.from(`
+            <svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+              <text x="60" y="80" font-family="serif" font-size="28" font-weight="bold" fill="#1e293b">APOLLO CLINIC • DR. V. K. SHARMA, MD</text>
+              <text x="60" y="115" font-family="sans-serif" font-size="16" fill="#64748b">Reg No: MCI-2015-84920 | New Delhi</text>
+              <line x1="50" y1="135" x2="1350" y2="135" stroke="#94a3b8" stroke-width="2"/>
+              <text x="60" y="180" font-family="serif" font-size="32" font-style="italic" fill="#0f172a">Rx</text>
+              <!-- Simulated cursive ink prescription lines -->
+              <path d="M 120 220 Q 200 210 280 225 T 440 215 T 580 230" fill="none" stroke="#1e3a8a" stroke-width="4"/>
+              <text x="120" y="270" font-family="cursive, serif" font-size="26" fill="#1e3a8a">1. Augmentin 625mg  1 tab BD x 5 days</text>
+              <text x="120" y="340" font-family="cursive, serif" font-size="26" fill="#1e3a8a">2. Met...ol 50mg  OD post breakfast</text>
+              <circle cx="1200" cy="850" r="70" stroke="#059669" stroke-width="3" fill="none" opacity="0.6"/>
+              <text x="1145" y="855" font-family="sans-serif" font-size="14" fill="#059669" font-weight="bold">VERIFIED CLINIC</text>
+            </svg>
+          `),
+          top: 0,
+          left: 0
+        }
+      ])
+      .png()
+      .toBuffer();
+
+    const preprocessed = await prescriptionPreprocessor.preprocess(syntheticRxBuffer);
+    assert.strictEqual(preprocessed.isPdf, false);
+    assert(preprocessed.quality.edgeVariance > 10, "Realistic prescription SVG must have measurable edge variance");
+    assert.strictEqual(preprocessed.quality.dimensions.width, 1400);
+    assert.strictEqual(preprocessed.quality.dimensions.height, 1000);
+    assert.strictEqual(preprocessed.metadata.format, "png");
+  });
+
+  await asyncTest("Candidate Safety: Refuses to invent medicine candidates when no useful characters are readable", async () => {
+    // Single non-alphanumeric character or punctuation
+    const emptyCandidates1 = await medicineMatcher.generateSuggestions("...");
+    assert.strictEqual(emptyCandidates1.length, 0, "Must return 0 candidates for '...'");
+
+    const emptyCandidates2 = await medicineMatcher.generateSuggestions("~");
+    assert.strictEqual(emptyCandidates2.length, 0, "Must return 0 candidates for '~'");
+
+    const emptyCandidates3 = await medicineMatcher.generateSuggestions("!@#$");
+    assert.strictEqual(emptyCandidates3.length, 0, "Must return 0 candidates for '!@#$'");
+
+    const emptyCandidates4 = await medicineMatcher.generateSuggestions(" ");
+    assert.strictEqual(emptyCandidates4.length, 0, "Must return 0 candidates for whitespace");
+  });
+
+  await asyncTest("Heuristic Match Score: Candidates include explicit heuristic disclosure and scoreDisclaimer", async () => {
+    const suggestions = await medicineMatcher.generateSuggestions("Met...ol", "50mg");
+    assert(suggestions.length > 0, "Must yield suggestions for Met...ol");
+    const topSuggestion = suggestions[0];
+    assert.strictEqual(typeof topSuggestion.heuristicMatchScore, "number");
+    assert(topSuggestion.scoreDisclaimer.includes("Heuristic character agreement"), "Must disclose heuristic nature of score");
   });
 
   console.log("\n============================================================");

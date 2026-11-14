@@ -6,7 +6,7 @@
  * 2. Multi-evidence candidate generation (character similarity, abbreviation expansion, strength consistency).
  * 3. Separation of raw observations from unverified suggestions.
  * 4. High-Risk Look-Alike / Sound-Alike (LASA) safety guard.
- * 5. Strict Zero-Hallucination gate for illegible scribbles.
+ * 5. Strict uncertainty safeguards: do not generate suggestions when no legible characters are observed.
  */
 
 const Medicine = require("../models/Medicine");
@@ -157,6 +157,55 @@ class MedicineMatcher {
   }
 
   /**
+   * Fetch catalog items from MedsZop MongoDB database, supplemented by validated benchmark data
+   * @param {string} queryStem
+   * @returns {Promise<Array<object>>}
+   */
+  async getCombinedCatalog(queryStem = "") {
+    const combined = [...BENCHMARK_CATALOG];
+    const seen = new Set(BENCHMARK_CATALOG.map((m) => (m.name || "").toLowerCase()));
+
+    // Dynamically query MedsZop MongoDB Medicine collection if available
+    try {
+      if (Medicine && Medicine.find) {
+        let dbQuery = {};
+        if (queryStem && queryStem.length >= 2) {
+          const safeStem = queryStem.replace(/[^a-zA-Z0-9]/g, "");
+          if (safeStem.length >= 2) {
+            dbQuery = {
+              $or: [
+                { name: { $regex: safeStem, $options: "i" } },
+                { generic_name: { $regex: safeStem, $options: "i" } }
+              ]
+            };
+          }
+        }
+        const dbItems = await Medicine.find(dbQuery).limit(60).lean();
+        for (const item of dbItems) {
+          const key = (item.name || "").toLowerCase();
+          if (!seen.has(key)) {
+            seen.add(key);
+            combined.push({
+              id: item._id?.toString() || item.id,
+              name: item.name,
+              generic_name: item.generic_name || item.name,
+              brand: item.brand || item.manufacturer || "Generic",
+              dosage_form: item.dosage_form || "Tablet",
+              strength: item.strength || "",
+              category: item.category || "General",
+              requiresPrescription: Boolean(item.requires_prescription)
+            });
+          }
+        }
+      }
+    } catch {
+      // Safe fallback to reference catalog if database query fails or during offline test runs
+    }
+
+    return combined;
+  }
+
+  /**
    * Generate evidence-grounded candidate suggestions for partially visible handwriting
    * @param {string} fragment - Observed raw text / character fragment (e.g. "Met...ol")
    * @param {string|null} strength - Observed strength if legible
@@ -167,8 +216,9 @@ class MedicineMatcher {
     if (!fragment || typeof fragment !== "string") return [];
 
     const cleanFrag = fragment.trim();
-    // Zero-hallucination gate: Refuse to generate candidates on unreadable scribbles
-    if (cleanFrag === "" || /^\?+$/.test(cleanFrag) || /^[_\-~.\s]+$/.test(cleanFrag)) {
+    // Safety uncertainty gate: Never invent a medicine when no useful characters are readable
+    const usefulChars = cleanFrag.replace(/[^a-zA-Z0-9]/g, "");
+    if (usefulChars.length < 2 || /^\?+$/.test(cleanFrag) || /^[_\-~.\s]+$/.test(cleanFrag)) {
       return [];
     }
 
@@ -185,7 +235,9 @@ class MedicineMatcher {
             matchType: em.matchType || "PARTIAL_HANDWRITING",
             evidence: em.evidence || `Visible strokes partially resemble ${em.medicineName}`,
             verified: false,
+            heuristicMatchScore: 0.75,
             confidenceScore: 0.75,
+            scoreDisclaimer: "Heuristic character agreement score, not calibrated clinical probability.",
             genericName: em.medicineName,
             category: "Prescription Formulation"
           });
@@ -206,8 +258,9 @@ class MedicineMatcher {
       prefix = cleanLetters.slice(0, 3);
     }
 
-    // 3. Search Catalog for Evidence Agreement
-    for (const item of BENCHMARK_CATALOG) {
+    // 3. Search Database & Supplemented Reference Catalog for Evidence Agreement
+    const searchCatalog = await this.getCombinedCatalog(prefix || cleanFrag);
+    for (const item of searchCatalog) {
       const itemNameLower = item.name.toLowerCase();
       const genericLower = item.generic_name.toLowerCase();
       const targetName = item.generic_name || item.name;
@@ -262,13 +315,15 @@ class MedicineMatcher {
           matchType,
           evidence,
           verified: false,
-          confidenceScore: Number(score.toFixed(2))
+          heuristicMatchScore: Number(score.toFixed(2)),
+          confidenceScore: Number(score.toFixed(2)),
+          scoreDisclaimer: "Heuristic character agreement score, not calibrated clinical probability."
         });
       }
     }
 
     // 4. Sort descending by evidence score and cap strictly at top 3
-    suggestions.sort((a, b) => (b.confidenceScore || 0) - (a.confidenceScore || 0));
+    suggestions.sort((a, b) => (b.heuristicMatchScore || b.confidenceScore || 0) - (a.heuristicMatchScore || a.confidenceScore || 0));
     return suggestions.slice(0, 3);
   }
 
@@ -317,23 +372,24 @@ class MedicineMatcher {
       }
     }
 
-    // 2. Search catalog for exact or high-confidence match
+    // 2. Search combined catalog for exact or high-confidence match
     let candidates = [];
     if (!isScribble && cleanQuery.length >= 2) {
-      BENCHMARK_CATALOG.forEach((item, idx) => {
+      const searchCatalog = await this.getCombinedCatalog(cleanQuery);
+      searchCatalog.forEach((item, idx) => {
         const simName = this.calculateSimilarity(cleanQuery, this.normalizeName(item.name));
         const simSalt = this.calculateSimilarity(cleanQuery, this.normalizeName(item.generic_name));
         const bestSim = Math.max(simName, simSalt);
 
         if (bestSim >= 0.6) {
           candidates.push({
-            id: `benchmark-${idx}`,
+            id: item.id || `benchmark-${idx}`,
             name: item.name,
             genericName: item.generic_name,
             brand: item.brand,
             dosageForm: item.dosage_form,
             strength: item.strength,
-            requiresPrescription: true,
+            requiresPrescription: item.requiresPrescription !== undefined ? item.requiresPrescription : true,
             similarity: bestSim
           });
         }
