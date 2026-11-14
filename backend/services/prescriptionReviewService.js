@@ -23,13 +23,15 @@ class PrescriptionReviewService {
    * @param {number} [params.page]
    * @param {number} [params.limit]
    */
-  async getReviewQueue({ pharmacyId, status = "needs_review", page = 1, limit = 20 }) {
-    const query = {
-      $or: [
-        { status: status },
-        { "parsed_data.medicines.recognitionStatus": { $in: ["UNCERTAIN", "PENDING_PHARMACIST", "CLARIFICATION_REQUIRED"] } }
-      ]
-    };
+  async getReviewQueue({ pharmacyId, status, page = 1, limit = 20 }) {
+    const query = status
+      ? { status }
+      : {
+          $or: [
+            { status: { $in: ["needs_review", "uploaded", "clarification_requested"] } },
+            { "parsed_data.hasUncertainFields": true }
+          ]
+        };
 
     const skip = (Math.max(1, page) - 1) * limit;
     const [total, items] = await Promise.all([

@@ -276,6 +276,9 @@ const PrescriptionScanPage = () => {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
+      if (result?.parsed) {
+        formData.append("parsedData", JSON.stringify(result.parsed));
+      }
 
       const res = await axios.post(`${API_URL}/prescriptions/upload`, formData, {
         headers: {
@@ -286,7 +289,7 @@ const PrescriptionScanPage = () => {
 
       if (res.data.success) {
         toast.success(
-          "Prescription forwarded to Registered Pharmacist Queue. A licensed pharmacist will audit the handwritten items before dispensing.",
+          "Prescription and AI handwriting observations submitted to Registered Pharmacist Queue. A licensed pharmacist will audit the handwritten items before dispensing.",
           { duration: 6000 }
         );
       }
@@ -783,109 +786,230 @@ const PrescriptionScanPage = () => {
                     </h4>
 
                     {result.parsed?.medicines?.length > 0 ? (
-                      <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
-                        {result.parsed.medicines.map((med, i) => (
-                          <div
-                            key={i}
-                            className={`p-3.5 rounded-xl border transition-all ${
-                              med.lasaAlert
-                                ? "bg-red-500/5 border-red-500/30"
-                                : med.recognitionStatus === "UNCERTAIN"
-                                ? "bg-amber-500/5 border-amber-500/30"
-                                : med.recognitionStatus === "ILLEGIBLE"
-                                ? "bg-slate-500/5 border-slate-500/30"
-                                : "bg-muted/40 border-border/60 hover:border-primary/40"
-                            }`}
-                          >
-                            <div className="flex justify-between items-start gap-2">
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className="font-semibold text-sm text-foreground">
-                                    {med.medicineName || med.name}
-                                  </p>
+                      <div className="space-y-3 max-h-[620px] overflow-y-auto pr-1">
+                        {result.parsed.medicines.map((med, i) => {
+                          const state =
+                            med.visualState ||
+                            (med.recognitionStatus === "ILLEGIBLE" || (!med.medicineName && (!med.possibleMatches || med.possibleMatches.length === 0))
+                              ? "RED"
+                              : med.recognitionStatus === "UNCERTAIN" ||
+                                med.missingStrengthWarning ||
+                                med.lasaAlert ||
+                                (med.possibleMatches && med.possibleMatches.length > 0) ||
+                                !med.medicineName
+                              ? "AMBER"
+                              : "GREEN");
 
-                                  {/* Status Badges */}
-                                  {med.recognitionStatus === "RECOGNIZED_UNVERIFIED" && (
-                                    <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 bg-emerald-500/10 text-[10px] px-1.5 py-0">
-                                      AI Recognized
-                                    </Badge>
-                                  )}
-                                  {med.recognitionStatus === "UNCERTAIN" && (
-                                    <Badge variant="outline" className="border-amber-500/40 text-amber-600 bg-amber-500/10 text-[10px] px-1.5 py-0 flex items-center gap-1">
-                                      <AlertTriangle className="h-3 w-3" />
-                                      Uncertain
-                                    </Badge>
-                                  )}
-                                  {med.recognitionStatus === "ILLEGIBLE" && (
-                                    <Badge variant="outline" className="border-red-500/40 text-red-600 bg-red-500/10 text-[10px] px-1.5 py-0">
-                                      Illegible Line
-                                    </Badge>
-                                  )}
-                                </div>
+                          if (state === "GREEN") {
+                            return (
+                              <div
+                                key={i}
+                                className="p-3.5 rounded-xl border transition-all bg-emerald-500/5 border-emerald-500/30 hover:border-emerald-500/50"
+                              >
+                                <div className="flex justify-between items-start gap-2">
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <p className="font-semibold text-sm text-foreground">
+                                        {med.medicineName || med.name}
+                                      </p>
+                                      <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 text-[10px] px-1.5 py-0 flex items-center gap-1 font-medium">
+                                        <CheckCircle className="h-3 w-3" />
+                                        AI Recognized • Pharmacist Verification Pending
+                                      </Badge>
+                                    </div>
 
-                                {/* Visible handwriting text snippet */}
-                                {med.sourceText && med.sourceText !== med.medicineName && (
-                                  <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
-                                    Deciphered from: "{med.sourceText}"
-                                  </p>
-                                )}
+                                    {med.sourceText && med.sourceText !== med.medicineName && (
+                                      <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
+                                        Deciphered from: "{med.sourceText}"
+                                      </p>
+                                    )}
 
-                                {/* LASA Clinical Alert */}
-                                {med.lasaAlert && (
-                                  <div className="mt-2 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-[11px] text-red-600 dark:text-red-400 flex items-start gap-1.5">
-                                    <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                                    <span>
-                                      <strong>Safety Warning (LASA):</strong> {med.lasaAlert.warning}. Pharmacist confirmation required.
-                                    </span>
+                                    {/* Attributes */}
+                                    <div className="flex gap-1.5 mt-2 flex-wrap">
+                                      {(med.strength || med.dosage) && (
+                                        <Badge variant="secondary" className="text-[10px] px-2 py-0">
+                                          {med.strength || med.dosage}
+                                        </Badge>
+                                      )}
+                                      {med.frequency && (
+                                        <Badge variant="outline" className="text-[10px] px-2 py-0">
+                                          {med.frequency}
+                                        </Badge>
+                                      )}
+                                      {med.duration && (
+                                        <Badge variant="outline" className="text-[10px] px-2 py-0">
+                                          {med.duration}
+                                        </Badge>
+                                      )}
+                                    </div>
+
+                                    <p className="text-[10px] text-muted-foreground mt-2 italic">
+                                      * Prescription order requires licensed pharmacist clinical verification before dispatch.
+                                    </p>
                                   </div>
-                                )}
 
-                                {/* Strength Discrepancy warning */}
-                                {med.strengthDiscrepancy && (
-                                  <p className="text-[11px] text-amber-600 mt-1">
-                                    ⚠️ Strength Note: {med.strengthDiscrepancy}
-                                  </p>
-                                )}
-
-                                {/* Attributes */}
-                                <div className="flex gap-1.5 mt-2 flex-wrap">
-                                  {(med.strength || med.dosage) && (
-                                    <Badge variant="secondary" className="text-[10px] px-2 py-0">
-                                      {med.strength || med.dosage}
-                                    </Badge>
-                                  )}
-                                  {med.frequency && (
-                                    <Badge variant="outline" className="text-[10px] px-2 py-0">
-                                      {med.frequency}
-                                    </Badge>
-                                  )}
-                                  {med.duration && (
-                                    <Badge variant="outline" className="text-[10px] px-2 py-0">
-                                      {med.duration}
-                                    </Badge>
-                                  )}
-                                  {med.instructions && (
-                                    <Badge variant="outline" className="text-[10px] px-2 py-0 text-muted-foreground">
-                                      {med.instructions}
-                                    </Badge>
-                                  )}
+                                  <Button
+                                    size="sm"
+                                    className="rounded-xl px-3.5 h-8 text-xs font-semibold shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 active-press"
+                                    onClick={() => handleAddMedicineToCart(med.medicineName || med.name)}
+                                  >
+                                    <ShoppingCart className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
+                                    Add to Cart
+                                  </Button>
                                 </div>
                               </div>
+                            );
+                          }
 
-                              {/* Action button */}
-                              {med.recognitionStatus !== "ILLEGIBLE" && (
-                                <Button
-                                  size="sm"
-                                  className="rounded-xl px-3.5 h-8 text-xs font-semibold shadow-xs active-press shrink-0"
-                                  onClick={() => handleAddMedicineToCart(med.medicineName || med.name)}
-                                >
-                                  <ShoppingCart className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
-                                  Add
-                                </Button>
-                              )}
+                          if (state === "AMBER") {
+                            return (
+                              <div
+                                key={i}
+                                className="p-3.5 rounded-xl border transition-all bg-amber-500/5 border-amber-500/30 hover:border-amber-500/50"
+                              >
+                                <div className="space-y-2.5">
+                                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                                    <Badge variant="outline" className="border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/10 text-[11px] px-2 py-0.5 flex items-center gap-1 font-semibold">
+                                      <AlertTriangle className="h-3.5 w-3.5" />
+                                      Possible Interpretation • Requires Confirmation
+                                    </Badge>
+                                    <span className="text-[10px] text-amber-600/90 dark:text-amber-400/90 font-medium">
+                                      Unverified by Pharmacist
+                                    </span>
+                                  </div>
+
+                                  {/* Observed pen strokes snippet */}
+                                  <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200">
+                                    <span className="font-semibold text-amber-700 dark:text-amber-300">Observed Handwriting: </span>
+                                    <span className="font-mono font-medium">"{med.recognizedFragment || med.sourceText || 'Partially legible pen strokes'}"</span>
+                                    {med.strength && (
+                                      <span className="ml-2 font-sans text-[11px] text-muted-foreground">
+                                        (Observed strength: {med.strength})
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Warning Chips */}
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {med.missingStrengthWarning && (
+                                      <div className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                        <AlertCircle className="h-3 w-3 shrink-0" />
+                                        <span>⚠️ Missing / Incomplete Strength — Dosage verification needed</span>
+                                      </div>
+                                    )}
+                                    {med.lasaAlert && (
+                                      <div className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/30">
+                                        <AlertCircle className="h-3 w-3 shrink-0" />
+                                        <span>⚠️ High-Risk Sound-Alike (LASA): {med.lasaAlert.warning || "Confusable drug name"}</span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Candidate Suggestions */}
+                                  {med.possibleMatches && med.possibleMatches.length > 0 && (
+                                    <div className="space-y-1.5 pt-1">
+                                      <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                                        <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                                        Evidence-Grounded Possible Interpretations ({med.possibleMatches.length}):
+                                      </p>
+                                      <div className="grid gap-1.5 sm:grid-cols-2">
+                                        {med.possibleMatches.slice(0, 3).map((match, mIdx) => (
+                                          <div
+                                            key={mIdx}
+                                            className="p-2 rounded-lg bg-background/80 border border-amber-500/20 text-xs flex flex-col justify-between"
+                                          >
+                                            <div className="flex items-center justify-between gap-1">
+                                              <span className="font-semibold text-foreground">{match.medicineName}</span>
+                                              <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold">
+                                                Unverified
+                                              </span>
+                                            </div>
+                                            {match.evidence && (
+                                              <p className="text-[10px] text-muted-foreground mt-1">
+                                                Evidence: {match.evidence}
+                                              </p>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Clinical Safety Action Bar */}
+                                  <div className="flex items-center justify-between gap-2 pt-1 border-t border-amber-500/20">
+                                    <span className="text-[10px] text-muted-foreground">
+                                      Direct cart addition disabled for patient safety.
+                                    </span>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="rounded-xl px-3 h-8 text-xs font-semibold border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 active-press shrink-0"
+                                      onClick={handleSubmitForReview}
+                                      disabled={submittingReview}
+                                    >
+                                      <UserCheck className="h-3.5 w-3.5 mr-1" />
+                                      Request Pharmacist Confirmation
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          // RED: Illegible line / zero hallucination
+                          return (
+                            <div
+                              key={i}
+                              className="p-3.5 rounded-xl border transition-all bg-red-500/5 border-red-500/30"
+                            >
+                              <div className="space-y-2.5">
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                  <Badge variant="outline" className="border-red-500/50 text-red-600 dark:text-red-400 bg-red-500/10 text-[11px] px-2 py-0.5 flex items-center gap-1 font-semibold">
+                                    <AlertCircle className="h-3.5 w-3.5" />
+                                    Illegible Line • Zero Hallucination
+                                  </Badge>
+                                  <span className="text-[10px] text-red-600/90 dark:text-red-400/90 font-medium">
+                                    Unreadable by AI
+                                  </span>
+                                </div>
+
+                                <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-900 dark:text-red-200">
+                                  <p className="font-semibold text-red-700 dark:text-red-300">
+                                    Cannot safely decipher medication from visible pen strokes.
+                                  </p>
+                                  <p className="text-[11px] text-muted-foreground mt-1">
+                                    MedsZop strictly prevents guessing drug names to avoid clinical risk.
+                                    {med.sourceText && (
+                                      <span className="font-mono block mt-1">Scattered strokes: "{med.sourceText}"</span>
+                                    )}
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center justify-end gap-2 pt-1 border-t border-red-500/20">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="rounded-xl px-3 h-8 text-xs font-medium text-foreground hover:bg-muted"
+                                    onClick={clearFile}
+                                  >
+                                    <RotateCcw className="h-3 w-3 mr-1" />
+                                    Retake Photo
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="rounded-xl px-3 h-8 text-xs font-semibold border-red-500/40 text-red-700 dark:text-red-300 hover:bg-red-500/10 active-press"
+                                    onClick={handleSubmitForReview}
+                                    disabled={submittingReview}
+                                  >
+                                    <UserCheck className="h-3.5 w-3.5 mr-1" />
+                                    Request Pharmacist Review
+                                  </Button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center text-sm text-muted-foreground py-8 border border-dashed border-border/80 rounded-xl">
