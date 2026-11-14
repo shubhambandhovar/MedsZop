@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
     MessageSquare,
     Send,
@@ -22,7 +23,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Textarea } from "../components/ui/textarea";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const ConsultDoctorPage = () => {
     const { t } = useTranslation(['consult', 'common']);
@@ -42,9 +43,10 @@ const ConsultDoctorPage = () => {
         const fetchDoctors = async () => {
             try {
                 const res = await axios.get(`${API_URL}/doctor/list`);
-                setDoctors(res.data);
+                setDoctors(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Failed to fetch doctors", err);
+                setDoctors([]);
             } finally {
                 setLoadingDocs(false);
             }
@@ -64,9 +66,10 @@ const ConsultDoctorPage = () => {
             const res = await axios.get(`${API_URL}/doctor/my-consultations`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setConsultations(res.data);
+            setConsultations(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error("Failed fetch consultations");
+            setConsultations([]);
         }
     };
 
@@ -130,18 +133,18 @@ const ConsultDoctorPage = () => {
     };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
-            <Badge className="mb-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-semibold px-3 py-1 rounded-full">
+            <Badge className="mb-2.5 backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-semibold px-3 py-1 rounded-full shadow-xs">
               <UserCheck className="h-3.5 w-3.5 mr-1.5" />
               {t("doctor.verified_specialists", "Verified Healthcare Specialists")}
             </Badge>
-            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground" data-testid="consult-doctor-title">
               {t("doctor.title", "Consult a Doctor")}
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm max-w-xl mt-1 leading-relaxed">
@@ -151,8 +154,8 @@ const ConsultDoctorPage = () => {
 
           {consultations.length > 0 && (
             <div className="flex items-center gap-2 self-start sm:self-auto">
-              <Badge variant="outline" className="text-xs font-medium px-3 py-1.5 rounded-xl border-slate-200 dark:border-slate-800 bg-card gap-1.5">
-                <CalendarCheck className="h-3.5 w-3.5 text-primary" />
+              <Badge variant="outline" className="text-xs font-medium px-3.5 py-1.5 rounded-2xl backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-slate-200 dark:border-slate-800 gap-1.5 shadow-xs">
+                <CalendarCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 {consultations.length} {consultations.length === 1 ? "Consultation" : "Consultations"}
               </Badge>
             </div>
@@ -189,9 +192,11 @@ const ConsultDoctorPage = () => {
               const lastCompleted = docConsultations.find((c) => c.status === "COMPLETED");
 
               return (
-                <Card
+                <GlassCard
                   key={doc._id}
-                  className="rounded-3xl border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all duration-200 group overflow-hidden bg-card flex flex-col justify-between"
+                  interactive
+                  variant="default"
+                  className="rounded-3xl hover:shadow-lg transition-all duration-200 group overflow-hidden flex flex-col justify-between"
                 >
                   <div>
                     <CardHeader className="flex flex-row items-center gap-3.5 sm:gap-4 p-5 pb-3">
@@ -304,7 +309,7 @@ const ConsultDoctorPage = () => {
                       </Button>
                     )}
                   </CardContent>
-                </Card>
+                </GlassCard>
               );
             })
           )}

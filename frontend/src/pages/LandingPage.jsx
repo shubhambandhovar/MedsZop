@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   Pill,
   Truck,
@@ -36,7 +37,7 @@ import {
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const LandingPage = () => {
   const { t } = useTranslation(['landing', 'common']);
@@ -272,13 +273,13 @@ const LandingPage = () => {
   const selectedData = genericComparisons[selectedGenericSalt] || genericComparisons.metformin;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh text-foreground flex flex-col">
       <Navbar />
 
       {/* ========================================================================= */}
       {/* 1. TOP HYPERLOCAL SERVICEABILITY & REGULATORY STATUS STRIP               */}
       {/* ========================================================================= */}
-      <section className="bg-slate-900 text-slate-100 border-b border-slate-800 text-xs py-2">
+      <section className="backdrop-blur-md bg-slate-950/90 text-slate-100 border-b border-slate-800/80 text-xs py-2.5">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 flex flex-col md:flex-row justify-between items-center gap-2">
           {/* Hyperlocal Pincode & Hub Info */}
           <div className="flex items-center gap-3">
@@ -334,19 +335,19 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 2. FULL-WIDTH HERO: COMMAND OMNIBAR & DUAL INTAKE PIPELINE               */}
       {/* ========================================================================= */}
-      <section className="bg-gradient-to-b from-secondary/50 via-background to-background border-b border-border/70 py-10 lg:py-16">
-        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
+      <section className="relative overflow-hidden py-10 lg:py-16">
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {/* Left Primary Hero Rail (7 Columns) */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
-                <ShieldCheck className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border border-emerald-500/25 text-emerald-700 dark:text-emerald-400 text-xs font-semibold shadow-xs">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("landing:hero.badge")}</span>
               </div>
 
               <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.12]">
-                {t("landing:hero.title_part1")} <span className="text-primary">{t("landing:hero.title_highlight")}</span> {t("landing:hero.title_part2")}
+                {t("landing:hero.title_part1")} <span className="text-emerald-600 dark:text-emerald-400">{t("landing:hero.title_highlight")}</span> {t("landing:hero.title_part2")}
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl font-body">
@@ -357,10 +358,10 @@ const LandingPage = () => {
               <div className="pt-2">
                 <form
                   onSubmit={handleHeroSearchSubmit}
-                  className="flex flex-col sm:flex-row items-stretch gap-2 p-2 rounded-xl bg-card border-2 border-primary/40 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all max-w-2xl"
+                  className="flex flex-col sm:flex-row items-stretch gap-2 p-2 rounded-2xl backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-2 border-emerald-500/35 shadow-glass focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all max-w-2xl"
                 >
                   <div className="flex-1 flex items-center px-3 gap-2">
-                    <Search className="h-5 w-5 text-primary shrink-0" />
+                    <Search className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <input
                       type="text"
                       value={heroSearch}
@@ -382,7 +383,7 @@ const LandingPage = () => {
                   </div>
                   <Button
                     type="submit"
-                    className="h-11 px-6 rounded-lg font-heading font-semibold text-sm bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
+                    className="h-11 px-6 rounded-xl font-heading font-semibold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm shrink-0"
                   >
                     <span>Search Formulary</span>
                     <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -390,14 +391,14 @@ const LandingPage = () => {
                 </form>
 
                 {/* Popular Salt Search Chips */}
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3 text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3.5 text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">Common Salts:</span>
                   {quickSalts.map((item) => (
                     <button
                       key={item.label}
                       type="button"
                       onClick={() => navigate(`/medicines?search=${encodeURIComponent(item.query)}`)}
-                      className="px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-colors text-xs font-medium border border-border/60"
+                      className="px-3 py-1 rounded-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-xs font-medium border border-slate-200/70 dark:border-slate-800/70 shadow-xs"
                     >
                       {item.label}
                     </button>
@@ -407,8 +408,8 @@ const LandingPage = () => {
             </div>
 
             {/* Right Intake Track: Prescription Upload Card (5 Columns) */}
-            <div className="lg:col-span-5 bg-card border-2 border-border/80 rounded-2xl p-6 sm:p-8 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
+            <GlassCard variant="elevated" className="lg:col-span-5 rounded-3xl p-6 sm:p-8">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                 <div>
                   <h2 className="font-heading text-lg sm:text-xl font-bold text-foreground">
                     Have a Doctor's Prescription?
@@ -424,7 +425,7 @@ const LandingPage = () => {
 
               <div className="py-6 space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                     1
                   </div>
                   <div>
@@ -434,7 +435,7 @@ const LandingPage = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                     2
                   </div>
                   <div>
@@ -444,7 +445,7 @@ const LandingPage = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                     3
                   </div>
                   <div>
@@ -468,7 +469,7 @@ const LandingPage = () => {
                   Operated in strict compliance with the Drugs and Cosmetics Rules, 1945.
                 </p>
               </div>
-            </div>
+            </GlassCard>
 
           </div>
         </div>
@@ -477,12 +478,12 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 3. JAN AUSHADHI & GENERIC SAVINGS RADAR                                  */}
       {/* ========================================================================= */}
-      <section className="py-12 lg:py-16 bg-card border-b border-border">
+      <section className="py-12 lg:py-16 backdrop-blur-md bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/15 text-accent text-xs font-bold uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-sm bg-accent/15 text-accent text-xs font-bold uppercase tracking-wider mb-2">
                 <Percent className="h-3.5 w-3.5" />
                 <span>Price Transparency Radar</span>
               </div>
@@ -501,10 +502,10 @@ const LandingPage = () => {
                   key={key}
                   type="button"
                   onClick={() => setSelectedGenericSalt(key)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-heading font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-heading font-semibold transition-all ${
                     selectedGenericSalt === key
-                      ? "bg-primary text-primary-foreground shadow-xs"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border"
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-glow-sm"
+                      : "backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-xs"
                   }`}
                 >
                   {genericComparisons[key].condition}
@@ -514,13 +515,13 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Comparison Radar Card */}
-          <div className="bg-secondary/40 border border-border rounded-2xl p-6 sm:p-8">
+          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
               {/* Chemical Salt Detail */}
               <div className="lg:col-span-5 space-y-4">
                 <div className="space-y-1">
-                  <span className="text-xs font-mono font-semibold text-primary uppercase tracking-wide">
+                  <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
                     Active Chemical Salt Formulation
                   </span>
                   <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
@@ -531,9 +532,9 @@ const LandingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-card border border-border text-xs space-y-2">
+                <div className="p-4 rounded-2xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs space-y-2 shadow-xs">
                   <div className="flex items-center gap-2 text-foreground font-semibold">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Active Chemical Salt Reference & Pricing</span>
                   </div>
                   <p className="text-muted-foreground text-[11px] leading-relaxed">
@@ -547,33 +548,33 @@ const LandingPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   
                   {/* Branded Option */}
-                  <div className="p-5 rounded-xl bg-card border border-border space-y-3">
+                  <div className="p-5 rounded-2xl backdrop-blur-sm bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/90 space-y-3 shadow-xs">
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                       Commercial Branded Medicine
                     </div>
                     <div className="font-heading font-bold text-base text-foreground">
                       {selectedData.brandedName}
                     </div>
-                    <div className="pt-2 border-t border-border flex items-baseline justify-between">
+                    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-baseline justify-between">
                       <span className="text-xs text-muted-foreground">Standard Retail MRP:</span>
                       <span className="font-mono text-xl font-bold text-foreground">₹{selectedData.brandedPrice.toFixed(2)}</span>
                     </div>
                   </div>
 
                   {/* Jan Aushadhi Generic Option */}
-                  <div className="p-5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500/60 space-y-3 relative">
+                  <div className="p-5 rounded-2xl backdrop-blur-sm bg-emerald-50/80 dark:bg-emerald-950/50 border-2 border-emerald-500/70 space-y-3 relative shadow-emerald-glow-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
                         Verified Generic Salt
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-heading font-bold text-[11px]">
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-heading font-bold text-[11px] shadow-xs">
                         Save {selectedData.savingsPct}%
                       </span>
                     </div>
                     <div className="font-heading font-bold text-base text-foreground">
                       {selectedData.genericSaltName}
                     </div>
-                    <div className="pt-2 border-t border-emerald-200 dark:border-emerald-800 flex items-baseline justify-between">
+                    <div className="pt-2 border-t border-emerald-200/80 dark:border-emerald-800/80 flex items-baseline justify-between">
                       <span className="text-xs text-emerald-900 dark:text-emerald-200 font-medium">Jan Aushadhi Price:</span>
                       <span className="font-mono text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                         ₹{selectedData.genericPrice.toFixed(2)}
@@ -584,13 +585,13 @@ const LandingPage = () => {
                 </div>
 
                 {/* Savings Callout Footnote */}
-                <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-border/80 text-xs">
+                <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-slate-200/60 dark:border-slate-700/60 text-xs">
                   <div className="text-muted-foreground">
                     Estimated Annual Patient Savings: <strong className="text-foreground">{selectedData.annualSavings}</strong> on this maintenance therapy alone.
                   </div>
                   <Button
                     onClick={() => navigate(`/medicines?search=${encodeURIComponent(selectedData.salt.split(" ")[0])}`)}
-                    className="h-9 px-4 rounded-lg bg-primary text-primary-foreground font-heading font-semibold text-xs"
+                    className="h-9 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-heading font-semibold text-xs shadow-xs"
                   >
                     <span>View Available Salts</span>
                     <ArrowRight className="ml-1 h-3.5 w-3.5" />
@@ -599,7 +600,7 @@ const LandingPage = () => {
               </div>
 
             </div>
-          </div>
+          </GlassCard>
 
         </div>
       </section>
@@ -607,7 +608,7 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 4. BILINGUAL CATEGORY DISCOVERY GRID (6 Authentic Health Categories)      */}
       {/* ========================================================================= */}
-      <section className="py-12 lg:py-16 bg-background border-b border-border">
+      <section className="py-12 lg:py-16 backdrop-blur-sm bg-white/40 dark:bg-slate-950/40 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -621,7 +622,7 @@ const LandingPage = () => {
             </div>
             <Link
               to="/medicines"
-              className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline inline-flex items-center gap-1"
+              className="text-xs sm:text-sm font-heading font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
             >
               <span>Explore All Medicines</span>
               <ChevronRight className="h-4 w-4" />
@@ -632,17 +633,19 @@ const LandingPage = () => {
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (
-                <div
+                <GlassCard
                   key={cat.id}
+                  interactive
+                  variant="default"
                   onClick={() => navigate(`/medicines?category=${encodeURIComponent(cat.query)}`)}
-                  className="group p-5 rounded-xl bg-card border border-border hover:border-primary/60 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                  className="group p-5 rounded-2xl flex flex-col justify-between"
                 >
                   <div className="space-y-3">
-                    <div className="h-10 w-10 rounded-lg bg-secondary text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors flex items-center justify-center shadow-xs">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                      <h3 className="font-heading font-bold text-base text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                         {cat.title}
                       </h3>
                       <div className="text-xs text-muted-foreground font-devanagari mt-0.5">
@@ -653,11 +656,11 @@ const LandingPage = () => {
                       {cat.desc}
                     </p>
                   </div>
-                  <div className="pt-4 mt-3 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-primary">
+                  <div className="pt-4 mt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                     <span>Browse Lot</span>
                     <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
-                </div>
+                </GlassCard>
               );
             })}
           </div>
@@ -668,12 +671,12 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 5. VERIFIED REAL CATALOG SHOWCASE (Direct from Backend Database)           */}
       {/* ========================================================================= */}
-      <section className="py-12 lg:py-16 bg-card border-b border-border">
+      <section className="py-12 lg:py-16 backdrop-blur-md bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-2 border border-emerald-500/20">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 <span>Verified Active Lots in Stock</span>
               </div>
@@ -686,7 +689,7 @@ const LandingPage = () => {
             </div>
             <Link
               to="/medicines"
-              className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline inline-flex items-center gap-1"
+              className="text-xs sm:text-sm font-heading font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
             >
               <span>View Full Formulary</span>
               <ChevronRight className="h-4 w-4" />
@@ -696,18 +699,20 @@ const LandingPage = () => {
           {/* Product Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {catalogMedicines.map((med) => (
-              <div
+              <GlassCard
                 key={med.id || med._id}
-                className="rounded-xl bg-background border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all shadow-xs"
+                interactive
+                variant="default"
+                className="rounded-2xl p-5 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   {/* Badges */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-secondary text-primary uppercase">
+                    <span className="text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 uppercase border border-slate-200/60 dark:border-slate-700/60">
                       {med.category || "Formulation"}
                     </span>
                     {med.isRxRequired && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800">
                         Rx Required
                       </span>
                     )}
@@ -728,14 +733,14 @@ const LandingPage = () => {
 
                   {/* Generic Alternative Availability Tag */}
                   {med.genericAvailable && (
-                    <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-300">
+                    <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300/40 dark:border-emerald-800/60 text-[11px] text-emerald-800 dark:text-emerald-300">
                       <span className="font-bold">Generic Salt Option:</span> ₹{med.genericPrice ? med.genericPrice.toFixed(2) : "14.00"} (Save ~65%)
                     </div>
                   )}
                 </div>
 
                 {/* Price and Action */}
-                <div className="pt-4 mt-4 border-t border-border flex items-center justify-between">
+                <div className="pt-4 mt-4 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
                   <div>
                     <div className="font-mono text-xl font-bold text-foreground">
                       ₹{(med.price || 0).toFixed(2)}
@@ -746,15 +751,15 @@ const LandingPage = () => {
                       </div>
                     )}
                   </div>
-                  <Button
+                  <GlassButton
                     onClick={() => handleQuickAdd(med)}
                     size="sm"
-                    className="h-9 px-4 rounded-lg bg-primary text-primary-foreground font-heading font-semibold text-xs"
+                    variant="primary"
                   >
                     + Add to Cart
-                  </Button>
+                  </GlassButton>
                 </div>
-              </div>
+              </GlassCard>
             ))}
           </div>
 
@@ -764,7 +769,7 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 6. STRICT CLINICAL DEMARCATION: REGISTERED DOCTORS VS AI KNOWLEDGE TOOL  */}
       {/* ========================================================================= */}
-      <section className="py-12 lg:py-16 bg-background border-b border-border">
+      <section className="py-12 lg:py-16 backdrop-blur-sm bg-white/40 dark:bg-slate-950/40 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           
           <div className="text-center max-w-2xl mx-auto mb-10">
@@ -779,10 +784,10 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             
             {/* Card 1: Registered Doctor Telehealth */}
-            <div className="rounded-2xl bg-card border-2 border-primary/40 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-xs">
+            <div className="rounded-3xl backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border border-white/80 dark:border-white/10 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-glass">
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
-                  <Stethoscope className="h-3.5 w-3.5" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-500/20">
+                  <Stethoscope className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Licensed Medical Practitioners (MBBS / MD)</span>
                 </div>
                 <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
@@ -793,15 +798,15 @@ const LandingPage = () => {
                 </p>
                 <ul className="text-xs text-muted-foreground space-y-2 pt-2">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>MCI / State Council verified medical registration numbers</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>Legally recognized e-prescriptions with digital signature</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>Confidential peer-to-peer WebRTC encrypted video</span>
                   </li>
                 </ul>
@@ -809,7 +814,7 @@ const LandingPage = () => {
 
               <div>
                 <Link to="/consult-doctor" className="block w-full">
-                  <Button className="w-full h-11 bg-primary text-primary-foreground font-heading font-semibold text-sm rounded-xl">
+                  <Button className="w-full h-11 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-heading font-semibold text-sm rounded-xl shadow-emerald-glow-sm">
                     <Stethoscope className="mr-2 h-4 w-4" />
                     <span>{t("common:nav.consult_doctor")}</span>
                   </Button>
@@ -818,9 +823,9 @@ const LandingPage = () => {
             </div>
 
             {/* Card 2: AI Health Knowledge Compass */}
-            <div className="rounded-2xl bg-secondary/50 border border-border p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="rounded-3xl backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border border-white/70 dark:border-white/10 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-glass">
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-300/40 dark:border-slate-700/40">
                   <Sparkles className="h-3.5 w-3.5 text-accent" />
                   <span>{t("landing:ai.badge")}</span>
                 </div>
@@ -832,7 +837,7 @@ const LandingPage = () => {
                 </p>
                 
                 {/* Explicit Disclaimer */}
-                <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
                   <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                   <p className="text-[11px] leading-relaxed">
                     <strong>Medical Disclaimer:</strong> The AI Knowledge Assistant is for educational awareness only. It cannot provide a clinical diagnosis, evaluate emergencies, or prescribe medication. Always consult a registered doctor.
@@ -842,8 +847,8 @@ const LandingPage = () => {
 
               <div>
                 <Link to="/doctor-chat" className="block w-full">
-                  <Button variant="outline" className="w-full h-11 border-border text-foreground hover:bg-card font-heading font-semibold text-sm rounded-xl">
-                    <MessageSquare className="mr-2 h-4 w-4 text-primary" />
+                  <Button variant="outline" className="w-full h-11 border-slate-200 dark:border-slate-800 text-foreground hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-heading font-semibold text-sm rounded-xl">
+                    <MessageSquare className="mr-2 h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span>{t("landing:ai.chat_btn")}</span>
                   </Button>
                 </Link>
@@ -858,12 +863,12 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 7. FACTUAL CLINICAL COMMITMENTS & REGULATORY ASSURANCE                    */}
       {/* ========================================================================= */}
-      <section className="py-12 bg-card border-b border-border">
+      <section className="py-12 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="flex items-start gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl backdrop-blur-sm bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 shadow-xs">
+              <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
@@ -874,8 +879,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="flex items-start gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl backdrop-blur-sm bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 shadow-xs">
+              <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
                 <ThermometerSnowflake className="h-5 w-5" />
               </div>
               <div>
@@ -886,8 +891,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="flex items-start gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl backdrop-blur-sm bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 shadow-xs">
+              <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
                 <FileCheck className="h-5 w-5" />
               </div>
               <div>
@@ -898,8 +903,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="flex items-start gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl backdrop-blur-sm bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 shadow-xs">
+              <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
                 <FileText className="h-5 w-5" />
               </div>
               <div>

@@ -1,0 +1,58 @@
+name: Glass V3 UI Visual & Responsive Tests
+
+on:
+  push:
+    branches:
+      - feature/medszop-glass-ui-v3
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-glass:
+    name: Glass UI Playwright Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Install Playwright Browsers
+        working-directory: frontend
+        run: npx playwright install chromium --with-deps
+
+      - name: Build Frontend Production Assets
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:5000/api
+
+      - name: Run Glass Experience V3 Test Suite
+        working-directory: frontend
+        run: npm run test:glass
+        env:
+          CI: true
+          VITE_API_URL: http://localhost:5000/api
+
+      - name: Upload Test Summary & Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: glass-v3-test-results
+          path: |
+            frontend/tests/glass-test-summary.json
+            frontend/tests/screenshots/
+          retention-days: 7
+

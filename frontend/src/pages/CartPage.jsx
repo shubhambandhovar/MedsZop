@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { Skeleton } from "../components/ui/skeleton";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ShoppingCart,
   Plus,
@@ -103,7 +104,7 @@ const CartPage = () => {
   const itemsCount = cart.items?.length || 0;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 lg:pb-8">
@@ -113,18 +114,18 @@ const CartPage = () => {
             <div className="flex items-center gap-2 mb-1">
               <Link
                 to="/medicines"
-                className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 font-medium"
+                className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors inline-flex items-center gap-1 font-medium"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 Continue Shopping
               </Link>
             </div>
             <h1 className="font-heading text-2xl sm:text-3xl font-bold flex items-center gap-3 text-foreground tracking-tight" data-testid="cart-title">
-              <div className="p-2 sm:p-2.5 rounded-xl bg-primary/10 text-primary">
+              <div className="p-2 sm:p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-xs">
                 <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
               {t("checkout:cart.title")}
-              <Badge variant="secondary" className="text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              <Badge variant="secondary" className="text-xs font-semibold px-2.5 py-0.5 rounded-full backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60">
                 {itemsCount} {itemsCount === 1 ? "item" : "items"}
               </Badge>
             </h1>
@@ -134,7 +135,7 @@ const CartPage = () => {
               variant="outline"
               size="sm"
               onClick={handleClearCart}
-              className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive self-start sm:self-auto rounded-xl h-9 px-3.5 text-xs font-semibold transition-all"
+              className="text-rose-600 dark:text-rose-400 border-rose-500/30 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl h-9 px-3.5 text-xs font-semibold transition-all shadow-xs"
               aria-label="Clear all items from shopping cart"
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
@@ -144,9 +145,9 @@ const CartPage = () => {
         </div>
 
         {!itemsCount ? (
-          <Card className="text-center py-16 px-4 rounded-3xl border-slate-200 dark:border-slate-800 shadow-sm max-w-2xl mx-auto my-8">
-            <CardContent className="space-y-4">
-              <div className="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-2">
+          <GlassCard variant="elevated" className="text-center py-16 px-4 rounded-3xl max-w-2xl mx-auto my-8">
+            <div className="space-y-4">
+              <div className="h-20 w-20 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-2 shadow-xs">
                 <ShoppingBag className="h-10 w-10" />
               </div>
               <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground">
@@ -157,14 +158,14 @@ const CartPage = () => {
               </p>
               <div className="pt-2">
                 <Link to="/medicines">
-                  <Button className="rounded-xl px-7 h-12 font-semibold shadow-md shadow-primary/20 active-press">
+                  <GlassButton size="lg" variant="primary" className="rounded-xl px-7">
                     {t("checkout:cart.explore_btn")}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  </GlassButton>
                 </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         ) : (
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start">
             {/* Cart Items List */}
@@ -173,12 +174,13 @@ const CartPage = () => {
                 const price = item.medicine.discount_price || item.medicine.price;
                 const hasDiscount = Boolean(item.medicine.discount_price);
                 return (
-                  <Card
+                  <GlassCard
                     key={item.medicine.id}
-                    className="overflow-hidden rounded-2xl border-slate-200 dark:border-slate-800 shadow-xs hover:border-primary/40 transition-colors"
+                    variant="default"
+                    className="overflow-hidden rounded-2xl"
                     data-testid={`cart-item-${item.medicine.id}`}
                   >
-                    <CardContent className="p-4 sm:p-5">
+                    <div className="p-4 sm:p-5">
                       <div className="flex gap-3.5 sm:gap-4">
                         {/* Medicine Thumbnail */}
                         <Link
@@ -275,19 +277,19 @@ const CartPage = () => {
                           Remove
                         </Button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </GlassCard>
                 );
               })}
             </div>
 
             {/* Desktop Order Summary Sidebar */}
             <div className="hidden lg:block">
-              <Card className="sticky top-24 rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
-                <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <CardTitle className="font-heading text-lg font-bold">Order Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="p-5 space-y-4">
+              <GlassCard variant="elevated" className="sticky top-24 rounded-3xl p-6 sm:p-7">
+                <div className="pb-3 border-b border-slate-200/60 dark:border-slate-800/60">
+                  <h3 className="font-heading text-lg font-bold text-foreground">Order Summary</h3>
+                </div>
+                <div className="py-4 space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-medium tabular-nums">₹{cart.total.toFixed(2)}</span>
@@ -305,39 +307,41 @@ const CartPage = () => {
                   <Separator />
                   <div className="flex justify-between items-baseline">
                     <span className="font-heading font-bold text-base">{t("checkout:summary.total_amount")}</span>
-                    <span className="font-heading font-extrabold text-2xl text-primary tabular-nums" data-testid="cart-total">
+                    <span className="font-heading font-extrabold text-2xl text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="cart-total">
                       ₹{cart.total.toFixed(2)}
                     </span>
                   </div>
 
-                  <Button
-                    className="w-full h-12 rounded-xl text-base font-bold shadow-md shadow-primary/20 active-press"
+                  <GlassButton
+                    size="lg"
+                    variant="primary"
+                    className="w-full"
                     onClick={() => navigate("/checkout")}
                     data-testid="proceed-to-checkout"
                   >
                     {t("checkout:summary.proceed_to_checkout")}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  </GlassButton>
 
                   <Link to="/medicines" className="block">
-                    <Button variant="outline" className="w-full rounded-xl text-sm h-11">
+                    <GlassButton variant="secondary" size="md" className="w-full">
                       {t("checkout:cart.explore_btn")}
-                    </Button>
+                    </GlassButton>
                   </Link>
 
                   {/* Trust assurance micro-badges */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-muted-foreground">
+                  <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 space-y-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
                       <span>100% Genuine, verified medicines</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-primary shrink-0" />
+                      <Sparkles className="h-4 w-4 text-emerald-600 shrink-0" />
                       <span>Cold-chain delivery guaranteed</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassCard>
             </div>
           </div>
         )}

@@ -9,6 +9,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
 import { Separator } from "../components/ui/separator";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ShoppingCart,
   ArrowLeft,
@@ -100,7 +101,7 @@ const MedicineDetailPage = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 md:pb-8">
@@ -110,10 +111,10 @@ const MedicineDetailPage = () => {
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="pl-0 text-muted-foreground hover:text-primary transition-colors text-xs sm:text-sm font-medium gap-1.5"
+            className="pl-3 pr-3 h-8 rounded-full backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-xs font-semibold gap-1.5 shadow-xs"
             aria-label="Return to previous page"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3.5 w-3.5" />
             {t("detail.back_to_medicines", "Back to Medicines")}
           </Button>
         </div>
@@ -122,7 +123,7 @@ const MedicineDetailPage = () => {
           {/* Image Section */}
           <div className="relative">
             <div className="md:sticky md:top-24">
-              <div className="relative rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800 shadow-sm aspect-square sm:aspect-4/3 md:aspect-square max-h-[440px]">
+              <div className="relative rounded-3xl overflow-hidden backdrop-blur-md bg-white/75 dark:bg-slate-900/75 border border-white/80 dark:border-white/10 shadow-glass aspect-square sm:aspect-4/3 md:aspect-square max-h-[440px]">
                 <img
                   src={medicine.image_url || "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800"}
                   alt={medicine.name}
@@ -147,7 +148,7 @@ const MedicineDetailPage = () => {
           {/* Details Section */}
           <div className="space-y-6">
             <div>
-              <Badge variant="outline" className="mb-3 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/5 text-primary border-primary/20">
+              <Badge variant="outline" className="mb-3 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25">
                 {medicine.category}
               </Badge>
 
@@ -162,35 +163,33 @@ const MedicineDetailPage = () => {
             </div>
 
             {/* Price Card */}
-            <Card className="rounded-2xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent border-primary/20 shadow-xs">
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 mb-2">
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-primary tabular-nums" data-testid="medicine-price">
-                    ₹{finalPrice}
-                  </span>
-                  {medicine.discount_price && (
-                    <>
-                      <span className="text-lg sm:text-xl text-muted-foreground line-through tabular-nums">
-                        ₹{medicine.price}
-                      </span>
-                      <Badge className="bg-emerald-600 text-white text-xs font-semibold">
-                        Save ₹{medicine.price - medicine.discount_price}
-                      </Badge>
-                    </>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">Inclusive of all taxes • 100% Genuine product</p>
-              </CardContent>
-            </Card>
+            <GlassCard variant="elevated" className="rounded-3xl p-5 sm:p-6">
+              <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 mb-2">
+                <span className="font-heading font-extrabold text-3xl sm:text-4xl text-emerald-600 dark:text-emerald-400 tabular-nums" data-testid="medicine-price">
+                  ₹{finalPrice}
+                </span>
+                {medicine.discount_price && (
+                  <>
+                    <span className="text-lg sm:text-xl text-muted-foreground line-through tabular-nums">
+                      ₹{medicine.price}
+                    </span>
+                    <Badge className="bg-emerald-600 text-white text-xs font-semibold">
+                      Save ₹{medicine.price - medicine.discount_price}
+                    </Badge>
+                  </>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">Inclusive of all taxes • 100% Genuine product</p>
+            </GlassCard>
 
             {/* Quantity Stepper */}
             <div className="flex items-center gap-4 sm:gap-6 py-2">
               <span className="text-sm font-semibold text-foreground">{t("detail.quantity", "Quantity")}:</span>
-              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+              <div className="flex items-center gap-2 backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-foreground"
+                  className="h-8 w-8 rounded-xl hover:bg-white dark:hover:bg-slate-700 text-foreground"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
                   data-testid="qty-decrease"
@@ -204,7 +203,7 @@ const MedicineDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-foreground"
+                  className="h-8 w-8 rounded-xl hover:bg-white dark:hover:bg-slate-700 text-foreground"
                   onClick={() => setQuantity(quantity + 1)}
                   data-testid="qty-increase"
                   aria-label="Increase quantity"
@@ -216,9 +215,10 @@ const MedicineDetailPage = () => {
 
             {/* Desktop Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1">
-              <Button
+              <GlassButton
                 size="lg"
-                className="flex-1 h-12 sm:h-14 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-primary/20 active-press"
+                variant="primary"
+                className="flex-1"
                 onClick={handleAddToCart}
                 disabled={addingToCart || medicine.stock === 0}
                 data-testid="add-to-cart-btn"
@@ -227,15 +227,15 @@ const MedicineDetailPage = () => {
                 {medicine.stock === 0
                   ? t("medicine_card.out_of_stock", "Out of Stock")
                   : (addingToCart ? t("medicine_card.adding", "Adding...") : t("medicine_card.add_to_cart", "Add to Cart"))}
-              </Button>
+              </GlassButton>
               <Link to="/cart" className="flex-1">
-                <Button
+                <GlassButton
                   size="lg"
-                  variant="outline"
-                  className="w-full h-12 sm:h-14 rounded-xl text-sm sm:text-base font-semibold border-slate-200 dark:border-slate-700 hover:border-primary/50"
+                  variant="secondary"
+                  className="w-full"
                 >
                   {t("detail.view_cart", "Go to Cart")}
-                </Button>
+                </GlassButton>
               </Link>
             </div>
 

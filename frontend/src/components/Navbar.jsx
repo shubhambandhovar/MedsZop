@@ -159,10 +159,10 @@ const Navbar = () => {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-200 ${
+        className={`sticky top-0 z-50 w-full overflow-x-clip transition-all duration-300 ${
           isScrolled
-            ? "border-b border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md shadow-sm"
-            : "border-b border-slate-100 dark:border-slate-800/70 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md"
+            ? "backdrop-blur-xl bg-white/88 dark:bg-slate-950/88 border-b border-slate-200/70 dark:border-slate-800/80 shadow-glass dark:shadow-glass-dark"
+            : "backdrop-blur-md bg-white/70 dark:bg-slate-950/70 border-b border-slate-200/40 dark:border-slate-800/50 shadow-xs"
         }`}
       >
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
@@ -171,7 +171,7 @@ const Navbar = () => {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to={logoDestination}
-                className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+                className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-h-[44px] min-w-[44px]"
                 data-testid="logo-link"
                 aria-label="MedsZop Home"
               >
@@ -185,20 +185,20 @@ const Navbar = () => {
 
               {/* Factual Licensed Chemist Verification Badge */}
               <div
-                className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 border border-primary/20 text-primary text-[11px] font-semibold"
+                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-sm bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold shadow-xs"
                 title="Licensed Indian Chemist & Pharmacist Verified under D&C Act"
               >
-                <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                 <span>Licensed Pharmacy Network</span>
               </div>
             </div>
 
-            {/* 2. MEDICINE SEARCH BAR (Desktop & Tablet) */}
-            <div className="hidden md:flex flex-1 max-w-sm lg:max-w-md xl:max-w-lg mx-2">
+            {/* 2. MEDICINE SEARCH BAR (Desktop & Large Screens) */}
+            <div className="hidden xl:flex flex-1 max-w-sm lg:max-w-md xl:max-w-lg mx-2">
               <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <div className="relative flex items-center">
                   <Search
-                    className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none"
+                    className="absolute left-3.5 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none"
                     aria-hidden="true"
                   />
                   <input
@@ -207,7 +207,7 @@ const Navbar = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search medicines, salts, brands..."
                     aria-label="Search medicines across MedsZop"
-                    className="w-full h-10 pl-9 pr-9 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-150"
+                    className="w-full h-10 pl-9 pr-9 rounded-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-800/90 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-150 shadow-xs"
                   />
                   {searchQuery && (
                     <button
@@ -246,10 +246,10 @@ const Navbar = () => {
             </nav>
 
             {/* 4. RIGHT ACTION CONTROLS */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
-              {/* Quick Upload Rx Action Pill (Visible on sm+ screens) */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              {/* Quick Upload Rx Action Pill (Visible on xl+ screens) */}
               {(!user || user.role === "customer") && (
-                <Link to="/prescription-scan" className="hidden sm:inline-flex shrink-0">
+                <Link to="/prescription-scan" className="hidden xl:inline-flex shrink-0">
                   <Button
                     variant="outline"
                     size="sm"
@@ -272,7 +272,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="h-9 w-9 rounded-full text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
                 aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
                 data-testid="theme-toggle"
               >
@@ -289,7 +289,7 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-slate-700 dark:text-slate-300 hover:text-primary hover:bg-primary/10 transition-all"
+                    className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-slate-700 dark:text-slate-300 hover:text-primary hover:bg-primary/10 transition-all"
                     aria-label={`Shopping cart with ${cartCount} items`}
                   >
                     <ShoppingCart className="h-4 w-4" aria-hidden="true" />
@@ -309,7 +309,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 text-foreground hover:ring-2 hover:ring-primary/20 transition-all"
+                      className="h-11 w-11 sm:h-9 sm:w-9 rounded-full border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 text-foreground hover:ring-2 hover:ring-primary/20 transition-all"
                       aria-label="User account menu"
                       data-testid="user-menu"
                     >
@@ -419,7 +419,7 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-foreground"
+                    className="h-11 w-11 sm:h-9 sm:w-9 rounded-full text-foreground"
                     aria-label="Open mobile navigation menu"
                     data-testid="mobile-menu"
                   >

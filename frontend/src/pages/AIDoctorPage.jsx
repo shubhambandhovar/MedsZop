@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
     Send,
     Loader2,
@@ -24,7 +25,7 @@ import remarkGfm from "remark-gfm";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const AIDoctorPage = () => {
     const { t } = useTranslation(['consult', 'common']);
@@ -149,13 +150,13 @@ const AIDoctorPage = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen glass-ambient-mesh flex flex-col">
             <Navbar />
 
             <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
                 {/* Header Section */}
                 <div className="mb-4 sm:mb-6 text-center">
-                    <Badge className="mb-2 sm:mb-3 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-3 py-1 text-xs font-semibold rounded-full">
+                    <Badge className="mb-2 sm:mb-3 backdrop-blur-sm bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-3.5 py-1 text-xs font-semibold rounded-full shadow-xs">
                         <Sparkles className="h-3.5 w-3.5 mr-1.5" />
                         AI-Powered Self Help
                     </Badge>
@@ -168,15 +169,15 @@ const AIDoctorPage = () => {
                 </div>
 
                 {/* Main Chat Interface Container */}
-                <Card className="flex-1 min-h-0 flex flex-col rounded-3xl overflow-hidden shadow-sm border-slate-200 dark:border-slate-800 bg-card h-[620px] max-h-[calc(100dvh-220px)] min-h-[460px]">
-                    <CardHeader className="border-b border-slate-100 dark:border-slate-800 py-3.5 px-4 sm:px-6 bg-slate-50/70 dark:bg-slate-900/70 shrink-0">
+                <GlassCard variant="elevated" className="flex-1 min-h-0 flex flex-col rounded-3xl overflow-hidden p-0 h-[620px] max-h-[calc(100dvh-220px)] min-h-[460px]">
+                    <div className="border-b border-slate-200/60 dark:border-slate-800/60 py-3.5 px-4 sm:px-6 backdrop-blur-md bg-white/50 dark:bg-slate-900/50 shrink-0">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400">
+                                <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center border border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 shadow-xs">
                                     <Bot className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <CardTitle className="font-heading text-base sm:text-lg font-bold text-foreground">Dr. MedsZop (AI)</CardTitle>
+                                    <h2 className="font-heading text-base sm:text-lg font-bold text-foreground">Dr. MedsZop (AI)</h2>
                                     <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
                                         <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                                         Always Available • Informational Guidance
@@ -184,15 +185,15 @@ const AIDoctorPage = () => {
                                 </div>
                             </div>
                             <Link to="/consult-doctor" className="hidden sm:inline-flex">
-                                <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold h-8 gap-1.5">
-                                    <Stethoscope className="h-3.5 w-3.5 text-primary" />
+                                <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold h-8 gap-1.5 border-slate-200 dark:border-slate-800 backdrop-blur-sm bg-white/60 dark:bg-slate-800/60 shadow-xs">
+                                    <Stethoscope className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                                     {t("common:nav.consult_doctor")}
                                 </Button>
                             </Link>
                         </div>
-                    </CardHeader>
+                    </div>
 
-                    <CardContent className="flex-1 min-h-0 flex flex-col p-0 overflow-hidden bg-slate-50/30 dark:bg-slate-950/30">
+                    <div className="flex-1 min-h-0 flex flex-col p-0 overflow-hidden bg-slate-50/30 dark:bg-slate-950/30">
                         {/* Messages Scroll Area with Native Smooth Momentum Scrolling */}
                         <div
                             ref={scrollContainerRef}
@@ -292,10 +293,12 @@ const AIDoctorPage = () => {
                                     className="h-12 rounded-2xl px-4 sm:px-5 shadow-xs border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus-visible:ring-emerald-500 text-foreground"
                                     data-testid="chat-input"
                                 />
-                                <Button
+                                <GlassButton
                                     onClick={handleSend}
                                     disabled={!input.trim() || loading}
-                                    className="h-12 w-12 rounded-2xl shrink-0 bg-emerald-600 hover:bg-emerald-700 active-press shadow-xs"
+                                    variant="primary"
+                                    size="icon"
+                                    className="h-12 w-12 rounded-2xl shrink-0"
                                     data-testid="send-btn"
                                     aria-label="Send message"
                                 >
@@ -304,11 +307,11 @@ const AIDoctorPage = () => {
                                     ) : (
                                         <Send className="h-5 w-5" />
                                     )}
-                                </Button>
+                                </GlassButton>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </GlassCard>
 
                 {/* Medical Safety Disclaimer Callout */}
                 <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/70 rounded-2xl text-xs max-w-4xl mx-auto w-full">

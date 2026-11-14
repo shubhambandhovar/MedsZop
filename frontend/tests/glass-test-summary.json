@@ -1,0 +1,364 @@
+{
+  "timestamp": "2026-11-14T00:18:38.505Z",
+  "baseUrl": "http://localhost:5173",
+  "viewportsTested": [
+    {
+      "name": "320px-mobile-narrow",
+      "width": 320,
+      "height": 568
+    },
+    {
+      "name": "375px-mobile-standard",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "name": "768px-tablet-portrait",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "name": "1024px-tablet-landscape",
+      "width": 1024,
+      "height": 768
+    },
+    {
+      "name": "1440px-desktop-hd",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "1920px-desktop-fhd",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "2560px-ultrawide-2k",
+      "width": 2560,
+      "height": 1440
+    }
+  ],
+  "overflowAudit": [
+    {
+      "viewport": "320px-mobile-narrow",
+      "width": 320,
+      "metrics": {
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "375px-mobile-standard",
+      "width": 375,
+      "metrics": {
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "768px-tablet-portrait",
+      "width": 768,
+      "metrics": {
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "1024px-tablet-landscape",
+      "width": 1024,
+      "metrics": {
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "1440px-desktop-hd",
+      "width": 1440,
+      "metrics": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "1920px-desktop-fhd",
+      "width": 1920,
+      "metrics": {
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    },
+    {
+      "viewport": "2560px-ultrawide-2k",
+      "width": 2560,
+      "metrics": {
+        "scrollWidth": 2560,
+        "clientWidth": 2560,
+        "hasHorizontalOverflow": false
+      },
+      "pass": true
+    }
+  ],
+  "touchTargetAudit": [
+    {
+      "label": "Header Brand Logo Link",
+      "selector": "[data-testid=\"logo-link\"]",
+      "found": true,
+      "width": 100,
+      "height": 44,
+      "pass": true,
+      "error": null
+    },
+    {
+      "label": "Theme Toggle Button",
+      "selector": "[data-testid=\"theme-toggle\"]",
+      "found": true,
+      "width": 44,
+      "height": 44,
+      "pass": true,
+      "error": null
+    },
+    {
+      "label": "Shopping Cart Action",
+      "selector": "[data-testid=\"cart-link\"]",
+      "found": true,
+      "width": 44,
+      "height": 44,
+      "pass": true,
+      "error": null
+    },
+    {
+      "label": "Mobile Navigation Menu Drawer",
+      "selector": "[data-testid=\"mobile-menu\"]",
+      "found": true,
+      "width": 44,
+      "height": 44,
+      "pass": true,
+      "error": null
+    },
+    {
+      "label": "Hero Upload Prescription CTA",
+      "selector": "[data-testid=\"hero-upload-prescription-btn\"]",
+      "found": true,
+      "width": 293,
+      "height": 48,
+      "pass": true,
+      "error": null
+    }
+  ],
+  "reducedMotionAudit": [
+    {
+      "tested": "GlassButton scale suppression under reduced-motion",
+      "result": {
+        "transformBefore": "none",
+        "transformActive": "none",
+        "scaleX": 1,
+        "scaledDown": false,
+        "pass": true
+      },
+      "pass": true
+    }
+  ],
+  "modalKeyboardAudit": [
+    {
+      "modal": "LanguageSelector (Desktop)",
+      "pass": true
+    },
+    {
+      "modal": "MobileMenuDrawer (Mobile)",
+      "pass": true
+    }
+  ],
+  "authGuardAudit": [
+    {
+      "path": "/cart",
+      "redirectedToLogin": true,
+      "pass": true
+    },
+    {
+      "path": "/dashboard",
+      "redirectedToLogin": true,
+      "pass": true
+    },
+    {
+      "path": "/doctor-chat",
+      "redirectedToLogin": true,
+      "pass": true
+    }
+  ],
+  "pageThemesCaptured": [
+    {
+      "page": "01_landing_hero",
+      "path": "/",
+      "isProtected": false,
+      "theme": "light",
+      "file": "01_landing_hero_light.png",
+      "pass": true
+    },
+    {
+      "page": "01_landing_hero",
+      "path": "/",
+      "isProtected": false,
+      "theme": "dark",
+      "file": "01_landing_hero_dark.png",
+      "pass": true
+    },
+    {
+      "page": "02_medicines_catalog",
+      "path": "/medicines",
+      "isProtected": false,
+      "theme": "light",
+      "file": "02_medicines_catalog_light.png",
+      "pass": true
+    },
+    {
+      "page": "02_medicines_catalog",
+      "path": "/medicines",
+      "isProtected": false,
+      "theme": "dark",
+      "file": "02_medicines_catalog_dark.png",
+      "pass": true
+    },
+    {
+      "page": "03_care_identity_login",
+      "path": "/login",
+      "isProtected": false,
+      "theme": "light",
+      "file": "03_care_identity_login_light.png",
+      "pass": true
+    },
+    {
+      "page": "03_care_identity_login",
+      "path": "/login",
+      "isProtected": false,
+      "theme": "dark",
+      "file": "03_care_identity_login_dark.png",
+      "pass": true
+    },
+    {
+      "page": "04_help_center",
+      "path": "/help",
+      "isProtected": false,
+      "theme": "light",
+      "file": "04_help_center_light.png",
+      "pass": true
+    },
+    {
+      "page": "04_help_center",
+      "path": "/help",
+      "isProtected": false,
+      "theme": "dark",
+      "file": "04_help_center_dark.png",
+      "pass": true
+    },
+    {
+      "page": "05_faqs_accordions",
+      "path": "/faqs",
+      "isProtected": false,
+      "theme": "light",
+      "file": "05_faqs_accordions_light.png",
+      "pass": true
+    },
+    {
+      "page": "05_faqs_accordions",
+      "path": "/faqs",
+      "isProtected": false,
+      "theme": "dark",
+      "file": "05_faqs_accordions_dark.png",
+      "pass": true
+    },
+    {
+      "page": "06_cart_overview",
+      "path": "/cart",
+      "isProtected": true,
+      "theme": "light",
+      "file": "06_cart_overview_light.png",
+      "pass": true
+    },
+    {
+      "page": "06_cart_overview",
+      "path": "/cart",
+      "isProtected": true,
+      "theme": "dark",
+      "file": "06_cart_overview_dark.png",
+      "pass": true
+    },
+    {
+      "page": "07_patient_dashboard",
+      "path": "/dashboard",
+      "isProtected": true,
+      "theme": "light",
+      "file": "07_patient_dashboard_light.png",
+      "pass": true
+    },
+    {
+      "page": "07_patient_dashboard",
+      "path": "/dashboard",
+      "isProtected": true,
+      "theme": "dark",
+      "file": "07_patient_dashboard_dark.png",
+      "pass": true
+    },
+    {
+      "page": "08_ai_doctor_chat",
+      "path": "/doctor-chat",
+      "isProtected": true,
+      "theme": "light",
+      "file": "08_ai_doctor_chat_light.png",
+      "pass": true
+    },
+    {
+      "page": "08_ai_doctor_chat",
+      "path": "/doctor-chat",
+      "isProtected": true,
+      "theme": "dark",
+      "file": "08_ai_doctor_chat_dark.png",
+      "pass": true
+    },
+    {
+      "page": "09_prescription_scan",
+      "path": "/prescription-scan",
+      "isProtected": true,
+      "theme": "light",
+      "file": "09_prescription_scan_light.png",
+      "pass": true
+    },
+    {
+      "page": "09_prescription_scan",
+      "path": "/prescription-scan",
+      "isProtected": true,
+      "theme": "dark",
+      "file": "09_prescription_scan_dark.png",
+      "pass": true
+    },
+    {
+      "page": "10_consult_doctor",
+      "path": "/consult-doctor",
+      "isProtected": true,
+      "theme": "light",
+      "file": "10_consult_doctor_light.png",
+      "pass": true
+    },
+    {
+      "page": "10_consult_doctor",
+      "path": "/consult-doctor",
+      "isProtected": true,
+      "theme": "dark",
+      "file": "10_consult_doctor_dark.png",
+      "pass": true
+    }
+  ],
+  "allPassed": true,
+  "failures": []
+}

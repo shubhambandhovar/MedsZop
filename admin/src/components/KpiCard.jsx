@@ -22,7 +22,7 @@ export default function KpiCard({
   return (
     <div
       className={cn(
-        "relative rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md",
+        "relative rounded-xl border glass-surface p-5 shadow-sm transition-all hover:shadow-md",
         className
       )}
     >

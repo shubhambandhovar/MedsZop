@@ -10,6 +10,7 @@ import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
+import { GlassCard, GlassButton, GlassSkeleton } from "../components/glass";
 import {
   Select,
   SelectContent,
@@ -22,7 +23,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const MedicinesPage = () => {
   const { t } = useTranslation(['catalog', 'common']);
@@ -57,9 +58,10 @@ const MedicinesPage = () => {
       if (selectedCategory) params.append("category", selectedCategory);
       
       const response = await axios.get(`${API_URL}/medicines?${params.toString()}`);
-      setMedicines(response.data);
+      setMedicines(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching medicines:", error);
+      setMedicines([]);
     } finally {
       setLoading(false);
     }
@@ -141,7 +143,7 @@ const MedicinesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       <main className="flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-8">
@@ -167,12 +169,12 @@ const MedicinesPage = () => {
           <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             <form onSubmit={handleSearch} className="flex-1 relative">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                 <Input
                   placeholder={t("catalog:search_placeholder")}
                   value={search}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-11 pr-10 h-12 rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs text-sm placeholder:text-muted-foreground focus-visible:ring-primary text-foreground"
+                  className="pl-11 pr-10 h-12 rounded-2xl border-slate-200/90 dark:border-slate-800/90 bg-white/75 dark:bg-slate-900/75 backdrop-blur-md shadow-xs text-sm placeholder:text-muted-foreground focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 text-foreground"
                   aria-label="Search medicines, brands, or generic names"
                   data-testid="medicine-search"
                 />
@@ -195,23 +197,23 @@ const MedicinesPage = () => {
 
               {/* Search Suggestions Dropdown */}
               {showSuggestions && searchResults.length > 0 && (
-                <Card className="absolute top-full left-0 right-0 z-30 mt-2 shadow-2xl rounded-2xl border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-h-[280px] overflow-y-auto no-scrollbar p-1.5">
+                <Card className="absolute top-full left-0 right-0 z-30 mt-2 shadow-2xl rounded-2xl border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[280px] overflow-y-auto no-scrollbar p-1.5">
                   <CardContent className="p-0 space-y-1">
                     {searchResults.map((med) => (
                       <Link
                         key={med.id}
                         to={`/medicines/${med.id}`}
-                        className="flex items-center gap-3 p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/70 rounded-xl transition-colors"
+                        className="flex items-center gap-3 p-2.5 hover:bg-emerald-50 dark:hover:bg-slate-800/70 rounded-xl transition-colors"
                         onClick={() => setShowSuggestions(false)}
                       >
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                        <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                           <Pill className="h-4 w-4" aria-hidden="true" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-xs sm:text-sm text-foreground truncate">{med.name}</p>
                           <p className="text-[11px] text-muted-foreground truncate">{med.generic_name} • {med.brand}</p>
                         </div>
-                        <span className="font-bold text-xs sm:text-sm text-primary tabular-nums shrink-0">₹{med.price}</span>
+                        <span className="font-bold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 tabular-nums shrink-0">₹{med.price}</span>
                       </Link>
                     ))}
                   </CardContent>
@@ -224,14 +226,14 @@ const MedicinesPage = () => {
               onValueChange={(val) => setSelectedCategory(val === "all" ? "" : val)}
             >
               <SelectTrigger
-                className="w-full md:w-[220px] h-12 rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs text-sm font-medium"
+                className="w-full md:w-[220px] h-12 rounded-2xl border-slate-200/90 dark:border-slate-800/90 bg-white/75 dark:bg-slate-900/75 backdrop-blur-md shadow-xs text-sm font-medium"
                 data-testid="category-filter"
                 aria-label="Filter by category"
               >
-                <Filter className="h-4 w-4 mr-2 text-primary" aria-hidden="true" />
+                <Filter className="h-4 w-4 mr-2 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl max-h-[300px]">
+              <SelectContent className="rounded-2xl max-h-[300px] backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border-slate-200/80 dark:border-slate-800/80">
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
@@ -247,8 +249,8 @@ const MedicinesPage = () => {
                 type="button"
                 onClick={() => setSelectedCategory("")}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active-press ${!selectedCategory
-                  ? "bg-primary text-white shadow-xs"
-                  : "bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:text-foreground hover:bg-slate-200 dark:hover:bg-slate-700"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-glow-sm"
+                  : "backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-slate-800"
                   }`}
               >
                 All
@@ -259,8 +261,8 @@ const MedicinesPage = () => {
                   type="button"
                   onClick={() => setSelectedCategory(selectedCategory === cat ? "" : cat)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active-press ${selectedCategory === cat
-                    ? "bg-primary text-white shadow-xs"
-                    : "bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:text-foreground hover:bg-slate-200 dark:hover:bg-slate-700"
+                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-glow-sm"
+                    : "backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/70 text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-slate-800"
                     }`}
                 >
                   {cat}
@@ -274,23 +276,12 @@ const MedicinesPage = () => {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4 sm:gap-6" role="status" aria-label="Loading medicines">
             {[...Array(8)].map((_, i) => (
-              <Card key={i} className="overflow-hidden rounded-2xl border-slate-200 dark:border-slate-800">
-                <Skeleton className="aspect-4/3 w-full" />
-                <CardContent className="p-4 space-y-2">
-                  <Skeleton className="h-4 w-3/4 rounded-md" />
-                  <Skeleton className="h-3 w-1/2 rounded-md" />
-                  <Skeleton className="h-3 w-1/3 rounded-md" />
-                  <div className="pt-2 flex justify-between items-center">
-                    <Skeleton className="h-6 w-1/4 rounded-md" />
-                    <Skeleton className="h-9 w-9 rounded-xl" />
-                  </div>
-                </CardContent>
-              </Card>
+              <GlassSkeleton key={i} variant="card" className="h-72 w-full rounded-2xl" />
             ))}
           </div>
         ) : medicines.length === 0 ? (
-          <Card className="text-center py-16 px-4 rounded-3xl border-slate-200 dark:border-slate-800 max-w-lg mx-auto my-8">
-            <CardContent className="space-y-4">
+          <GlassCard variant="elevated" className="text-center py-16 px-4 rounded-3xl max-w-lg mx-auto my-8">
+            <div className="space-y-4">
               <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-800 text-muted-foreground flex items-center justify-center mx-auto mb-2">
                 <AlertCircle className="h-8 w-8" aria-hidden="true" />
               </div>
@@ -299,15 +290,16 @@ const MedicinesPage = () => {
                 We couldn't find any medicines matching your search or active category filters.
               </p>
               <div className="pt-2">
-                <Button
-                  className="rounded-xl px-6 h-11 font-semibold active-press"
+                <GlassButton
+                  variant="primary"
+                  className="rounded-xl px-6 h-11 font-semibold"
                   onClick={() => { setSearch(""); setSelectedCategory(""); }}
                 >
                   Clear Filters
-                </Button>
+                </GlassButton>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -321,8 +313,10 @@ const MedicinesPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03, duration: 0.2 }}
               >
-                <Card
-                  className="overflow-hidden group hover:shadow-lg transition-all duration-300 rounded-xl border border-border flex flex-col h-full bg-card"
+                <GlassCard
+                  interactive
+                  variant="default"
+                  className="overflow-hidden group flex flex-col h-full rounded-2xl"
                   data-testid={`medicine-card-${medicine.id}`}
                 >
                   <Link to={`/medicines/${medicine.id}`} className="block relative overflow-hidden">
@@ -346,20 +340,20 @@ const MedicinesPage = () => {
                     </div>
                   </Link>
 
-                  <CardContent className="p-4 flex-1 flex flex-col justify-between">
+                  <div className="p-4 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="text-[10px] font-mono text-primary font-bold uppercase tracking-wide truncate" title={medicine.generic_name}>
+                      <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wide truncate" title={medicine.generic_name}>
                         SALT: {medicine.generic_name || "Verified Salt IP"}
                       </div>
                       <Link to={`/medicines/${medicine.id}`}>
-                        <h3 className="font-heading font-bold text-sm sm:text-base mt-1 line-clamp-1 hover:text-primary transition-colors text-foreground">
+                        <h3 className="font-heading font-bold text-sm sm:text-base mt-1 line-clamp-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-foreground">
                           {medicine.name}
                         </h3>
                       </Link>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">{medicine.brand || "Licensed Manufacturer"}</p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-border">
+                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-200/60 dark:border-slate-800/60">
                       <div>
                         {medicine.discount_price ? (
                           <div className="flex items-baseline gap-1.5">
@@ -376,18 +370,18 @@ const MedicinesPage = () => {
                           </span>
                         )}
                       </div>
-                      <Button
-                        size="sm"
-                        className="rounded-lg h-9 w-9 p-0 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs active-press"
+                      <GlassButton
+                        size="icon"
+                        variant="primary"
                         onClick={() => handleAddToCart(medicine)}
                         aria-label={`Add ${medicine.name} to cart`}
                         data-testid={`add-to-cart-${medicine.id}`}
                       >
                         <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      </GlassButton>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </GlassCard>
               </motion.div>
             ))}
           </motion.div>

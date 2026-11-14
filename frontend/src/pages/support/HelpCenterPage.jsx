@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../../components/ui/accordion";
+import { GlassCard } from "../../components/glass";
 
 const helpCategories = [
   {
@@ -150,11 +151,11 @@ const quickLinks = [
 const HelpCenterPage = () => {
   const { t } = useTranslation(['support', 'common']);
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       {/* Header Section */}
-      <div className="bg-primary pt-16 pb-20 text-center px-4">
+      <div className="relative overflow-hidden pt-16 pb-20 text-center px-4 bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 text-white border-b border-white/10 shadow-xl">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight font-heading">
             {t("help_center.title", "Help Center")}
@@ -180,7 +181,7 @@ const HelpCenterPage = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 -mt-8 pb-16 flex-grow w-full relative z-10">
-        <div className="bg-card text-foreground rounded-2xl shadow-sm border border-border p-5 sm:p-8">
+        <GlassCard variant="elevated" className="p-5 sm:p-8 rounded-3xl">
 
           <div className="space-y-10 sm:space-y-12">
             {helpCategories.map((category, idx) => (
@@ -214,10 +215,10 @@ const HelpCenterPage = () => {
             ))}
           </div>
 
-        </div>
+        </GlassCard>
 
         {/* Support Contact Section */}
-        <div className="mt-8 sm:mt-10 bg-card rounded-2xl shadow-xs border border-border p-6 sm:p-8 text-center">
+        <GlassCard variant="surface" className="mt-8 sm:mt-10 p-6 sm:p-8 text-center">
           <h2 className="text-xl sm:text-2xl font-bold font-heading mb-2 text-foreground">Still Need Help?</h2>
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
             Our dedicated support team is here for you. If you couldn't find the answer you were looking for, don't hesitate to reach out!
@@ -235,7 +236,7 @@ const HelpCenterPage = () => {
             </a>
           </div>
           <p className="text-xs text-muted-foreground mt-5">🕒 24/7 Digital Health Support</p>
-        </div>
+        </GlassCard>
       </main>
 
       <Footer />

@@ -78,7 +78,7 @@ export default function AdminHeader({ onOpenMobile, onRefresh, isRefreshing = fa
   const currentPageTitle = ROUTE_NAMES[location.pathname] || "Admin Portal";
 
   return (
-    <header className="h-16 px-4 lg:px-6 border-b border-border bg-card/80 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 shrink-0">
+    <header className="h-16 px-4 lg:px-6 border-b border-border glass-navbar flex items-center justify-between sticky top-0 z-30 shrink-0">
       {/* Left: Mobile Trigger & Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button

@@ -2,6 +2,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../../components/ui/accordion";
+import { GlassCard } from "../../components/glass";
 
 const faqs = [
   {
@@ -121,11 +122,11 @@ const FaqsPage = () => {
   const { t } = useTranslation(['support', 'common']);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen glass-ambient-mesh flex flex-col">
       <Navbar />
 
       {/* Hero Section */}
-      <div className="bg-primary/10 py-12 sm:py-16 text-center">
+      <div className="py-12 sm:py-16 text-center backdrop-blur-sm bg-white/40 dark:bg-slate-900/40 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="max-w-4xl mx-auto px-4">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-foreground mb-3 tracking-tight">
             {t("faq.title", "Frequently Asked Questions")}
@@ -137,7 +138,7 @@ const FaqsPage = () => {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-8 sm:py-12 flex-grow w-full">
-        <div className="bg-card text-foreground rounded-2xl shadow-xs border border-border p-5 sm:p-8">
+        <GlassCard variant="surface" className="rounded-3xl p-5 sm:p-8">
 
           {faqs.map((section, idx) => (
             <div key={idx} className="mb-8 sm:mb-10 last:mb-0">
@@ -159,7 +160,7 @@ const FaqsPage = () => {
             </div>
           ))}
 
-        </div>
+        </GlassCard>
 
         {/* SEO context text (invisible to users but readable by screen readers/crawlers) */}
         <div className="sr-only">

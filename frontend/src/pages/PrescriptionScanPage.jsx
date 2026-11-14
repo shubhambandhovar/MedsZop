@@ -14,6 +14,7 @@ import {
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
+import { GlassCard, GlassButton } from "../components/glass";
 import {
   ScanLine,
   Upload,
@@ -33,7 +34,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const PrescriptionScanPage = () => {
   const { t } = useTranslation(['consult', 'common']);
@@ -242,13 +243,13 @@ const PrescriptionScanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen glass-ambient-mesh text-foreground">
       <Navbar />
 
       <main className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full backdrop-blur-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-3 border border-emerald-500/20 shadow-xs">
           <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Clinical Prescription Intake & Pharmacist Audit</span>
+          <span>Clinical Prescription Intake &amp; Pharmacist Audit</span>
         </div>
 
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 text-foreground">
@@ -260,7 +261,7 @@ const PrescriptionScanPage = () => {
 
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* UPLOAD CARD */}
-          <Card className="rounded-2xl border-border bg-card shadow-xs">
+          <GlassCard variant="elevated" className="rounded-3xl shadow-glass p-0">
             <CardHeader className="p-4 sm:p-6 pb-2">
               <CardTitle className="font-heading text-xl flex items-center gap-2">
                 <Upload className="h-5 w-5 text-primary" aria-hidden="true" /> Upload Document
@@ -360,8 +361,10 @@ const PrescriptionScanPage = () => {
                       <RotateCcw className="h-4 w-4 mr-1.5" />
                       Change Image
                     </Button>
-                    <Button
-                      className="flex-2 rounded-xl h-11 text-xs sm:text-sm font-bold shadow-md shadow-primary/20 active-press"
+                    <GlassButton
+                      variant="primary"
+                      size="md"
+                      className="flex-2"
                       onClick={handleScan}
                       disabled={scanning}
                       data-testid="scan-prescription-submit-btn"
@@ -377,7 +380,7 @@ const PrescriptionScanPage = () => {
                           Extract Medicines
                         </>
                       )}
-                    </Button>
+                    </GlassButton>
                   </div>
                 </div>
               )}
@@ -409,10 +412,10 @@ const PrescriptionScanPage = () => {
                 </p>
               </div>
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* RESULT CARD */}
-          <Card className="rounded-2xl border-border bg-card shadow-xs flex flex-col">
+          <GlassCard variant="default" className="rounded-3xl shadow-glass flex flex-col p-0">
             <CardHeader className="p-4 sm:p-6 pb-2">
               <CardTitle className="font-heading text-xl flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" aria-hidden="true" /> Extraction Results
@@ -530,7 +533,7 @@ const PrescriptionScanPage = () => {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
         </div>
       </main>
 
