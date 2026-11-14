@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation, Trans } from "react-i18next";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -43,6 +43,7 @@ const LandingPage = () => {
   const { t } = useTranslation(['landing', 'common']);
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const shouldReduceMotion = useReducedMotion();
 
   const [heroSearch, setHeroSearch] = useState("");
   const [pincode, setPincode] = useState(() => localStorage.getItem("medszop_pincode") || "110001");
@@ -279,7 +280,7 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 1. TOP HYPERLOCAL SERVICEABILITY & REGULATORY STATUS STRIP               */}
       {/* ========================================================================= */}
-      <section className="backdrop-blur-md bg-slate-950/90 text-slate-100 border-b border-slate-800/80 text-xs py-2.5">
+      <section className="relative z-20 backdrop-blur-xl bg-slate-900/80 dark:bg-slate-950/80 text-slate-100 border-y border-emerald-500/25 shadow-glass-sm text-xs py-2.5 transition-all">
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 flex flex-col md:flex-row justify-between items-center gap-2">
           {/* Hyperlocal Pincode & Hub Info */}
           <div className="flex items-center gap-3">
@@ -319,12 +320,12 @@ const LandingPage = () => {
 
           {/* Genuine Factual Status Badges */}
           <div className="flex items-center gap-4 text-[11px] text-slate-300">
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>Cold-Pack Packaging Supported for Thermolabile Drugs</span>
             </span>
             <span className="hidden lg:inline text-slate-600">•</span>
-            <span className="hidden lg:inline-flex items-center gap-1">
+            <span className="hidden lg:inline-flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               <span>Partner Pharmacies Hold Form 20/21 State Retail Licenses</span>
             </span>
@@ -335,19 +336,48 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 2. FULL-WIDTH HERO: COMMAND OMNIBAR & DUAL INTAKE PIPELINE               */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden py-10 lg:py-16">
+      <section className="relative overflow-hidden py-12 lg:py-20">
+        {/* Luminous Atmospheric Ambient Glows (visible refraction through glass) */}
+        <div
+          className="absolute -top-24 -left-20 w-[620px] h-[620px] rounded-full bg-gradient-to-tr from-emerald-500/22 via-teal-400/18 to-cyan-400/12 blur-[110px] pointer-events-none -z-0"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute top-10 -right-20 w-[580px] h-[580px] rounded-full bg-gradient-to-bl from-cyan-400/22 via-teal-400/18 to-emerald-400/16 blur-[110px] pointer-events-none -z-0"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute top-1/2 left-1/3 w-[450px] h-[400px] rounded-full bg-emerald-400/12 blur-[100px] pointer-events-none -z-0"
+          aria-hidden="true"
+        />
+
         <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {/* Left Primary Hero Rail (7 Columns) */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border border-emerald-500/25 text-emerald-700 dark:text-emerald-400 text-xs font-semibold shadow-xs">
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-7 space-y-6"
+            >
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("landing:hero.badge")}</span>
               </div>
 
-              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.12]">
-                {t("landing:hero.title_part1")} <span className="text-emerald-600 dark:text-emerald-400">{t("landing:hero.title_highlight")}</span> {t("landing:hero.title_part2")}
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-foreground leading-[1.12]">
+                {t("landing:hero.title_part1")}{" "}
+                <span className="relative inline-block">
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    {t("landing:hero.title_highlight")}
+                  </span>
+                  <span
+                    className="absolute -bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full opacity-60"
+                    aria-hidden="true"
+                  />
+                </span>{" "}
+                {t("landing:hero.title_part2")}
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl font-body">
@@ -358,10 +388,10 @@ const LandingPage = () => {
               <div className="pt-2">
                 <form
                   onSubmit={handleHeroSearchSubmit}
-                  className="flex flex-col sm:flex-row items-stretch gap-2 p-2 rounded-2xl backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-2 border-emerald-500/35 shadow-glass focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all max-w-2xl"
+                  className="group relative flex flex-col sm:flex-row items-stretch gap-2 p-2.5 rounded-2xl sm:rounded-3xl backdrop-blur-2xl saturate-180 bg-white/70 dark:bg-slate-900/70 border-2 border-emerald-500/35 hover:border-emerald-500/55 shadow-glass-xl focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/20 transition-all max-w-2xl"
                 >
                   <div className="flex-1 flex items-center px-3 gap-2">
-                    <Search className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <Search className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 group-focus-within:scale-110 transition-transform" />
                     <input
                       type="text"
                       value={heroSearch}
@@ -374,7 +404,7 @@ const LandingPage = () => {
                       <button
                         type="button"
                         onClick={() => setHeroSearch("")}
-                        className="p-1 text-muted-foreground hover:text-foreground rounded-full"
+                        className="p-1 text-muted-foreground hover:text-foreground rounded-full transition-colors"
                         aria-label="Clear search input"
                       >
                         <X className="h-4 w-4" />
@@ -383,7 +413,7 @@ const LandingPage = () => {
                   </div>
                   <Button
                     type="submit"
-                    className="h-11 px-6 rounded-xl font-heading font-semibold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm shrink-0"
+                    className="h-11 px-6 rounded-xl sm:rounded-2xl font-heading font-semibold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm hover:shadow-emerald-glow shrink-0 transition-all active:scale-[0.985] motion-reduce:active:scale-100"
                   >
                     <span>Search Formulary</span>
                     <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -398,78 +428,98 @@ const LandingPage = () => {
                       key={item.label}
                       type="button"
                       onClick={() => navigate(`/medicines?search=${encodeURIComponent(item.query)}`)}
-                      className="px-3 py-1 rounded-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-xs font-medium border border-slate-200/70 dark:border-slate-800/70 shadow-xs"
+                      className="px-3.5 py-1.5 rounded-full backdrop-blur-md bg-white/60 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 dark:hover:text-emerald-300 hover:border-emerald-500/50 transition-all text-xs font-medium border border-white/80 dark:border-slate-700/80 shadow-xs"
                     >
                       {item.label}
                     </button>
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Intake Track: Prescription Upload Card (5 Columns) */}
-            <GlassCard variant="elevated" className="lg:col-span-5 rounded-3xl p-6 sm:p-8">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
-                <div>
-                  <h2 className="font-heading text-lg sm:text-xl font-bold text-foreground">
-                    Have a Doctor's Prescription?
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    पर्चा अपलोड करें • Double-blind Pharmacist Verification
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-5 relative"
+            >
+              {/* Card-specific ambient light glow */}
+              <div
+                className="absolute -top-10 -right-10 w-72 h-72 rounded-full bg-gradient-to-br from-emerald-400/25 via-teal-400/20 to-cyan-400/15 blur-3xl pointer-events-none -z-0"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute -bottom-8 -left-8 w-56 h-56 rounded-full bg-teal-400/15 blur-2xl pointer-events-none -z-0"
+                aria-hidden="true"
+              />
+
+              <GlassCard
+                variant="elevated"
+                className="relative z-10 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl saturate-180 bg-white/65 dark:bg-slate-900/65 border border-white/85 dark:border-white/20 shadow-glass-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05] transition-all hover:shadow-glass-xl"
+              >
+                <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
+                  <div>
+                    <h2 className="font-heading text-lg sm:text-xl font-bold text-foreground">
+                      Have a Doctor's Prescription?
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      पर्चा अपलोड करें • Double-blind Pharmacist Verification
+                    </p>
+                  </div>
+                  <div className="h-10 w-10 rounded-xl backdrop-blur-md bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shadow-xs">
+                    <ScanLine className="h-5 w-5" />
+                  </div>
+                </div>
+
+                <div className="py-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                      1
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Upload Handwritten or Digital Rx</h3>
+                      <p className="text-xs text-muted-foreground">Upload JPG, PNG or PDF issued by a registered medical practitioner.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                      2
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Registered Pharmacist Verification</h3>
+                      <p className="text-xs text-muted-foreground">A licensed chemist audits dosage, instructions, and suggests generic alternatives.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                      3
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Tamper-Proof Sealed Delivery</h3>
+                      <p className="text-xs text-muted-foreground">Medicines dispatched in temperature-sealed packaging with printed tax invoice.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Link to="/prescription-scan" className="w-full block">
+                    <Button
+                      className="w-full h-12 bg-gradient-to-r from-amber-500 via-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-heading font-bold text-sm rounded-xl shadow-amber-glow shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.985] motion-reduce:active:scale-100"
+                      data-testid="hero-upload-prescription-btn"
+                    >
+                      <ScanLine className="mr-2 h-4 w-4" />
+                      <span>Upload Prescription (पर्चा)</span>
+                    </Button>
+                  </Link>
+                  <p className="text-[11px] text-muted-foreground text-center mt-2.5">
+                    Operated in strict compliance with the Drugs and Cosmetics Rules, 1945.
                   </p>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center">
-                  <ScanLine className="h-5 w-5" />
-                </div>
-              </div>
-
-              <div className="py-6 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    1
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">Upload Handwritten or Digital Rx</h3>
-                    <p className="text-xs text-muted-foreground">Upload JPG, PNG or PDF issued by a registered medical practitioner.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">Registered Pharmacist Verification</h3>
-                    <p className="text-xs text-muted-foreground">A licensed chemist audits dosage, instructions, and suggests generic alternatives.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">Tamper-Proof Sealed Delivery</h3>
-                    <p className="text-xs text-muted-foreground">Medicines dispatched in temperature-sealed packaging with printed tax invoice.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Link to="/prescription-scan" className="w-full block">
-                  <Button
-                    className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold text-sm rounded-xl shadow-xs"
-                    data-testid="hero-upload-prescription-btn"
-                  >
-                    <ScanLine className="mr-2 h-4 w-4" />
-                    <span>Upload Prescription (पर्चा)</span>
-                  </Button>
-                </Link>
-                <p className="text-[11px] text-muted-foreground text-center mt-2.5">
-                  Operated in strict compliance with the Drugs and Cosmetics Rules, 1945.
-                </p>
-              </div>
-            </GlassCard>
+              </GlassCard>
+            </motion.div>
 
           </div>
         </div>
@@ -478,19 +528,23 @@ const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 3. JAN AUSHADHI & GENERIC SAVINGS RADAR                                  */}
       {/* ========================================================================= */}
-      <section className="py-12 lg:py-16 backdrop-blur-md bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-800/60">
-        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
+      <section className="relative overflow-hidden py-14 lg:py-20 backdrop-blur-xl bg-white/40 dark:bg-slate-950/40 border-y border-emerald-500/15">
+        {/* Background ambient mesh orbs */}
+        <div className="absolute top-1/2 left-10 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-400/12 blur-[100px] pointer-events-none -z-0" aria-hidden="true" />
+        <div className="absolute top-1/3 right-10 w-96 h-96 rounded-full bg-cyan-400/12 blur-[100px] pointer-events-none -z-0" aria-hidden="true" />
+
+        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 relative z-10">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-sm bg-accent/15 text-accent text-xs font-bold uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-md bg-accent/15 border border-accent/25 text-accent text-xs font-bold uppercase tracking-wider mb-2.5 shadow-xs">
                 <Percent className="h-3.5 w-3.5" />
                 <span>Price Transparency Radar</span>
               </div>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
                 Jan Aushadhi & Generic Chemical Salt Savings
               </h2>
-              <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+              <p className="text-sm sm:text-base text-muted-foreground mt-1 max-w-2xl">
                 Compare commercial branded medicines against certified Jan Aushadhi generic salts. Save up to 75% on chronic monthly medical treatments without compromising quality or bioequivalence.
               </p>
             </div>
@@ -502,10 +556,10 @@ const LandingPage = () => {
                   key={key}
                   type="button"
                   onClick={() => setSelectedGenericSalt(key)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-heading font-semibold transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-heading font-semibold transition-all ${
                     selectedGenericSalt === key
                       ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-glow-sm"
-                      : "backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-xs"
+                      : "backdrop-blur-md bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 border border-white/80 dark:border-slate-700/80 shadow-xs"
                   }`}
                 >
                   {genericComparisons[key].condition}
@@ -515,7 +569,7 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Comparison Radar Card */}
-          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8">
+          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8 backdrop-blur-2xl saturate-180 bg-white/65 dark:bg-slate-900/65 border border-white/85 dark:border-white/20 shadow-glass-xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
               {/* Chemical Salt Detail */}
@@ -532,7 +586,7 @@ const LandingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs space-y-2 shadow-xs">
+                <div className="p-4 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs space-y-2 shadow-xs">
                   <div className="flex items-center gap-2 text-foreground font-semibold">
                     <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Active Chemical Salt Reference & Pricing</span>
@@ -548,7 +602,7 @@ const LandingPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   
                   {/* Branded Option */}
-                  <div className="p-5 rounded-2xl backdrop-blur-sm bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/90 space-y-3 shadow-xs">
+                  <div className="p-5 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-white/90 dark:border-slate-700/90 space-y-3 shadow-glass-sm">
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                       Commercial Branded Medicine
                     </div>
@@ -562,7 +616,7 @@ const LandingPage = () => {
                   </div>
 
                   {/* Jan Aushadhi Generic Option */}
-                  <div className="p-5 rounded-2xl backdrop-blur-sm bg-emerald-50/80 dark:bg-emerald-950/50 border-2 border-emerald-500/70 space-y-3 relative shadow-emerald-glow-sm">
+                  <div className="p-5 rounded-2xl backdrop-blur-xl bg-emerald-500/10 dark:bg-emerald-950/40 border-2 border-emerald-500/60 space-y-3 relative shadow-emerald-glow-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
                         Verified Generic Salt
@@ -574,7 +628,7 @@ const LandingPage = () => {
                     <div className="font-heading font-bold text-base text-foreground">
                       {selectedData.genericSaltName}
                     </div>
-                    <div className="pt-2 border-t border-emerald-200/80 dark:border-emerald-800/80 flex items-baseline justify-between">
+                    <div className="pt-2 border-t border-emerald-500/25 flex items-baseline justify-between">
                       <span className="text-xs text-emerald-900 dark:text-emerald-200 font-medium">Jan Aushadhi Price:</span>
                       <span className="font-mono text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                         ₹{selectedData.genericPrice.toFixed(2)}

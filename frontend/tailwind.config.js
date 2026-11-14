@@ -37,12 +37,16 @@ export default {
         "glass-lg": "24px"
       },
       boxShadow: {
-        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.06)",
-        "glass-hover": "0 14px 40px 0 rgba(0, 0, 0, 0.10)",
-        "glass-dark": "0 8px 32px 0 rgba(0, 0, 0, 0.40)",
-        "glass-dark-hover": "0 14px 44px 0 rgba(0, 0, 0, 0.55)",
-        "emerald-glow": "0 0 25px -4px rgba(16, 185, 129, 0.28)",
-        "emerald-glow-sm": "0 0 15px -3px rgba(16, 185, 129, 0.22)"
+        "glass-sm": "0 2px 10px 0 rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)",
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.85)",
+        "glass-hover": "0 16px 40px 0 rgba(0, 0, 0, 0.08), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9)",
+        "glass-xl": "0 24px 60px -12px rgba(0, 0, 0, 0.09), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95)",
+        "glass-dark": "0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12)",
+        "glass-dark-hover": "0 16px 44px 0 rgba(0, 0, 0, 0.60), inset 0 1px 2px 0 rgba(255, 255, 255, 0.18)",
+        "glass-dark-xl": "0 24px 64px -12px rgba(0, 0, 0, 0.75), inset 0 1px 2px 0 rgba(255, 255, 255, 0.22)",
+        "emerald-glow": "0 0 25px -4px rgba(16, 185, 129, 0.35)",
+        "emerald-glow-sm": "0 0 15px -3px rgba(16, 185, 129, 0.25)",
+        "amber-glow": "0 8px 24px -4px rgba(245, 158, 11, 0.38)",
       },
       colors: {
         background: "hsl(var(--background))",

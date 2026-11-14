@@ -159,14 +159,21 @@ const Navbar = () => {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full overflow-x-clip transition-all duration-300 ${
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           isScrolled
-            ? "backdrop-blur-xl bg-white/88 dark:bg-slate-950/88 border-b border-slate-200/70 dark:border-slate-800/80 shadow-glass dark:shadow-glass-dark"
-            : "backdrop-blur-md bg-white/70 dark:bg-slate-950/70 border-b border-slate-200/40 dark:border-slate-800/50 shadow-xs"
+            ? "py-2 sm:py-2.5 bg-white/40 dark:bg-slate-950/40 backdrop-blur-md"
+            : "py-2 sm:py-3"
         }`}
       >
-        <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="flex h-16 sm:h-[68px] items-center justify-between gap-3 sm:gap-6">
+        <div className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10">
+          <div
+            className={`w-full rounded-2xl sm:rounded-3xl transition-all duration-300 ${
+              isScrolled
+                ? "backdrop-blur-2xl bg-white/80 dark:bg-slate-900/80 border border-white/90 dark:border-white/15 shadow-glass-xl dark:shadow-glass-dark-xl px-3.5 sm:px-6"
+                : "backdrop-blur-xl bg-white/68 dark:bg-slate-900/68 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark hover:border-emerald-500/30 px-3.5 sm:px-6"
+            }`}
+          >
+            <div className="flex h-16 sm:h-[68px] items-center justify-between gap-3 sm:gap-6">
             {/* 1. BRAND LOGO + HONEST CLINICAL ASSURANCE */}
             <div className="flex items-center gap-3 shrink-0">
               <Link
@@ -198,7 +205,7 @@ const Navbar = () => {
               <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <div className="relative flex items-center">
                   <Search
-                    className="absolute left-3.5 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none"
+                    className="absolute left-3.5 h-4 w-4 text-emerald-600 dark:text-emerald-400 pointer-events-none"
                     aria-hidden="true"
                   />
                   <input
@@ -207,7 +214,7 @@ const Navbar = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search medicines, salts, brands..."
                     aria-label="Search medicines across MedsZop"
-                    className="w-full h-10 pl-9 pr-9 rounded-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-800/90 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-150 shadow-xs"
+                    className="w-full h-10 pl-9 pr-9 rounded-full backdrop-blur-md bg-white/50 dark:bg-slate-950/50 border border-slate-200/80 dark:border-slate-800/80 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:bg-white/90 dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/25 focus:border-emerald-500 transition-all duration-200 shadow-xs"
                   />
                   {searchQuery && (
                     <button
@@ -224,7 +231,7 @@ const Navbar = () => {
             </div>
 
             {/* 3. DESKTOP NAV LINKS (Wide Screens) */}
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 shrink-0">
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 shrink-0">
               {(!user || user.role === "customer") &&
                 navLinks.map(
                   (link) =>
@@ -232,10 +239,10 @@ const Navbar = () => {
                       <Link
                         key={link.href}
                         to={link.href}
-                        className={`text-sm font-medium transition-colors ${
+                        className={`text-sm font-medium px-3.5 py-1.5 rounded-full transition-all duration-200 ${
                           location.pathname === link.href
-                            ? "text-primary font-semibold"
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shadow-xs border border-emerald-500/25"
+                            : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-slate-800/50"
                         }`}
                         data-testid={`nav-${link.label.toLowerCase().replace(" ", "-")}`}
                       >
@@ -404,7 +411,7 @@ const Navbar = () => {
                   <Link to="/register">
                     <Button
                       size="sm"
-                      className="rounded-full text-xs font-semibold px-5 h-9 shadow-sm hover:shadow transition-all"
+                      className="rounded-full text-xs font-semibold px-5 h-9 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-glow-sm hover:shadow-emerald-glow transition-all"
                       data-testid="signup-btn"
                     >
                       {t("nav.get_started")}
@@ -565,7 +572,7 @@ const Navbar = () => {
           <div className="md:hidden pb-3 pt-0.5">
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-600 dark:text-emerald-400 pointer-events-none"
                 aria-hidden="true"
               />
               <input
@@ -574,7 +581,7 @@ const Navbar = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search medicines, brands, generics..."
                 aria-label="Search medicines on mobile"
-                className="w-full h-9 pl-9 pr-8 rounded-full bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className="w-full h-10 pl-9 pr-8 rounded-full backdrop-blur-md bg-white/60 dark:bg-slate-950/60 border border-slate-200/90 dark:border-slate-800/90 text-xs text-foreground placeholder:text-muted-foreground focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/25 focus:border-emerald-500 shadow-xs transition-all"
               />
               {searchQuery && (
                 <button
@@ -587,6 +594,7 @@ const Navbar = () => {
                 </button>
               )}
             </form>
+          </div>
           </div>
         </div>
       </header>
