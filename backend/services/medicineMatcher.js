@@ -1,12 +1,12 @@
 /**
  * MedsZop Prescription Intelligence V2 — medicineMatcher
  * 
- * Smart Handwriting Suggestion Engine & Controlled Catalog Reconciliation:
- * 1. Partial handwriting fragment recognition (wildcard prefix/suffix matching).
- * 2. Multi-evidence candidate generation (character similarity, abbreviation expansion, strength consistency).
- * 3. Separation of raw observations from unverified suggestions.
- * 4. High-Risk Look-Alike / Sound-Alike (LASA) safety guard.
- * 5. Strict uncertainty safeguards: do not generate suggestions when no legible characters are observed.
+ * Controlled catalog reconciliation and Look-Alike / Sound-Alike (LASA) safety engine.
+ * 
+ * Clinical Rule:
+ * "A text similarity score must NEVER be treated as clinical proof that a medicine was correctly identified.
+ * Do not substitute medicines or infer therapeutic equivalence automatically.
+ * Any conflicting strength, dosage form, salt, or brand must require review."
  */
 
 const Medicine = require("../models/Medicine");
@@ -35,27 +35,14 @@ const BENCHMARK_CATALOG = [
   { name: "Glycomet GP 1", generic_name: "Metformin + Glimepiride", brand: "USV Ltd", dosage_form: "Tablet", strength: "500mg/1mg", category: "Diabetes" },
   { name: "Augmentin 625 Duo", generic_name: "Amoxicillin + Clavulanic Acid", brand: "GSK", dosage_form: "Tablet", strength: "625mg", category: "Antibiotic" },
   { name: "Pan 40", generic_name: "Pantoprazole Gastro-Resistant", brand: "Alkem Laboratories", dosage_form: "Tablet", strength: "40mg", category: "Gastro" },
-  { name: "Pantoprazole 40mg", generic_name: "Pantoprazole", brand: "Generic", dosage_form: "Tablet", strength: "40mg", category: "Gastro" },
   { name: "Telma 40", generic_name: "Telmisartan", brand: "Glenmark Pharmaceuticals", dosage_form: "Tablet", strength: "40mg", category: "Cardiac" },
   { name: "Atorva 10", generic_name: "Atorvastatin Calcium", brand: "Zydus Healthcare", dosage_form: "Tablet", strength: "10mg", category: "Cardiac" },
   { name: "Amlokind 5", generic_name: "Amlodipine Besylate", brand: "Mankind Pharma", dosage_form: "Tablet", strength: "5mg", category: "Cardiac" },
-  { name: "Amlodipine 5mg", generic_name: "Amlodipine", brand: "Generic", dosage_form: "Tablet", strength: "5mg", category: "Cardiac" },
-  { name: "Amitriptyline 25mg", generic_name: "Amitriptyline", brand: "Generic", dosage_form: "Tablet", strength: "25mg", category: "CNS" },
   { name: "Cetzine 10mg", generic_name: "Cetirizine Hydrochloride", brand: "Dr. Reddy's", dosage_form: "Tablet", strength: "10mg", category: "Antihistamine" },
-  { name: "Cetirizine 10mg", generic_name: "Cetirizine", brand: "Generic", dosage_form: "Tablet", strength: "10mg", category: "Antihistamine" },
   { name: "Dolo 650", generic_name: "Paracetamol", brand: "Micro Labs", dosage_form: "Tablet", strength: "650mg", category: "Analgesic" },
   { name: "Calpol 500", generic_name: "Paracetamol", brand: "GSK", dosage_form: "Tablet", strength: "500mg", category: "Analgesic" },
   { name: "Azithral 500", generic_name: "Azithromycin", brand: "Alembic Pharmaceuticals", dosage_form: "Tablet", strength: "500mg", category: "Antibiotic" },
-  { name: "Montair LC", generic_name: "Montelukast + Levocetirizine", brand: "Cipla", dosage_form: "Tablet", strength: "10mg/5mg", category: "Respiratory" },
-  { name: "Cefixime 200mg", generic_name: "Cefixime", brand: "Generic", dosage_form: "Tablet", strength: "200mg", category: "Antibiotic" },
-  { name: "Cefuroxime 500mg", generic_name: "Cefuroxime", brand: "Generic", dosage_form: "Tablet", strength: "500mg", category: "Antibiotic" },
-  { name: "Allegra 120mg", generic_name: "Fexofenadine", brand: "Sanofi", dosage_form: "Tablet", strength: "120mg", category: "Antihistamine" },
-  { name: "Meftal-Spas", generic_name: "Mefenamic Acid + Dicyclomine", brand: "Blue Cross", dosage_form: "Tablet", strength: "500mg/10mg", category: "Antispasmodic" },
-  { name: "Ondem 4mg", generic_name: "Ondansetron", brand: "Alkem", dosage_form: "Tablet", strength: "4mg", category: "Antiemetic" },
-  { name: "Ecosprin 75", generic_name: "Aspirin", brand: "USV Ltd", dosage_form: "Tablet", strength: "75mg", category: "Antiplatelet" },
-  { name: "Rosuvas 10", generic_name: "Rosuvastatin", brand: "Sun Pharma", dosage_form: "Tablet", strength: "10mg", category: "Cardiac" },
-  { name: "Clonazepam 0.5mg", generic_name: "Clonazepam", brand: "Generic", dosage_form: "Tablet", strength: "0.5mg", category: "CNS" },
-  { name: "Lorazepam 1mg", generic_name: "Lorazepam", brand: "Generic", dosage_form: "Tablet", strength: "1mg", category: "CNS" }
+  { name: "Montair LC", generic_name: "Montelukast + Levocetirizine", brand: "Cipla", dosage_form: "Tablet", strength: "10mg/5mg", category: "Respiratory" }
 ];
 
 const CLINICAL_ABBREVIATIONS = {
@@ -157,302 +144,107 @@ class MedicineMatcher {
   }
 
   /**
-   * Fetch catalog items from MedsZop MongoDB database, supplemented by validated benchmark data
-   * @param {string} queryStem
-   * @returns {Promise<Array<object>>}
-   */
-  async getCombinedCatalog(queryStem = "") {
-    const combined = [...BENCHMARK_CATALOG];
-    const seen = new Set(BENCHMARK_CATALOG.map((m) => (m.name || "").toLowerCase()));
-
-    // Dynamically query MedsZop MongoDB Medicine collection if available
-    try {
-      if (Medicine && Medicine.find) {
-        let dbQuery = {};
-        if (queryStem && queryStem.length >= 2) {
-          const safeStem = queryStem.replace(/[^a-zA-Z0-9]/g, "");
-          if (safeStem.length >= 2) {
-            dbQuery = {
-              $or: [
-                { name: { $regex: safeStem, $options: "i" } },
-                { generic_name: { $regex: safeStem, $options: "i" } }
-              ]
-            };
-          }
-        }
-        const dbItems = await Medicine.find(dbQuery).limit(60).lean();
-        for (const item of dbItems) {
-          const key = (item.name || "").toLowerCase();
-          if (!seen.has(key)) {
-            seen.add(key);
-            combined.push({
-              id: item._id?.toString() || item.id,
-              name: item.name,
-              generic_name: item.generic_name || item.name,
-              brand: item.brand || item.manufacturer || "Generic",
-              dosage_form: item.dosage_form || "Tablet",
-              strength: item.strength || "",
-              category: item.category || "General",
-              requiresPrescription: Boolean(item.requires_prescription)
-            });
-          }
-        }
-      }
-    } catch {
-      // Safe fallback to reference catalog if database query fails or during offline test runs
-    }
-
-    return combined;
-  }
-
-  /**
-   * Generate evidence-grounded candidate suggestions for partially visible handwriting
-   * @param {string} fragment - Observed raw text / character fragment (e.g. "Met...ol")
-   * @param {string|null} strength - Observed strength if legible
-   * @param {Array<object>} existingMatches - Preliminary matches provided by Gemini
-   * @returns {Promise<Array<object>>} Up to 3 ranked suggestions with explicit visible evidence
-   */
-  async generateSuggestions(fragment, strength = null, existingMatches = []) {
-    if (!fragment || typeof fragment !== "string") return [];
-
-    const cleanFrag = fragment.trim();
-    // Safety uncertainty gate: Never invent a medicine when no useful characters are readable
-    const usefulChars = cleanFrag.replace(/[^a-zA-Z0-9]/g, "");
-    if (usefulChars.length < 2 || /^\?+$/.test(cleanFrag) || /^[_\-~.\s]+$/.test(cleanFrag)) {
-      return [];
-    }
-
-    const suggestions = [];
-    const seenNames = new Set();
-
-    // 1. Ingest valid existing matches from Gemini if evidence-backed
-    if (Array.isArray(existingMatches)) {
-      for (const em of existingMatches) {
-        if (em && em.medicineName && !seenNames.has(em.medicineName.toLowerCase())) {
-          seenNames.add(em.medicineName.toLowerCase());
-          suggestions.push({
-            medicineName: em.medicineName,
-            matchType: em.matchType || "PARTIAL_HANDWRITING",
-            evidence: em.evidence || `Visible strokes partially resemble ${em.medicineName}`,
-            verified: false,
-            heuristicMatchScore: 0.75,
-            confidenceScore: 0.75,
-            scoreDisclaimer: "Heuristic character agreement score, not calibrated clinical probability.",
-            genericName: em.medicineName,
-            category: "Prescription Formulation"
-          });
-        }
-      }
-    }
-
-    // 2. Identify Wildcard Prefix & Suffix (e.g. "Met...ol" -> prefix: "met", suffix: "ol")
-    let prefix = "";
-    let suffix = "";
-    const wildcardMatch = cleanFrag.match(/^([A-Za-z0-9]+)[\.\~]{2,}([A-Za-z0-9]*)$/);
-
-    if (wildcardMatch) {
-      prefix = wildcardMatch[1].toLowerCase();
-      suffix = (wildcardMatch[2] || "").toLowerCase();
-    } else {
-      const cleanLetters = cleanFrag.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-      prefix = cleanLetters.slice(0, 3);
-    }
-
-    // 3. Search Database & Supplemented Reference Catalog for Evidence Agreement
-    const searchCatalog = await this.getCombinedCatalog(prefix || cleanFrag);
-    for (const item of searchCatalog) {
-      const itemNameLower = item.name.toLowerCase();
-      const genericLower = item.generic_name.toLowerCase();
-      const targetName = item.generic_name || item.name;
-
-      if (seenNames.has(targetName.toLowerCase())) continue;
-
-      let score = 0;
-      let evidence = "";
-      let matchType = "PARTIAL_HANDWRITING";
-
-      // A: Exact prefix & suffix wildcard agreement (e.g. "Met...ol" matches "Metoprolol")
-      if (prefix && suffix && (itemNameLower.startsWith(prefix) || genericLower.startsWith(prefix)) && (itemNameLower.endsWith(suffix) || genericLower.endsWith(suffix))) {
-        score = 0.92;
-        matchType = "PARTIAL_HANDWRITING";
-        evidence = `Visible character boundaries '${prefix}...' and '...${suffix}' match '${targetName}'`;
-      }
-      // B: Prefix agreement (e.g. "Met..." matches "Metformin" or "Metoprolol")
-      else if (prefix && prefix.length >= 3 && (itemNameLower.startsWith(prefix) || genericLower.startsWith(prefix))) {
-        score = 0.78;
-        matchType = "PREFIX_MATCH";
-        evidence = `Initial visible cursive letters '${prefix}' agree with '${targetName}'`;
-      }
-      // C: High character similarity on cleaned stem
-      else {
-        const sim = Math.max(
-          this.calculateSimilarity(cleanFrag, item.name),
-          this.calculateSimilarity(cleanFrag, item.generic_name)
-        );
-        if (sim >= 0.70) {
-          score = Number((sim * 0.85).toFixed(2));
-          matchType = "CATALOG_FUZZY";
-          evidence = `Visible character structure (${Math.round(sim * 100)}% agreement) aligns with '${targetName}'`;
-        }
-      }
-
-      // D: Strength agreement bonus
-      if (score > 0 && strength && item.strength) {
-        const cleanObsStrength = strength.toLowerCase().replace(/\s+/g, "");
-        const cleanCatStrength = item.strength.toLowerCase().replace(/\s+/g, "");
-        if (cleanCatStrength.includes(cleanObsStrength) || cleanObsStrength.includes(cleanCatStrength)) {
-          score = Math.min(0.96, score + 0.08);
-          evidence += ` with matching ${item.strength} commercial strength`;
-        }
-      }
-
-      if (score >= 0.65) {
-        seenNames.add(targetName.toLowerCase());
-        suggestions.push({
-          medicineName: targetName,
-          genericName: item.generic_name,
-          category: item.category,
-          matchType,
-          evidence,
-          verified: false,
-          heuristicMatchScore: Number(score.toFixed(2)),
-          confidenceScore: Number(score.toFixed(2)),
-          scoreDisclaimer: "Heuristic character agreement score, not calibrated clinical probability."
-        });
-      }
-    }
-
-    // 4. Sort descending by evidence score and cap strictly at top 3
-    suggestions.sort((a, b) => (b.heuristicMatchScore || b.confidenceScore || 0) - (a.heuristicMatchScore || a.confidenceScore || 0));
-    return suggestions.slice(0, 3);
-  }
-
-  /**
    * Match an extracted medicine item against Indian catalog candidates
    * @param {object} extractedItem
    * @returns {Promise<object>} enriched item with candidate matches and LASA flags
    */
   async match(extractedItem) {
-    const rawFragment = extractedItem.recognizedFragment || extractedItem.sourceText || extractedItem.medicineName || "";
-    const cleanQuery = this.normalizeName(rawFragment);
-    const lasa = this.checkLasaAlert(rawFragment);
+    const rawName = extractedItem.medicineName || extractedItem.sourceText || "";
+    const cleanQuery = this.normalizeName(rawName);
+    const lasa = this.checkLasaAlert(rawName);
 
-    // Detect if this line represents partial handwriting or difficult cursive
-    const isPartial =
-      rawFragment.includes("...") ||
-      rawFragment.includes("~") ||
-      rawFragment.includes("..") ||
-      extractedItem.recognitionStatus === "UNCERTAIN";
-
-    const isScribble =
-      !rawFragment ||
-      rawFragment.trim() === "" ||
-      /^\?+$/.test(rawFragment) ||
-      extractedItem.recognitionStatus === "ILLEGIBLE";
-
-    // 1. Generate evidence-grounded suggestions
-    let possibleMatches = [];
-    if (!isScribble) {
-      possibleMatches = await this.generateSuggestions(
-        rawFragment,
-        extractedItem.strength,
-        extractedItem.possibleMatches || []
-      );
-    }
-
-    // Check LASA on suggestions as well
-    let triggeredLasa = lasa;
-    if (!triggeredLasa && possibleMatches.length > 0) {
-      for (const cand of possibleMatches) {
-        const candLasa = this.checkLasaAlert(cand.medicineName);
-        if (candLasa) {
-          triggeredLasa = candLasa;
-          break;
-        }
-      }
-    }
-
-    // 2. Search combined catalog for exact or high-confidence match
     let candidates = [];
-    if (!isScribble && cleanQuery.length >= 2) {
-      const searchCatalog = await this.getCombinedCatalog(cleanQuery);
-      searchCatalog.forEach((item, idx) => {
+
+    // 1. Search Database if MongoDB is active
+    try {
+      if (cleanQuery.length >= 2 && Medicine && Medicine.find) {
+        const queryRegex = new RegExp(cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+        const dbMatches = await Medicine.find({
+          $or: [
+            { name: { $regex: queryRegex } },
+            { generic_name: { $regex: queryRegex } },
+            { brand: { $regex: queryRegex } }
+          ]
+        })
+          .limit(8)
+          .lean();
+
+        candidates = dbMatches.map((m) => ({
+          id: m._id ? m._id.toString() : m.id,
+          name: m.name,
+          genericName: m.generic_name || m.genericName,
+          brand: m.brand,
+          dosageForm: m.dosage_form || m.dosageForm,
+          strength: m.strength,
+          requiresPrescription: m.requires_prescription || false,
+          similarity: this.calculateSimilarity(cleanQuery, this.normalizeName(m.name))
+        }));
+      }
+    } catch {
+      // Graceful fallback to static benchmark catalog on DB disconnect
+    }
+
+    // 2. Supplement with benchmark catalog if candidates are sparse
+    if (candidates.length === 0 && cleanQuery.length >= 2) {
+      BENCHMARK_CATALOG.forEach((item, idx) => {
         const simName = this.calculateSimilarity(cleanQuery, this.normalizeName(item.name));
         const simSalt = this.calculateSimilarity(cleanQuery, this.normalizeName(item.generic_name));
         const bestSim = Math.max(simName, simSalt);
 
         if (bestSim >= 0.6) {
           candidates.push({
-            id: item.id || `benchmark-${idx}`,
+            id: `benchmark-${idx}`,
             name: item.name,
             genericName: item.generic_name,
             brand: item.brand,
             dosageForm: item.dosage_form,
             strength: item.strength,
-            requiresPrescription: item.requiresPrescription !== undefined ? item.requiresPrescription : true,
+            requiresPrescription: true,
             similarity: bestSim
           });
         }
       });
-      candidates.sort((a, b) => b.similarity - a.similarity);
     }
 
+    // 3. Sort candidates by similarity descending
+    candidates.sort((a, b) => b.similarity - a.similarity);
+
+    // Top candidate evaluation
     const topCandidate = candidates[0] || null;
+    let recognitionStatus = extractedItem.recognitionStatus || "PENDING_PHARMACIST";
     const uncertaintyReasons = Array.isArray(extractedItem.uncertaintyReasons) ? [...extractedItem.uncertaintyReasons] : [];
 
-    // Evaluate Missing Strength Warning
-    const missingStrengthWarning = !extractedItem.strength;
-    if (missingStrengthWarning && !isScribble) {
-      uncertaintyReasons.push("Dosage strength not visibly legible on prescription");
+    if (lasa) {
+      uncertaintyReasons.push(lasa.warning);
+      recognitionStatus = "UNCERTAIN";
     }
 
-    // Evaluate LASA alert
-    if (triggeredLasa) {
-      uncertaintyReasons.push(triggeredLasa.warning);
-    }
-
-    // Determine Clinical Recognition Status and Visual State
-    let recognitionStatus = extractedItem.recognitionStatus || "PENDING_PHARMACIST";
-    let visualState = "AMBER";
-    let finalizedMedicineName = extractedItem.medicineName;
-
-    if (isScribble) {
-      recognitionStatus = "ILLEGIBLE";
-      visualState = "RED";
-      finalizedMedicineName = null;
-      possibleMatches = []; // Never fabricate on unreadable scribbles
-    } else if (isPartial || !finalizedMedicineName || triggeredLasa || missingStrengthWarning) {
-      recognitionStatus = "UNCERTAIN";
-      visualState = "AMBER";
-      finalizedMedicineName = null; // Keep null until verified!
-    } else if (topCandidate && topCandidate.similarity >= 0.85) {
-      recognitionStatus = "RECOGNIZED_UNVERIFIED";
-      visualState = "GREEN";
-      finalizedMedicineName = topCandidate.genericName || topCandidate.name;
-    } else {
-      recognitionStatus = "UNCERTAIN";
-      visualState = "AMBER";
-      finalizedMedicineName = null;
+    // Check strength consistency if top candidate exists
+    let strengthDiscrepancy = null;
+    if (topCandidate && extractedItem.strength && topCandidate.strength) {
+      const extractedClean = extractedItem.strength.toLowerCase().replace(/\s+/g, "");
+      const candidateClean = topCandidate.strength.toLowerCase().replace(/\s+/g, "");
+      if (!candidateClean.includes(extractedClean) && !extractedClean.includes(candidateClean)) {
+        strengthDiscrepancy = `Discrepancy: Extracted "${extractedItem.strength}" differs from catalog "${topCandidate.strength}".`;
+        uncertaintyReasons.push(strengthDiscrepancy);
+        if (recognitionStatus === "RECOGNIZED_UNVERIFIED") {
+          recognitionStatus = "UNCERTAIN";
+        }
+      }
     }
 
     return {
       ...extractedItem,
-      sourceText: extractedItem.sourceText || rawFragment,
-      recognizedFragment: isScribble ? null : rawFragment,
-      medicineName: finalizedMedicineName,
       canonicalName: topCandidate ? topCandidate.genericName || topCandidate.name : cleanQuery || null,
       normalizedCandidate: topCandidate ? topCandidate.name : null,
       matchedMedicineId: topCandidate ? topCandidate.id : null,
       matchedGenericName: topCandidate ? topCandidate.genericName : null,
       similarityScore: topCandidate ? topCandidate.similarity : 0,
       candidateMatches: candidates.slice(0, 4),
-      possibleMatches,
-      lasaAlert: triggeredLasa ? { warning: triggeredLasa.warning, ...triggeredLasa } : null,
-      lasaDetails: triggeredLasa,
-      missingStrengthWarning,
-      visualState,
+      lasaAlert: lasa ? { warning: lasa.warning, ...lasa } : null,
+      lasaDetails: lasa,
+      strengthDiscrepancy,
       recognitionStatus,
-      requiresPharmacistReview: true,
       uncertaintyReasons
     };
   }
