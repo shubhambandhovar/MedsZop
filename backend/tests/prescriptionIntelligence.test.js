@@ -539,6 +539,76 @@ async function runTests() {
     }
   });
 
+  await asyncTest("Prescription Model Relations: Schema defines Mongoose references & virtual relations", async () => {
+    // Assert schema paths have configured refs
+    assert.strictEqual(Prescription.schema.path("user_id").options.ref, "User");
+    assert.strictEqual(Prescription.schema.path("order_id").options.ref, "Order");
+    assert.strictEqual(Prescription.schema.path("pharmacy_id").options.ref, "Pharmacy");
+    assert.strictEqual(Prescription.schema.path("assigned_pharmacist_id").options.ref, "User");
+
+    // Assert virtual relations exist
+    assert(Prescription.schema.virtuals.user, "Virtual 'user' must be configured");
+    assert(Prescription.schema.virtuals.order, "Virtual 'order' must be configured");
+    assert(Prescription.schema.virtuals.pharmacy, "Virtual 'pharmacy' must be configured");
+    assert(Prescription.schema.virtuals.assignedPharmacist, "Virtual 'assignedPharmacist' must be configured");
+
+    // Order model relations
+    assert.strictEqual(Order.schema.path("prescription_id").options.ref, "Prescription");
+    assert(Order.schema.virtuals.prescription, "Virtual 'prescription' must be configured in Order");
+  });
+
+  await asyncTest("Prescription Review: Syncs linked order status to 'confirmed' upon pharmacist verification", async () => {
+    const origFindById = Prescription.findById;
+    const origPharmacyFindOne = Pharmacy.findOne;
+    const origOrderFindById = Order.findById;
+
+    let updatedOrder = null;
+    Prescription.findById = async () => ({
+      _id: "rx-sync-100",
+      order_id: "order-999",
+      pharmacy_id: "pharma-A-id",
+      status: "needs_review",
+      parsed_data: { medicines: [{ medicineName: "Amoxicillin", strength: "500mg" }] },
+      markModified: () => {},
+      save: async () => {}
+    });
+
+    Pharmacy.findOne = async () => ({
+      _id: "pharma-A-id",
+      user_id: "user-pharma-A",
+      pharmacist_name: "Dr. Ramesh Gupta",
+      verified: true,
+      license_number: "DL-MH-2024-88392"
+    });
+
+    Order.findById = async (id) => ({
+      _id: id,
+      order_status: "pending_verification",
+      prescription_verified: false,
+      save: async function() {
+        updatedOrder = this;
+      }
+    });
+
+    try {
+      const result = await prescriptionReviewService.submitReview({
+        prescriptionId: "rx-sync-100",
+        decision: "approve",
+        reviewedMedicines: [{ medicineName: "Amoxicillin", strength: "500mg" }],
+        pharmacist: { id: "user-pharma-A", role: "pharmacy" }
+      });
+
+      assert.strictEqual(result.status, "verified");
+      assert(updatedOrder !== null, "Linked order must be retrieved and updated");
+      assert.strictEqual(updatedOrder.order_status, "confirmed");
+      assert.strictEqual(updatedOrder.prescription_verified, true);
+    } finally {
+      Prescription.findById = origFindById;
+      Pharmacy.findOne = origPharmacyFindOne;
+      Order.findById = origOrderFindById;
+    }
+  });
+
   // ----------------------------------------------------
   // 6. Real Scanner Evaluation & Candidate Safety Rules
   // ----------------------------------------------------

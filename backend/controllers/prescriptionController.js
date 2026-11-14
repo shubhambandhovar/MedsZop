@@ -232,8 +232,22 @@ exports.uploadPrescription = async (req, res) => {
       file_size: req.file.size,
       parsed_data: parsedData,
       raw_text: parsedData?.rawExtractedText || parsedData?.rawTranscript || "",
+      order_id: req.body.order_id || null,
+      pharmacy_id: req.body.pharmacy_id || null,
       status: "needs_review"
     });
+
+    // If order_id was provided, synchronize relation back to Order
+    if (req.body.order_id) {
+      try {
+        await Order.findByIdAndUpdate(req.body.order_id, {
+          prescription_id: prescription._id.toString(),
+          prescription_url: filePath
+        });
+      } catch (linkErr) {
+        console.warn("Could not link uploaded prescription to order:", linkErr.message);
+      }
+    }
 
     return res.status(201).json({
       success: true,

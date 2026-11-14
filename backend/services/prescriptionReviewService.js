@@ -292,18 +292,48 @@ class PrescriptionReviewService {
     await rx.save();
 
     // If prescription is linked to an Order, sync order status
+    let linkedOrder = null;
     if (rx.order_id) {
       try {
-        const order = await Order.findById(rx.order_id);
-        if (order) {
-          if (newStatus === "verified" && ["pending_verification", "pending"].includes(order.order_status)) {
-            order.order_status = "confirmed";
-            order.prescription_verified = true;
-            await order.save();
-          } else if (newStatus === "rejected") {
-            order.order_status = "cancelled";
-            await order.save();
+        if (mongoose.connection.readyState === 1 || Order.findById !== mongoose.Model.findById) {
+          linkedOrder = await Order.findById(rx.order_id);
+        }
+      } catch (findErr) {
+        console.warn("Could not find order by rx.order_id:", findErr.message);
+      }
+    }
+    if (!linkedOrder && (rx.file_url || rx._id)) {
+      try {
+        if (mongoose.connection.readyState === 1 || Order.findOne !== mongoose.Model.findOne) {
+          const orderQueries = [];
+          if (rx._id) {
+            orderQueries.push({ prescription_id: rx._id.toString() });
           }
+          if (rx.file_url) {
+            orderQueries.push({ prescription_url: rx.file_url });
+          }
+          if (orderQueries.length > 0) {
+            linkedOrder = await Order.findOne({ $or: orderQueries });
+          }
+        }
+      } catch (findErr) {
+        console.warn("Could not find order by prescription relation:", findErr.message);
+      }
+    }
+
+    if (linkedOrder) {
+      try {
+        if (!rx.order_id) {
+          rx.order_id = linkedOrder._id.toString();
+          await rx.save();
+        }
+        if (newStatus === "verified" && ["pending_verification", "pending"].includes(linkedOrder.order_status)) {
+          linkedOrder.order_status = "confirmed";
+          linkedOrder.prescription_verified = true;
+          await linkedOrder.save();
+        } else if (newStatus === "rejected") {
+          linkedOrder.order_status = "cancelled";
+          await linkedOrder.save();
         }
       } catch (orderSyncErr) {
         console.warn("Order sync warning during prescription review:", orderSyncErr.message);
