@@ -22,11 +22,11 @@ export const GlassCard = forwardRef(function GlassCard(
 
   const variantStyles = {
     default:
-      'backdrop-blur-md bg-white/75 dark:bg-slate-900/75 border border-white/70 dark:border-white/10 shadow-glass dark:shadow-glass-dark',
+      'backdrop-blur-xl backdrop-saturate-150 saturate-150 bg-white/70 dark:bg-slate-900/70 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark',
     elevated:
-      'backdrop-blur-lg bg-white/88 dark:bg-slate-900/85 border border-white/90 dark:border-white/15 shadow-glass-hover dark:shadow-glass-dark-hover',
+      'backdrop-blur-2xl backdrop-saturate-180 saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/85 dark:border-white/20 shadow-glass-xl dark:shadow-glass-dark-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05]',
     subtle:
-      'backdrop-blur-sm bg-white/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-800/50',
+      'backdrop-blur-md bg-white/45 dark:bg-slate-900/45 border border-slate-200/60 dark:border-slate-800/60 shadow-glass-sm',
     opaque:
       'bg-white/98 dark:bg-slate-900/98 border border-slate-200/80 dark:border-slate-800/80 shadow-xs',
   };
