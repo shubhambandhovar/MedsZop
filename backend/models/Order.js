@@ -20,10 +20,9 @@ const orderSchema = new mongoose.Schema({
   total: Number,
 
 
-  prescription_id: { type: String, ref: "Prescription", default: null },
+  prescription_id: String,
   prescription_url: String, // URL/Path to uploaded prescription
   requires_prescription: { type: Boolean, default: false },
-  prescription_verified: { type: Boolean, default: false },
 
   payment_method: {
     type: String,
@@ -99,15 +98,6 @@ orderSchema.index({ delivery_agent_id: 1, order_status: 1 });
 orderSchema.index({ pg_order_id: 1 });
 orderSchema.index({ order_status: 1 });
 orderSchema.index({ payment_status: 1 });
-orderSchema.index({ prescription_id: 1 });
 orderSchema.index({ createdAt: -1 });
-
-// Virtual Relations for Mongoose populate support
-orderSchema.virtual("prescription", {
-  ref: "Prescription",
-  localField: "prescription_id",
-  foreignField: "_id",
-  justOne: true
-});
 
 module.exports = mongoose.model("Order", orderSchema);

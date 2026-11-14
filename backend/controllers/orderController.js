@@ -29,7 +29,7 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    const { address_id, payment_method, prescription_url, prescription_id, prescriptionId } = req.body;
+    const { address_id, payment_method, prescription_url } = req.body;
 
     // Find the actual address object from user's addresses
     const address = user.addresses.find(
@@ -117,9 +117,8 @@ exports.createOrder = async (req, res) => {
 
     // CHECK PRESCRIPTION REQUIREMENT
     let finalStatus = payment_method === "online" ? "payment_pending" : "pending";
-    const requestedRxId = prescription_id || prescriptionId;
     if (orderRequiresPrescription) {
-      if (!prescription_url && !requestedRxId) {
+      if (!prescription_url) {
         return res.status(400).json({
           message: "Prescription is required for this order. Please upload a valid prescription."
         });
@@ -128,29 +127,20 @@ exports.createOrder = async (req, res) => {
       finalStatus = "pending_verification";
     }
 
-    // Verify prescription ownership if prescription_url or prescription_id is attached
-    let matchedRx = null;
-    if (requestedRxId || prescription_url) {
-      const rxQueries = [];
-      if (requestedRxId && mongoose.Types.ObjectId.isValid(requestedRxId)) {
-        rxQueries.push({ _id: requestedRxId });
-      }
-      if (prescription_url) {
-        rxQueries.push({ file_url: prescription_url });
-        rxQueries.push({ filename: path.basename(prescription_url) });
-      }
-      if (rxQueries.length > 0) {
-        matchedRx = await Prescription.findOne({ $or: rxQueries });
-      }
-      if (matchedRx && matchedRx.user_id && matchedRx.user_id.toString() !== user._id.toString()) {
+    // Verify prescription ownership if prescription_url is attached
+    if (prescription_url) {
+      const rxDoc = await Prescription.findOne({
+        $or: [
+          { file_url: prescription_url },
+          { filename: path.basename(prescription_url) }
+        ]
+      });
+      if (rxDoc && rxDoc.user_id && rxDoc.user_id.toString() !== user._id.toString()) {
         return res.status(403).json({
           message: "Unauthorized: You can only attach prescriptions that you have uploaded."
         });
       }
     }
-
-    const resolvedPrescriptionUrl = prescription_url || (matchedRx ? matchedRx.file_url : null);
-    const resolvedPrescriptionId = matchedRx ? matchedRx._id.toString() : (requestedRxId || null);
 
     const order = await Order.create({
       user_id: user._id,
@@ -159,23 +149,13 @@ exports.createOrder = async (req, res) => {
       total,
       address,
       payment_method: payment_method || "cod",
-      prescription_id: resolvedPrescriptionId,
-      prescription_url: resolvedPrescriptionUrl,
+      prescription_url: prescription_url || null,
       requires_prescription: orderRequiresPrescription,
       order_status: finalStatus,
       payment_status: payment_method === "online" ? "pending" : "pending", // COD is pending until delivered
       status_history: [{ status: finalStatus, timestamp: new Date() }],
       orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     });
-
-    // Synchronize bidirectional relation with Prescription record
-    if (matchedRx) {
-      matchedRx.order_id = order._id.toString();
-      if (pharmacyId && !matchedRx.pharmacy_id) {
-        matchedRx.pharmacy_id = pharmacyId.toString();
-      }
-      await matchedRx.save();
-    }
 
     // EMAIL NOTIFICATION - PLACED
     try {

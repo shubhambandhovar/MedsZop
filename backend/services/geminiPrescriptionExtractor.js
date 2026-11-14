@@ -2,11 +2,11 @@
  * MedsZop Prescription Intelligence V2 — geminiPrescriptionExtractor
  * 
  * Core AI interpretation engine using Gemini Multimodal Vision API with:
- * 1. Native Structured JSON Schema generation (`responseMimeType: "application/json"`, `responseSchema`).
- * 2. AI-assisted recognition with uncertainty warnings and pharmacist verification.
- * 3. Partial handwriting recognition separating observations from suggestions.
- * 4. Preserved visible character fragments (e.g. "Met...ol") with up to 3 evidence-backed candidate readings.
- * 5. High-resolution buffer and PDF support.
+ * 1. Native Structured JSON Schema generation (`responseMimeType: "application/json"`).
+ * 2. Zero-hallucination clinical prompt boundaries.
+ * 3. Exact visible sourceText preservation alongside normalized interpretations.
+ * 4. Multi-page and PDF buffer support.
+ * 5. Robust fallback handling across SDK variants (@google/genai & @google/generative-ai).
  */
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -27,31 +27,14 @@ class GeminiPrescriptionExtractor {
     return `
 You are a senior clinical pharmacist and medical document transcription specialist analyzing handwritten doctor prescriptions from India.
 
-CRITICAL CLINICAL TRANSCRIPTION & SAFETY DIRECTIVES:
-1. INSPECT THE ENTIRE PRESCRIPTION:
-   - Identify each individual prescribed medicine line.
-   - Re-examine difficult, slanted, or messy handwritten cursive regions carefully.
-   - Preserve the exact verbatim visible handwritten strokes in "sourceText".
-
-2. PARTIAL HANDWRITING RECOGNITION (SEPARATION OF OBSERVATIONS FROM SUGGESTIONS):
-   - When a handwritten line is only partially readable or letters are obscured by cursive ink, extract whatever character fragments you can genuinely see into "recognizedFragment", using ellipses "..." or "~" for missing/unclear letters (e.g., "Met...ol", "Aug...tin", "Ce~f~~ime", "Pan...40").
-   - In such cases, you MUST KEEP "medicineName" as null. Do not turn a partially readable name into a confidently identified medicine.
-   - If visible evidence suggests plausible candidate medications, provide up to 3 candidate readings in "possibleMatches" with an explicit "evidence" description (e.g. "Visible prefix 'Met' and suffix 'ol'").
-   - Set "recognitionStatus" to "UNCERTAIN".
-
-4. SAFETY UNCERTAINTY GATE: ILLEGIBLE SCRIBBLE DETECTION:
-   - If a handwritten line is an unreadable scribble, wavy line, or doctor signature with no identifiable character fragments, you MUST mark "recognitionStatus" as "ILLEGIBLE", "medicineName" as null, "recognizedFragment" as null, and "possibleMatches" as [] (empty array).
-   - NEVER fabricate or invent medication candidates out of thin air when there is no visible character evidence.
-
-4. MEDICAL CONTEXT DOES NOT EQUAL PROOF:
-   - Avoid using the patient's diagnosis or therapeutic plausibility as "proof" of a medicine name. Candidates must be supported by actual visible pen strokes.
-   - Missing strengths, dosages, and instructions MUST remain null. Never guess or invent dosages (e.g. do not assume 500mg or 650mg if not visibly written).
-
-5. INDIAN PHARMACOPEIA & SIG ABBREVIATIONS:
-   - Recognize common clinical shorthand: "OD" (once daily), "BD"/"BID" (twice daily), "TDS"/"TID" (thrice daily), "HS" (bedtime), "SOS" (as needed), "AC" (before food), "PC" (after food), "1-0-1", "1-0-0", "0-0-1", "1-1-1".
-   - Be vigilant regarding Look-Alike / Sound-Alike (LASA) pairs (e.g. Metformin vs Metoprolol, Amlodipine vs Amitriptyline, Cefixime vs Cefuroxime).
-
-6. Output ONLY valid JSON adhering strictly to the requested schema.
+CRITICAL CLINICAL SAFETY RULES:
+1. NEVER invent, infer, or hallucinate a medication name, strength, dosage form, or frequency just because it seems medically plausible or common.
+2. If any word or number is illegible, partially cropped, or ambiguous, you MUST mark it as null and set "recognitionStatus" to "UNCERTAIN" or "ILLEGIBLE".
+3. Record the exact visible handwritten text string into "sourceText". Never alter "sourceText".
+4. For Indian prescriptions:
+   - Identify common abbreviation patterns: "OD" (once daily), "BD" / "BID" (twice daily), "TDS" / "TID" (thrice daily), "QID" (four times daily), "HS" (at bedtime), "SOS" (as needed), "AC" (before food), "PC" (after food), "1-0-1" (morning & night), "1-0-0" (morning), "0-0-1" (night), "1-1-1" (thrice daily).
+   - Carefully distinguish look-alike and sound-alike (LASA) medication pairs (e.g. Metformin vs Metoprolol, Amlodipine vs Amitriptyline).
+5. Output ONLY valid JSON conforming strictly to the requested schema.
 `;
   }
 
@@ -76,25 +59,19 @@ CRITICAL CLINICAL TRANSCRIPTION & SAFETY DIRECTIVES:
     }
 
     try {
-      // 1. Initialize model with structured JSON response config & schema
+      // 1. Initialize model with structured JSON response config
       const model = this.genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: this.getSystemInstruction(),
         generationConfig: {
           responseMimeType: "application/json",
-          responseSchema: extractionValidator.getGeminiResponseSchema(),
           temperature: 0.1 // Low temperature for high deterministic fidelity
         }
       });
 
-      // 2. Multimodal prompt directing evidence-grounded extraction
-      const prompt = `Carefully inspect and transcribe this handwritten prescription document.
-For each prescribed medicine line:
-- Extract the verbatim visible text into "sourceText".
-- If any letters are unclear, occluded, or messy, extract the legible character fragments into "recognizedFragment" (e.g., "Met...ol", "Aug...tin") and list up to 3 plausible candidates in "possibleMatches" with the visible evidence.
-- Set "medicineName" to null if only a partial fragment is readable.
-- If completely illegible, set "recognitionStatus" to "ILLEGIBLE", "medicineName" to null, and "possibleMatches" to [].
-- Transcribe visible strength, frequency, and instructions, leaving any missing or illegible field as null.`;
+      // 2. Prepare multimodal parts
+      const prompt = `Analyze this prescription carefully. Transcribe all handwritten and printed medical information. 
+Identify the doctor, patient, date, diagnosis, and every individual prescribed medicine line item with visible sourceText, strength, dosage form, frequency, and instructions.`;
 
       const contents = [
         prompt,
@@ -115,24 +92,27 @@ For each prescribed medicine line:
       try {
         rawJson = JSON.parse(textOutput);
       } catch (parseErr) {
+        // Fallback for unexpected markdown wrappers
         const cleaned = textOutput.replace(/```(?:json)?/g, "").trim();
         rawJson = JSON.parse(cleaned);
       }
 
       // 5. Strict schema validation & clinical safety sanitization
-      const validatedData = extractionValidator.validate(rawJson);
+      const validated = extractionValidator.validate(rawJson);
 
       return {
         success: true,
-        data: validatedData,
+        provider: "gemini-2.5-flash",
+        data: validated,
         quality: options.quality || null
       };
 
-    } catch (error) {
-      console.error("Gemini prescription extraction failed:", error.message);
-      throw error;
+    } catch (err) {
+      console.error("Gemini prescription extraction error:", err.message);
+      throw err;
     }
   }
 }
 
 module.exports = new GeminiPrescriptionExtractor();
+
