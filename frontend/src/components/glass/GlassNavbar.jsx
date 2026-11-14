@@ -22,8 +22,8 @@ export function GlassNavbar({
       <div
         className={`max-w-[1720px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 rounded-2xl sm:rounded-3xl transition-all duration-300 ${
           isScrolled
-            ? 'backdrop-blur-2xl bg-white/75 dark:bg-slate-900/75 border border-white/85 dark:border-white/15 shadow-glass-xl dark:shadow-glass-dark-xl py-2.5 sm:py-3'
-            : 'backdrop-blur-xl bg-white/65 dark:bg-slate-900/65 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark py-3 sm:py-3.5 hover:border-emerald-500/30'
+            ? 'backdrop-blur-2xl backdrop-saturate-180 bg-white/72 dark:bg-slate-900/72 border border-white/85 dark:border-white/15 shadow-glass-xl dark:shadow-glass-dark-xl py-2.5 sm:py-3'
+            : 'backdrop-blur-xl backdrop-saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark py-3 sm:py-3.5 hover:border-emerald-500/30'
         }`}
       >
         {children}

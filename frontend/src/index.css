@@ -303,6 +303,12 @@ input, textarea {
     background-attachment: fixed;
 }
 
+@media (max-width: 768px) {
+    .glass-ambient-mesh {
+        background-attachment: scroll;
+    }
+}
+
 .dark .glass-ambient-mesh {
     background-color: #070d18;
     background-image: 
@@ -312,6 +318,12 @@ input, textarea {
         radial-gradient(at 85% 85%, rgba(14, 165, 233, 0.14) 0px, transparent 50%),
         radial-gradient(at 15% 85%, rgba(16, 185, 129, 0.14) 0px, transparent 50%);
     background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+    .dark .glass-ambient-mesh {
+        background-attachment: scroll;
+    }
 }
 
 /* Standard frosted glass surface */

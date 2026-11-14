@@ -169,8 +169,8 @@ const Navbar = () => {
           <div
             className={`w-full rounded-2xl sm:rounded-3xl transition-all duration-300 ${
               isScrolled
-                ? "backdrop-blur-2xl bg-white/80 dark:bg-slate-900/80 border border-white/90 dark:border-white/15 shadow-glass-xl dark:shadow-glass-dark-xl px-3.5 sm:px-6"
-                : "backdrop-blur-xl bg-white/68 dark:bg-slate-900/68 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark hover:border-emerald-500/30 px-3.5 sm:px-6"
+                ? "backdrop-blur-2xl backdrop-saturate-180 bg-white/72 dark:bg-slate-900/72 border border-white/90 dark:border-white/15 shadow-glass-xl dark:shadow-glass-dark-xl px-3.5 sm:px-6"
+                : "backdrop-blur-xl backdrop-saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark hover:border-emerald-500/30 px-3.5 sm:px-6"
             }`}
           >
             <div className="flex h-16 sm:h-[68px] items-center justify-between gap-3 sm:gap-6">

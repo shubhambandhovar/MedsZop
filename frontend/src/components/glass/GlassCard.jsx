@@ -22,9 +22,9 @@ export const GlassCard = forwardRef(function GlassCard(
 
   const variantStyles = {
     default:
-      'backdrop-blur-xl saturate-150 bg-white/70 dark:bg-slate-900/70 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark',
+      'backdrop-blur-xl backdrop-saturate-150 saturate-150 bg-white/70 dark:bg-slate-900/70 border border-white/80 dark:border-white/12 shadow-glass dark:shadow-glass-dark',
     elevated:
-      'backdrop-blur-2xl saturate-180 bg-white/65 dark:bg-slate-900/65 border border-white/85 dark:border-white/20 shadow-glass-xl dark:shadow-glass-dark-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05]',
+      'backdrop-blur-2xl backdrop-saturate-180 saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/85 dark:border-white/20 shadow-glass-xl dark:shadow-glass-dark-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05]',
     subtle:
       'backdrop-blur-md bg-white/45 dark:bg-slate-900/45 border border-slate-200/60 dark:border-slate-800/60 shadow-glass-sm',
     opaque:

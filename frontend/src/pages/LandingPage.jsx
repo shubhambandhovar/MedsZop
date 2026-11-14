@@ -322,12 +322,12 @@ const LandingPage = () => {
           <div className="flex items-center gap-4 text-[11px] text-slate-300">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Cold-Pack Packaging Supported for Thermolabile Drugs</span>
+              <span>Insulated Packaging for Temperature-Sensitive Medicines</span>
             </span>
             <span className="hidden lg:inline text-slate-600">•</span>
             <span className="hidden lg:inline-flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Partner Pharmacies Hold Form 20/21 State Retail Licenses</span>
+              <span>Orders Dispensed by Registered Local Retail Pharmacies</span>
             </span>
           </div>
         </div>
@@ -337,17 +337,17 @@ const LandingPage = () => {
       {/* 2. FULL-WIDTH HERO: COMMAND OMNIBAR & DUAL INTAKE PIPELINE               */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden py-12 lg:py-20">
-        {/* Luminous Atmospheric Ambient Glows (visible refraction through glass) */}
+        {/* Luminous Atmospheric Ambient Glows (visible refraction through glass) with GPU containment */}
         <div
-          className="absolute -top-24 -left-20 w-[620px] h-[620px] rounded-full bg-gradient-to-tr from-emerald-500/22 via-teal-400/18 to-cyan-400/12 blur-[110px] pointer-events-none -z-0"
+          className="absolute -top-24 -left-20 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] lg:w-[620px] lg:h-[620px] rounded-full bg-gradient-to-tr from-emerald-500/22 via-teal-400/18 to-cyan-400/12 blur-[60px] sm:blur-[90px] lg:blur-[110px] pointer-events-none -z-0 transform-gpu"
           aria-hidden="true"
         />
         <div
-          className="absolute top-10 -right-20 w-[580px] h-[580px] rounded-full bg-gradient-to-bl from-cyan-400/22 via-teal-400/18 to-emerald-400/16 blur-[110px] pointer-events-none -z-0"
+          className="absolute top-10 -right-20 w-[280px] h-[280px] sm:w-[460px] sm:h-[460px] lg:w-[580px] lg:h-[580px] rounded-full bg-gradient-to-bl from-cyan-400/22 via-teal-400/18 to-emerald-400/16 blur-[60px] sm:blur-[90px] lg:blur-[110px] pointer-events-none -z-0 transform-gpu"
           aria-hidden="true"
         />
         <div
-          className="absolute top-1/2 left-1/3 w-[450px] h-[400px] rounded-full bg-emerald-400/12 blur-[100px] pointer-events-none -z-0"
+          className="absolute top-1/2 left-1/3 w-[220px] h-[220px] sm:w-[340px] sm:h-[300px] lg:w-[450px] lg:h-[400px] rounded-full bg-emerald-400/12 blur-[50px] sm:blur-[80px] lg:blur-[100px] pointer-events-none -z-0 transform-gpu"
           aria-hidden="true"
         />
 
@@ -388,7 +388,7 @@ const LandingPage = () => {
               <div className="pt-2">
                 <form
                   onSubmit={handleHeroSearchSubmit}
-                  className="group relative flex flex-col sm:flex-row items-stretch gap-2 p-2.5 rounded-2xl sm:rounded-3xl backdrop-blur-2xl saturate-180 bg-white/70 dark:bg-slate-900/70 border-2 border-emerald-500/35 hover:border-emerald-500/55 shadow-glass-xl focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/20 transition-all max-w-2xl"
+                  className="group relative flex flex-col sm:flex-row items-stretch gap-2 p-2.5 rounded-2xl sm:rounded-3xl backdrop-blur-2xl backdrop-saturate-180 saturate-180 bg-white/70 dark:bg-slate-900/70 border-2 border-emerald-500/35 hover:border-emerald-500/55 shadow-glass-xl focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/20 transition-all max-w-2xl"
                 >
                   <div className="flex-1 flex items-center px-3 gap-2">
                     <Search className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 group-focus-within:scale-110 transition-transform" />
@@ -444,19 +444,19 @@ const LandingPage = () => {
               transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-5 relative"
             >
-              {/* Card-specific ambient light glow */}
+              {/* Card-specific ambient light glow with GPU optimization */}
               <div
-                className="absolute -top-10 -right-10 w-72 h-72 rounded-full bg-gradient-to-br from-emerald-400/25 via-teal-400/20 to-cyan-400/15 blur-3xl pointer-events-none -z-0"
+                className="absolute -top-6 -right-6 sm:-top-10 sm:-right-10 w-44 h-44 sm:w-72 sm:h-72 rounded-full bg-gradient-to-br from-emerald-400/25 via-teal-400/20 to-cyan-400/15 blur-2xl sm:blur-3xl pointer-events-none -z-0 transform-gpu"
                 aria-hidden="true"
               />
               <div
-                className="absolute -bottom-8 -left-8 w-56 h-56 rounded-full bg-teal-400/15 blur-2xl pointer-events-none -z-0"
+                className="absolute -bottom-6 -left-6 sm:-bottom-8 sm:-left-8 w-36 h-36 sm:w-56 sm:h-56 rounded-full bg-teal-400/15 blur-xl sm:blur-2xl pointer-events-none -z-0 transform-gpu"
                 aria-hidden="true"
               />
 
               <GlassCard
                 variant="elevated"
-                className="relative z-10 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl saturate-180 bg-white/65 dark:bg-slate-900/65 border border-white/85 dark:border-white/20 shadow-glass-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05] transition-all hover:shadow-glass-xl"
+                className="relative z-10 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl backdrop-saturate-180 saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/85 dark:border-white/20 shadow-glass-xl ring-1 ring-black/[0.02] dark:ring-white/[0.05] transition-all hover:shadow-glass-xl"
               >
                 <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                   <div>
@@ -464,7 +464,7 @@ const LandingPage = () => {
                       Have a Doctor's Prescription?
                     </h2>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      पर्चा अपलोड करें • Double-blind Pharmacist Verification
+                      पर्चा अपलोड करें • Registered Pharmacist Prescription Review
                     </p>
                   </div>
                   <div className="h-10 w-10 rounded-xl backdrop-blur-md bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shadow-xs">
@@ -542,10 +542,10 @@ const LandingPage = () => {
                 <span>Price Transparency Radar</span>
               </div>
               <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
-                Jan Aushadhi & Generic Chemical Salt Savings
+                Jan Aushadhi & Generic Salt Comparison
               </h2>
               <p className="text-sm sm:text-base text-muted-foreground mt-1 max-w-2xl">
-                Compare commercial branded medicines against certified Jan Aushadhi generic salts. Save up to 75% on chronic monthly medical treatments without compromising quality or bioequivalence.
+                Compare representative commercial brand MRPs against Jan Aushadhi generic benchmarks. Illustrative calculations show potential savings on chronic maintenance therapies without compromising therapeutic bioequivalence.
               </p>
             </div>
 
@@ -569,7 +569,7 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Comparison Radar Card */}
-          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8 backdrop-blur-2xl saturate-180 bg-white/65 dark:bg-slate-900/65 border border-white/85 dark:border-white/20 shadow-glass-xl">
+          <GlassCard variant="elevated" className="rounded-3xl p-6 sm:p-8 backdrop-blur-2xl backdrop-saturate-180 saturate-180 bg-white/68 dark:bg-slate-900/68 border border-white/85 dark:border-white/20 shadow-glass-xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
               {/* Chemical Salt Detail */}
@@ -589,10 +589,10 @@ const LandingPage = () => {
                 <div className="p-4 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs space-y-2 shadow-xs">
                   <div className="flex items-center gap-2 text-foreground font-semibold">
                     <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                    <span>Active Chemical Salt Reference & Pricing</span>
+                    <span>Illustrative Benchmark Reference & Sourcing</span>
                   </div>
                   <p className="text-muted-foreground text-[11px] leading-relaxed">
-                    Benchmark price references sourced from Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP) public listings and NPPA ceiling price guidelines. Generic medications approved by CDSCO share the same active pharmaceutical ingredient (API) and strength. Patients should consult their prescribing physician before substituting any medication.
+                    Price comparisons are illustrative references based on published PMBJP public rates and representative brand MRPs. Generic medications approved by CDSCO share the same active pharmaceutical ingredient (API) and strength. Actual pharmacy prices, pack sizes, and patient savings may vary. Consult a healthcare professional before altering medication regimens.
                   </p>
                 </div>
               </div>
@@ -604,13 +604,13 @@ const LandingPage = () => {
                   {/* Branded Option */}
                   <div className="p-5 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-white/90 dark:border-slate-700/90 space-y-3 shadow-glass-sm">
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Commercial Branded Medicine
+                      Representative Commercial Brand
                     </div>
                     <div className="font-heading font-bold text-base text-foreground">
                       {selectedData.brandedName}
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-baseline justify-between">
-                      <span className="text-xs text-muted-foreground">Standard Retail MRP:</span>
+                      <span className="text-xs text-muted-foreground">Illustrative Brand MRP*:</span>
                       <span className="font-mono text-xl font-bold text-foreground">₹{selectedData.brandedPrice.toFixed(2)}</span>
                     </div>
                   </div>
@@ -619,17 +619,17 @@ const LandingPage = () => {
                   <div className="p-5 rounded-2xl backdrop-blur-xl bg-emerald-500/10 dark:bg-emerald-950/40 border-2 border-emerald-500/60 space-y-3 relative shadow-emerald-glow-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
-                        Verified Generic Salt
+                        Generic Formulation
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-heading font-bold text-[11px] shadow-xs">
-                        Save {selectedData.savingsPct}%
+                        Illustrative ~{selectedData.savingsPct}% Lower
                       </span>
                     </div>
                     <div className="font-heading font-bold text-base text-foreground">
                       {selectedData.genericSaltName}
                     </div>
                     <div className="pt-2 border-t border-emerald-500/25 flex items-baseline justify-between">
-                      <span className="text-xs text-emerald-900 dark:text-emerald-200 font-medium">Jan Aushadhi Price:</span>
+                      <span className="text-xs text-emerald-900 dark:text-emerald-200 font-medium">Illustrative Jan Aushadhi Rate*:</span>
                       <span className="font-mono text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                         ₹{selectedData.genericPrice.toFixed(2)}
                       </span>
@@ -641,7 +641,7 @@ const LandingPage = () => {
                 {/* Savings Callout Footnote */}
                 <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-slate-200/60 dark:border-slate-700/60 text-xs">
                   <div className="text-muted-foreground">
-                    Estimated Annual Patient Savings: <strong className="text-foreground">{selectedData.annualSavings}</strong> on this maintenance therapy alone.
+                    *Illustrative Benchmark: <strong className="text-foreground">{selectedData.annualSavings}</strong> estimated annual savings on this maintenance regimen based on published benchmarks. Actual costs depend on pharmacy dispensing and pack specifications.
                   </div>
                   <Button
                     onClick={() => navigate(`/medicines?search=${encodeURIComponent(selectedData.salt.split(" ")[0])}`)}
@@ -781,7 +781,7 @@ const LandingPage = () => {
                       {med.name}
                     </h3>
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      {med.manufacturer || "Licensed CDSCO Manufacturer"} • {med.packSize || "Standard Pack"}
+                      {med.manufacturer || "Pharmaceutical Manufacturer"} • {med.packSize || "Standard Pack"}
                     </div>
                   </div>
 
@@ -926,9 +926,9 @@ const LandingPage = () => {
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading font-bold text-sm text-foreground">Licensed Retail Pharmacies</h4>
+                <h4 className="font-heading font-bold text-sm text-foreground">Partner Retail Pharmacies</h4>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Fulfillment through registered community pharmacies required to hold valid state drug retail licenses under Form 20/21.
+                  Orders are dispensed by independent registered community retail pharmacies operating under applicable state pharmacy rules.
                 </p>
               </div>
             </div>
@@ -938,9 +938,9 @@ const LandingPage = () => {
                 <ThermometerSnowflake className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading font-bold text-sm text-foreground">Thermolabile Packaging</h4>
+                <h4 className="font-heading font-bold text-sm text-foreground">Insulated Packaging</h4>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Cold-pack thermal insulation provided for temperature-sensitive drugs where supported by fulfilling partner stores.
+                  Thermal packaging provided for temperature-sensitive items where available from fulfilling pharmacy partners.
                 </p>
               </div>
             </div>
@@ -950,9 +950,9 @@ const LandingPage = () => {
                 <FileCheck className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading font-bold text-sm text-foreground">Double-Blind Verification</h4>
+                <h4 className="font-heading font-bold text-sm text-foreground">Pharmacist Prescription Review</h4>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Prescription orders require pharmacist sign-off before dispatch, preventing dosage errors.
+                  Prescription orders undergo qualified pharmacist review prior to dispatch to check dosage instructions and medication details.
                 </p>
               </div>
             </div>
@@ -962,9 +962,9 @@ const LandingPage = () => {
                 <FileText className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading font-bold text-sm text-foreground">Legally Valid Invoicing</h4>
+                <h4 className="font-heading font-bold text-sm text-foreground">Itemized Invoicing</h4>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Every package includes a printed GST invoice detailing drug batch number and expiry date.
+                  Every order includes an itemized invoice detailing drug batch numbers, expiry dates, and regulatory tax breakdown.
                 </p>
               </div>
             </div>

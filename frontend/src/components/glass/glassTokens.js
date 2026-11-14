@@ -8,12 +8,12 @@ export const glassTokens = {
   // Surface Opacities & Blur
   surfaces: {
     frosted: {
-      light: 'bg-white/70 border-white/80 backdrop-blur-xl saturate-150 shadow-glass',
-      dark: 'dark:bg-slate-900/70 dark:border-white/12 dark:backdrop-blur-xl dark:saturate-150 dark:shadow-glass-dark',
+      light: 'bg-white/70 border-white/80 backdrop-blur-xl backdrop-saturate-150 saturate-150 shadow-glass',
+      dark: 'dark:bg-slate-900/70 dark:border-white/12 dark:backdrop-blur-xl dark:backdrop-saturate-150 dark:saturate-150 dark:shadow-glass-dark',
     },
     elevated: {
-      light: 'bg-white/65 border-white/85 backdrop-blur-2xl saturate-180 shadow-glass-xl ring-1 ring-black/[0.02]',
-      dark: 'dark:bg-slate-900/65 dark:border-white/20 dark:backdrop-blur-2xl dark:saturate-180 dark:shadow-glass-dark-xl dark:ring-white/[0.05]',
+      light: 'bg-white/68 border-white/85 backdrop-blur-2xl backdrop-saturate-180 saturate-180 shadow-glass-xl ring-1 ring-black/[0.02]',
+      dark: 'dark:bg-slate-900/68 dark:border-white/20 dark:backdrop-blur-2xl dark:backdrop-saturate-180 dark:saturate-180 dark:shadow-glass-dark-xl dark:ring-white/[0.05]',
     },
     subtle: {
       light: 'bg-white/45 border-slate-200/60 backdrop-blur-md shadow-glass-sm',
