@@ -12,7 +12,7 @@ const prescriptionSchema = new mongoose.Schema({
   order_id: { type: String },
   status: {
     type: String,
-    enum: ["uploaded", "verified", "rejected"],
+    enum: ["uploaded", "needs_review", "verified", "rejected", "clarification_requested"],
     default: "uploaded"
   },
   createdAt: { type: Date, default: Date.now }

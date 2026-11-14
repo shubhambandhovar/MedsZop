@@ -1,88 +1,183 @@
 const path = require("path");
 const fs = require("fs");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Prescription = require("../models/Prescription");
 const Order = require("../models/Order");
 const Pharmacy = require("../models/Pharmacy");
 const Consultation = require("../models/Consultation");
 const { escapeRegex } = require("../middleware/sanitizeMiddleware");
 const { getStorageProvider } = require("../utils/storageService");
+const prescriptionPreprocessor = require("../services/prescriptionPreprocessor");
+const { getOCRProvider } = require("../services/ocrProviderAdapter");
+const medicineMatcher = require("../services/medicineMatcher");
+const prescriptionReviewService = require("../services/prescriptionReviewService");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+/**
+ * Validate file signature (magic bytes) to prevent masquerading
+ */
+function detectAndValidateMimeType(buffer) {
+  if (!buffer || buffer.length < 4) return null;
+
+  // JPEG: FF D8 FF
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return "image/jpeg";
+  }
+
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47 &&
+    buffer[4] === 0x0d &&
+    buffer[5] === 0x0a &&
+    buffer[6] === 0x1a &&
+    buffer[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+
+  // WebP: RIFF .... WEBP
+  if (
+    buffer.length >= 12 &&
+    buffer.toString("ascii", 0, 4) === "RIFF" &&
+    buffer.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    return "image/webp";
+  }
+
+  // PDF: %PDF
+  if (buffer.toString("ascii", 0, 4) === "%PDF") {
+    return "application/pdf";
+  }
+
+  return null;
+}
 
 /**
  * ============================================================
- * SCAN PRESCRIPTION (Gemini Vision AI)
+ * SCAN PRESCRIPTION (Intelligence V2: Multi-Engine OCR & Quality Audit)
  * ============================================================
  */
 exports.scanPrescription = async (req, res) => {
   try {
-    const { base64Image } = req.body;
+    let inputBuffer = null;
+    let originalMime = null;
+    let originalFilename = "prescription";
 
-    // 1. Validate input
-    if (!base64Image || typeof base64Image !== "string") {
-      return res.status(400).json({ message: "No image provided" });
+    // 1. Ingest input (multipart file OR base64 in body)
+    if (req.file) {
+      if (req.file.buffer) {
+        inputBuffer = req.file.buffer;
+      } else if (req.file.path) {
+        inputBuffer = await fs.promises.readFile(req.file.path);
+        // Clean up upload temp file if not requested to save to account
+        if (!req.body.saveToAccount) {
+          fs.promises.unlink(req.file.path).catch(() => {});
+        }
+      }
+      originalMime = req.file.mimetype;
+      originalFilename = req.file.originalname || "prescription";
+    } else if (req.body && req.body.base64Image) {
+      const rawString = req.body.base64Image;
+      const matches = rawString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      if (matches && matches.length === 3) {
+        originalMime = matches[1];
+        inputBuffer = Buffer.from(matches[2], "base64");
+      } else {
+        inputBuffer = Buffer.from(rawString.replace(/^data:image\/\w+;base64,/, ""), "base64");
+      }
     }
 
-    // 2. Prepare Gemini Vision
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash"
+    if (!inputBuffer || inputBuffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No prescription image or document provided. Please upload a clear photo or PDF."
+      });
+    }
+
+    // 2. Validate magic bytes / file signature (Anti-spoofing)
+    const detectedMime = detectAndValidateMimeType(inputBuffer);
+    if (!detectedMime) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid file format detected. Prescriptions must be valid JPEG, PNG, WebP, or PDF files."
+      });
+    }
+
+    // 3. Preprocess with Sharp pipeline (EXIF auto-rotation, Laplacian blur check, glare check, contrast normalization)
+    const preprocessed = await prescriptionPreprocessor.preprocess(inputBuffer, {
+      mimeType: detectedMime,
+      filename: originalFilename
     });
 
-    // Remove data:image/jpeg;base64, prefix if exists
-    const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+    // 4. Multi-engine OCR execution
+    const requestedProvider = req.body.provider || process.env.OCR_PROVIDER || "hybrid";
+    const ocrProvider = getOCRProvider(requestedProvider);
+    const extraction = await ocrProvider.recognize(preprocessed.enhancedBuffer || inputBuffer, {
+      mimeType: detectedMime,
+      quality: preprocessed.quality,
+      originalBuffer: inputBuffer
+    });
 
-    const prompt = `
-    You are an expert medical pharmacist. Analyze this prescription image (which might be handwritten) and extract all medicines listed.
-    
-    Return ONLY valid JSON in this format:
-    {
-      "medicines": [
-        {
-          "name": "Full name of the medicine",
-          "dosage": "e.g., 500mg",
-          "frequency": "e.g., twice a day",
-          "duration": "e.g., 5 days"
-        }
-      ]
-    }
-    
-    If it's handwritten, look closely at the medication names. If no medicines are found, return an empty list.
-    `;
-
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType: "image/jpeg"
-        }
-      }
-    ]);
-
-    const textOutput = result.response.text();
-
-    // 3. SAFE JSON extraction
-    let parsed = { medicines: [] };
-    try {
-      const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[0].trim());
-      }
-    } catch (err) {
-      console.error("❌ Gemini Vision JSON parse failed", textOutput);
+    // 5. Controlled Indian Medicine Database reconciliation & LASA detection
+    let medicines = extraction.data?.medicines || [];
+    if (medicines.length > 0) {
+      medicines = await medicineMatcher.matchAll(medicines);
     }
 
-    // 4. Response
-    return res.json({
-      rawText: "Extracted via Gemini Vision",
-      parsed
+    const hasUncertainFields = medicines.some(
+      (m) => m.recognitionStatus === "UNCERTAIN" || m.recognitionStatus === "ILLEGIBLE" || m.lasaAlert
+    );
+
+    const fullResultData = {
+      ...extraction.data,
+      medicines,
+      hasUncertainFields,
+      qualityAudit: preprocessed.quality
+    };
+
+    // 6. Optional Persistence if Authenticated User & save requested
+    let savedPrescriptionId = null;
+    const userId = req.user?.id;
+    if (userId && (req.body.saveToAccount === true || req.body.prescriptionId)) {
+      try {
+        if (req.body.prescriptionId) {
+          const existingRx = await Prescription.findOne({ _id: req.body.prescriptionId, user_id: userId });
+          if (existingRx) {
+            existingRx.parsed_data = fullResultData;
+            existingRx.raw_text = fullResultData.rawExtractedText || "";
+            existingRx.status = hasUncertainFields ? "needs_review" : "uploaded";
+            await existingRx.save();
+            savedPrescriptionId = existingRx._id;
+          }
+        }
+      } catch (saveErr) {
+        console.warn("Could not auto-save scanned prescription record:", saveErr.message);
+      }
+    }
+
+    // 7. Safe structured clinical response
+    return res.status(200).json({
+      success: true,
+      provider: extraction.provider || requestedProvider,
+      isDualPass: extraction.isDualPass || false,
+      quality: preprocessed.quality,
+      previewImage: preprocessed.previewBuffer
+        ? `data:image/webp;base64,${preprocessed.previewBuffer.toString("base64")}`
+        : null,
+      parsed: fullResultData,
+      prescriptionId: savedPrescriptionId,
+      requiresPharmacistReview: true,
+      disclaimer: "MedsZop AI Prescription Intelligence assists in deciphering handwritten documents. A registered pharmacist must clinically review and verify all items prior to dispensing."
     });
 
   } catch (error) {
-    console.error("❌ Prescription scan error:", error);
+    // Zero PII logged - only log generic error
+    console.error("Prescription scan error:", error.message);
     return res.status(500).json({
-      message: "Prescription scanning failed",
+      success: false,
+      message: "Prescription analysis could not be completed. Please ensure the handwriting is legible and try again.",
       error: error.message
     });
   }
@@ -380,3 +475,73 @@ exports.getPrescriptionFile = async (req, res) => {
     });
   }
 };
+
+/**
+ * ============================================================
+ * GET PRESCRIPTION REVIEW QUEUE (Pharmacist Workstation)
+ * ============================================================
+ */
+exports.getReviewQueue = async (req, res) => {
+  try {
+    const { status = "needs_review", page = 1, limit = 20 } = req.query;
+    const pharmacyId = req.user.role === "pharmacy" ? req.user.id : null;
+    const result = await prescriptionReviewService.getReviewQueue({
+      pharmacyId,
+      status,
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10)
+    });
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Fetch review queue error:", error.message);
+    return res.status(500).json({ message: "Failed to fetch review queue", error: error.message });
+  }
+};
+
+/**
+ * ============================================================
+ * GET PRESCRIPTION REVIEW DETAILS
+ * ============================================================
+ */
+exports.getPrescriptionReviewDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const rx = await prescriptionReviewService.getPrescriptionDetails(id);
+    if (!rx) {
+      return res.status(404).json({ message: "Prescription not found" });
+    }
+    // Authorization check: admin, pharmacy, or owning customer
+    if (req.user.role === "customer" && rx.user_id !== req.user.id) {
+      return res.status(403).json({ message: "Forbidden: You do not own this prescription" });
+    }
+    return res.status(200).json(rx);
+  } catch (error) {
+    console.error("Prescription review details error:", error.message);
+    return res.status(404).json({ message: error.message });
+  }
+};
+
+/**
+ * ============================================================
+ * SUBMIT PHARMACIST REVIEW DECISION
+ * ============================================================
+ */
+exports.submitPrescriptionReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { decision, reviewedMedicines, notes, rejectionReason } = req.body;
+    const result = await prescriptionReviewService.submitReview({
+      prescriptionId: id,
+      decision,
+      reviewedMedicines,
+      notes,
+      rejectionReason,
+      pharmacist: req.user
+    });
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Submit prescription review error:", error.message);
+    return res.status(400).json({ message: error.message });
+  }
+};
+
