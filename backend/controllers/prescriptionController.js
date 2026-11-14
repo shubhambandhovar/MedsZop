@@ -212,6 +212,16 @@ exports.uploadPrescription = async (req, res) => {
       }
     }
 
+    // Safely parse extraction data if forwarded from scan
+    let parsedData = null;
+    if (req.body.parsedData) {
+      try {
+        parsedData = typeof req.body.parsedData === "string" ? JSON.parse(req.body.parsedData) : req.body.parsedData;
+      } catch (parseErr) {
+        console.warn("Could not parse forwarded extraction data:", parseErr.message);
+      }
+    }
+
     // Save prescription record tied to authenticated user
     const prescription = await Prescription.create({
       user_id: req.user.id,
@@ -220,7 +230,9 @@ exports.uploadPrescription = async (req, res) => {
       original_name: req.file.originalname,
       mime_type: req.file.mimetype,
       file_size: req.file.size,
-      status: "uploaded"
+      parsed_data: parsedData,
+      raw_text: parsedData?.rawExtractedText || parsedData?.rawTranscript || "",
+      status: "needs_review"
     });
 
     return res.status(201).json({

@@ -193,6 +193,114 @@ async function runTests() {
     assert.strictEqual(matched[0].canonicalName, "Paracetamol");
   });
 
+  await asyncTest("Medicine Matcher: Partial handwriting 'Met...ol' yields visualState AMBER, null medicineName, and candidate suggestions", async () => {
+    const item = {
+      recognizedFragment: "Met...ol",
+      sourceText: "Met...ol 50mg OD",
+      strength: "50mg",
+      frequency: "OD"
+    };
+
+    const matched = await medicineMatcher.match(item);
+    // Clinical Zero Hallucination: Unverified guess is NOT assigned to medicineName
+    assert.strictEqual(matched.medicineName, null, "medicineName must remain null until verified");
+    assert.strictEqual(matched.visualState, "AMBER", "visualState must be AMBER for partial handwriting");
+    assert.strictEqual(matched.recognitionStatus, "UNCERTAIN");
+    assert(matched.possibleMatches.length > 0, "Must generate candidate interpretations");
+    assert(matched.possibleMatches.length <= 3, "Must not exceed 3 candidates");
+    const hasMetoprolol = matched.possibleMatches.some((cand) =>
+      cand.medicineName.toLowerCase().includes("metoprolol")
+    );
+    assert(hasMetoprolol, "Suggestions must include Metoprolol based on 'Met...ol' fragment");
+    assert(matched.possibleMatches[0].evidence.length > 0, "Candidate must provide visible evidence");
+    assert.strictEqual(matched.possibleMatches[0].verified, false, "Candidate must be marked unverified");
+  });
+
+  await asyncTest("Medicine Matcher: Illegible scribble yields visualState RED, null medicineName, and zero suggestions", async () => {
+    const item = {
+      recognizedFragment: "???",
+      sourceText: "???",
+      medicineName: "",
+      recognitionStatus: "ILLEGIBLE"
+    };
+
+    const matched = await medicineMatcher.match(item);
+    assert.strictEqual(matched.medicineName, null);
+    assert.strictEqual(matched.visualState, "RED", "Illegible scribble must have visualState RED");
+    assert.strictEqual(matched.recognitionStatus, "ILLEGIBLE");
+    assert.strictEqual(matched.possibleMatches.length, 0, "Zero Hallucination: Must not fabricate candidates on scribble");
+  });
+
+  await asyncTest("Medicine Matcher: Missing strength triggers missingStrengthWarning and AMBER visualState", async () => {
+    const item = {
+      medicineName: "Paracetamol",
+      sourceText: "Paracetamol 1 tab",
+      strength: null,
+      frequency: "TDS"
+    };
+
+    const matched = await medicineMatcher.match(item);
+    assert.strictEqual(matched.missingStrengthWarning, true, "Missing strength must be flagged");
+    assert.strictEqual(matched.visualState, "AMBER", "Missing strength must require pharmacist confirmation (AMBER)");
+    assert(
+      matched.uncertaintyReasons.some((r) => r.toLowerCase().includes("strength")),
+      "Must include strength note in uncertaintyReasons"
+    );
+  });
+
+  test("Extraction Validator: Enforces 3-state clinical visual triage (GREEN, AMBER, RED)", () => {
+    const mixedPayload = {
+      doctor: { doctorName: "Dr. K. Mehta" },
+      patient: { patientName: "Aarav Sharma" },
+      medicines: [
+        // GREEN: Fully recognized with complete strength and dosage
+        {
+          medicineName: "Augmentin",
+          sourceText: "Augmentin 625mg BD",
+          strength: "625mg",
+          prescribedDose: "1 tab",
+          frequency: "BD",
+          recognitionStatus: "RECOGNIZED_UNVERIFIED"
+        },
+        // AMBER: Partial handwriting with wildcard
+        {
+          medicineName: null,
+          recognizedFragment: "Met...ol",
+          sourceText: "Met...ol 50mg",
+          strength: "50mg",
+          recognitionStatus: "UNCERTAIN"
+        },
+        // RED: Illegible scribble
+        {
+          medicineName: "",
+          recognizedFragment: null,
+          sourceText: "~~~~",
+          recognitionStatus: "ILLEGIBLE"
+        }
+      ]
+    };
+
+    const validated = validateExtraction(mixedPayload);
+    assert.strictEqual(validated.medicines.length, 3);
+
+    // Green item assertions
+    assert.strictEqual(validated.medicines[0].visualState, "GREEN");
+    assert.strictEqual(validated.medicines[0].medicineName, "Augmentin");
+
+    // Amber item assertions
+    assert.strictEqual(validated.medicines[1].visualState, "AMBER");
+    assert.strictEqual(validated.medicines[1].medicineName, null);
+    assert.strictEqual(validated.medicines[1].recognitionStatus, "UNCERTAIN");
+
+    // Red item assertions
+    assert.strictEqual(validated.medicines[2].visualState, "RED");
+    assert.strictEqual(validated.medicines[2].medicineName, null);
+    assert.strictEqual(validated.medicines[2].possibleMatches.length, 0);
+
+    // Overall uncertain flag
+    assert.strictEqual(validated.hasUncertainFields, true);
+  });
+
   // ----------------------------------------------------
   // 4. Multi-Provider OCR Adapter Tests
   // ----------------------------------------------------
