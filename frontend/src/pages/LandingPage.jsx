@@ -37,7 +37,7 @@ import {
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const LandingPage = () => {
   const { t } = useTranslation(['landing', 'common']);

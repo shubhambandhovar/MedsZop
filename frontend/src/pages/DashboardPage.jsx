@@ -58,7 +58,7 @@ import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
 import { GlassCard, GlassButton } from "../components/glass";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const DashboardPage = () => {
   const { t } = useTranslation(['dashboard', 'common']);

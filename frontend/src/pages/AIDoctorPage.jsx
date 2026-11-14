@@ -25,7 +25,7 @@ import remarkGfm from "remark-gfm";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const AIDoctorPage = () => {
     const { t } = useTranslation(['consult', 'common']);

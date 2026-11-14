@@ -23,7 +23,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const MedicinesPage = () => {
   const { t } = useTranslation(['catalog', 'common']);
@@ -58,9 +58,10 @@ const MedicinesPage = () => {
       if (selectedCategory) params.append("category", selectedCategory);
       
       const response = await axios.get(`${API_URL}/medicines?${params.toString()}`);
-      setMedicines(response.data);
+      setMedicines(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching medicines:", error);
+      setMedicines([]);
     } finally {
       setLoading(false);
     }

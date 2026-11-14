@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Textarea } from "../components/ui/textarea";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const ConsultDoctorPage = () => {
     const { t } = useTranslation(['consult', 'common']);
@@ -43,9 +43,10 @@ const ConsultDoctorPage = () => {
         const fetchDoctors = async () => {
             try {
                 const res = await axios.get(`${API_URL}/doctor/list`);
-                setDoctors(res.data);
+                setDoctors(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Failed to fetch doctors", err);
+                setDoctors([]);
             } finally {
                 setLoadingDocs(false);
             }
@@ -65,9 +66,10 @@ const ConsultDoctorPage = () => {
             const res = await axios.get(`${API_URL}/doctor/my-consultations`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setConsultations(res.data);
+            setConsultations(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error("Failed fetch consultations");
+            setConsultations([]);
         }
     };
 
@@ -142,7 +144,7 @@ const ConsultDoctorPage = () => {
               <UserCheck className="h-3.5 w-3.5 mr-1.5" />
               {t("doctor.verified_specialists", "Verified Healthcare Specialists")}
             </Badge>
-            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground" data-testid="consult-doctor-title">
               {t("doctor.title", "Consult a Doctor")}
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm max-w-xl mt-1 leading-relaxed">

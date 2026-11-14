@@ -55,9 +55,9 @@ const PUBLIC_PAGES = [
   {
     name: '02_medicines_catalog',
     path: '/medicines',
-    headingSelector: 'input[placeholder*="Search"], h1',
+    headingSelector: '[data-testid="medicines-title"]',
     verifyContent: async (page) => {
-      const search = await page.$('input');
+      const search = await page.$('[data-testid="medicine-search"], input');
       return !!search;
     }
   },
@@ -131,7 +131,7 @@ const PROTECTED_PAGES = [
   {
     name: '10_consult_doctor',
     path: '/consult-doctor',
-    headingSelector: 'h1, h2, div:has-text("Consult")',
+    headingSelector: '[data-testid="consult-doctor-title"]',
     verifyContent: async (page) => {
       const body = await page.innerText('body');
       return body.toLowerCase().includes('doctor') || body.toLowerCase().includes('consult');
@@ -165,7 +165,11 @@ async function ensurePreviewServer() {
   if (!fs.existsSync(distDir) || !fs.existsSync(path.join(distDir, 'index.html'))) {
     console.log('ℹ Production dist/ assets not found. Compiling build first...');
     const { execSync } = await import('child_process');
-    execSync('npm run build', { cwd: frontendDir, stdio: 'inherit' });
+    execSync('npm run build', {
+      cwd: frontendDir,
+      stdio: 'inherit',
+      env: { ...process.env, VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:5000/api' }
+    });
   }
 
   const serverProc = spawn('npx', ['vite', 'preview', '--port', String(DEFAULT_PORT), '--host'], {
@@ -539,8 +543,8 @@ async function runHardenedTestSuite() {
     // -------------------------------------------------------------
     console.log('\n[6/6] Capturing High-Res Screenshots & Asserting Headings (Light & Dark)...');
 
-    // Setup Mocked Authenticated Session for Protected Routes
-    const mockUser = {
+    // Setup Mock Data for Deterministic Verification
+    const MOCK_USER = {
       _id: 'cust-verified-001',
       id: 'cust-verified-001',
       name: 'Ananya Sharma',
@@ -549,40 +553,225 @@ async function runHardenedTestSuite() {
       mobile: '9876543210'
     };
 
+    const MOCK_MEDICINES = [
+      {
+        _id: 'med-001',
+        id: 'med-001',
+        name: 'Paracetamol 650mg',
+        brandName: 'Dolo 650',
+        brand: 'Micro Labs',
+        genericName: 'Paracetamol',
+        category: 'Analgesics & Antipyretics',
+        form: 'Tablet',
+        strength: '650mg',
+        price: 30.50,
+        mrp: 35.00,
+        discount: 12,
+        prescriptionRequired: false,
+        inStock: true,
+        rating: 4.8,
+        reviewsCount: 1420,
+        image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300',
+        description: 'Effective relief from mild to moderate pain and fever reduction.'
+      },
+      {
+        _id: 'med-002',
+        id: 'med-002',
+        name: 'Azithromycin 500mg',
+        brandName: 'Azithral 500',
+        brand: 'Alembic',
+        genericName: 'Azithromycin',
+        category: 'Antibiotics',
+        form: 'Tablet',
+        strength: '500mg',
+        price: 119.00,
+        mrp: 135.00,
+        discount: 11,
+        prescriptionRequired: true,
+        inStock: true,
+        rating: 4.6,
+        reviewsCount: 840,
+        image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=300',
+        description: 'Broad-spectrum macrolide antibiotic for respiratory and bacterial infections.'
+      }
+    ];
+
+    const MOCK_CATEGORIES = [
+      'All',
+      'Analgesics & Antipyretics',
+      'Antibiotics',
+      'Cardiovascular',
+      'Diabetes Care',
+      'Dermatology',
+      'Gastrointestinal'
+    ];
+
+    const MOCK_DOCTORS = [
+      {
+        _id: 'doc-001',
+        id: 'doc-001',
+        name: 'Dr. Priya Sharma',
+        specialization: 'General Physician',
+        qualification: 'MBBS, MD (Internal Medicine)',
+        experience: 12,
+        rating: 4.9,
+        reviewsCount: 320,
+        fee: 499,
+        availability: 'Available Today',
+        status: 'online',
+        hospital: 'Apollo Hospitals',
+        languages: ['English', 'Hindi']
+      },
+      {
+        _id: 'doc-002',
+        id: 'doc-002',
+        name: 'Dr. Rajesh Patel',
+        specialization: 'Cardiologist',
+        qualification: 'MBBS, DM (Cardiology)',
+        experience: 16,
+        rating: 4.85,
+        reviewsCount: 450,
+        fee: 799,
+        availability: 'Available Tomorrow',
+        status: 'online',
+        hospital: 'Fortis Healthcare',
+        languages: ['English', 'Hindi', 'Gujarati']
+      }
+    ];
+
+    const MOCK_CONSULTATIONS = [
+      {
+        _id: 'cons-001',
+        id: 'cons-001',
+        doctor: {
+          name: 'Dr. Priya Sharma',
+          specialization: 'General Physician'
+        },
+        status: 'completed',
+        date: '2026-11-10',
+        time: '10:30 AM',
+        notes: 'Prescription issued for seasonal fever.'
+      }
+    ];
+
+    const attachDeterministicMocks = async (pageContext, isProtected) => {
+      if (isProtected) {
+        // Inject token into localStorage before page loads
+        await pageContext.addInitScript(() => {
+          localStorage.setItem('token', 'mock-valid-customer-jwt-token');
+        });
+      }
+
+      // Intercept all API endpoints, including any fallback or undefined paths
+      await pageContext.route(/(.*\/api\/.*|.*\/undefined\/.*|.*\/medicines.*|.*\/doctor\/.*|.*\/orders.*|.*\/prescriptions.*|.*\/cart.*|.*\/auth\/.*|.*\/addresses.*)/, (route) => {
+        // Never intercept HTML document navigation or static assets
+        const resourceType = route.request().resourceType();
+        if (resourceType === 'document' || resourceType === 'stylesheet' || resourceType === 'script' || resourceType === 'font') {
+          return route.continue();
+        }
+
+        const url = route.request().url();
+
+        if (url.includes('/medicines/categories')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(MOCK_CATEGORIES)
+          });
+        }
+
+        if (url.includes('/medicines')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(MOCK_MEDICINES)
+          });
+        }
+
+        if (url.includes('/doctor/list')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(MOCK_DOCTORS)
+          });
+        }
+
+        if (url.includes('/doctor/my-consultations')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(MOCK_CONSULTATIONS)
+          });
+        }
+
+        if (url.includes('/auth/me')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(MOCK_USER)
+          });
+        }
+
+        if (url.includes('/cart')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ items: [], total: 0 })
+          });
+        }
+
+        if (url.includes('/orders') || url.includes('/prescriptions') || url.includes('/addresses')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify([])
+          });
+        }
+
+        // Default safe fallback response
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([])
+        });
+      });
+    };
+
     const runPageCapture = async ({ pageItem, isProtected, theme }) => {
       const pageContext = await browser.newContext({
         viewport: { width: 1440, height: 900 },
         colorScheme: theme
       });
 
-      if (isProtected) {
-        // Inject token into localStorage before page loads
-        await pageContext.addInitScript(() => {
-          localStorage.setItem('token', 'mock-valid-customer-jwt-token');
-        });
-
-        // Intercept user API call to authenticate session
-        await pageContext.route('**/auth/me', (route) => {
-          route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify(mockUser)
-          });
-        });
-
-        // Mock empty data endpoints
-        await pageContext.route('**/orders**', (route) => {
-          route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
-        });
-        await pageContext.route('**/prescriptions**', (route) => {
-          route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
-        });
-        await pageContext.route('**/addresses**', (route) => {
-          route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
-        });
-      }
+      await attachDeterministicMocks(pageContext, isProtected);
 
       const activePage = await pageContext.newPage();
+
+      // Diagnostic event listeners
+      const pageErrors = [];
+      const consoleLogs = [];
+      const failedRequests = [];
+      const networkResponses = [];
+
+      activePage.on('pageerror', (err) => {
+        pageErrors.push(err.message || String(err));
+      });
+
+      activePage.on('console', (msg) => {
+        if (msg.type() === 'error' || msg.type() === 'warning') {
+          consoleLogs.push(`[${msg.type().toUpperCase()}] ${msg.text()}`);
+        }
+      });
+
+      activePage.on('requestfailed', (req) => {
+        failedRequests.push(`${req.method()} ${req.url()} - ${req.failure()?.errorText || 'Unknown error'}`);
+      });
+
+      activePage.on('response', (res) => {
+        if (res.status() >= 400) {
+          networkResponses.push(`${res.request().method()} ${res.url()} -> Status ${res.status()}`);
+        }
+      });
 
       try {
         await activePage.goto(`${BASE_URL}${pageItem.path}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
@@ -627,6 +816,44 @@ async function runHardenedTestSuite() {
           pass: true
         });
       } catch (err) {
+        const errFileName = `ERR_${pageItem.name}_${theme}.png`;
+        const errFilePath = path.join(SCREENSHOT_DIR, errFileName);
+        try {
+          await activePage.screenshot({ path: errFilePath, fullPage: true });
+          console.error(`  📸 Captured error screenshot: ${errFileName}`);
+        } catch (snapErr) {
+          console.error(`  ⚠️ Could not take error screenshot: ${snapErr.message}`);
+        }
+
+        let domSnippet = '';
+        try {
+          domSnippet = await activePage.evaluate(() => {
+            return document.body ? document.body.innerHTML.slice(0, 1000) : 'No document body';
+          });
+        } catch {
+          domSnippet = 'Could not retrieve DOM snippet';
+        }
+
+        console.error(`\n❌ [FAILURE DIAGNOSTIC] ${pageItem.name} (${theme})`);
+        console.error(`   Error: ${err.message}`);
+        if (pageErrors.length > 0) {
+          console.error(`   Page Errors (${pageErrors.length}):`);
+          pageErrors.forEach(e => console.error(`     - ${e}`));
+        }
+        if (consoleLogs.length > 0) {
+          console.error(`   Console Errors/Warnings (${consoleLogs.length}):`);
+          consoleLogs.forEach(c => console.error(`     - ${c}`));
+        }
+        if (failedRequests.length > 0) {
+          console.error(`   Failed Network Requests (${failedRequests.length}):`);
+          failedRequests.forEach(r => console.error(`     - ${r}`));
+        }
+        if (networkResponses.length > 0) {
+          console.error(`   HTTP >=400 Responses (${networkResponses.length}):`);
+          networkResponses.forEach(r => console.error(`     - ${r}`));
+        }
+        console.error(`   DOM Snippet (first 1000 chars):\n${domSnippet}\n`);
+
         registerFailure('Page Visual Capture', `${pageItem.name} (${theme}): ${err.message}`);
         testSummary.pageThemesCaptured.push({
           page: pageItem.name,
@@ -634,7 +861,14 @@ async function runHardenedTestSuite() {
           isProtected,
           theme,
           error: err.message,
-          pass: false
+          pass: false,
+          diagnostics: {
+            pageErrors,
+            consoleLogs,
+            failedRequests,
+            networkResponses,
+            domSnippet
+          }
         });
       } finally {
         await pageContext.close();

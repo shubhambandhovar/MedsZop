@@ -36,12 +36,15 @@ jobs:
       - name: Build Frontend Production Assets
         working-directory: frontend
         run: npm run build
+        env:
+          VITE_API_URL: http://localhost:5000/api
 
       - name: Run Glass Experience V3 Test Suite
         working-directory: frontend
         run: npm run test:glass
         env:
           CI: true
+          VITE_API_URL: http://localhost:5000/api
 
       - name: Upload Test Summary & Screenshots
         if: always()
@@ -52,3 +55,4 @@ jobs:
             frontend/tests/glass-test-summary.json
             frontend/tests/screenshots/
           retention-days: 7
+
