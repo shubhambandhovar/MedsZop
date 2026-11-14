@@ -171,7 +171,7 @@ const Navbar = () => {
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 to={logoDestination}
-                className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+                className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-h-[44px] min-w-[44px]"
                 data-testid="logo-link"
                 aria-label="MedsZop Home"
               >

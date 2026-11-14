@@ -35,15 +35,17 @@ export const GlassButton = forwardRef(function GlassButton(
   };
 
   const sizeStyles = {
-    sm: 'h-9 px-3.5 text-xs rounded-xl gap-1.5',
+    sm: 'min-h-[44px] px-3.5 text-xs rounded-xl gap-1.5 sm:min-h-[36px] sm:h-9',
     md: 'h-11 px-5 text-sm rounded-xl gap-2 min-h-[44px]',
     lg: 'h-13 px-6 text-base rounded-2xl gap-2.5 min-h-[48px]',
-    icon: 'h-10 w-10 p-0 rounded-xl min-h-[40px] min-w-[40px] flex items-center justify-center',
+    icon: 'h-11 w-11 p-0 rounded-xl min-h-[44px] min-w-[44px] sm:h-10 sm:w-10 sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center',
   };
 
   const disabledStyles = disabled || loading
     ? 'opacity-60 cursor-not-allowed pointer-events-none'
-    : 'cursor-pointer active:scale-[0.98]';
+    : shouldReduceMotion
+      ? 'cursor-pointer'
+      : 'cursor-pointer active:scale-[0.98] motion-reduce:active:scale-100 motion-reduce:transform-none';
 
   return (
     <motion.button
@@ -51,8 +53,8 @@ export const GlassButton = forwardRef(function GlassButton(
       type={type}
       disabled={disabled || loading}
       whileTap={!disabled && !loading && !shouldReduceMotion ? { scale: 0.985 } : undefined}
-      transition={{ duration: 0.1 }}
-      className={`inline-flex items-center justify-center font-semibold tracking-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 select-none ${variantStyles[variant] || variantStyles.primary} ${sizeStyles[size] || sizeStyles.md} ${disabledStyles} ${className}`}
+      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.1 }}
+      className={`inline-flex items-center justify-center font-semibold tracking-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 select-none motion-reduce:transition-none motion-reduce:transform-none ${variantStyles[variant] || variantStyles.primary} ${sizeStyles[size] || sizeStyles.md} ${disabledStyles} ${className}`}
       onClick={onClick}
       {...props}
     >
